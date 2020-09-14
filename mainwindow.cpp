@@ -3,14 +3,18 @@
 MainWindow::MainWindow()
 {
     // Set the main widget and create menus and actions
-    widget = new QWidget;
-    setCentralWidget(widget);
-
+    mainWidget = new QWidget;
+    setCentralWidget(mainWidget);
+    // Create the layout handlers
+    m_welcLayRef = std::make_shared<WelcomeLayout>();
+    // Set the starting layout to the welcome layout, showing the welcome message
+    mainWidget->setLayout(m_welcLayRef->getWelcomeLayout());
+    // Create the menus and different actions
     createActions();
     createMenus();
-
+    // Set a title and a minimum size
     setWindowTitle("Light Combat Manager");
-    setMinimumSize(1280, 720);
+    setMinimumSize(640, 480);
 }
 
 void MainWindow::newFile()
@@ -23,7 +27,7 @@ void MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"), 
             "Light Combat Manager. A simple Combat Manager for DnD-like games. "
             "\nCode available on Github: https://github.com/MaxFleur/LightCombatManager"
-            "\nVersion 0.0.2 alpha.");
+            "\nVersion 0.0.3 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -63,7 +67,7 @@ void MainWindow::createMenus()
 
 MainWindow::~MainWindow()
 {
-    delete widget;
+    delete mainWidget;
     delete newAct;
     delete aboutAct;
     delete aboutQtAct;

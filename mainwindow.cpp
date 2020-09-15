@@ -33,7 +33,7 @@ void MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"), 
             "Light Combat Manager. A simple Combat Manager for DnD-like games. "
             "\nCode available on Github: https://github.com/MaxFleur/LightCombatManager"
-            "\nVersion 0.1.1 alpha.");
+            "\nVersion 0.1.2 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -73,8 +73,6 @@ void MainWindow::createMenus()
 
 MainWindow::~MainWindow()
 {
-    delete welcomeWidget;
-    delete characterCreationWidget;
     delete newAct;
     delete aboutAct;
     delete aboutQtAct;

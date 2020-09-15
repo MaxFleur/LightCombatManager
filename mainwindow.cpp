@@ -3,22 +3,28 @@
 MainWindow::MainWindow()
 {
     // Set the main widget and create menus and actions
-    mainWidget = new QWidget;
-    setCentralWidget(mainWidget);
+    welcomeWidget = new QWidget;
+    characterCreationWidget = new QWidget;
+    setCentralWidget(welcomeWidget);
+    
     // Create the layout handlers
-    m_welcLayRef = std::make_shared<WelcomeLayout>();
+    m_welcLay = std::make_shared<WelcomeLayout>();
+    m_charCreateLay = std::make_shared<CharacterCreationLayout>();
+    
     // Set the starting layout to the welcome layout, showing the welcome message
-    mainWidget->setLayout(m_welcLayRef->getWelcomeLayout());
+    welcomeWidget->setLayout(m_welcLay->getWelcomeLayout());
+    characterCreationWidget->setLayout(m_charCreateLay->getCharacterCreationLayout());
     // Create the menus and different actions
     createActions();
     createMenus();
     // Set a title and a minimum size
     setWindowTitle("Light Combat Manager");
-    setMinimumSize(640, 480);
+    setFixedSize(640, 260);
 }
 
 void MainWindow::newFile()
 {
+    setCentralWidget(characterCreationWidget);
 }
 
 // Display about message
@@ -67,7 +73,8 @@ void MainWindow::createMenus()
 
 MainWindow::~MainWindow()
 {
-    delete mainWidget;
+    delete welcomeWidget;
+    delete characterCreationWidget;
     delete newAct;
     delete aboutAct;
     delete aboutQtAct;

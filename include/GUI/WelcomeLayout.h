@@ -15,12 +15,12 @@ private:
     void createLayout();
     
     // These widgets create some free space around the text in the centre
-    QWidget *topFiller;
-    QWidget *bottomFiller;
-    QWidget *leftFiller;
-    QWidget *rightFiller;
+    QWidget     *topFiller;
+    QWidget     *bottomFiller;
+    QWidget     *leftFiller;
+    QWidget     *rightFiller;
     // The label showing the welcome text
-    QLabel *welcomeLabel;
+    QLabel      *welcomeLabel;
     // The overall welcome layout and the layout in the centre
     QVBoxLayout *welcomeLayout;
     QHBoxLayout *centeredLayout;

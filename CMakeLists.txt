@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.5)
 
 project(LightCombatManager LANGUAGES CXX)
 
-set(SRC_LIST main.cpp mainwindow.cpp src/GUI/WelcomeLayout.cpp)
+set(SRC_LIST 
+    main.cpp 
+    mainwindow.cpp 
+    src/GUI/WelcomeLayout.cpp 
+    src/GUI/CharacterCreationLayout.cpp
+)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)

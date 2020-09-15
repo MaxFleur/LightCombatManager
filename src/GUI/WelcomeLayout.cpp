@@ -1,6 +1,12 @@
 #include "../../include/GUI/WelcomeLayout.h"
 
+// Create the welcome layout at instantiation
 WelcomeLayout::WelcomeLayout() {
+    createLayout();
+}
+
+// This function creates the welcoming layout
+void WelcomeLayout::createLayout() {
     // First, set all filler widgets
     topFiller = new QWidget;
     topFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

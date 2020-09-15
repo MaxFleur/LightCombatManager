@@ -12,6 +12,8 @@ public:
     QVBoxLayout *getWelcomeLayout() { return welcomeLayout; }
     
 private:
+    void createLayout();
+    
     // These widgets create some free space around the text in the centre
     QWidget *topFiller;
     QWidget *bottomFiller;

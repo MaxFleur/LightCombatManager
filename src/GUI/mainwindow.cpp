@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "../../include/GUI/mainwindow.h"
 
 MainWindow::MainWindow()
 {
@@ -33,7 +33,7 @@ void MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"), 
             "Light Combat Manager. A simple Combat Manager for DnD-like games. "
             "\nCode available on Github: https://github.com/MaxFleur/LightCombatManager"
-            "\nVersion 0.1.2 alpha.");
+            "\nVersion 0.1.4 alpha.");
 }
 
 void MainWindow::aboutQt()

@@ -3,8 +3,10 @@ cmake_minimum_required(VERSION 3.5)
 project(LightCombatManager LANGUAGES CXX)
 
 set(SRC_LIST 
+    include/GUI/mainwindow.h
+
     main.cpp 
-    mainwindow.cpp 
+    src/GUI/mainwindow.cpp 
     src/GUI/WelcomeLayout.cpp 
     src/GUI/CharacterCreationLayout.cpp
 )

@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QtWidgets>
 
-#include "include/GUI/WelcomeLayout.h"
-#include "include/GUI/CharacterCreationLayout.h"
+#include "WelcomeLayout.h"
+#include "CharacterCreationLayout.h"
 
 // This class handles the creation and managing of the main GUI window (the dropdown menu and it's actions).
 // The layouts themselves are created in other classes and given to this class.

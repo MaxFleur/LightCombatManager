@@ -1,16 +1,18 @@
-#include "../../include/GUI/CharacterCreationLayout.h"
+#include "../../include/GUI/CharacterCreationWidget.h"
 
 // Create the layout at instantiation
-CharacterCreationLayout::CharacterCreationLayout() {
+CharacterCreationWidget::CharacterCreationWidget(QWidget *parent)
+        : QWidget( parent) {
     createLayout();
 }
 
-void CharacterCreationLayout::createLayout() {
+void CharacterCreationWidget::createLayout() {
     
     bottomFiller = new QWidget;
     bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     // First, allocate all layouts
-    characterCreationLayout = new QVBoxLayout;
+    // The characterCreationLayout will be displayed, so it gets the instance of this class
+    characterCreationLayout = new QVBoxLayout(this);
     characterInformationLayout = new QHBoxLayout;
     additionalInformationLayout = new QHBoxLayout;
     buttonsLayout = new QHBoxLayout;

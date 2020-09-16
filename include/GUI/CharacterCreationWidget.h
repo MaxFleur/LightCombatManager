@@ -2,14 +2,12 @@
 
 #include <QtWidgets>
 
-// This class handles the layout used for the creation of characters
-class CharacterCreationLayout {
+// This class handles the widget used for the creation of characters
+class CharacterCreationWidget : public QWidget {
     
      
 public:
-    CharacterCreationLayout();
-    // Return the final layout 
-    QVBoxLayout *getCharacterCreationLayout() { return characterCreationLayout; }
+    CharacterCreationWidget(QWidget *parent = 0);
     
 private:
     void createLayout();
@@ -42,5 +40,3 @@ private:
     QPushButton *resetButton;
     QPushButton *cancelButton;
 };
-// Shared pointer instance for usage in the mainwindow class
-using CharacterCreationLayoutRef = std::shared_ptr<CharacterCreationLayout>; 

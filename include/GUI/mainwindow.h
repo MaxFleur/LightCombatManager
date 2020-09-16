@@ -5,7 +5,7 @@
 #include <QtWidgets>
 
 #include "WelcomeWidget.h"
-#include "CharacterCreationLayout.h"
+#include "CharacterCreationWidget.h"
 
 // This class handles the creation and managing of the main GUI window (the dropdown menu and it's actions).
 // The layouts themselves are created in other classes and given to this class.
@@ -19,7 +19,7 @@ public:
     
 private slots:
     // Slots for the dropdown menu actions
-    void newFile();
+    void newCombat();
     void about();
     void aboutQt();
 
@@ -28,12 +28,9 @@ private:
     void createActions();
     void createMenus();
     
-    CharacterCreationLayoutRef m_charCreateLay;
-    
-    // The main widget used for the GUI
-    QWidget *characterCreationWidget;
-    
+    // The widgets displaxed when using the program
     WelcomeWidget *welcomeWidget;
+    CharacterCreationWidget *characterCreationWidget;
     
     // The dropdown menus
     QMenu   *fileMenu;

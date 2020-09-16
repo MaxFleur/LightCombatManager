@@ -5,11 +5,12 @@ project(LightCombatManager LANGUAGES CXX)
 set(SRC_LIST 
     include/GUI/mainwindow.h
     include/GUI/WelcomeWidget.h
+    include/GUI/CharacterCreationWidget.h
 
     main.cpp 
     src/GUI/mainwindow.cpp 
     src/GUI/WelcomeWidget.cpp 
-    src/GUI/CharacterCreationLayout.cpp
+    src/GUI/CharacterCreationWidget.cpp
 )
 
 set(CMAKE_AUTOUIC ON)

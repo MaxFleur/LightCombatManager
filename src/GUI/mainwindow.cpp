@@ -2,16 +2,12 @@
 
 MainWindow::MainWindow()
 {
-    // Set the main widget and create menus and actions
+    // Set this window as parent for the widgets
     welcomeWidget = new WelcomeWidget(this);
-    characterCreationWidget = new QWidget;
+    characterCreationWidget = new CharacterCreationWidget(this);
+    // The welcome widget will be displayed at the beginning, so set to this one
     setCentralWidget(welcomeWidget);
     
-    // Create the layout handlers
-    m_charCreateLay = std::make_shared<CharacterCreationLayout>();
-    
-    // Set the starting layout to the welcome layout, showing the welcome message
-    characterCreationWidget->setLayout(m_charCreateLay->getCharacterCreationLayout());
     // Create the menus and different actions
     createActions();
     createMenus();
@@ -20,8 +16,9 @@ MainWindow::MainWindow()
     setFixedSize(640, 260);
 }
 
-void MainWindow::newFile()
+void MainWindow::newCombat()
 {
+    // 
     setCentralWidget(characterCreationWidget);
 }
 
@@ -45,7 +42,7 @@ void MainWindow::createActions()
     newAct = new QAction(tr("&New Combat"), this);
     newAct->setShortcuts(QKeySequence::New);
     newAct->setStatusTip(tr("Start a new combat."));
-    connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
+    connect(newAct, &QAction::triggered, this, &MainWindow::newCombat);
     // See information about the program
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("About Light Combat Manager"));

@@ -10,7 +10,7 @@ public:
     CharacterCreationWidget(QWidget *parent = 0);
     
 private:
-    void createLayout();
+    void createWidget();
     // Widget for spacing, layouts for the input options
     QWidget     *bottomFiller;
     QHBoxLayout *characterInformationLayout;

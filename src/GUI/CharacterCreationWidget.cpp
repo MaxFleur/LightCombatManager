@@ -3,10 +3,10 @@
 // Create the layout at instantiation
 CharacterCreationWidget::CharacterCreationWidget(QWidget *parent)
         : QWidget( parent) {
-    createLayout();
+    createWidget();
 }
 
-void CharacterCreationWidget::createLayout() {
+void CharacterCreationWidget::createWidget() {
     
     bottomFiller = new QWidget;
     bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

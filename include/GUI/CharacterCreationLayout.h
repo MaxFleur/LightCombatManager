@@ -4,6 +4,7 @@
 
 // This class handles the layout used for the creation of characters
 class CharacterCreationLayout {
+    
      
 public:
     CharacterCreationLayout();

@@ -16,7 +16,7 @@ void CharacterCreationLayout::createLayout() {
     buttonsLayout = new QHBoxLayout;
     // Now start with the headlining label. Set it's properties and align it to the highest and left position
     headlineLabel = new QLabel("Please enter the character stats.");
-    QFont f("Arial", 12, QFont::Bold);
+    QFont f("Arial", 12, QFont::DemiBold);
     headlineLabel->setFont(f);
     headlineLabel->setFrameStyle(QFrame::NoFrame);
     headlineLabel->setAlignment(Qt::AlignLeft);

@@ -28,10 +28,12 @@ void CharacterCreationWidget::createLayout() {
     nameLabel = new QLabel("Name:");
     nameLabel->setFrameStyle(QFrame::NoFrame);
     nameLabel->setAlignment(Qt::AlignLeft);
+    nameLabel->setToolTip("Set the name of the character.");
     nameEdit = new QLineEdit;
     initiativeLabel = new QLabel("Initiative:");
     initiativeLabel->setFrameStyle(QFrame::NoFrame);
     initiativeLabel->setAlignment(Qt::AlignLeft);
+    initiativeLabel->setToolTip("Set the initiative. This includes ALL modifiers.");
     initiativeBox = new QSpinBox;
     // Cap the lowest initiative at -20.
     // No char will ever have such a bad initiative but we can never know ;-) )
@@ -39,17 +41,20 @@ void CharacterCreationWidget::createLayout() {
     initModifierLabel = new QLabel("Init modifier:");
     initModifierLabel->setFrameStyle(QFrame::NoFrame);
     initModifierLabel->setAlignment(Qt::AlignLeft);
+    initModifierLabel->setToolTip("Set the modificator of the initiative.");
     initModifierBox = new QSpinBox;
     // Same for the modifier and hp, -10 or -100 are really bad but can still be reached
     initModifierBox->setMinimum(-10);
     hpLabel = new QLabel("HP:");
     hpLabel->setFrameStyle(QFrame::NoFrame);
     hpLabel->setAlignment(Qt::AlignLeft);
+    hpLabel->setToolTip("Set the HP of this character. This value is optional.");
     hpBox = new QSpinBox;
     hpBox->setMinimum(-100);
     isNPCLabel = new QLabel("Is NPC:");
     isNPCLabel->setFrameStyle(QFrame::NoFrame);
     isNPCLabel->setAlignment(Qt::AlignLeft);
+    isNPCLabel->setToolTip("Set if this character is an NPC or not.");
     isNPCBox = new QCheckBox;
     // Add all these things to the layout
     characterInformationLayout->addWidget(nameLabel);
@@ -67,6 +72,7 @@ void CharacterCreationWidget::createLayout() {
     additionalInformationLabel = new QLabel("Additional information:");
     additionalInformationLabel->setFrameStyle(QFrame::NoFrame);
     additionalInformationLabel->setAlignment(Qt::AlignLeft);
+    additionalInformationLabel->setToolTip("Set some additional information. This is optional.");
     additionalInformationEdit = new QLineEdit;
     // Add to layout
     additionalInformationLayout->addWidget(additionalInformationLabel);
@@ -75,14 +81,18 @@ void CharacterCreationWidget::createLayout() {
     
     // Now handle the buttons at the lower end
     saveAnotherButton = new QPushButton("Save and create new character");
-    finishButton = new QPushButton("Finish character creation");
-    resetButton = new QPushButton("Reset");QWidget *
-    cancelButton = new QPushButton("Cancel");
-    // Set an own width for every button
     saveAnotherButton->setFixedWidth(200);
+    saveAnotherButton->setToolTip("Save this character and create another one.");
+    finishButton = new QPushButton("Finish character creation");
     finishButton->setFixedWidth(180);
+    finishButton->setToolTip("Finish the character creation. Once you're finished, you can't go back.");
+    resetButton = new QPushButton("Reset");
     resetButton->setFixedWidth(60);
+    resetButton->setToolTip("Reset the current character.");
+    cancelButton = new QPushButton("Cancel");
     cancelButton->setFixedWidth(60);
+    cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
+    
     // Align the buttons to the right side using a spacer
     QWidget *spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);

@@ -28,7 +28,7 @@ void MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"), 
             "Light Combat Manager. A simple Combat Manager for DnD-like games. "
             "\nCode available on Github: https://github.com/MaxFleur/LightCombatManager"
-            "\nVersion 0.1.4 alpha.");
+            "\nVersion 0.2.0 alpha.");
 }
 
 void MainWindow::aboutQt()

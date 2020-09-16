@@ -4,10 +4,11 @@ project(LightCombatManager LANGUAGES CXX)
 
 set(SRC_LIST 
     include/GUI/mainwindow.h
+    include/GUI/WelcomeWidget.h
 
     main.cpp 
     src/GUI/mainwindow.cpp 
-    src/GUI/WelcomeLayout.cpp 
+    src/GUI/WelcomeWidget.cpp 
     src/GUI/CharacterCreationLayout.cpp
 )
 

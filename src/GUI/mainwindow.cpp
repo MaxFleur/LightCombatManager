@@ -3,16 +3,14 @@
 MainWindow::MainWindow()
 {
     // Set the main widget and create menus and actions
-    welcomeWidget = new QWidget;
+    welcomeWidget = new WelcomeWidget(this);
     characterCreationWidget = new QWidget;
     setCentralWidget(welcomeWidget);
     
     // Create the layout handlers
-    m_welcLay = std::make_shared<WelcomeLayout>();
     m_charCreateLay = std::make_shared<CharacterCreationLayout>();
     
     // Set the starting layout to the welcome layout, showing the welcome message
-    welcomeWidget->setLayout(m_welcLay->getWelcomeLayout());
     characterCreationWidget->setLayout(m_charCreateLay->getCharacterCreationLayout());
     // Create the menus and different actions
     createActions();

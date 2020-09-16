@@ -15,7 +15,6 @@ private:
     void createLayout();
     // Widget for spacing, layouts for the input options
     QWidget     *bottomFiller;
-    QVBoxLayout *centeredLayout;
     QHBoxLayout *characterInformationLayout;
     QHBoxLayout *additionalInformationLayout;
     QHBoxLayout *buttonsLayout;

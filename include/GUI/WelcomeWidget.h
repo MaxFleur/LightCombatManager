@@ -1,18 +1,17 @@
 #pragma once
 
 #include <QtWidgets>
-
-// This class handles the welcoming layout
-//Which means, it creates a fancy textbox around some widgets and that's it
-class WelcomeLayout {
+    
+// This class handles the welcoming widget
+// Which means, it creates a fancy textbox and that's it
+class WelcomeWidget : public QWidget {
     
 public:
-    WelcomeLayout();
-    // We want this layout to be displayed, so return it, 
-    QVBoxLayout *getWelcomeLayout() { return welcomeLayout; }
+    WelcomeWidget(QWidget *parent = 0);
     
 private:
-    void createLayout();
+    // Create the widget
+    void createWidget();
     
     // These widgets create some free space around the text in the centre
     QWidget     *topFiller;
@@ -25,5 +24,3 @@ private:
     QVBoxLayout *welcomeLayout;
     QHBoxLayout *centeredLayout;
 };
-// Shared pointer instance for usage in the mainwindow class
-using WelcomeLayoutRef = std::shared_ptr<WelcomeLayout>;

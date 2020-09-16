@@ -1,12 +1,14 @@
-#include "../../include/GUI/WelcomeLayout.h"
+#include "../../include/GUI/WelcomeWidget.h"
 
-// Create the welcome layout at instantiation
-WelcomeLayout::WelcomeLayout() {
-    createLayout();
+// Create the welcome widget at instantiation
+WelcomeWidget::WelcomeWidget(QWidget *parent)
+        : QWidget( parent) {
+            
+    createWidget();
 }
 
-// This function creates the welcoming layout
-void WelcomeLayout::createLayout() {
+// This function creates the welcoming widget
+void WelcomeWidget::createWidget() {
     // First, set all filler widgets
     topFiller = new QWidget;
     topFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -24,8 +26,8 @@ void WelcomeLayout::createLayout() {
     welcomeLabel = new QLabel("Welcome to Light Combat Manager! \n To start a new combat, click on 'File' -> New Combat' or hit Ctrl + N.");
     welcomeLabel->setFrameStyle(QFrame::Box);
     welcomeLabel->setAlignment(Qt::AlignCenter);
-    // Now the layouts are allocated
-    welcomeLayout = new QVBoxLayout;
+    // Now the layouts are allocated, set this widget to the welcomeLayout so it will be shown properly
+    welcomeLayout = new QVBoxLayout(this);
     centeredLayout = new QHBoxLayout;
     // Add the left and right filler with the label to the layout in the centre
     centeredLayout->addWidget(leftFiller);

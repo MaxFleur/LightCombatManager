@@ -4,6 +4,53 @@
 CharacterCreationWidget::CharacterCreationWidget(QWidget *parent)
         : QWidget( parent) {
     createWidget();
+    connectWidgets();
+}
+
+// Set the name of the current character
+void CharacterCreationWidget::setName(std::string name) {
+    m_name = name;
+}
+
+// Set initiative of the current character
+void CharacterCreationWidget::setInitiative(int initiative) {
+    m_initiative = initiative;
+}
+
+// Set the initiative modifier of the current character
+void CharacterCreationWidget::setModifier(int modifier) {
+    m_modifier = modifier;
+}
+
+// Set if the current character is an NPC or not
+void CharacterCreationWidget::setIsNPC(bool isNPC) {
+    m_isNPC = isNPC;
+}
+
+// Set the current character's hp
+void CharacterCreationWidget::setHP(int hp) {
+    m_hp = hp;
+}
+
+// Set some additional information for the current character, if needed
+void CharacterCreationWidget::setAdditionalInformation(std::string additionalInf) {
+    m_additionalInf = additionalInf;
+}
+
+// Save the current character and reset to create another one
+void CharacterCreationWidget::saveAndCreateNewCharacter() {
+}
+
+// Finish the character creation
+void CharacterCreationWidget::finishCreation() {
+}
+
+// Reset the current character
+void CharacterCreationWidget::resetCharacter() {
+}
+
+// Cancel character creation
+void CharacterCreationWidget::cancel() {
 }
 
 void CharacterCreationWidget::createWidget() {
@@ -117,4 +164,15 @@ void CharacterCreationWidget::createWidget() {
     characterCreationLayout->addLayout(buttonsLayout);
     // At the end, create some more space using a filler widget
     characterCreationLayout->addWidget(bottomFiller);
+}
+
+void CharacterCreationWidget::connectWidgets() {
+    connect (initiativeBox, SIGNAL(valueChanged(int)), this, SLOT (setInitiative(int)));
+    connect (initModifierBox, SIGNAL(valueChanged(int)), this, SLOT (setModifier(int)));
+    connect (hpBox, SIGNAL(valueChanged(int)), this, SLOT (setHP(int)));
+    
+    connect(saveAnotherButton, SIGNAL (clicked ()), this, SLOT (saveAndCreateNewCharacter()));
+    connect(finishButton, SIGNAL (clicked ()), this, SLOT (finishCreation()));
+    connect(resetButton, SIGNAL (clicked ()), this, SLOT (resetCharacter()));
+    connect(cancelButton, SIGNAL (clicked ()), this, SLOT (cancel()));
 }

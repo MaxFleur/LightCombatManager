@@ -1,16 +1,34 @@
 #pragma once
 
 #include <QtWidgets>
+#include "../Character.h"
 
 // This class handles the widget used for the creation of characters
 class CharacterCreationWidget : public QWidget {
-    
+    Q_OBJECT
      
 public:
     CharacterCreationWidget(QWidget *parent = 0);
     
+private slots:
+    void setName(std::string name);
+    void setInitiative(int initiative);
+    void setModifier(int modifier);
+    void setIsNPC(bool isNPC);
+    void setHP(int hp);
+    void setAdditionalInformation(std::string additionalInf);
+    
+    void saveAndCreateNewCharacter();
+    void finish();
+    void resetCharacter();
+    void cancel();
+    
 private:
+    // Create the widget
     void createWidget();
+    void connectWidgets();
+    
+    // All GUI elements
     // Widget for spacing, layouts for the input options
     QWidget     *bottomFiller;
     QHBoxLayout *characterInformationLayout;
@@ -39,4 +57,24 @@ private:
     QPushButton *finishButton;
     QPushButton *resetButton;
     QPushButton *cancelButton;
+    
+    // The actions fot GUI interaction
+    QAction     *setNameAct;
+    QAction     *setIniAct;
+    QAction     *setModAct;
+    QAction     *setNPCAct;
+    QAction     *setHPAct;
+    QAction     *setAddInfAct;
+    QAction     *saveAnotherAct;
+    QAction     *finishAct;
+    QAction     *resetAct;
+    QAction     *cancelAct;
+    
+    // The values needed for the creation of another character
+    std::string m_name;
+    int         m_initiative;
+    int         m_modifier;
+    bool        m_isNPC;
+    int         m_hp;
+    std::string m_additionalInf;
 };

@@ -8,8 +8,8 @@ CharacterCreationWidget::CharacterCreationWidget(QWidget *parent)
 }
 
 // Set the name of the current character
-void CharacterCreationWidget::setName(std::string name) {
-    m_name = name;
+void CharacterCreationWidget::setName(const QString &name) {
+    m_name = name.toStdString();
 }
 
 // Set initiative of the current character
@@ -33,8 +33,8 @@ void CharacterCreationWidget::setHP(int hp) {
 }
 
 // Set some additional information for the current character, if needed
-void CharacterCreationWidget::setAdditionalInformation(std::string additionalInf) {
-    m_additionalInf = additionalInf;
+void CharacterCreationWidget::setAdditionalInformation(const QString &additionalInf) {
+    m_additionalInf = additionalInf.toStdString();
 }
 
 // Save the current character and reset to create another one
@@ -167,9 +167,12 @@ void CharacterCreationWidget::createWidget() {
 }
 
 void CharacterCreationWidget::connectWidgets() {
+    connect (nameEdit, SIGNAL(textEdited(const QString &)), this, SLOT (setName(QString)));
     connect (initiativeBox, SIGNAL(valueChanged(int)), this, SLOT (setInitiative(int)));
     connect (initModifierBox, SIGNAL(valueChanged(int)), this, SLOT (setModifier(int)));
-    connect (hpBox, SIGNAL(valueChanged(int)), this, SLOT (setHP(int)));
+    connect (initModifierBox, SIGNAL(valueChanged(int)), this, SLOT (setModifier(int)));
+    connect (isNPCBox, SIGNAL(clicked(bool)), this, SLOT (setIsNPC(bool)));
+    connect (additionalInformationEdit, SIGNAL(textEdited(const QString &)), this, SLOT (setAdditionalInformation(QString)));
     
     connect(saveAnotherButton, SIGNAL (clicked ()), this, SLOT (saveAndCreateNewCharacter()));
     connect(finishButton, SIGNAL (clicked ()), this, SLOT (finishCreation()));

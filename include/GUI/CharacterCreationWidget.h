@@ -11,15 +11,15 @@ public:
     CharacterCreationWidget(QWidget *parent = 0);
     
 private slots:
-    void setName(std::string name);
+    void setName(const QString &name);
     void setInitiative(int initiative);
     void setModifier(int modifier);
     void setIsNPC(bool isNPC);
     void setHP(int hp);
-    void setAdditionalInformation(std::string additionalInf);
+    void setAdditionalInformation(const QString &additionalInf);
     
     void saveAndCreateNewCharacter();
-    void finish();
+    void finishCreation();
     void resetCharacter();
     void cancel();
     
@@ -57,18 +57,6 @@ private:
     QPushButton *finishButton;
     QPushButton *resetButton;
     QPushButton *cancelButton;
-    
-    // The actions fot GUI interaction
-    QAction     *setNameAct;
-    QAction     *setIniAct;
-    QAction     *setModAct;
-    QAction     *setNPCAct;
-    QAction     *setHPAct;
-    QAction     *setAddInfAct;
-    QAction     *saveAnotherAct;
-    QAction     *finishAct;
-    QAction     *resetAct;
-    QAction     *cancelAct;
     
     // The values needed for the creation of another character
     std::string m_name;

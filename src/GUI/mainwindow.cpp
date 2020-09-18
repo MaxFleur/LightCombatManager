@@ -16,9 +16,10 @@ MainWindow::MainWindow()
     setFixedSize(640, 260);
 }
 
+// Initiate a new combat
 void MainWindow::newCombat()
 {
-    // 
+    // Set to the character creation widget
     setCentralWidget(characterCreationWidget);
 }
 
@@ -29,7 +30,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.2.7 alpha.");
+            "\nVersion 0.2.8 alpha.");
 }
 
 void MainWindow::aboutQt()

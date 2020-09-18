@@ -1,8 +1,8 @@
 #include "../../include/GUI/CharacterCreationWidget.h"
 
 // Create the layout at instantiation
-CharacterCreationWidget::CharacterCreationWidget(QWidget *parent)
-        : QWidget( parent) {
+CharacterCreationWidget::CharacterCreationWidget(QWidget *parent) {
+            m_charSort =std::make_shared<CharacterSort>();
     createWidget();
     connectWidgets();
     // Reset all character values to standard
@@ -74,6 +74,15 @@ void CharacterCreationWidget::resetCharacter() {
 
 // Cancel character creation
 void CharacterCreationWidget::cancel() {
+    QMessageBox::StandardButton reply = QMessageBox::question(this, 
+                                                              "Cancel creation?",
+                                                              "Are you sure you want to cancel the character creation? All created characters will be lost.",
+                                QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        m_charSort->clearCharacters();
+        this->hide(); 
+        parentWidget()->show();
+    }
 }
 
 void CharacterCreationWidget::createWidget() {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtWidgets>
-#include "../Character.h"
+#include "../CharacterSort.h"
 
 // This class handles the widget used for the creation of characters
 class CharacterCreationWidget : public QWidget {
@@ -68,4 +68,6 @@ private:
     bool        m_isNPC;
     int         m_hp;
     std::string m_additionalInf;
+    
+    CharacterSortRef m_charSort;
 };

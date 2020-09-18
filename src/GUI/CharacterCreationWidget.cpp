@@ -9,31 +9,37 @@ CharacterCreationWidget::CharacterCreationWidget(QWidget *parent)
 
 // Set the name of the current character
 void CharacterCreationWidget::setName(const QString &name) {
+    setChecker();
     m_name = name.toStdString();
 }
 
 // Set initiative of the current character
 void CharacterCreationWidget::setInitiative(int initiative) {
+    setChecker();
     m_initiative = initiative;
 }
 
 // Set the initiative modifier of the current character
 void CharacterCreationWidget::setModifier(int modifier) {
+    setChecker();
     m_modifier = modifier;
 }
 
 // Set if the current character is an NPC or not
 void CharacterCreationWidget::setIsNPC(bool isNPC) {
+    setChecker();
     m_isNPC = isNPC;
 }
 
 // Set the current character's hp
 void CharacterCreationWidget::setHP(int hp) {
+    setChecker();
     m_hp = hp;
 }
 
 // Set some additional information for the current character, if needed
 void CharacterCreationWidget::setAdditionalInformation(const QString &additionalInf) {
+    setChecker();
     m_additionalInf = additionalInf.toStdString();
 }
 
@@ -47,6 +53,23 @@ void CharacterCreationWidget::finishCreation() {
 
 // Reset the current character
 void CharacterCreationWidget::resetCharacter() {
+    // Because of the reset, no value is set again, so this will be false
+    checkIsSet = false;
+    // Reset all displayed values
+    nameEdit->setText("");
+    initiativeBox->setValue(0);
+    initModifierBox->setValue(0);
+    isNPCBox->setChecked(false);
+    hpBox->setValue(0);
+    additionalInformationEdit->setText("");
+    // Reset all underlying values
+    m_name = "";
+    m_initiative = 0;
+    m_modifier = 0;
+    m_isNPC = false;
+    m_hp = 0;
+    m_additionalInf = "";
+    this->update();
 }
 
 // Cancel character creation
@@ -178,4 +201,12 @@ void CharacterCreationWidget::connectWidgets() {
     connect(finishButton, SIGNAL (clicked ()), this, SLOT (finishCreation()));
     connect(resetButton, SIGNAL (clicked ()), this, SLOT (resetCharacter()));
     connect(cancelButton, SIGNAL (clicked ()), this, SLOT (cancel()));
+}
+
+// Sets if at least one value has been modified
+void CharacterCreationWidget::setChecker() {
+    // Set to true if any value is set for the first time
+    if(!checkIsSet) {
+        checkIsSet = true;
+    }
 }

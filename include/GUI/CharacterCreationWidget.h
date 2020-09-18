@@ -58,8 +58,8 @@ private:
     QPushButton *resetButton;
     QPushButton *cancelButton;
     
-    // This bool checks if at least one value in the widget has been set
-    bool checkIsSet;
+    // Check if the name has been set
+    bool isNameSet;
     
     // The values needed for the creation of another character
     std::string m_name;
@@ -68,7 +68,4 @@ private:
     bool        m_isNPC;
     int         m_hp;
     std::string m_additionalInf;
-    
-    // Set checking bool (checkIsSet)
-    void setChecker();
 };

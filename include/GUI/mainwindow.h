@@ -30,6 +30,7 @@ private:
     // Create the user actions and menus
     void createActions();
     void createMenus();
+    void setCharacterCreationWidget();
     
     // The widgets displayed when using the program
     WelcomeWidget *welcomeWidget;
@@ -42,6 +43,10 @@ private:
     QAction *newAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+    
+    // Checks if the user is storing chars or running a combat
+    bool isGameActive = false;
+    
     // The char sort reference used by several widgets
     CharacterHandlerRef m_char;
 };

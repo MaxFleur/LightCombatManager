@@ -1,8 +1,8 @@
 #include "../../include/GUI/CharacterCreationWidget.h"
 
 // Create the layout at instantiation
-CharacterCreationWidget::CharacterCreationWidget(QWidget *parent) {
-            m_charSort =std::make_shared<CharacterSort>();
+CharacterCreationWidget::CharacterCreationWidget(CharacterSortRef charSort, QWidget *parent) 
+    : m_charSort(charSort) {
     createWidget();
     connectWidgets();
     // Reset all character values to standard
@@ -70,19 +70,6 @@ void CharacterCreationWidget::resetCharacter() {
     m_hp = 0;
     m_additionalInf = "";
     this->update();
-}
-
-// Cancel character creation
-void CharacterCreationWidget::cancel() {
-    QMessageBox::StandardButton reply = QMessageBox::question(this, 
-                                                              "Cancel creation?",
-                                                              "Are you sure you want to cancel the character creation? All created characters will be lost.",
-                                QMessageBox::Yes|QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-        m_charSort->clearCharacters();
-        this->hide(); 
-        parentWidget()->show();
-    }
 }
 
 void CharacterCreationWidget::createWidget() {
@@ -198,6 +185,7 @@ void CharacterCreationWidget::createWidget() {
     characterCreationLayout->addWidget(bottomFiller);
 }
 
+// Connect all widgets to the functions
 void CharacterCreationWidget::connectWidgets() {
     connect (nameEdit, SIGNAL(textEdited(const QString &)), this, SLOT (setName(QString)));
     connect (initiativeBox, SIGNAL(valueChanged(int)), this, SLOT (setInitiative(int)));
@@ -209,5 +197,4 @@ void CharacterCreationWidget::connectWidgets() {
     connect(saveAnotherButton, SIGNAL (clicked ()), this, SLOT (saveAndCreateNewCharacter()));
     connect(finishButton, SIGNAL (clicked ()), this, SLOT (finishCreation()));
     connect(resetButton, SIGNAL (clicked ()), this, SLOT (resetCharacter()));
-    connect(cancelButton, SIGNAL (clicked ()), this, SLOT (cancel()));
 }

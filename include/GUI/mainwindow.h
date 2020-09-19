@@ -6,6 +6,7 @@
 
 #include "WelcomeWidget.h"
 #include "CharacterCreationWidget.h"
+#include "../CharacterSort.h"
 
 // This class handles the creation and managing of the main GUI window (the dropdown menu and it's actions).
 // The layouts themselves are created in other classes and given to this class.
@@ -22,13 +23,15 @@ private slots:
     void newCombat();
     void about();
     void aboutQt();
+    // Cancel the character creation widget, returning to the welcoming widget
+    void cancelCreation();
 
 private:
     // Create the user actions and menus
     void createActions();
     void createMenus();
     
-    // The widgets displaxed when using the program
+    // The widgets displayed when using the program
     WelcomeWidget *welcomeWidget;
     CharacterCreationWidget *characterCreationWidget;
     
@@ -39,5 +42,7 @@ private:
     QAction *newAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+    // The char sort reference used by several widgets
+    CharacterSortRef m_charSort;
 };
 #endif 

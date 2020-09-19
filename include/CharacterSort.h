@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 
-// This class represents a character that is created
+// This class handles the sorting of the created characters
 class CharacterSort {
     
 public:

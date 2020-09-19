@@ -2,9 +2,11 @@
 
 MainWindow::MainWindow()
 {
+    // Allocate the char sort object
+    m_charSort = std::make_shared<CharacterSort>();
     // Set this window as parent for the widgets
     welcomeWidget = new WelcomeWidget(this);
-    characterCreationWidget = new CharacterCreationWidget(this);
+    
     // The welcome widget will be displayed at the beginning, so set to this one
     setCentralWidget(welcomeWidget);
     
@@ -19,8 +21,11 @@ MainWindow::MainWindow()
 // Initiate a new combat
 void MainWindow::newCombat()
 {
-    // Set to the character creation widget
+    // Allocate the character creation widget, passing the char sort reference to it 
+    characterCreationWidget = new CharacterCreationWidget(m_charSort, this);
+    // Then set it to central and connect it's cancel button to the main window
     setCentralWidget(characterCreationWidget);
+    connect(characterCreationWidget->getCancelButton(), SIGNAL (clicked ()), this, SLOT (cancelCreation()));
 }
 
 // Display about message
@@ -66,6 +71,22 @@ void MainWindow::createMenus()
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
     helpMenu->addAction(aboutQtAct);
+}
+
+// This function cancels the character creation widget and returns to the welcoming widget
+void MainWindow::cancelCreation() {
+    // Create the message box
+    QMessageBox::StandardButton reply = QMessageBox::question(this, 
+                                                              "Cancel creation?",
+                                                              "Are you sure you want to cancel the character creation? All created characters will be lost.",
+                                QMessageBox::Yes|QMessageBox::No);
+    // If the user clicks yes, remove all created characters
+    if (reply == QMessageBox::Yes) {
+        m_charSort->clearCharacters();
+        // Then reallocate the welcoming widget and set it to central
+        welcomeWidget = new WelcomeWidget(this);
+        setCentralWidget(welcomeWidget);
+    }
 }
 
 MainWindow::~MainWindow()

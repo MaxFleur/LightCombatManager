@@ -8,7 +8,9 @@ class CharacterCreationWidget : public QWidget {
     Q_OBJECT
      
 public:
-    CharacterCreationWidget(QWidget *parent = 0);
+    CharacterCreationWidget(CharacterSortRef charSort, QWidget *parent = 0);
+    // Return the cancel button, connecting the parent widget to this button
+    QPushButton* getCancelButton() { return cancelButton; }
     
 private slots:
     void setName(const QString &name);
@@ -21,7 +23,6 @@ private slots:
     void saveAndCreateNewCharacter();
     void finishCreation();
     void resetCharacter();
-    void cancel();
     
 private:
     // Create the widget
@@ -68,6 +69,6 @@ private:
     bool        m_isNPC;
     int         m_hp;
     std::string m_additionalInf;
-    
+    // character sort object to store newly created objects
     CharacterSortRef m_charSort;
 };

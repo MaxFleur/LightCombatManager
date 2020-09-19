@@ -11,7 +11,7 @@ set(SRC_LIST
     src/GUI/mainwindow.cpp 
     src/GUI/WelcomeWidget.cpp 
     src/GUI/CharacterCreationWidget.cpp
-    src/CharacterSort.cpp
+    src/CharacterHandler.cpp
 )
 
 set(CMAKE_AUTOUIC ON)

@@ -3,7 +3,7 @@
 MainWindow::MainWindow()
 {
     // Allocate the char sort object
-    m_charSort = std::make_shared<CharacterSort>();
+    m_char = std::make_shared<CharacterHandler>();
     // Set this window as parent for the widgets
     welcomeWidget = new WelcomeWidget(this);
     
@@ -22,7 +22,7 @@ MainWindow::MainWindow()
 void MainWindow::newCombat()
 {
     // Allocate the character creation widget, passing the char sort reference to it 
-    characterCreationWidget = new CharacterCreationWidget(m_charSort, this);
+    characterCreationWidget = new CharacterCreationWidget(m_char, this);
     // Then set it to central and connect it's cancel button to the main window
     setCentralWidget(characterCreationWidget);
     connect(characterCreationWidget->getCancelButton(), SIGNAL (clicked ()), this, SLOT (cancelCreation()));
@@ -35,7 +35,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.2.8 alpha.");
+            "\nVersion 0.2.9 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -82,7 +82,7 @@ void MainWindow::cancelCreation() {
                                 QMessageBox::Yes|QMessageBox::No);
     // If the user clicks yes, remove all created characters
     if (reply == QMessageBox::Yes) {
-        m_charSort->clearCharacters();
+        m_char->clearCharacters();
         // Then reallocate the welcoming widget and set it to central
         welcomeWidget = new WelcomeWidget(this);
         setCentralWidget(welcomeWidget);

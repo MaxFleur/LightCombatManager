@@ -3,12 +3,21 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <iostream>
 
-// This class handles the sorting of the created characters
-class CharacterSort {
+// This class handles the creation, sorting and deletion of the created characters
+class CharacterHandler {
     
 public:
-    CharacterSort();
+    CharacterHandler();
+    
+    // Store a new character
+    void storeCharacter(std::string name,
+                        int initiative,
+                        int modifier,
+                        bool isNPC,
+                        int,
+                        std::string additionalInf);
     
     // Clear all characters
     void clearCharacters();
@@ -17,20 +26,20 @@ private:
     // The struct for the character
     struct Character {
         // Name of the character. Because this name must be set manually by all means, it is the only variable without a standard value
-        std::string m_name;
+        std::string name;
         // Final initiative roll of the character, including all modifiers
-        int         m_initiative = 0;
+        int         initiative = 0;
         // Modifiers only
-        int         m_modifier = 0;
+        int         modifier = 0;
         // Is the character an NPC or not
-        bool        m_isNPC = false;
+        bool        isNPC = false;
         // The hp for this character (not necessarily needed)
-        int         m_hp = 0;
+        int         hp = 0;
         // Additional information (e.g. status effects). Optional.
-        std::string m_additionalInf = "";
+        std::string additionalInf = "";
     };
     
     // Vector storing all created characters
     std::vector<std::shared_ptr<Character>> characters;
 };
-using CharacterSortRef = std::shared_ptr<CharacterSort>;
+using CharacterHandlerRef = std::shared_ptr<CharacterHandler>;

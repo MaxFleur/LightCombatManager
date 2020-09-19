@@ -1,8 +1,8 @@
 #include "../../include/GUI/CharacterCreationWidget.h"
 
 // Create the layout at instantiation
-CharacterCreationWidget::CharacterCreationWidget(CharacterSortRef charSort, QWidget *parent) 
-    : m_charSort(charSort) {
+CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent) 
+    : m_char(charSort) {
     createWidget();
     connectWidgets();
     // Reset all character values to standard
@@ -11,10 +11,6 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterSortRef charSort, QWid
 
 // Set the name of the current character
 void CharacterCreationWidget::setName(const QString &name) {
-    // If a name has been set for the first time, set to true
-    if(!isNameSet) {
-        isNameSet = true;
-    }
     m_name = name.toStdString();
 }
 
@@ -45,6 +41,16 @@ void CharacterCreationWidget::setAdditionalInformation(const QString &additional
 
 // Save the current character and reset to create another one
 void CharacterCreationWidget::saveAndCreateNewCharacter() {
+    // If no name was entered, display a warning message and abort
+    if(m_name.empty()) {
+        QMessageBox::StandardButton reply = QMessageBox::warning(this, 
+                                                              "Creation not possible!",
+                                                              "No name has been set. Please set at least a name before storing the character!");
+         return;
+    }
+    // Otherwise store the character and reset the widgets
+    m_char->storeCharacter(m_name, m_initiative, m_modifier, m_isNPC, m_hp, m_additionalInf);
+    resetCharacter();
 }
 
 // Finish the character creation
@@ -53,8 +59,6 @@ void CharacterCreationWidget::finishCreation() {
 
 // Reset the current character
 void CharacterCreationWidget::resetCharacter() {
-    // Because of the reset, no name is set now
-    isNameSet = false;
     // Reset all displayed values
     nameEdit->setText("");
     initiativeBox->setValue(0);

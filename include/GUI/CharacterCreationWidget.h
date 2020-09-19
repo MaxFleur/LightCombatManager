@@ -1,14 +1,15 @@
 #pragma once
 
 #include <QtWidgets>
-#include "../CharacterSort.h"
+#include "../CharacterHandler.h"
+#include <iostream>
 
 // This class handles the widget used for the creation of characters
 class CharacterCreationWidget : public QWidget {
     Q_OBJECT
      
 public:
-    CharacterCreationWidget(CharacterSortRef charSort, QWidget *parent = 0);
+    CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent = 0);
     // Return the cancel button, connecting the parent widget to this button
     QPushButton* getCancelButton() { return cancelButton; }
     
@@ -59,9 +60,6 @@ private:
     QPushButton *resetButton;
     QPushButton *cancelButton;
     
-    // Check if the name has been set
-    bool isNameSet;
-    
     // The values needed for the creation of another character
     std::string m_name;
     int         m_initiative;
@@ -70,5 +68,5 @@ private:
     int         m_hp;
     std::string m_additionalInf;
     // character sort object to store newly created objects
-    CharacterSortRef m_charSort;
+    CharacterHandlerRef m_char;
 };

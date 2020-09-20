@@ -2,15 +2,6 @@
 
 // Set all values
 CharacterHandler::CharacterHandler() {
-    // Temporary test values 
-    characters.push_back(std::make_shared<Character>( Character { "Player1", 11, -1, false, 0, "" }));
-    characters.push_back(std::make_shared<Character>( Character { "Player3", 11, -1, false, 0, "NOTE1" }));
-    characters.push_back(std::make_shared<Character>( Character { "Anti-Paladin", 11, -1, true, 0, "NOTE2" }));
-    characters.push_back(std::make_shared<Character>( Character { "Ghoul", 11, -1, true, 0, "NOTE3" }));
-    characters.push_back(std::make_shared<Character>( Character { "Goblin1", 20, 7, true, 0, "INI + 4" }));
-    characters.push_back(std::make_shared<Character>( Character { "Player4", 20, 7, false, 0, "Haste" }));
-    characters.push_back(std::make_shared<Character>( Character { "Player2", 20, 7, false, 0, "Stricken" }));
-    characters.push_back(std::make_shared<Character>( Character { "Necromant", 20, 7, true, 0, "Dazed" }));
 } 
 
 // Stores a new character in the vector
@@ -40,10 +31,14 @@ void CharacterHandler::sortCharacters() {
         } return false;
     });
     
-    // Right now, print the sorted characters for testing purposes
-    for(int i = 0; i < characters.size(); i++) {
-        std::cout << characters.at(i)->name << " " << characters.at(i)->initiative << " " << characters.at(i)->modifier << " " << characters.at(i)->additionalInf << std::endl; 
-    }
+    // Last sort. If the initiative and the modifier are equal, the char with the higher address value is taken
+    // Thus, we randomize the characters a bit
+    // This replaces the typical reroll in this case
+    std::sort(characters.begin(), characters.end(), [](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
+        if(c1->initiative == c2->initiative && c1->modifier == c2->modifier) {
+            return c1.get() > c2.get(); 
+        } return false;
+    });
 }
 
 // Remove all characters if the user cancels during character creation

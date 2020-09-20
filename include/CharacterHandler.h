@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include <iostream>
 
 // This class handles the creation, sorting and deletion of the created characters
@@ -19,6 +20,7 @@ public:
                         int,
                         std::string additionalInf);
     
+    // Sort the stored characters
     void sortCharacters();
     
     // Clear all characters

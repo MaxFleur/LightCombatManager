@@ -18,6 +18,24 @@ MainWindow::MainWindow()
     setFixedSize(640, 260);
 }
 
+// This function is called if the program is closed
+void MainWindow::closeEvent( QCloseEvent *event ) {
+    // If a game has been started, send a message if the game should be closed
+    if(isGameActive) {
+        QMessageBox::StandardButton reply = QMessageBox::question(this, 
+                                                              "Exit",
+                                                              "You are in a game right now! Do you want to exit the program anyway? All stored characters will be lost.",
+                                QMessageBox::Yes|QMessageBox::No);
+        // If so, exit the application
+        if (reply == QMessageBox::Yes) {
+            QApplication::exit;
+        // Otherwise ignore this event and nothing happens
+        } else {
+            event->ignore();
+        }
+    }
+}
+
 // Initiate a new combat
 void MainWindow::newCombat()
 {
@@ -47,7 +65,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.3.5 alpha.");
+            "\nVersion 0.4.0 alpha.");
 }
 
 void MainWindow::aboutQt()

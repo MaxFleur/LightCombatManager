@@ -27,6 +27,8 @@ private slots:
     void cancelCreation();
     // Finish the character creation
     void finishCreation();
+    // Override the closing function, displaying a message
+    virtual void closeEvent ( QCloseEvent * event );
 
 private:
     // Create the user actions and menus

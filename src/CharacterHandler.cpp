@@ -2,7 +2,6 @@
 
 // Set all values
 CharacterHandler::CharacterHandler() {
-        
 } 
 
 // Stores a new character in the vector
@@ -14,15 +13,7 @@ void CharacterHandler::storeCharacter(
                         int hp = 0,
                         std::string additionalInf = 0) {
     // Create the shared ptr instance
-    std::shared_ptr<Character> c = std::make_shared<Character>();
-    // Pass all values
-    c->name = name;
-    c->initiative = initiative;
-    c->modifier = modifier;
-    c->isNPC = isNPC;
-    c->hp = hp;
-    c->additionalInf = additionalInf;
-    // Push back the instance
+    std::shared_ptr<Character> c = std::make_shared<Character>( Character { name, initiative, modifier, isNPC, hp, additionalInf });
     characters.push_back(c);
 }
 

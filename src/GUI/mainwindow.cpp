@@ -47,7 +47,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.3.1 alpha.");
+            "\nVersion 0.3.2 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -102,12 +102,20 @@ void MainWindow::cancelCreation() {
     }
 }
 
+// Finishes the character creation, sorting the created characters and switching to the table layout 
+// WORK IN PROGRESS
+void MainWindow::finishCreation() {
+    // First, store the characters
+    m_char->sortCharacters();
+}
+
 void MainWindow::setCharacterCreationWidget() {
     // Allocate the character creation widget, passing the char sort reference to it 
     characterCreationWidget = new CharacterCreationWidget(m_char, this);
     // Then set it to central and connect it's cancel button to the main window
     setCentralWidget(characterCreationWidget);
     connect(characterCreationWidget->getCancelButton(), SIGNAL (clicked ()), this, SLOT (cancelCreation()));
+    connect(characterCreationWidget->getFinishButton(), SIGNAL (clicked ()), this, SLOT (finishCreation()));
 }
 
 MainWindow::~MainWindow()

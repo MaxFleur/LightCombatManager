@@ -53,10 +53,6 @@ void CharacterCreationWidget::saveAndCreateNewCharacter() {
     resetCharacter();
 }
 
-// Finish the character creation
-void CharacterCreationWidget::finishCreation() {
-}
-
 // Reset the current character
 void CharacterCreationWidget::resetCharacter() {
     // Reset all displayed values
@@ -153,8 +149,8 @@ void CharacterCreationWidget::createWidget() {
     saveAnotherButton = new QPushButton("Save and create new character");
     saveAnotherButton->setFixedWidth(200);
     saveAnotherButton->setToolTip("Save this character and create another one.");
-    finishButton = new QPushButton("Finish character creation");
-    finishButton->setFixedWidth(180);
+    finishButton = new QPushButton("Save and finish");
+    finishButton->setFixedWidth(110);
     finishButton->setToolTip("Finish the character creation. Once you're finished, you can't go back.");
     resetButton = new QPushButton("Reset");
     resetButton->setFixedWidth(60);
@@ -199,6 +195,5 @@ void CharacterCreationWidget::connectWidgets() {
     connect (additionalInformationEdit, SIGNAL(textEdited(const QString &)), this, SLOT (setAdditionalInformation(QString)));
     
     connect(saveAnotherButton, SIGNAL (clicked ()), this, SLOT (saveAndCreateNewCharacter()));
-    connect(finishButton, SIGNAL (clicked ()), this, SLOT (finishCreation()));
     connect(resetButton, SIGNAL (clicked ()), this, SLOT (resetCharacter()));
 }

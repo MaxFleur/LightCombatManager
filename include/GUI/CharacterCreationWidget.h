@@ -12,6 +12,7 @@ public:
     CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent = 0);
     // Return the cancel button, connecting the parent widget to this button
     QPushButton* getCancelButton() { return cancelButton; }
+    QPushButton* getFinishButton() { return finishButton; }
     
 private slots:
     void setName(const QString &name);
@@ -22,7 +23,6 @@ private slots:
     void setAdditionalInformation(const QString &additionalInf);
     
     void saveAndCreateNewCharacter();
-    void finishCreation();
     void resetCharacter();
     
 private:

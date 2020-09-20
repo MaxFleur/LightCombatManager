@@ -25,6 +25,8 @@ private slots:
     void aboutQt();
     // Cancel the character creation widget, returning to the welcoming widget
     void cancelCreation();
+    // Finish the character creation
+    void finishCreation();
 
 private:
     // Create the user actions and menus

@@ -19,6 +19,8 @@ public:
                         int,
                         std::string additionalInf);
     
+    void sortCharacters();
+    
     // Clear all characters
     void clearCharacters();
     

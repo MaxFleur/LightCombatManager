@@ -13,8 +13,10 @@ void CharacterHandler::storeCharacter(
                         int hp = 0,
                         std::string additionalInf = 0) {
     // Create the shared ptr instance
-    std::shared_ptr<Character> c = std::make_shared<Character>( Character { name, initiative, modifier, isNPC, hp, additionalInf });
-    characters.push_back(c);
+    characters.push_back(std::make_shared<Character>( Character { name, initiative, modifier, isNPC, hp, additionalInf }));
+}
+
+void CharacterHandler::sortCharacters() {
 }
 
 // Remove all characters if the user cancels during character creation

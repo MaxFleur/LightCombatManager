@@ -11,7 +11,7 @@ void CharacterHandler::storeCharacter(
                         int modifier = 0,
                         bool isNPC = false,
                         int hp = 0,
-                        std::string additionalInf = 0) {
+                        std::string additionalInf = "") {
     // Create the shared ptr instance
     characters.push_back(std::make_shared<Character>( Character { name, initiative, modifier, isNPC, hp, additionalInf }));
 }

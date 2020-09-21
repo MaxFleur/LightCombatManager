@@ -2,7 +2,6 @@
 
 #include <QtWidgets>
 #include "../CharacterHandler.h"
-#include <iostream>
 
 // This class handles the widget used for the creation of characters
 class CharacterCreationWidget : public QWidget {

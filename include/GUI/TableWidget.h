@@ -9,13 +9,17 @@ class TableWidget : public QWidget {
     
 public:
     TableWidget(CharacterHandlerRef charHandler, QWidget *parent = 0);
+    ~TableWidget();
     
 private:
     CharacterHandlerRef m_char;
     // Create the table
     void createTable();
     
-    // These widgets create some free space around the text in the centre
-    QTableWidget *tableWidget;
+    // Main table widget and header
+    QTableWidget    *tableWidget;
+    QStringList     tableHeader;
+    // The final layout that will be returned
+    QVBoxLayout     *tableLayout;
 };
  

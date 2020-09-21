@@ -190,7 +190,7 @@ void CharacterCreationWidget::connectWidgets() {
     connect (nameEdit, SIGNAL(textEdited(const QString &)), this, SLOT (setName(QString)));
     connect (initiativeBox, SIGNAL(valueChanged(int)), this, SLOT (setInitiative(int)));
     connect (initModifierBox, SIGNAL(valueChanged(int)), this, SLOT (setModifier(int)));
-    connect (initModifierBox, SIGNAL(valueChanged(int)), this, SLOT (setModifier(int)));
+    connect (hpBox, SIGNAL(valueChanged(int)), this, SLOT (setHP(int)));
     connect (isNPCBox, SIGNAL(clicked(bool)), this, SLOT (setIsNPC(bool)));
     connect (additionalInformationEdit, SIGNAL(textEdited(const QString &)), this, SLOT (setAdditionalInformation(QString)));
     

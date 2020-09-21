@@ -65,7 +65,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.4.1 alpha.");
+            "\nVersion 0.4.4 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -121,7 +121,6 @@ void MainWindow::cancelCreation() {
 }
 
 // Finishes the character creation, sorting the created characters and switching to the table layout 
-// WORK IN PROGRESS
 void MainWindow::finishCreation() {
     // If less than 2 characters have been entered, abort
     if(m_char->getCharacters().size() < 2) {

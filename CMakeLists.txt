@@ -6,11 +6,13 @@ set(SRC_LIST
     include/GUI/mainwindow.h
     include/GUI/WelcomeWidget.h
     include/GUI/CharacterCreationWidget.h
+    include/GUI/TableWidget.h
 
     main.cpp 
     src/GUI/mainwindow.cpp 
     src/GUI/WelcomeWidget.cpp 
     src/GUI/CharacterCreationWidget.cpp
+    src/GUI/TableWidget.cpp
     src/CharacterHandler.cpp
 )
 

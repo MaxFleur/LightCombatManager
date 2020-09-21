@@ -6,6 +6,7 @@
 
 #include "WelcomeWidget.h"
 #include "CharacterCreationWidget.h"
+#include "TableWidget.h"
 #include "../CharacterHandler.h"
 
 // This class handles the creation and managing of the main GUI window (the dropdown menu and it's actions).
@@ -39,6 +40,7 @@ private:
     // The widgets displayed when using the program
     WelcomeWidget *welcomeWidget;
     CharacterCreationWidget *characterCreationWidget;
+    TableWidget *tableWidget;
     
     // The dropdown menus
     QMenu   *fileMenu;

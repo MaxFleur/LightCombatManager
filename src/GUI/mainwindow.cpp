@@ -130,11 +130,18 @@ void MainWindow::finishCreation() {
                                                               "Please store at least 2 characters before creating the combat table!");
         return;
     }
-    // Else start with sorting the characters
-    m_char->sortCharacters();
-    // Then create the table widget and set it as central
-    tableWidget = new TableWidget(m_char, this);
-    setCentralWidget(tableWidget);
+    // Else, display a question message asking if the creation should be finished
+    QMessageBox::StandardButton reply = QMessageBox::question(this, 
+                                                              "Finish creation?",
+                                                              "Are you sure you want to finish the character creation? All unsaved inputs will be lost.",
+                                QMessageBox::Yes|QMessageBox::No);
+    if(reply == QMessageBox::Yes) {
+        // Else start with sorting the characters
+        m_char->sortCharacters();
+        // Then create the table widget and set it as central
+        tableWidget = new TableWidget(m_char, this);
+        setCentralWidget(tableWidget);
+    }
 }
 
 void MainWindow::setCharacterCreationWidget() {

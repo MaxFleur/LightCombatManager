@@ -46,7 +46,7 @@ void CharacterCreationWidget::saveAndCreateNewCharacter() {
         QMessageBox::StandardButton reply = QMessageBox::warning(this, 
                                                               "Creation not possible!",
                                                               "No name has been set. Please set at least a name before storing the character!");
-         return;
+        return;
     }
     // Otherwise store the character and reset the widgets
     m_char->storeCharacter(m_name, m_initiative, m_modifier, m_isNPC, m_hp, m_additionalInf);

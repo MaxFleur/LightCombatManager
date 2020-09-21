@@ -114,7 +114,7 @@ void MainWindow::cancelCreation() {
     if (reply == QMessageBox::Yes) {
         m_char->clearCharacters();
         isGameActive = false;
-        // Then reallocate the welcoming widget and set it to central
+        // Then reallocate the welcoming widget and set it as the central one
         welcomeWidget = new WelcomeWidget(this);
         setCentralWidget(welcomeWidget);
     }
@@ -123,8 +123,18 @@ void MainWindow::cancelCreation() {
 // Finishes the character creation, sorting the created characters and switching to the table layout 
 // WORK IN PROGRESS
 void MainWindow::finishCreation() {
-    // First, store the characters
+    // If less than 2 characters have been entered, abort
+    if(m_char->getCharacters().size() < 2) {
+        QMessageBox::StandardButton reply = QMessageBox::warning(this, 
+                                                              "Could not finish!",
+                                                              "Please store at least 2 characters before creating the combat table!");
+        return;
+    }
+    // Else start with sorting the characters
     m_char->sortCharacters();
+    // Then create the table widget and set it as central
+    tableWidget = new TableWidget(m_char, this);
+    setCentralWidget(tableWidget);
 }
 
 void MainWindow::setCharacterCreationWidget() {

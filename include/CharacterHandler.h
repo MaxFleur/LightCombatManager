@@ -9,23 +9,6 @@
 // This class handles the creation, sorting and deletion of the created characters
 class CharacterHandler {
     
-public:
-    CharacterHandler();
-    
-    // Store a new character
-    void storeCharacter(std::string name,
-                        int initiative,
-                        int modifier,
-                        bool isNPC,
-                        int,
-                        std::string additionalInf);
-    
-    // Sort the stored characters
-    void sortCharacters();
-    
-    // Clear all characters
-    void clearCharacters();
-    
 private:
     // The struct for the character
     struct Character {
@@ -45,5 +28,25 @@ private:
     
     // Vector storing all created characters
     std::vector<std::shared_ptr<Character>> characters;
+    
+public:
+    CharacterHandler();
+    
+    // Store a new character
+    void storeCharacter(std::string name,
+                        int initiative,
+                        int modifier,
+                        bool isNPC,
+                        int,
+                        std::string additionalInf);
+    
+    // Sort the stored characters
+    void sortCharacters();
+    
+    // Clear all characters
+    void clearCharacters();
+    
+    // Check if the vector
+    std::vector<std::shared_ptr<Character>> getCharacters() { return characters; }
 };
 using CharacterHandlerRef = std::shared_ptr<CharacterHandler>;

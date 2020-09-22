@@ -15,10 +15,17 @@ private:
     CharacterHandlerRef m_char;
     // Create the table
     void createTable();
+    void createLowerWidget();
     
     // Main table widget and header
     QTableWidget    *tableWidget;
     QStringList     tableHeader;
+    QHBoxLayout     *lowerLayout;
+    // Button to exit the layout
+    QPushButton     *exitButton;
+    // Button to remove a row
+    QPushButton     *removeButton;
+    
     // The final layout that will be returned
     QVBoxLayout     *tableLayout;
 };

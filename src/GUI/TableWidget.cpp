@@ -3,9 +3,12 @@
 // Create the welcome widget at instantiation
 TableWidget::TableWidget(CharacterHandlerRef charHandler, QWidget *parent)
         : m_char(charHandler) {
+    // Create the table
     createTable();
+    // Then create the other widgets
     createLowerWidget();
-    connect(tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(cellEnteredSlot(int,int)));
+    // Connect drag and drop function, enabled each time a row is dragged
+    connect(tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(dragAndDrop(int,int)));
 }
 
 // This function creates the table of this widget
@@ -70,27 +73,32 @@ void TableWidget::createLowerWidget() {
     tableLayout->addLayout(lowerLayout);
 }
 
-void TableWidget::cellEnteredSlot(int row, int column) {
-    int rowsel;
-    
+// This function enables drag and drop of table rows
+// Which works by switching the values of a row with it's upper or lower "neighbor"
+// This is done until the row is at the desired position
+void TableWidget::dragAndDrop(int row, int column) {
+    // New row index
+    int newRow;
+    // Depending on the current index, set the newRow value
     if(tableWidget->currentIndex().row() < row) {
-        rowsel = row - 1; 
+        newRow = row - 1; 
     }
     else if(tableWidget->currentIndex().row() > row) {
-        rowsel = row + 1; 
+        newRow = row + 1; 
     }
+    // Return if they are equal
     else return;
-    
-    QList<QTableWidgetItem*> rowItems,rowItems1;
-    
+    // The Widget Items containing the row data (surce and destination)
+    QList<QTableWidgetItem*> rowItemSrc, rowItemDest;
+    // Take the data of the source and destination row
     for (int col = 0; col < tableWidget->columnCount(); ++col) {
-        rowItems << tableWidget->takeItem(row, col);
-        rowItems1 << tableWidget->takeItem(rowsel, col);
+        rowItemSrc << tableWidget->takeItem(row, col);
+        rowItemDest << tableWidget->takeItem(newRow, col);
     }
-
-    for (int cola = 0; cola < tableWidget->columnCount(); ++cola) {
-        tableWidget->setItem(rowsel, cola, rowItems.at(cola));
-        tableWidget->setItem(row, cola, rowItems1.at(cola));
+    // Set them in reversed order
+    for (int col = 0; col < tableWidget->columnCount(); ++col) {
+        tableWidget->setItem(newRow, col, rowItemSrc.at(col));
+        tableWidget->setItem(row, col, rowItemDest.at(col));
     }
 }
 

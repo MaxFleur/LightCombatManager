@@ -13,7 +13,8 @@ public:
     ~TableWidget();
     
 private slots:
-    void cellEnteredSlot(int row, int column);
+    // Enable drag and drop in the widget
+    void dragAndDrop(int row, int column);
     
 private:
     CharacterHandlerRef m_char;

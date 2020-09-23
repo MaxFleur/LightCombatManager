@@ -2,6 +2,7 @@
 
 #include <QtWidgets>
 #include "../CharacterHandler.h"
+#include <iostream>
     
 // This class handles the table widget
 class TableWidget : public QWidget {
@@ -10,6 +11,9 @@ class TableWidget : public QWidget {
 public:
     TableWidget(CharacterHandlerRef charHandler, QWidget *parent = 0);
     ~TableWidget();
+    
+private slots:
+    void cellEnteredSlot(int row, int column);
     
 private:
     CharacterHandlerRef m_char;

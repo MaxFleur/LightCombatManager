@@ -5,6 +5,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, QWidget *parent)
         : m_char(charHandler) {
     createTable();
     createLowerWidget();
+    connect(tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(cellEnteredSlot(int,int)));
 }
 
 // This function creates the table of this widget
@@ -67,6 +68,30 @@ void TableWidget::createLowerWidget() {
     lowerLayout->addWidget(spacer);
     lowerLayout->addWidget(exitButton);
     tableLayout->addLayout(lowerLayout);
+}
+
+void TableWidget::cellEnteredSlot(int row, int column) {
+    int rowsel;
+    
+    if(tableWidget->currentIndex().row() < row) {
+        rowsel = row - 1; 
+    }
+    else if(tableWidget->currentIndex().row() > row) {
+        rowsel = row + 1; 
+    }
+    else return;
+    
+    QList<QTableWidgetItem*> rowItems,rowItems1;
+    
+    for (int col = 0; col < tableWidget->columnCount(); ++col) {
+        rowItems << tableWidget->takeItem(row, col);
+        rowItems1 << tableWidget->takeItem(rowsel, col);
+    }
+
+    for (int cola = 0; cola < tableWidget->columnCount(); ++cola) {
+        tableWidget->setItem(rowsel, cola, rowItems.at(cola));
+        tableWidget->setItem(row, cola, rowItems1.at(cola));
+    }
 }
 
 TableWidget::~TableWidget() {

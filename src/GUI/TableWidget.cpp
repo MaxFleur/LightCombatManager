@@ -131,3 +131,10 @@ void TableWidget::rowSelected() {
         isRowSelected = true;
     }
 }
+
+// This function calls the row remove function if the delete key is pressed
+void TableWidget::keyPressEvent(QKeyEvent *event) {
+    if(event->key() == Qt::Key_Delete) {
+        removeRow();
+    }
+}

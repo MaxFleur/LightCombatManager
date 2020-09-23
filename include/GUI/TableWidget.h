@@ -25,7 +25,10 @@ private:
     CharacterHandlerRef m_char;
     // Create the table
     void createTable();
+    // Create the lower widget
     void createLowerWidget();
+    // Key event function
+    void keyPressEvent(QKeyEvent *event);
     
     // Main table widget and header
     QTableWidget    *tableWidget;

@@ -12,6 +12,8 @@ public:
     TableWidget(CharacterHandlerRef charHandler, QWidget *parent = 0);
     ~TableWidget();
     
+    QPushButton* getExitButton() { return exitButton; }
+    
 private slots:
     // Enable drag and drop in the widget
     void dragAndDrop(int row, int column);

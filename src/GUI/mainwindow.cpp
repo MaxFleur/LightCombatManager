@@ -140,6 +140,25 @@ void MainWindow::finishCreation() {
         // Then create the table widget and set it as central
         tableWidget = new TableWidget(m_char, this);
         setCentralWidget(tableWidget);
+        
+        connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
+    }
+}
+
+// Exits the combat and returns to the welcoming widget
+void MainWindow::exitCombat() {
+    // Standard reply, asking if the user is sure
+    QMessageBox::StandardButton reply = QMessageBox::question(this, 
+                                                              "Exit combat?",
+                                                              "Are you sure you want to exit the combat? All created characters will be lost.",
+                                QMessageBox::Yes|QMessageBox::No);
+    if(reply == QMessageBox::Yes) {
+        // If so, delete all created characters and set active game to false
+        m_char->clearCharacters();
+        isGameActive = false;
+        // Then reallocate and set the welcoming widget
+        welcomeWidget = new WelcomeWidget(this);
+        setCentralWidget(welcomeWidget);
     }
 }
 

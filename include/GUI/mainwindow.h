@@ -28,6 +28,8 @@ private slots:
     void cancelCreation();
     // Finish the character creation
     void finishCreation();
+    // Exit an existing combat (when the table is displayed)
+    void exitCombat();
     // Override the closing function, displaying a message
     virtual void closeEvent ( QCloseEvent * event );
 

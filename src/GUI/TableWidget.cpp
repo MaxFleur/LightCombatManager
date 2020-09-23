@@ -8,7 +8,9 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, QWidget *parent)
     // Then create the other widgets
     createLowerWidget();
     // Connect drag and drop function, enabled each time a row is dragged
-    connect(tableWidget, SIGNAL(cellEntered(int,int)), this, SLOT(dragAndDrop(int,int)));
+    connect(tableWidget, SIGNAL (cellEntered(int,int)), this, SLOT(dragAndDrop(int,int)));
+    connect(removeButton, SIGNAL (clicked ()), this, SLOT(removeRow()));
+    connect(tableWidget->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(rowSelected()));
 }
 
 // This function creates the table of this widget
@@ -18,7 +20,7 @@ void TableWidget::createTable() {
     // Set the number of rows to characters created
     tableWidget->setRowCount(m_char->getCharacters().size());
     // Four colums for name, hp, isNPC and additional information about a character. The last column is for the buttons
-    tableWidget->setColumnCount(5);
+    tableWidget->setColumnCount(4);
     // Set the header infos, no info for the last column
     tableHeader << "Name" << "HP" << "Is NPC" << "Additional information" << "";
     tableWidget->setHorizontalHeaderLabels(tableHeader);
@@ -45,11 +47,10 @@ void TableWidget::createTable() {
     tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     // Set fixed sizes for the columns
-    tableWidget->setColumnWidth(0, 100);
-    tableWidget->setColumnWidth(1, 25);
-    tableWidget->setColumnWidth(2, 50);
-    tableWidget->setColumnWidth(3, 270);
-    tableWidget->setColumnWidth(4, 180);
+    tableWidget->setColumnWidth(0, 120);
+    tableWidget->setColumnWidth(1, 35);
+    tableWidget->setColumnWidth(2, 60);
+    tableWidget->setColumnWidth(3, 395);
     
     // Allocate the main layout, add the table widget to this
     tableLayout = new QVBoxLayout(this);
@@ -60,15 +61,20 @@ void TableWidget::createTable() {
 void TableWidget::createLowerWidget() {
     // Allocate
     lowerLayout = new QHBoxLayout();
-    // Create the new button
+    // Create the exit button
     exitButton = new QPushButton("Exit");
     // Tooltip
     exitButton->setToolTip("Exit the combat. This cannot be undone.");
+    // Same for the remove button
+    removeButton = new QPushButton("Remove character");
+    removeButton->setToolTip("Removes a character from the list.");
+    
     // Create a spacer widget to move the button to the right side
     QWidget *spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     // Add the spacer and button to the lower layout, then add the lower layout to the final layout
     lowerLayout->addWidget(spacer);
+    lowerLayout->addWidget(removeButton);
     lowerLayout->addWidget(exitButton);
     tableLayout->addLayout(lowerLayout);
 }
@@ -102,7 +108,26 @@ void TableWidget::dragAndDrop(int row, int column) {
     }
 }
 
-TableWidget::~TableWidget() {
-    // TODO: Delete the widget items
+// Remove a row/character of the table
+void TableWidget::removeRow() {
+    // if only one character remains, remove this character 
+    // @note This part can change later, because the slot for selected rows is not called if only one row remains
+    if(tableWidget->rowCount() == 1) {
+        tableWidget->removeRow(0);
+        return;
+    }
+    // If a row has been selected, remove the selected row
+    if(isRowSelected) {
+        tableWidget->removeRow(tableWidget->currentIndex().row());
+        // Then reset
+        isRowSelected = false;
+    }
 }
- 
+
+// Check if a row is selected
+void TableWidget::rowSelected() {
+    // Set to true if no row has been selected
+    if(!isRowSelected){
+        isRowSelected = true;
+    }
+}

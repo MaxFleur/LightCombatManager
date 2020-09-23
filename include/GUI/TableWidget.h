@@ -10,13 +10,16 @@ class TableWidget : public QWidget {
     
 public:
     TableWidget(CharacterHandlerRef charHandler, QWidget *parent = 0);
-    ~TableWidget();
     
     QPushButton* getExitButton() { return exitButton; }
     
 private slots:
     // Enable drag and drop in the widget
     void dragAndDrop(int row, int column);
+    // Remove a row out of te table
+    void removeRow();
+    // Function activated if a row is selected
+    void rowSelected();
     
 private:
     CharacterHandlerRef m_char;
@@ -35,5 +38,7 @@ private:
     
     // The final layout that will be returned
     QVBoxLayout     *tableLayout;
+    // Has a row been selected (via clicking or using the arrow keys)
+    bool isRowSelected = false;
 };
  

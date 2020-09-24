@@ -23,6 +23,7 @@ public:
 private slots:
     // Slots for the dropdown menu actions
     void newCombat();
+    void saveTable();
     void about();
     void aboutQt();
     // Cancel the character creation widget, returning to the welcoming widget
@@ -50,12 +51,13 @@ private:
     QMenu   *helpMenu;
     // The actions when clicking the dropdown menu options
     QAction *newAct;
+    QAction *saveAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
     
-    // Checks if the user is storing chars or running a combat
-    bool isGameActive = false;
-    
+    // Checks if the user is storing chars 
+    bool isCreationActive = false;
+
     // The char sort reference used by several widgets
     CharacterHandlerRef m_char;
     // File handler instance to save and open tables

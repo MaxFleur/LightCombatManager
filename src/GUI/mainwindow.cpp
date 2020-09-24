@@ -23,7 +23,7 @@ MainWindow::MainWindow()
 // This function is called if the program is closed
 void MainWindow::closeEvent( QCloseEvent *event ) {
     // If a game has been started, send a message if the game should be closed
-    if(isGameActive) {
+    if(isCreationActive) {
         QMessageBox::StandardButton reply = QMessageBox::question(this, 
                                                               "Exit",
                                                               "You are in a game right now! Do you want to exit the program anyway? All stored characters will be lost.",
@@ -42,8 +42,8 @@ void MainWindow::closeEvent( QCloseEvent *event ) {
 void MainWindow::newCombat()
 {
     // Now a game begins, so set to true and reset the widget
-    if(!isGameActive) {
-        isGameActive = true;
+    if(!isCreationActive) {
+        isCreationActive = true;
         setCharacterCreationWidget();
     } else {
         // If a game is currently running, asks if a new combat should be started anyway
@@ -60,6 +60,11 @@ void MainWindow::newCombat()
     }
 }
 
+// Save the table
+void MainWindow::saveTable() {
+
+}
+
 // Display about message
 void MainWindow::about()
 {
@@ -67,7 +72,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.4.9 alpha.");
+            "\nVersion 0.5.1 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -78,29 +83,37 @@ void MainWindow::aboutQt()
 void MainWindow::createActions()
 {
     // Action to start a new combat
-    newAct = new QAction(tr("&New Combat"), this);
+    newAct = new QAction("&New Combat", this);
     newAct->setShortcuts(QKeySequence::New);
-    newAct->setStatusTip(tr("Start a new combat."));
+    newAct->setStatusTip("Start a new combat.");
     connect(newAct, &QAction::triggered, this, &MainWindow::newCombat);
+    // Action to save the table
+    saveAct = new QAction("&Save Table", this);
+    saveAct->setShortcuts(QKeySequence::Save);
+    saveAct->setStatusTip("Save the created table.");
+    connect(saveAct, &QAction::triggered, this, &MainWindow::saveTable);
     // See information about the program
-    aboutAct = new QAction(tr("&About"), this);
-    aboutAct->setStatusTip(tr("About Light Combat Manager"));
+    aboutAct = new QAction("&About", this);
+    aboutAct->setStatusTip("About Light Combat Manager");
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
     // See information about Qt
-    aboutQtAct = new QAction(tr("About &Qt"), this);
-    aboutQtAct->setStatusTip(tr("About QT version and license"));
+    aboutQtAct = new QAction("About &Qt", this);
+    aboutQtAct->setStatusTip("About QT version and license");
     connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
+    // Because no table has been created yet, disable this action
+    saveAct->setEnabled(false);
 }
 
 // Create the dropdown menus
 void MainWindow::createMenus()
 {
     // File menu for starting, saving and opening a combat
-    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu = menuBar()->addMenu("&File");
     fileMenu->addAction(newAct);
+    fileMenu->addAction(saveAct);
     fileMenu->addSeparator();
     // Help menu, displays information about the program
-    helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu = menuBar()->addMenu("&Help");
     helpMenu->addAction(aboutAct);
     helpMenu->addAction(aboutQtAct);
 }
@@ -115,7 +128,7 @@ void MainWindow::cancelCreation() {
     // If the user clicks yes, remove all created characters and set bool to false because no game is active any longer
     if (reply == QMessageBox::Yes) {
         m_char->clearCharacters();
-        isGameActive = false;
+        isCreationActive = false;
         // Then reallocate the welcoming widget and set it as the central one
         welcomeWidget = new WelcomeWidget(this);
         setCentralWidget(welcomeWidget);
@@ -142,9 +155,10 @@ void MainWindow::finishCreation() {
         // Then create the table widget and set it as central
         tableWidget = new TableWidget(m_char, this);
         setCentralWidget(tableWidget);
-        
         connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
     }
+    // Now that a table has been created, enable the save action
+    saveAct->setEnabled(true);
 }
 
 // Exits the combat and returns to the welcoming widget
@@ -157,10 +171,11 @@ void MainWindow::exitCombat() {
     if(reply == QMessageBox::Yes) {
         // If so, delete all created characters and set active game to false
         m_char->clearCharacters();
-        isGameActive = false;
         // Then reallocate and set the welcoming widget
         welcomeWidget = new WelcomeWidget(this);
         setCentralWidget(welcomeWidget);
+        // The table has been destroyed, so disable the saving action
+        saveAct->setEnabled(false);
     }
 }
 
@@ -176,6 +191,7 @@ void MainWindow::setCharacterCreationWidget() {
 MainWindow::~MainWindow()
 {
     delete newAct;
+    delete saveAct;
     delete aboutAct;
     delete aboutQtAct;
 }

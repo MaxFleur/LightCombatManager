@@ -4,6 +4,8 @@ MainWindow::MainWindow()
 {
     // Allocate the char sort object
     m_char = std::make_shared<CharacterHandler>();
+    // Same for file handler
+    m_file = std::make_shared<FileHandler>();
     // Set this window as parent for the widgets
     welcomeWidget = new WelcomeWidget(this);
     

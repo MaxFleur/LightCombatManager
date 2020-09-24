@@ -14,6 +14,7 @@ set(SRC_LIST
     src/GUI/CharacterCreationWidget.cpp
     src/GUI/TableWidget.cpp
     src/CharacterHandler.cpp
+    src/FileHandler.cpp
 )
 
 set(CMAKE_AUTOUIC ON)

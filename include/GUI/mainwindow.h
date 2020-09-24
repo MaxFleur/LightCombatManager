@@ -8,6 +8,7 @@
 #include "CharacterCreationWidget.h"
 #include "TableWidget.h"
 #include "../CharacterHandler.h"
+#include "../FileHandler.h"
 
 // This class handles the creation and managing of the main GUI window (the dropdown menu and it's actions).
 // The layouts themselves are created in other classes and given to this class.
@@ -57,5 +58,7 @@ private:
     
     // The char sort reference used by several widgets
     CharacterHandlerRef m_char;
+    // File handler instance to save and open tables
+    FileHandlerRef m_file;
 };
 #endif 

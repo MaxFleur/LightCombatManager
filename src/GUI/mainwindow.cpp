@@ -5,7 +5,7 @@ MainWindow::MainWindow()
     // Allocate the char sort object
     m_char = std::make_shared<CharacterHandler>();
     // Same for file handler
-    m_file = std::make_shared<FileHandler>();
+    m_file = new FileHandler(this);
     // Set this window as parent for the widgets
     welcomeWidget = new WelcomeWidget(this);
     
@@ -62,7 +62,7 @@ void MainWindow::newCombat()
 
 // Save the table
 void MainWindow::saveTable() {
-
+    m_file->saveTable(tableWidget->getTableWidget());
 }
 
 // Display about message
@@ -72,7 +72,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.5.1 alpha.");
+            "\nVersion 0.5.2 alpha.");
 }
 
 void MainWindow::aboutQt()

@@ -7,6 +7,7 @@ set(SRC_LIST
     include/GUI/WelcomeWidget.h
     include/GUI/CharacterCreationWidget.h
     include/GUI/TableWidget.h
+    include/FileHandler.h
 
     main.cpp 
     src/GUI/mainwindow.cpp 

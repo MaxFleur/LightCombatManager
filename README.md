@@ -8,7 +8,7 @@ LightCombatManager is written in C++14. The user interface is created with QT [1
 
 ## Linux
 
-CMake and QT5 are required to build this application.
+`cmake` and `QT5` are required to build this application. QT on Ubuntu can be installed with `qt5-default`, for Manjaro or other Arch-based distributions install `qt5-base`.
 
 1. Download or clone this repository.
 2. Open a terminal and `cd` into this repository.

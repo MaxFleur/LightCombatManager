@@ -45,6 +45,20 @@ void TableWidget::createTableSkeleton() {
 // data         - used if the data has been stored in a csv file
 void TableWidget::setTableData(bool isDataStored, QString data) {
     if(isDataStored) {
+        // If the data has been stored, split it into rows
+        QStringList rowOfData = data.split("\n");
+        QStringList rowData;
+        // Set the table row count
+        tableWidget->setRowCount(rowOfData.size());
+        // Iterate over the row
+        for (int x = 0; x < rowOfData.size(); x++) {
+            // Split into the different column data
+            rowData = rowOfData.at(x).split(";");
+            // Create the widget items for the table
+            for (int y = 0; y < rowData.size(); y++) {
+                tableWidget->setItem(x, y, new QTableWidgetItem(rowData[y]));
+            }
+        }
         return;
     }
     // If no data is provided via csv, set the data according to the vector of chars

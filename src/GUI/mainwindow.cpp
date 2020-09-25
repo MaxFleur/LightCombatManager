@@ -75,9 +75,16 @@ void MainWindow::saveTable() {
 }
 
 void MainWindow::openTable() {
+    // Get the file path
     QString filename = QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
+    
     if(m_file->getCSVData(filename)) {
-        //
+        // If the data collection was successful, Then create the table widget and set it as central
+        tableWidget = new TableWidget(m_char, this);
+        tableWidget->setTableData(true, m_file->getData());
+        setCentralWidget(tableWidget);
+        // Connect the button
+        connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
     }
 }
 

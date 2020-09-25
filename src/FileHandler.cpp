@@ -40,16 +40,16 @@ void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
 }
 
 // Open an existing csv table
-// Currently returns nothing
-// TODO
 bool FileHandler::getCSVData(QString filename) {
+    // Create a file using the given path
     QFile importedCSV(filename);
-
+    // If the data can be read, import the csv data to the QFile
     if (importedCSV.open(QFile::ReadOnly)) {
         data = importedCSV.readAll();
+        // Then close and return succesful
         importedCSV.close();
-        
         return true;
     }
+    // If the device was not readable, return false
     return false;
 }

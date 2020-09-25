@@ -61,6 +61,6 @@ private:
     // The char sort reference used by several widgets
     CharacterHandlerRef m_char;
     // File handler instance to save and open tables
-    FileHandler *m_file;
+    FileHandlerRef m_file;
 };
 #endif 

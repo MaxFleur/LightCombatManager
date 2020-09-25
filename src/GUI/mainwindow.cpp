@@ -5,7 +5,7 @@ MainWindow::MainWindow()
     // Allocate the char sort object
     m_char = std::make_shared<CharacterHandler>();
     // Same for file handler
-    m_file = new FileHandler(this);
+    m_file = std::make_shared<FileHandler>();
     // Set this window as parent for the widgets
     welcomeWidget = new WelcomeWidget(this);
     
@@ -62,7 +62,14 @@ void MainWindow::newCombat()
 
 // Save the table
 void MainWindow::saveTable() {
-    m_file->saveTable(tableWidget->getTableWidget());
+    QString filename = QFileDialog::getSaveFileName(this,
+        "Save Table", QDir::currentPath(),
+        "Table (*.csv);;All Files (*)");
+
+    if (filename.isEmpty()) {
+        return;
+    } 
+    m_file->saveTable(tableWidget->getTableWidget(), filename);
 }
 
 // Display about message

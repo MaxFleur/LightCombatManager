@@ -3,15 +3,14 @@
 #include <QtWidgets>
 
 // This class handles the saving and reopening of QTableWidgets as csv data
-class FileHandler : public QWidget {
-    Q_OBJECT
+class FileHandler {
     
 public:
     // Constructor
-    FileHandler(QWidget *parent = 0);
+    FileHandler();
     // Save a table of characters
-    void saveTable(QTableWidget *tableWidget);
+    void saveTable(QTableWidget *tableWidget, QString filename);
     // Reopen a saved table
     QTableWidget* openTable();
-    
 };
+using FileHandlerRef = std::shared_ptr<FileHandler>;

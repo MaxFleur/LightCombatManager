@@ -14,6 +14,9 @@ public:
     QPushButton* getExitButton() { return exitButton; }
     QTableWidget* getTableWidget() { return tableWidget; }
     
+    // Set the data inside the table
+    void setTableData(bool isDataStored, QString data = "");
+    
 private slots:
     // Enable drag and drop in the widget
     void dragAndDrop(int row, int column);
@@ -25,7 +28,7 @@ private slots:
 private:
     CharacterHandlerRef m_char;
     // Create the table
-    void createTable();
+    void createTableSkeleton();
     // Create the lower widget
     void createLowerWidget();
     // Key event function

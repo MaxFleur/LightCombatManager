@@ -58,7 +58,7 @@ private:
     QAction *aboutQtAct;
     
     // Checks if the user is storing chars 
-    bool isCombatActive = false;
+    bool isCreationActive = false;
 
     // The char sort reference used by several widgets
     CharacterHandlerRef m_char;

@@ -178,6 +178,7 @@ void MainWindow::finishCreation() {
         m_char->sortCharacters();
         // Then create the table widget and set it as central
         tableWidget = new TableWidget(m_char, this);
+        tableWidget->setTableData(false);
         setCentralWidget(tableWidget);
         connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
     }

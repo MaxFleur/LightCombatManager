@@ -5,24 +5,36 @@ FileHandler::FileHandler() {
 
 // Stores a table with characters as a csv file
 void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
-    
+    // Create a file using the given filename
     QFile file(filename);
-    
-    if (file.open(QFile::WriteOnly | QFile::Truncate)){
+    // Check if device is open for writing
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        // Create a text stream streaming the input data
         QTextStream data( &file );
+        // Stringlist for the row data
         QStringList strList;
-            
-        for(int r = 0; r < tableWidget->rowCount(); ++r ) {
+        
+        // Iterate over the rows
+        for(int i = 0; i < tableWidget->rowCount(); ++i ) {
+            // Clear the list at the beginning of every row iteration
             strList.clear();
-            for( int c = 0; c < tableWidget->columnCount(); ++c ) {
-                QTableWidgetItem* item = tableWidget->item(r,c);        //Load items
-                if (!item || item->text().isEmpty()) {                  //Test if there is something at item(r,c)
-                    tableWidget->setItem(r,c,new QTableWidgetItem("0"));//IF there is nothing write 0
+            // Iterate over every column for each row
+            for(int j = 0; j < tableWidget->columnCount(); ++j ) {
+                // Get the items of every cell of the table
+                QTableWidgetItem* item = tableWidget->item(i, j);
+                // Check if the cell is empty (for example, if no additional information was provided)
+                if (!item || item->text().isEmpty()) {
+                    // If this is the case, write a whitespace so the cell can be added correctly
+                    tableWidget->setItem(i, j,new QTableWidgetItem(" "));
                 }
-                strList << "\" " + tableWidget->item( r, c )->text() + "\" ";
+                // For each row, every cell will be added to the string list
+                strList << tableWidget->item(i, j)->text();
             }
+            // Now put the list to the text stream 
+            // The "\n" guarantees that the rows are set correctly in the csv table
             data << strList.join( ";" ) + "\n";
         }
+        // After the operation, close the file descriptor
         file.close();
     }
 }

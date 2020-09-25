@@ -62,13 +62,15 @@ void MainWindow::newCombat()
 
 // Save the table
 void MainWindow::saveTable() {
+    // Set a filename
     QString filename = QFileDialog::getSaveFileName(this,
         "Save Table", QDir::currentPath(),
         "Table (*.csv);;All Files (*)");
-
+    // Return if no filename is provided
     if (filename.isEmpty()) {
         return;
     } 
+    // Otherwise store the table
     m_file->saveTable(tableWidget->getTableWidget(), filename);
 }
 

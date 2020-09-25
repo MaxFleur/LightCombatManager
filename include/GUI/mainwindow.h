@@ -41,6 +41,7 @@ private:
     void createActions();
     void createMenus();
     void setCharacterCreationWidget();
+    void setTableWidget(bool isDataStored, QString data = "");
     
     // The widgets displayed when using the program
     WelcomeWidget *welcomeWidget;

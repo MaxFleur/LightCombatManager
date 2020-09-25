@@ -79,12 +79,8 @@ void MainWindow::openTable() {
     QString filename = QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
     
     if(m_file->getCSVData(filename)) {
-        // If the data collection was successful, Then create the table widget and set it as central
-        tableWidget = new TableWidget(m_char, this);
-        tableWidget->setTableData(true, m_file->getData());
-        setCentralWidget(tableWidget);
-        // Connect the button
-        connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
+        // If the data collection was successful, create the table widget and set it as central
+        setTableWidget(true, m_file->getData());
     }
 }
 
@@ -187,10 +183,7 @@ void MainWindow::finishCreation() {
         // Else start with sorting the characters
         m_char->sortCharacters();
         // Then create the table widget and set it as central
-        tableWidget = new TableWidget(m_char, this);
-        tableWidget->setTableData(false);
-        setCentralWidget(tableWidget);
-        connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
+        setTableWidget(false);
     }
     // Now that a table has been created, enable the save action
     saveAct->setEnabled(true);
@@ -214,6 +207,7 @@ void MainWindow::exitCombat() {
     }
 }
 
+// Helper function for setting the character creation widget
 void MainWindow::setCharacterCreationWidget() {
     // Allocate the character creation widget, passing the char sort reference to it 
     characterCreationWidget = new CharacterCreationWidget(m_char, this);
@@ -221,6 +215,19 @@ void MainWindow::setCharacterCreationWidget() {
     setCentralWidget(characterCreationWidget);
     connect(characterCreationWidget->getCancelButton(), SIGNAL (clicked ()), this, SLOT (cancelCreation()));
     connect(characterCreationWidget->getFinishButton(), SIGNAL (clicked ()), this, SLOT (finishCreation()));
+}
+
+// Helper function for setting the table widget
+void MainWindow::setTableWidget(bool isDataStored, QString data) {
+    tableWidget = new TableWidget(m_char, this);
+    // Set the data depending on if the data has been stored as a csv or not
+    if(isDataStored) {
+        tableWidget->setTableData(true, data);
+    } else {
+        tableWidget->setTableData(false);
+    }
+    setCentralWidget(tableWidget);
+    connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
 }
 
 MainWindow::~MainWindow()

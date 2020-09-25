@@ -74,6 +74,10 @@ void MainWindow::saveTable() {
     m_file->saveTable(tableWidget->getTableWidget(), filename);
 }
 
+void MainWindow::openTable() {
+    
+}
+
 // Display about message
 void MainWindow::about()
 {
@@ -81,7 +85,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.5.2 alpha.");
+            "\nVersion 0.5.5 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -96,19 +100,29 @@ void MainWindow::createActions()
     newAct->setShortcuts(QKeySequence::New);
     newAct->setStatusTip("Start a new combat.");
     connect(newAct, &QAction::triggered, this, &MainWindow::newCombat);
+    
     // Action to save the table
     saveAct = new QAction("&Save Table", this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip("Save the created table.");
     connect(saveAct, &QAction::triggered, this, &MainWindow::saveTable);
+    
+    // Action to open the table
+    openAct = new QAction("&Open Table", this);
+    openAct->setShortcuts(QKeySequence::Open);
+    openAct->setStatusTip("Open an existing table.");
+    connect(openAct, &QAction::triggered, this, &MainWindow::openTable);
+    
     // See information about the program
     aboutAct = new QAction("&About", this);
     aboutAct->setStatusTip("About Light Combat Manager");
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+    
     // See information about Qt
     aboutQtAct = new QAction("About &Qt", this);
     aboutQtAct->setStatusTip("About QT version and license");
     connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
+    
     // Because no table has been created yet, disable this action
     saveAct->setEnabled(false);
 }
@@ -120,6 +134,7 @@ void MainWindow::createMenus()
     fileMenu = menuBar()->addMenu("&File");
     fileMenu->addAction(newAct);
     fileMenu->addAction(saveAct);
+    fileMenu->addAction(openAct);
     fileMenu->addSeparator();
     // Help menu, displays information about the program
     helpMenu = menuBar()->addMenu("&Help");
@@ -201,6 +216,7 @@ MainWindow::~MainWindow()
 {
     delete newAct;
     delete saveAct;
+    delete openAct;
     delete aboutAct;
     delete aboutQtAct;
 }

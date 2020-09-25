@@ -75,7 +75,10 @@ void MainWindow::saveTable() {
 }
 
 void MainWindow::openTable() {
-    
+    QString filename = QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
+    if(m_file->getCSVData(filename)) {
+        //
+    }
 }
 
 // Display about message

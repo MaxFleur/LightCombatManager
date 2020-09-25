@@ -42,6 +42,14 @@ void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
 // Open an existing csv table
 // Currently returns nothing
 // TODO
-QTableWidget* FileHandler::openTable() {
-    return nullptr;
+bool FileHandler::getCSVData(QString filename) {
+    QFile importedCSV(filename);
+
+    if (importedCSV.open(QFile::ReadOnly)) {
+        data = importedCSV.readAll();
+        importedCSV.close();
+        
+        return true;
+    }
+    return false;
 }

@@ -11,6 +11,11 @@ public:
     // Save a table of characters
     void saveTable(QTableWidget *tableWidget, QString filename);
     // Reopen a saved table
-    QTableWidget* openTable();
+    bool getCSVData(QString filename);
+    
+    QString getData() { return data; }
+    
+private:
+    QString data;
 };
 using FileHandlerRef = std::shared_ptr<FileHandler>;

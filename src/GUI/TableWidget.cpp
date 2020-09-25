@@ -48,10 +48,13 @@ void TableWidget::setTableData(bool isDataStored, QString data) {
         // If the data has been stored, split it into rows
         QStringList rowOfData = data.split("\n");
         QStringList rowData;
+        
         // Set the table row count
-        tableWidget->setRowCount(rowOfData.size());
+        // @note For some reason, the splitting of the data in line 53 creates one empty, obsolete line
+        // To ignore this line, decrement the row count and iteration number 
+        tableWidget->setRowCount(rowOfData.size() - 1);
         // Iterate over the row
-        for (int x = 0; x < rowOfData.size(); x++) {
+        for (int x = 0; x < rowOfData.size() - 1; x++) {
             // Split into the different column data
             rowData = rowOfData.at(x).split(";");
             // Create the widget items for the table

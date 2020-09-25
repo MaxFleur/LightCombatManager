@@ -25,7 +25,7 @@ void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
                 // Check if the cell is empty (for example, if no additional information was provided)
                 if (!item || item->text().isEmpty()) {
                     // If this is the case, write a whitespace so the cell can be added correctly
-                    tableWidget->setItem(i, j,new QTableWidgetItem(" "));
+                    tableWidget->setItem(i, j, new QTableWidgetItem(" "));
                 }
                 // For each row, every cell will be added to the string list
                 strList << tableWidget->item(i, j)->text();

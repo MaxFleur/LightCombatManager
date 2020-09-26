@@ -60,6 +60,8 @@ private:
     
     // Checks if the user is storing chars 
     bool isCreationActive = false;
+    // Checks if the table is displayed
+    bool isTableActive = false;
 
     // The char sort reference used by several widgets
     CharacterHandlerRef m_char;

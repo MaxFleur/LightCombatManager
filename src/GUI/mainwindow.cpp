@@ -26,7 +26,7 @@ void MainWindow::closeEvent( QCloseEvent *event ) {
     if(isCreationActive) {
         QMessageBox::StandardButton reply = QMessageBox::question(this, 
                                                               "Exit",
-                                                              "You are in a game right now! Do you want to exit the program anyway? All stored characters will be lost.",
+                                                              "You are in the character creation right now! Do you want to exit the program anyway? All stored characters will be lost.",
                                 QMessageBox::Yes|QMessageBox::No);
         // If so, exit the application
         if (reply == QMessageBox::Yes) {
@@ -34,6 +34,21 @@ void MainWindow::closeEvent( QCloseEvent *event ) {
         // Otherwise ignore this event and nothing happens
         } else {
             event->ignore();
+        }
+    }
+    // If the table is active, send a question if the table should be saved
+    if(isTableActive) {
+        QMessageBox::StandardButton reply = QMessageBox::question(this, 
+                                                              "Exit",
+                                                              "Currently, you are in a combat. Do you want to save the characters before exiting the program?",
+                                QMessageBox::Yes|QMessageBox::No);
+        // If so, save and exit the application
+        if (reply == QMessageBox::Yes) {
+            saveTable();
+            QApplication::exit;
+        // Otherwise just exit
+        } else {
+            QApplication::exit;
         }
     }
 }
@@ -91,7 +106,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.5.5 alpha.");
+            "\nVersion 0.5.9 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -180,6 +195,8 @@ void MainWindow::finishCreation() {
                                                               "Are you sure you want to finish the character creation? All unsaved inputs will be lost.",
                                 QMessageBox::Yes|QMessageBox::No);
     if(reply == QMessageBox::Yes) {
+        // Now the creation is no longer active, so set to false
+        isCreationActive = false;
         // Else start with sorting the characters
         m_char->sortCharacters();
         // Then create the table widget and set it as central
@@ -204,6 +221,7 @@ void MainWindow::exitCombat() {
         setCentralWidget(welcomeWidget);
         // The table has been destroyed, so disable the saving action
         saveAct->setEnabled(false);
+        isTableActive = false;
     }
 }
 
@@ -228,6 +246,8 @@ void MainWindow::setTableWidget(bool isDataStored, QString data) {
     }
     setCentralWidget(tableWidget);
     connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
+    // Now the table is active
+    isTableActive = true;
 }
 
 MainWindow::~MainWindow()

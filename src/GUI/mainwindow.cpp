@@ -42,14 +42,12 @@ void MainWindow::closeEvent( QCloseEvent *event ) {
                                                               "Exit",
                                                               "Currently, you are in a combat. Do you want to save the characters before exiting the program?",
                                 QMessageBox::Yes|QMessageBox::No);
-        // If so, save and exit the application
+        // If so, save the table
         if (reply == QMessageBox::Yes) {
             saveTable();
-            QApplication::exit;
-        // Otherwise just exit
-        } else {
-            QApplication::exit;
-        }
+        } 
+        // Exit
+        QApplication::exit;
     }
 }
 
@@ -57,10 +55,7 @@ void MainWindow::closeEvent( QCloseEvent *event ) {
 void MainWindow::newCombat()
 {
     // Now a game begins, so set to true and reset the widget
-    if(!isCreationActive) {
-        isCreationActive = true;
-        setCharacterCreationWidget();
-    } else {
+    if(isCreationActive) {
         // If a game is currently running, asks if a new combat should be started anyway
         QMessageBox::StandardButton reply = QMessageBox::question(this, 
                                                               "Start a new combat?",
@@ -72,7 +67,22 @@ void MainWindow::newCombat()
             m_char->clearCharacters();
             setCharacterCreationWidget();
         }
+        // If the table is active right now, asks if the current table should be saved
+    } else if (isTableActive) {
+        // If a game is currently running, asks if a new combat should be started anyway
+        QMessageBox::StandardButton reply = QMessageBox::question(this, 
+                                                              "Start a new combat?",
+                                                              "Do you want to save the current combat before starting a new combat?",
+                                QMessageBox::Yes|QMessageBox::No);
+        // If so, save and set the table active to false
+        if (reply == QMessageBox::Yes) {
+            saveTable();
+        }
+        isTableActive = false;
     }
+    // Then set to the character creation widget
+    isCreationActive = true;
+    setCharacterCreationWidget();
 }
 
 // Save the table
@@ -89,10 +99,11 @@ void MainWindow::saveTable() {
     m_file->saveTable(tableWidget->getTableWidget(), filename);
 }
 
+// Open the table
 void MainWindow::openTable() {
     // Get the file path
     QString filename = QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
-    
+    // Test if data can be read using the filename
     if(m_file->getCSVData(filename)) {
         // If the data collection was successful, create the table widget and set it as central
         setTableWidget(true, m_file->getData());
@@ -106,7 +117,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.5.9 alpha.");
+            "\nVersion 0.5.10 alpha.");
 }
 
 void MainWindow::aboutQt()

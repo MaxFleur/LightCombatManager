@@ -1,12 +1,16 @@
 #include "../../include/GUI/TableWidget.h"
 
 // Create the welcome widget at instantiation
-TableWidget::TableWidget(CharacterHandlerRef charHandler, QWidget *parent)
-        : m_char(charHandler) {
+TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
+        : m_char(charHandler), m_isDataStored(isDataStored), m_data(data) {
     // Create the table
     createTableSkeleton();
-    // Then create the other widgets
+    // Create the widget for the buttons
     createLowerWidget();
+    // Now set the table data
+    setTableData();
+    // Then set the height this widget will be displayed with
+    setHeight();
     // Connect drag and drop function, enabled each time a row is dragged
     connect(tableWidget, SIGNAL (cellEntered(int,int)), this, SLOT(dragAndDrop(int,int)));
     connect(removeButton, SIGNAL (clicked ()), this, SLOT(removeRow()));
@@ -41,12 +45,10 @@ void TableWidget::createTableSkeleton() {
 }
 
 // Set the data inside the table
-// isDataStored - is the data stored inside a csv or not?
-// data         - used if the data has been stored in a csv file
-void TableWidget::setTableData(bool isDataStored, QString data) {
-    if(isDataStored) {
-        // If the data has been stored, split it into rows
-        QStringList rowOfData = data.split("\n");
+void TableWidget::setTableData() {
+    if(m_isDataStored) {
+        // If the data has been stored, take it and split it into rows
+        QStringList rowOfData = m_data.split("\n");
         QStringList rowData;
         
         // Set the table row count
@@ -104,6 +106,13 @@ void TableWidget::createLowerWidget() {
     lowerLayout->addWidget(removeButton);
     lowerLayout->addWidget(exitButton);
     tableLayout->addLayout(lowerLayout);
+}
+
+void TableWidget::setHeight() {
+    for(int i = 0; i < tableWidget->rowCount(); i++) {
+        height += tableWidget->rowHeight(i);
+    }
+    height += 120;
 }
 
 // This function enables drag and drop of table rows

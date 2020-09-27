@@ -6,18 +6,13 @@ MainWindow::MainWindow()
     m_char = std::make_shared<CharacterHandler>();
     // Same for file handler
     m_file = std::make_shared<FileHandler>();
-    // Set this window as parent for the widgets
-    welcomeWidget = new WelcomeWidget(this);
-    
-    // The welcome widget will be displayed at the beginning, so set to this one
-    setCentralWidget(welcomeWidget);
-    
+    // Set to the welcoming widget
+    setWelcomingWidget();
     // Create the menus and different actions
     createActions();
     createMenus();
     // Set a title and a minimum size
     setWindowTitle("Light Combat Manager");
-    setFixedSize(640, 260);
 }
 
 // This function is called if the program is closed
@@ -148,7 +143,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.6.1 alpha.");
+            "\nVersion 0.6.2 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -216,9 +211,8 @@ void MainWindow::cancelCreation() {
     if (reply == QMessageBox::Yes) {
         m_char->clearCharacters();
         isCreationActive = false;
-        // Then reallocate the welcoming widget and set it as the central one
-        welcomeWidget = new WelcomeWidget(this);
-        setCentralWidget(welcomeWidget);
+        // Then set to the welcoming widget
+        setWelcomingWidget();
     }
 }
 
@@ -259,12 +253,21 @@ void MainWindow::exitCombat() {
         // If so, delete all created characters and set active game to false
         m_char->clearCharacters();
         // Then reallocate and set the welcoming widget
-        welcomeWidget = new WelcomeWidget(this);
-        setCentralWidget(welcomeWidget);
+        setWelcomingWidget();
         // The table has been destroyed, so disable the saving action
         saveAct->setEnabled(false);
         isTableActive = false;
     }
+}
+
+// Helper function for setting the welcoming widget
+void MainWindow::setWelcomingWidget() {
+    // Set this window as parent for the widgets
+    welcomeWidget = new WelcomeWidget(this);
+    // Set to central
+    setCentralWidget(welcomeWidget);
+    // Set size
+    setFixedSize(640, 260);
 }
 
 // Helper function for setting the character creation widget
@@ -275,21 +278,18 @@ void MainWindow::setCharacterCreationWidget() {
     setCentralWidget(characterCreationWidget);
     connect(characterCreationWidget->getCancelButton(), SIGNAL (clicked ()), this, SLOT (cancelCreation()));
     connect(characterCreationWidget->getFinishButton(), SIGNAL (clicked ()), this, SLOT (finishCreation()));
+    setFixedSize(640, 260);
 }
 
 // Helper function for setting the table widget
 void MainWindow::setTableWidget(bool isDataStored, QString data) {
-    tableWidget = new TableWidget(m_char, this);
-    // Set the data depending on if the data has been stored as a csv or not
-    if(isDataStored) {
-        tableWidget->setTableData(true, data);
-    } else {
-        tableWidget->setTableData(false);
-    }
+    tableWidget = new TableWidget(m_char, isDataStored, data, this);
     setCentralWidget(tableWidget);
     connect(tableWidget->getExitButton(), SIGNAL (clicked ()), this, SLOT (exitCombat()));
     // Now the table is active
     isTableActive = true;
+    // Set the size of this window according to the table size
+    setFixedSize(640, tableWidget->getHeight());
 }
 
 MainWindow::~MainWindow()

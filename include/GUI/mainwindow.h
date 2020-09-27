@@ -40,6 +40,7 @@ private:
     // Create the user actions and menus
     void createActions();
     void createMenus();
+    void setWelcomingWidget();
     void setCharacterCreationWidget();
     void setTableWidget(bool isDataStored, QString data = "");
     

@@ -81,6 +81,7 @@ void MainWindow::newCombat()
             return;
         }
         isTableActive = false;
+        m_char->clearCharacters();
     }
     // Then set to the character creation widget
     isCreationActive = true;
@@ -147,7 +148,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.6.0 alpha.");
+            "\nVersion 0.6.1 alpha.");
 }
 
 void MainWindow::aboutQt()

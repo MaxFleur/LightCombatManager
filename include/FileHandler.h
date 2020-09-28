@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets>
+#include <memory>
 
 // This class handles the saving and reopening of QTableWidgets as csv data
 class FileHandler {

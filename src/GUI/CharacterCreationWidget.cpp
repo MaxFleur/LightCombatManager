@@ -116,7 +116,7 @@ void CharacterCreationWidget::createWidget() {
     hpLabel->setAlignment(Qt::AlignLeft);
     hpLabel->setToolTip("Set the HP of this character. This value is optional.");
     hpBox = new QSpinBox;
-    hpBox->setMinimum(-100);
+    hpBox->setRange(-100, 10000);
     isNPCLabel = new QLabel("Is NPC:");
     isNPCLabel->setFrameStyle(QFrame::NoFrame);
     isNPCLabel->setAlignment(Qt::AlignLeft);

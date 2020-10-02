@@ -237,9 +237,9 @@ void MainWindow::finishCreation() {
         m_char->sortCharacters();
         // Then create the table widget and set it as central
         setTableWidget(false);
+        // Now that a table has been created, enable the save action
+        saveAct->setEnabled(true);
     }
-    // Now that a table has been created, enable the save action
-    saveAct->setEnabled(true);
 }
 
 // Exits the combat and returns to the welcoming widget

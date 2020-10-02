@@ -53,6 +53,14 @@ void CharacterCreationWidget::saveAndCreateNewCharacter() {
     resetCharacter();
 }
 
+// This stores the last created character. After this, the table widget will be created.
+void CharacterCreationWidget::storeLastCharacter() {
+    // Don't do anything if no name has been set
+    if(!m_name.empty()) {
+        m_char->storeCharacter(m_name, m_initiative, m_modifier, m_isNPC, m_hp, m_additionalInf);
+    }
+}
+
 // Reset the current character
 void CharacterCreationWidget::resetCharacter() {
     // Reset all displayed values

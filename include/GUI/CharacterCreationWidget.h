@@ -12,6 +12,8 @@ public:
     // Return the cancel button, connecting the parent widget to this button
     QPushButton* getCancelButton() { return cancelButton; }
     QPushButton* getFinishButton() { return finishButton; }
+    // Store the last created character before creating the table widget
+    void storeLastCharacter();
     
 private slots:
     void setName(const QString &name);

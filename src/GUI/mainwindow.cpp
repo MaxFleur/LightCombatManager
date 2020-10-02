@@ -228,9 +228,11 @@ void MainWindow::finishCreation() {
     // Else, display a question message asking if the creation should be finished
     QMessageBox::StandardButton reply = QMessageBox::question(this, 
                                                               "Finish creation?",
-                                                              "Are you sure you want to finish the character creation? All unsaved inputs will be lost.",
+                                                              "Are you sure you want to finish the character creation? Characters can't be added afterwards.",
                                 QMessageBox::Yes|QMessageBox::No);
     if(reply == QMessageBox::Yes) {
+        // Store the last character (if it was created)
+        characterCreationWidget->storeLastCharacter();
         // Now the creation is no longer active, so set to false
         isCreationActive = false;
         // Else start with sorting the characters

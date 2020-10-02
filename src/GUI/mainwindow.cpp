@@ -289,7 +289,8 @@ void MainWindow::setTableWidget(bool isDataStored, QString data) {
     // Now the table is active
     isTableActive = true;
     // Set the size of this window according to the table size
-    setFixedSize(640, tableWidget->getHeight());
+    setMinimumSize(640, tableWidget->getHeight());
+    setMaximumWidth(QWIDGETSIZE_MAX);
 }
 
 MainWindow::~MainWindow()

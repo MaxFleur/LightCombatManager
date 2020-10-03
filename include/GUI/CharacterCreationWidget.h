@@ -14,6 +14,8 @@ public:
     QPushButton* getFinishButton() { return finishButton; }
     // Store the last created character before creating the table widget
     void storeLastCharacter();
+    // Returns if a name has been entered
+    bool isNameEmpty() { return m_name.empty(); }
     
 private slots:
     void setName(const QString &name);

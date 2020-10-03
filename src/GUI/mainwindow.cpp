@@ -143,7 +143,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.6.4 alpha.");
+            "\nVersion 0.6.5 alpha.");
 }
 
 void MainWindow::aboutQt()
@@ -218,8 +218,8 @@ void MainWindow::cancelCreation() {
 
 // Finishes the character creation, sorting the created characters and switching to the table layout 
 void MainWindow::finishCreation() {
-    // If less than 2 characters have been entered, abort
-    if(m_char->getCharacters().size() < 2) {
+    // If no character was stored or just one character was stored and the name field of the char creation widget is empty, abort
+    if(m_char->getCharacters().size() == 0 || m_char->getCharacters().size() == 1 && characterCreationWidget->isNameEmpty()) {
         QMessageBox::StandardButton reply = QMessageBox::warning(this, 
                                                               "Could not finish!",
                                                               "Please store at least 2 characters before creating the combat table!");

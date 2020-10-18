@@ -84,6 +84,10 @@ void TableWidget::setTableData() {
             tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->additionalInf)));
         }
     }
+    // Create the identifiers for the rows
+    for(int i = 0; i < tableWidget->rowCount(); i++) {
+        identifiers.push_back(i);
+    }
     // Select the first row 
     rowEntered = 0;
     selectEnteredRow();
@@ -127,9 +131,12 @@ void TableWidget::dragAndDrop(int row, int column) {
     // Depending on the current index, set the newRow value
     if(tableWidget->currentIndex().row() < row) {
         newRow = row - 1; 
+        // Swap the identifiers so they match correctly with their row
+        std::iter_swap(identifiers.begin() + newRow, identifiers.begin() + row);
     }
     else if(tableWidget->currentIndex().row() > row) {
         newRow = row + 1; 
+        std::iter_swap(identifiers.begin() + newRow, identifiers.begin() + row);
     }
     // Return if they are equal
     else return;
@@ -144,6 +151,15 @@ void TableWidget::dragAndDrop(int row, int column) {
     for (int col = 0; col < tableWidget->columnCount(); ++col) {
         tableWidget->setItem(newRow, col, rowItemSrc.at(col));
         tableWidget->setItem(row, col, rowItemDest.at(col));
+    }
+    // After the drag and drop, the correct entered row has to be highlighted
+    for(int i = 0; i < identifiers.size(); i++) {
+        // Search for the row containing the identifier
+        if(identifiers.at(i) == rowIdentifier) {
+            // Set row enter to this
+            rowEntered = i;
+            break;
+        }
     }
 }
 
@@ -192,6 +208,9 @@ void TableWidget::keyPressEvent(QKeyEvent *event) {
         } else {
             rowEntered++;
         }
+        // The identifier gets the identifying value at the entered row
+        rowIdentifier = identifiers.at(rowEntered);
+        // Now select the row with Enter
         selectEnteredRow();
     }
 }

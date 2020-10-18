@@ -56,11 +56,18 @@ private:
     bool isRowSelected = false;
     // The height of this widget to be set
     int height = 0;
+    
     // Check if the loaded data has been stored
     bool m_isDataStored;
     // Data to load the table
     QString m_data;
     
+    // The entry number of the row selected with Enter
     int rowEntered;
+    
+    // This vector stores unique identifiers for each row
+    std::vector<int> identifiers;
+    // The row identifier to determine the correct row after drag and drop
+    int rowIdentifier;
 };
  

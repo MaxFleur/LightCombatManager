@@ -143,7 +143,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.6.7 alpha.");
+            "\nVersion 0.6.8 alpha.");
 }
 
 void MainWindow::aboutQt()

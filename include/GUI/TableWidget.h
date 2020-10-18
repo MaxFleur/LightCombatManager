@@ -36,6 +36,8 @@ private:
     void createLowerWidget();
     // Set the height of this widget
     void setHeight();
+    // Increments the round counter
+    void incrementRoundCounter();
     // Key event function
     void keyPressEvent(QKeyEvent *event);
     
@@ -49,9 +51,11 @@ private:
     QPushButton     *exitButton;
     // Button to remove a row
     QPushButton     *removeButton;
-    
+    // The label displaying the current round number
+    QLabel          *roundCounterLabel;
     // The final layout that will be returned
     QVBoxLayout     *tableLayout;
+    
     // Has a row been selected (via clicking or using the arrow keys)
     bool isRowSelected = false;
     // The height of this widget to be set
@@ -64,6 +68,8 @@ private:
     
     // The entry number of the row selected with Enter
     int rowEntered;
+    // Counts the current round
+    int roundCounter;
     
     // This vector stores unique identifiers for each row
     std::vector<int> identifiers;

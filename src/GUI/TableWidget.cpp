@@ -104,11 +104,18 @@ void TableWidget::createLowerWidget() {
     // Same for the remove button
     removeButton = new QPushButton("Remove character");
     removeButton->setToolTip("Removes a character from the list.");
+    // We start with the first round, so set the counter to 1
+    roundCounterLabel = new QLabel;
+    roundCounter = 0;
+    incrementRoundCounter();
     
     // Create a spacer widget to move the button to the right side
     QWidget *spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    // Add the spacer and button to the lower layout, then add the lower layout to the final layout
+    
+    // Add the elements to the label
+    lowerLayout->addWidget(roundCounterLabel);
+    lowerLayout->addSpacing(30);
     lowerLayout->addWidget(spacer);
     lowerLayout->addWidget(removeButton);
     lowerLayout->addWidget(exitButton);
@@ -120,6 +127,13 @@ void TableWidget::setHeight() {
         height += tableWidget->rowHeight(i);
     }
     height += 120;
+}
+
+// Increments the row counter every time navigating with Enter starts again at the beginning
+void TableWidget::incrementRoundCounter() {
+    // Increment
+    roundCounter++;
+    roundCounterLabel->setText("Round " + QString::number(roundCounter));
 }
 
 // This function enables drag and drop of table rows
@@ -205,6 +219,8 @@ void TableWidget::keyPressEvent(QKeyEvent *event) {
         // If the current selected row is the last one, reset to the first one
         if(rowEntered == tableWidget->rowCount() - 1) {
             rowEntered = 0;
+            // Now the next row begins, so increment the counter
+            incrementRoundCounter();
         } else {
             rowEntered++;
         }

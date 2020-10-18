@@ -20,7 +20,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 // This function creates the table of this widget
 void TableWidget::createTableSkeleton() {
     // Allocate the table widget
-    tableWidget = new QTableWidget();
+    tableWidget = new CustomTable();
     // Four colums for name, hp, isNPC and additional information about a character. The last column is for the buttons
     tableWidget->setColumnCount(4);
     // Set the header infos, no info for the last column

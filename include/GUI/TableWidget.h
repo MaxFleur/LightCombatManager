@@ -2,6 +2,7 @@
 
 #include <QtWidgets>
 #include "../CharacterHandler.h"
+#include "CustomTable.h"
     
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {
@@ -38,7 +39,7 @@ private:
     void keyPressEvent(QKeyEvent *event);
     
     // Main table widget and header
-    QTableWidget    *tableWidget;
+    CustomTable     *tableWidget;
     QStringList     tableHeader;
     QHBoxLayout     *lowerLayout;
     // Button to exit the layout

@@ -56,7 +56,7 @@ private:
     // The final layout that will be returned
     QVBoxLayout     *tableLayout;
     
-    // Has a row been selected (via clicking or using the arrow keys)
+    // Has a row been selected via clicking
     bool isRowSelected = false;
     // The height of this widget to be set
     int height = 0;

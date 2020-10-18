@@ -14,7 +14,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
     // Connect drag and drop function, enabled each time a row is dragged
     connect(tableWidget, SIGNAL (cellEntered(int,int)), this, SLOT(dragAndDrop(int,int)));
     connect(removeButton, SIGNAL (clicked ()), this, SLOT(removeRow()));
-    connect(tableWidget->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(rowSelected()));
+    connect(tableWidget, SIGNAL (cellClicked(int,int)), this, SLOT(rowSelected()));
 }
 
 // This function creates the table of this widget
@@ -185,12 +185,29 @@ void TableWidget::removeRow() {
         tableWidget->removeRow(0);
         return;
     }
-    // If a row has been selected, remove the selected row
+    // If a row has been selected, remove this row
     if(isRowSelected) {
+        // If the deleted row is before the current entered row, move rowEnter one up
+        if(tableWidget->currentIndex().row() < rowEntered) {
+            rowEntered--;
+        }
+        // If the deleted row was the last one in the table, select to the first row
+        if(tableWidget->currentIndex().row() == tableWidget->rowCount() - 1) {
+            rowEntered = 0;
+        }
+        // Now remove the row
         tableWidget->removeRow(tableWidget->currentIndex().row());
         // Then reset
         isRowSelected = false;
-    }
+        // Select the entered row
+        selectEnteredRow();
+        return;
+    } 
+    // If no row has been clicked, throw an error message
+    QMessageBox::StandardButton reply = QMessageBox::warning(this, 
+                                                        "Could not remove character!",
+                                                        "Please select a character with the Mouse Key before deleting!");
+    return;
 }
 
 // Check if a row is selected

@@ -5,10 +5,10 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
         : m_char(charHandler), m_isDataStored(isDataStored), m_data(data) {
     // Create the table
     createTableSkeleton();
-    // Create the widget for the buttons
-    createLowerWidget();
     // Now set the table data
     setTableData();
+    // Create the widget for the buttons
+    createLowerWidget();
     // Then set the height this widget will be displayed with
     setHeight();
     // Connect drag and drop function, enabled each time a row is dragged
@@ -84,13 +84,6 @@ void TableWidget::setTableData() {
             tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->additionalInf)));
         }
     }
-    // Create the identifiers for the rows
-    for(int i = 0; i < tableWidget->rowCount(); i++) {
-        identifiers.push_back(i);
-    }
-    // Select the first row 
-    rowEntered = 0;
-    selectEnteredRow();
 }
 
 // Create the lower widget, including the button
@@ -108,6 +101,8 @@ void TableWidget::createLowerWidget() {
     roundCounterLabel = new QLabel;
     roundCounter = 0;
     incrementRoundCounter();
+    // Set the player displaying label
+    enterPlayerLabel = new QLabel;
     
     // Create a spacer widget to move the button to the right side
     QWidget *spacer = new QWidget();
@@ -116,10 +111,20 @@ void TableWidget::createLowerWidget() {
     // Add the elements to the label
     lowerLayout->addWidget(roundCounterLabel);
     lowerLayout->addSpacing(30);
+    lowerLayout->addWidget(enterPlayerLabel);
     lowerLayout->addWidget(spacer);
     lowerLayout->addWidget(removeButton);
     lowerLayout->addWidget(exitButton);
     tableLayout->addLayout(lowerLayout);
+    
+    // Create the identifiers for the rows
+    for(int i = 0; i < tableWidget->rowCount(); i++) {
+        identifiers.push_back(i);
+    }
+    // Select the first row 
+    rowEntered = 0;
+    selectEnteredRow();
+    setCurrentPlayer();
 }
 
 void TableWidget::setHeight() {
@@ -134,6 +139,11 @@ void TableWidget::incrementRoundCounter() {
     // Increment
     roundCounter++;
     roundCounterLabel->setText("Round " + QString::number(roundCounter));
+}
+
+// Passes the current player's name to the label
+void TableWidget::setCurrentPlayer() {
+    enterPlayerLabel->setText("Current: " + tableWidget->item(rowEntered, 0)->text());
 }
 
 // This function enables drag and drop of table rows
@@ -199,7 +209,8 @@ void TableWidget::removeRow() {
         tableWidget->removeRow(tableWidget->currentIndex().row());
         // Then reset
         isRowSelected = false;
-        // Select the entered row
+        // Reste the current entered player and highlight again
+        setCurrentPlayer();
         selectEnteredRow();
         return;
     } 
@@ -245,5 +256,7 @@ void TableWidget::keyPressEvent(QKeyEvent *event) {
         rowIdentifier = identifiers.at(rowEntered);
         // Now select the row with Enter
         selectEnteredRow();
+        // Show the current player
+        setCurrentPlayer();
     }
 }

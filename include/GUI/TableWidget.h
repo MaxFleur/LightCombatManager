@@ -38,6 +38,8 @@ private:
     void setHeight();
     // Increments the round counter
     void incrementRoundCounter();
+    // Sets the text displaying the player selected with Enter
+    void setCurrentPlayer();
     // Key event function
     void keyPressEvent(QKeyEvent *event);
     
@@ -53,6 +55,8 @@ private:
     QPushButton     *removeButton;
     // The label displaying the current round number
     QLabel          *roundCounterLabel;
+    // The label displaying the current player selected with Enter
+    QLabel          *enterPlayerLabel;
     // The final layout that will be returned
     QVBoxLayout     *tableLayout;
     

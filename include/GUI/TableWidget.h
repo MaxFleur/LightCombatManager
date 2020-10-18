@@ -3,6 +3,7 @@
 #include <QtWidgets>
 #include "../CharacterHandler.h"
 #include "CustomTable.h"
+#include <iostream>
     
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {
@@ -38,6 +39,8 @@ private:
     // Key event function
     void keyPressEvent(QKeyEvent *event);
     
+    void selectEnteredRow();
+    
     // Main table widget and header
     CustomTable     *tableWidget;
     QStringList     tableHeader;
@@ -53,8 +56,11 @@ private:
     bool isRowSelected = false;
     // The height of this widget to be set
     int height = 0;
-    
+    // Check if the loaded data has been stored
     bool m_isDataStored;
+    // Data to load the table
     QString m_data;
+    
+    int rowEntered;
 };
  

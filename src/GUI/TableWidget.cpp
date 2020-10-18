@@ -64,26 +64,29 @@ void TableWidget::setTableData() {
                 tableWidget->setItem(x, y, new QTableWidgetItem(rowData[y]));
             }
         }
-        return;
-    }
-    // If no data is provided via csv, set the data according to the vector of chars
-    // Set the number of rows to characters created
-    tableWidget->setRowCount(m_char->getCharacters().size());
-    // Store the created character data in the table
-    for(int i = 0; i < m_char->getCharacters().size(); i++) {
-        // Store the name
-        tableWidget->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->name)));
-        // Same for hp
-        tableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
-        // Check if the bool is true or false, return yes or no
-        if(m_char->getCharacters().at(i)->isNPC) {
-            tableWidget->setItem(i, 2, new QTableWidgetItem("Yes"));
-        } else {
-            tableWidget->setItem(i, 2, new QTableWidgetItem("No"));
+    } else {
+        // If no data is provided via csv, set the data according to the vector of chars
+        // Set the number of rows to characters created
+        tableWidget->setRowCount(m_char->getCharacters().size());
+        // Store the created character data in the table
+        for(int i = 0; i < m_char->getCharacters().size(); i++) {
+            // Store the name
+            tableWidget->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->name)));
+            // Same for hp
+            tableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
+            // Check if the bool is true or false, return yes or no
+            if(m_char->getCharacters().at(i)->isNPC) {
+                tableWidget->setItem(i, 2, new QTableWidgetItem("Yes"));
+            } else {
+                tableWidget->setItem(i, 2, new QTableWidgetItem("No"));
+            }
+            // Store additional information
+            tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->additionalInf)));
         }
-        // Store additional information
-        tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->additionalInf)));
     }
+    // Select the first row 
+    rowEntered = 0;
+    selectEnteredRow();
 }
 
 // Create the lower widget, including the button
@@ -168,9 +171,27 @@ void TableWidget::rowSelected() {
     }
 }
 
+// Select a row with the Enter key
+void TableWidget::selectEnteredRow() {
+    // First, clear all selected rows (not their data, just the selection)
+    tableWidget->selectionModel()->clearSelection();
+    // Now select the row that was selected using the Enter key
+    tableWidget->selectRow(rowEntered);
+}
+
 // This function calls the row remove function if the delete key is pressed
 void TableWidget::keyPressEvent(QKeyEvent *event) {
     if(event->key() == Qt::Key_Delete) {
         removeRow();
+    }
+    // Iterate over the rows with the Enter key
+    if(event->key() == Qt::Key_Return) {
+        // If the current selected row is the last one, reset to the first one
+        if(rowEntered == tableWidget->rowCount() - 1) {
+            rowEntered = 0;
+        } else {
+            rowEntered++;
+        }
+        selectEnteredRow();
     }
 }

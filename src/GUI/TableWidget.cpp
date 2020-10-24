@@ -54,14 +54,16 @@ void TableWidget::setTableData() {
         // Set the table row count
         // @note For some reason, the splitting of the data in line 53 creates one empty, obsolete line
         // To ignore this line, decrement the row count and iteration number 
-        tableWidget->setRowCount(rowOfData.size() - 1);
+        // The second line is the header and is also ignored, so we set decrement again and are at -2
+        tableWidget->setRowCount(rowOfData.size() - 2);
         // Iterate over the row
-        for (int x = 0; x < rowOfData.size() - 1; x++) {
+        // // We start with 1 to ignore the stored header
+        for (int x = 1; x < rowOfData.size() - 1; x++) {
             // Split into the different column data
             rowData = rowOfData.at(x).split(";");
             // Create the widget items for the table
             for (int y = 0; y < rowData.size(); y++) {
-                tableWidget->setItem(x, y, new QTableWidgetItem(rowData[y]));
+                tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
             }
         }
     } else {

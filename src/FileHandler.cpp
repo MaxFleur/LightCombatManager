@@ -14,6 +14,10 @@ void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
         // Stringlist for the row data
         QStringList strList;
         
+        // Store the header of the table, this is used for checking the correct table format if the table is reloaded
+        strList << "Name" << "HP" << "Is NPC" << "Additional information";
+        data << strList.join( ";" ) + "\n";
+        
         // Iterate over the rows
         for(int i = 0; i < tableWidget->rowCount(); ++i ) {
             // Clear the list at the beginning of every row iteration

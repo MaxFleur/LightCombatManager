@@ -3,7 +3,6 @@
 #include <QtWidgets>
 #include "../CharacterHandler.h"
 #include "CustomTable.h"
-#include <iostream>
     
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {

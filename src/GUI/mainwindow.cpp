@@ -6,11 +6,11 @@ MainWindow::MainWindow()
     m_char = std::make_shared<CharacterHandler>();
     // Same for file handler
     m_file = std::make_shared<FileHandler>();
-    // Set to the welcoming widget
-    setWelcomingWidget();
     // Create the menus and different actions
     createActions();
     createMenus();
+    // Set to the welcoming widget
+    setWelcomingWidget();
     // Set a title and a minimum size
     setWindowTitle("Light Combat Manager");
 }
@@ -143,7 +143,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.7.1 Beta.");
+            "\nVersion 0.7.2 Beta.");
 }
 
 void MainWindow::aboutQt()
@@ -180,9 +180,6 @@ void MainWindow::createActions()
     aboutQtAct = new QAction("About &Qt", this);
     aboutQtAct->setStatusTip("About QT version and license");
     connect(aboutQtAct, &QAction::triggered, qApp, &QApplication::aboutQt);
-    
-    // Because no table has been created yet, disable this action
-    saveAct->setEnabled(false);
 }
 
 // Create the dropdown menus
@@ -239,8 +236,6 @@ void MainWindow::finishCreation() {
         m_char->sortCharacters();
         // Then create the table widget and set it as central
         setTableWidget(false);
-        // Now that a table has been created, enable the save action
-        saveAct->setEnabled(true);
     }
 }
 
@@ -256,8 +251,6 @@ void MainWindow::exitCombat() {
         m_char->clearCharacters();
         // Then reallocate and set the welcoming widget
         setWelcomingWidget();
-        // The table has been destroyed, so disable the saving action
-        saveAct->setEnabled(false);
         isTableActive = false;
     }
 }
@@ -270,6 +263,8 @@ void MainWindow::setWelcomingWidget() {
     setCentralWidget(welcomeWidget);
     // Set size
     setFixedSize(640, 260);
+    // No table available right now, so set saving to false
+    saveAct->setEnabled(false);
 }
 
 // Helper function for setting the character creation widget
@@ -281,6 +276,8 @@ void MainWindow::setCharacterCreationWidget() {
     connect(characterCreationWidget->getCancelButton(), SIGNAL (clicked ()), this, SLOT (cancelCreation()));
     connect(characterCreationWidget->getFinishButton(), SIGNAL (clicked ()), this, SLOT (finishCreation()));
     setFixedSize(640, 260);
+    // No table available right now, so set saving to false
+    saveAct->setEnabled(false);
 }
 
 // Helper function for setting the table widget
@@ -293,6 +290,8 @@ void MainWindow::setTableWidget(bool isDataStored, QString data) {
     // Set the size of this window according to the table size
     setMinimumSize(640, tableWidget->getHeight());
     setMaximumWidth(QWIDGETSIZE_MAX);
+    // Now that a table is created, enable the saving
+    saveAct->setEnabled(true);
 }
 
 MainWindow::~MainWindow()

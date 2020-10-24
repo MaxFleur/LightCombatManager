@@ -14,9 +14,10 @@ public:
     // Reopen a saved table
     bool getCSVData(QString filename);
     
-    QString getData() { return data; }
+    QString getData() { return m_data; }
     
 private:
-    QString data;
+    QString m_data;
+    bool checkTableFormat(QString data);
 };
 using FileHandlerRef = std::shared_ptr<FileHandler>;

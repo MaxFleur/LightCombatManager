@@ -49,11 +49,27 @@ bool FileHandler::getCSVData(QString filename) {
     QFile importedCSV(filename);
     // If the data can be read, import the csv data to the QFile
     if (importedCSV.open(QFile::ReadOnly)) {
-        data = importedCSV.readAll();
-        // Then close and return succesful
+        m_data = importedCSV.readAll();
+        // Then close the file
         importedCSV.close();
-        return true;
+        if(checkTableFormat(m_data)) {
+            return true;
+        } 
+        return false;
     }
     // If the device was not readable, return false
+    return false;
+}
+
+bool FileHandler::checkTableFormat(QString data) {
+    QStringList rowOfData = data.split("\n");
+    QStringList rowData = rowOfData.at(0).split(";");
+    if(rowData.size() == 4 
+        && rowData[0] == "Name"
+        && rowData[1] == "HP"
+        && rowData[2] == "Is NPC"
+        && rowData[3] == "Additional information") {
+        return true;
+    }
     return false;
 }

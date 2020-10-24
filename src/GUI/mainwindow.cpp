@@ -129,14 +129,18 @@ void MainWindow::openTable() {
     }
     // Get the file path
     QString filename = QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
-    // Test if data can be read using the filename
+    // Test if data can be read using the filename and if the table format is set correctly
     if(m_file->getCSVData(filename)) {
         // Table and char creation not active for a short time
         isCreationActive = false;
         isTableActive = false;
         // If the data collection was successful, create the table widget and set it as central
         setTableWidget(true, m_file->getData());
-    }
+        return;
+    } 
+    QMessageBox::StandardButton reply = QMessageBox::critical(this, 
+                                                              "Could not load table!",
+                                                              "The loading of the table failed. Please make sure that the access rights to the file and the table format are set correctly.");
 }
 
 // Display about message

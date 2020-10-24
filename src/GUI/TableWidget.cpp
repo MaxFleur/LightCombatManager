@@ -84,6 +84,10 @@ void TableWidget::setTableData() {
             tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->additionalInf)));
         }
     }
+    // Set the coluḿns containing the isNPC values as not visible
+    for(int i = 0; i < tableWidget->rowCount(); i++) {
+        tableWidget->item(i, 2)->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
+    }
 }
 
 // Create the lower widget, including the button

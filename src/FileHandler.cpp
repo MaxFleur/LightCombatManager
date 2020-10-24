@@ -43,8 +43,8 @@ void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
     }
 }
 
-// Open an existing csv table
-bool FileHandler::getCSVData(QString filename) {
+// Open an existing csv table and stream it's data to m_data
+int FileHandler::getCSVData(QString filename) {
     // Create a file using the given path
     QFile importedCSV(filename);
     // If the data can be read, import the csv data to the QFile
@@ -53,23 +53,29 @@ bool FileHandler::getCSVData(QString filename) {
         // Then close the file
         importedCSV.close();
         if(checkTableFormat(m_data)) {
-            return true;
+            // Code for successfully checked table
+            return 2;
         } 
-        return false;
+        // Code for table in false format
+        return 1;
     }
-    // If the device was not readable, return false
-    return false;
+    // Code for unreadable data
+    return 0;
 }
 
+// Checks if a table is in the correct format before using it
 bool FileHandler::checkTableFormat(QString data) {
-    QStringList rowOfData = data.split("\n");
-    QStringList rowData = rowOfData.at(0).split(";");
+    // Get the stored table row data information
+    QStringList rowData = data.split("\n").at(0).split(";");
+    // Test if the table has four columns (the header columns)
     if(rowData.size() == 4 
+    // Now test if the four columns in the first row have the correct header strings in them
         && rowData[0] == "Name"
         && rowData[1] == "HP"
         && rowData[2] == "Is NPC"
         && rowData[3] == "Additional information") {
+        // True, so return
         return true;
-    }
+    }// Otherwise return false
     return false;
 }

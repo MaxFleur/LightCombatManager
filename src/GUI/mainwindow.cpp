@@ -130,17 +130,33 @@ void MainWindow::openTable() {
     // Get the file path
     QString filename = QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
     // Test if data can be read using the filename and if the table format is set correctly
-    if(m_file->getCSVData(filename)) {
-        // Table and char creation not active for a short time
-        isCreationActive = false;
-        isTableActive = false;
-        // If the data collection was successful, create the table widget and set it as central
-        setTableWidget(true, m_file->getData());
-        return;
-    } 
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, 
-                                                              "Could not load table!",
-                                                              "The loading of the table failed. Please make sure that the access rights to the file and the table format are set correctly.");
+    int code = m_file->getCSVData(filename);
+    switch(code) {
+        // Error message if table could not be read
+        case 0 : 
+            {
+                QMessageBox::StandardButton reply = QMessageBox::critical(this, 
+                                                                "Could not read table!",
+                                                                "The loading of the table failed because of missing access rights.");
+                break;
+            }
+        // Error message if table is in wrong format
+        case 1 : 
+            {
+                QMessageBox::StandardButton reply = QMessageBox::critical(this, 
+                                                                "Wrong table format!",
+                                                                "The loading of the table failed because the table has the wrong format.");
+                break;
+            }
+        // Else continue normally
+        case 2 :
+            // Table and char creation not active for a short time
+            isCreationActive = false;
+            isTableActive = false;
+            // If the data collection was successful, create the table widget and set it as central
+            setTableWidget(true, m_file->getData());
+            break;
+    }    
 }
 
 // Display about message
@@ -150,7 +166,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.7.3 Beta.");
+            "\nVersion 0.7.4 Beta.");
 }
 
 void MainWindow::aboutQt()

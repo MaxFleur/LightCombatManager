@@ -12,12 +12,14 @@ public:
     // Save a table of characters
     void saveTable(QTableWidget *tableWidget, QString filename);
     // Reopen a saved table
-    bool getCSVData(QString filename);
+    int getCSVData(QString filename);
     
     QString getData() { return m_data; }
     
 private:
+    // Data used to fill the table
     QString m_data;
+    // Checks if a table is in the right format
     bool checkTableFormat(QString data);
 };
 using FileHandlerRef = std::shared_ptr<FileHandler>;

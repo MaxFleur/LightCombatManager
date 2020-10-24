@@ -6,7 +6,7 @@
 
 #include "WelcomeWidget.h"
 #include "CharacterCreationWidget.h"
-#include "TableWidget.h"
+#include "Table/TableWidget.h"
 #include "../CharacterHandler.h"
 #include "../FileHandler.h"
 

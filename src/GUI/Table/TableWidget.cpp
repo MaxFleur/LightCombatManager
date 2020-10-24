@@ -1,4 +1,4 @@
-#include "../../include/GUI/TableWidget.h"
+#include "../../../include/GUI/Table/TableWidget.h"
 
 // Create the welcome widget at instantiation
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)

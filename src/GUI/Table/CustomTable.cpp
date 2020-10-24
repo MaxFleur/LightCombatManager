@@ -1,4 +1,4 @@
-#include "../../include/GUI/CustomTable.h"
+#include "../../../include/GUI/Table/CustomTable.h"
 
 CustomTable::CustomTable(QWidget *parent)
 {

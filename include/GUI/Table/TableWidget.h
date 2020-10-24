@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtWidgets>
-#include "../CharacterHandler.h"
+#include "../../CharacterHandler.h"
 #include "CustomTable.h"
 #include "Delegate.h"
     

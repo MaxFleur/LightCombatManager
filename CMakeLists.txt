@@ -6,18 +6,18 @@ set(SRC_LIST
     include/GUI/mainwindow.h
     include/GUI/WelcomeWidget.h
     include/GUI/CharacterCreationWidget.h
-    include/GUI/TableWidget.h
-    include/GUI/CustomTable.h
-    include/GUI/Delegate.h
+    include/GUI/Table/TableWidget.h
+    include/GUI/Table/CustomTable.h
+    include/GUI/Table/Delegate.h
     include/FileHandler.h
 
     main.cpp 
     src/GUI/mainwindow.cpp 
     src/GUI/WelcomeWidget.cpp 
     src/GUI/CharacterCreationWidget.cpp
-    src/GUI/TableWidget.cpp
-    src/GUI/CustomTable.cpp
-    src/GUI/Delegate.cpp
+    src/GUI/Table/TableWidget.cpp
+    src/GUI/Table/CustomTable.cpp
+    src/GUI/Table/Delegate.cpp
     src/CharacterHandler.cpp
     src/FileHandler.cpp
 )

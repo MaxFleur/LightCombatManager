@@ -3,6 +3,7 @@
 #include <QtWidgets>
 #include "../CharacterHandler.h"
 #include "CustomTable.h"
+#include "Delegate.h"
     
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {
@@ -58,6 +59,8 @@ private:
     QLabel          *enterPlayerLabel;
     // The final layout that will be returned
     QVBoxLayout     *tableLayout;
+    // Spin box delegate to set spinboxes into the hp column
+    SpinBoxDelegate *delegate;
     
     // Has a row been selected via clicking
     bool isRowSelected = false;

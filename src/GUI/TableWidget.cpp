@@ -38,6 +38,9 @@ void TableWidget::createTableSkeleton() {
     tableWidget->setColumnWidth(1, 35);
     tableWidget->setColumnWidth(2, 60);
     tableWidget->setColumnWidth(3, 395);
+    // Set spinboxes for the hp column
+    delegate = new SpinBoxDelegate(this);
+    tableWidget->setItemDelegateForColumn(1, delegate);
     
     // Allocate the main layout, add the table widget to this
     tableLayout = new QVBoxLayout(this);

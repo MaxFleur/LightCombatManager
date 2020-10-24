@@ -8,6 +8,7 @@ set(SRC_LIST
     include/GUI/CharacterCreationWidget.h
     include/GUI/TableWidget.h
     include/GUI/CustomTable.h
+    include/GUI/Delegate.h
     include/FileHandler.h
 
     main.cpp 
@@ -16,6 +17,7 @@ set(SRC_LIST
     src/GUI/CharacterCreationWidget.cpp
     src/GUI/TableWidget.cpp
     src/GUI/CustomTable.cpp
+    src/GUI/Delegate.cpp
     src/CharacterHandler.cpp
     src/FileHandler.cpp
 )

@@ -36,10 +36,13 @@ void MainWindow::closeEvent( QCloseEvent *event ) {
         QMessageBox::StandardButton reply = QMessageBox::question(this, 
                                                               "Exit",
                                                               "Currently, you are in a combat. Do you want to save the characters before exiting the program?",
-                                QMessageBox::Yes|QMessageBox::No);
+                                QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
         // If so, save the table
         if (reply == QMessageBox::Yes) {
             saveTable();
+        // Ignore if Cancel button is pressed
+        } else if (reply == QMessageBox::Cancel) {
+            event->ignore();
         } 
         // Exit
         QApplication::exit;
@@ -143,7 +146,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.7.2 Beta.");
+            "\nVersion 0.7.3 Beta.");
 }
 
 void MainWindow::aboutQt()

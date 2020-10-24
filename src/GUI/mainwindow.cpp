@@ -139,11 +139,11 @@ void MainWindow::openTable() {
 // Display about message
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("About Light Combat Manager"), 
+    QMessageBox::about(this, "About Light Combat Manager", 
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.7.0 Beta.");
+            "\nVersion 0.7.1 Beta.");
 }
 
 void MainWindow::aboutQt()

@@ -76,9 +76,9 @@ void TableWidget::setTableData() {
             tableWidget->setItem(i, 1, new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
             // Check if the bool is true or false, return yes or no
             if(m_char->getCharacters().at(i)->isNPC) {
-                tableWidget->setItem(i, 2, new QTableWidgetItem("Yes"));
+                tableWidget->setItem(i, 2, new QTableWidgetItem("X"));
             } else {
-                tableWidget->setItem(i, 2, new QTableWidgetItem("No"));
+                tableWidget->setItem(i, 2, new QTableWidgetItem(" "));
             }
             // Store additional information
             tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->additionalInf)));

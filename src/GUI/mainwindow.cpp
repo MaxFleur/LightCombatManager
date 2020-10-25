@@ -105,7 +105,7 @@ void MainWindow::openTable() {
     if(isCreationActive) {
         // If a game is currently running, asks if a table shoud be opened anyway
         QMessageBox::StandardButton reply = QMessageBox::question(this, 
-                                                              "Open table??",
+                                                              "Open table?",
                                                               "Currently, you are storing characters for a beginning combat. Do you want to open another table anyway?",
                                 QMessageBox::Yes|QMessageBox::No);
         // If so, delete all existing characters
@@ -132,12 +132,9 @@ void MainWindow::openTable() {
     // Test if data can be read using the filename and if the table format is set correctly
     int code = m_file->getCSVData(filename);
     switch(code) {
-        // Error message if table could not be read
+        // If the loading of a file was aborted by the user, just return
         case 0 : 
             {
-                QMessageBox::StandardButton reply = QMessageBox::critical(this, 
-                                                                "Could not read table!",
-                                                                "The loading of the table failed because of missing access rights.");
                 break;
             }
         // Error message if table is in wrong format
@@ -166,7 +163,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.7.5 Beta.");
+            "\nVersion 0.7.6 Beta.");
 }
 
 void MainWindow::aboutQt()

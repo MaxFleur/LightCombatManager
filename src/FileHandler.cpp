@@ -4,7 +4,7 @@ FileHandler::FileHandler() {
 } 
 
 // Stores a table with characters as a csv file
-void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
+void FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter) {
     // Create a file using the given filename
     QFile file(filename);
     // Check if device is open for writing
@@ -33,6 +33,9 @@ void FileHandler::saveTable(QTableWidget *tableWidget, QString filename) {
                 }
                 // For each row, every cell will be added to the string list
                 strList << tableWidget->item(i, j)->text();
+            }
+            if(i == 0) {
+                strList << QString::number(rowEntered) << QString::number(roundCounter);
             }
             // Now put the list to the text stream 
             // The "\n" guarantees that the rows are set correctly in the csv table

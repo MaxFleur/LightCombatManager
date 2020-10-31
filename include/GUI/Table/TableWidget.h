@@ -17,6 +17,8 @@ public:
     
     // Return the height of this widget;
     int getHeight() { return height; }
+    int getRowEntered() { return rowEntered; }
+    int getRoundCounter() { return roundCounter; }
         
 private slots:
     // Enable drag and drop in the widget

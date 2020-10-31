@@ -10,7 +10,7 @@ public:
     // Constructor
     FileHandler();
     // Save a table of characters
-    void saveTable(QTableWidget *tableWidget, QString filename);
+    void saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter);
     // Reopen a saved table
     int getCSVData(QString filename);
     

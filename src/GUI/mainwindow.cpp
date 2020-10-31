@@ -97,7 +97,7 @@ void MainWindow::saveTable() {
         return;
     } 
     // Otherwise store the table
-    m_file->saveTable(tableWidget->getTableWidget(), filename);
+    m_file->saveTable(tableWidget->getTableWidget(), filename, tableWidget->getRowEntered(), tableWidget->getRoundCounter());
 }
 
 // Open the table

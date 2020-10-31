@@ -41,6 +41,8 @@ private:
     void setHeight();
     // Increments the round counter
     void incrementRoundCounter();
+    // Fill the enterPlayerLabel with some data
+    void setEnterPlayerLabelData();
     // Sets the text displaying the player selected with Enter
     void setCurrentPlayer();
     // Key event function

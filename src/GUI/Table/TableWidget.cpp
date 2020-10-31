@@ -73,7 +73,7 @@ void TableWidget::setTableData() {
             if(x == 1) {
                 rowEntered = rowData[4].toInt();
                 // Decrement before the incrementRoundCounter function is called
-                roundCounter = rowData[5].toInt() - 1;
+                roundCounter = rowData[5].toInt();
             }
         }
         
@@ -99,7 +99,7 @@ void TableWidget::setTableData() {
         // Select the first row 
         rowEntered = 0;
         // Then set the round counter to 0 before incrementing
-        roundCounter = 0;
+        roundCounter = 1;
     }
     // Set the coluḿns containing the isNPC values as not visible
     for(int i = 0; i < tableWidget->rowCount(); i++) {
@@ -120,7 +120,7 @@ void TableWidget::createLowerWidget() {
     removeButton->setToolTip("Removes a character from the list.");
     // We start with the first round, so set the counter to 1
     roundCounterLabel = new QLabel;
-    incrementRoundCounter();
+    setEnterPlayerLabelData();
     // Set the player displaying label
     enterPlayerLabel = new QLabel;
     
@@ -152,10 +152,8 @@ void TableWidget::setHeight() {
     height += 120;
 }
 
-// Increments the row counter every time navigating with Enter starts again at the beginning
-void TableWidget::incrementRoundCounter() {
-    // Increment
-    roundCounter++;
+// Passes the name of the player on the move to the player enter label
+void TableWidget::setEnterPlayerLabelData() {
     roundCounterLabel->setText("Round " + QString::number(roundCounter));
 }
 
@@ -266,7 +264,8 @@ void TableWidget::keyPressEvent(QKeyEvent *event) {
         if(rowEntered == tableWidget->rowCount() - 1) {
             rowEntered = 0;
             // Now the next row begins, so increment the counter
-            incrementRoundCounter();
+            roundCounter++;
+            setEnterPlayerLabelData();
         } else {
             rowEntered++;
         }

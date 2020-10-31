@@ -69,14 +69,18 @@ int FileHandler::getCSVData(QString filename) {
 // Checks if a table is in the correct format before using it
 bool FileHandler::checkTableFormat(QString data) {
     // Get the stored table row data information
-    QStringList rowData = data.split("\n").at(0).split(";");
+    QStringList rowDataHeader = data.split("\n").at(0).split(";");
+    QStringList rowDataFirstRow = data.split("\n").at(1).split(";");
     // Test if the table has four columns (the header columns)
-    if(rowData.size() == 4 
+    if(rowDataHeader.size() == 4 
     // Now test if the four columns in the first row have the correct header strings in them
-        && rowData[0] == "Name"
-        && rowData[1] == "HP"
-        && rowData[2] == "Is NPC"
-        && rowData[3] == "Additional information") {
+        && rowDataHeader[0] == "Name"
+        && rowDataHeader[1] == "HP"
+        && rowDataHeader[2] == "Is NPC"
+        && rowDataHeader[3] == "Additional information"
+        // The first row is checked -> if it has six entries (5th containing player on the move and 
+        // 6th the round counter), we can continue
+        && rowDataFirstRow.size() == 6) {
         // True, so return
         return true;
     }// Otherwise return false

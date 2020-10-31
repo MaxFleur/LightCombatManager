@@ -4,6 +4,7 @@
 #include "../../CharacterHandler.h"
 #include "CustomTable.h"
 #include "Delegate.h"
+#include <iostream>
     
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {

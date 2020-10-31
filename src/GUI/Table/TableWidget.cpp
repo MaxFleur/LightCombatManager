@@ -65,10 +65,18 @@ void TableWidget::setTableData() {
             // Split into the different column data
             rowData = rowOfData.at(x).split(";");
             // Create the widget items for the table
-            for (int y = 0; y < rowData.size(); y++) {
+            for (int y = 0; y < 4; y++) {
                 tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
             }
+            // If we are at the first row (which contains information about round counter and the
+            // player on the move), we get this data
+            if(x == 1) {
+                rowEntered = rowData[4].toInt();
+                // Decrement before the incrementRoundCounter function is called
+                roundCounter = rowData[5].toInt() - 1;
+            }
         }
+        
     } else {
         // If no data is provided via csv, set the data according to the vector of chars
         // Set the number of rows to characters created
@@ -88,6 +96,10 @@ void TableWidget::setTableData() {
             // Store additional information
             tableWidget->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(m_char->getCharacters().at(i)->additionalInf)));
         }
+        // Select the first row 
+        rowEntered = 0;
+        // Then set the round counter to 0 before incrementing
+        roundCounter = 0;
     }
     // Set the coluḿns containing the isNPC values as not visible
     for(int i = 0; i < tableWidget->rowCount(); i++) {
@@ -108,7 +120,6 @@ void TableWidget::createLowerWidget() {
     removeButton->setToolTip("Removes a character from the list.");
     // We start with the first round, so set the counter to 1
     roundCounterLabel = new QLabel;
-    roundCounter = 0;
     incrementRoundCounter();
     // Set the player displaying label
     enterPlayerLabel = new QLabel;
@@ -130,8 +141,6 @@ void TableWidget::createLowerWidget() {
     for(int i = 0; i < tableWidget->rowCount(); i++) {
         identifiers.push_back(i);
     }
-    // Select the first row 
-    rowEntered = 0;
     selectEnteredRow();
     setCurrentPlayer();
 }

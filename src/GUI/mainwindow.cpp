@@ -88,6 +88,12 @@ void MainWindow::newCombat()
 
 // Save the table
 void MainWindow::saveTable() {
+    if(tableWidget->getRowCount() < 2) {
+        QMessageBox::StandardButton reply = QMessageBox::critical(this, 
+                                                                "Too few table entries!",
+                                                                "The table contains less then 2 entries.");
+        return;
+    }
     // Set a filename
     QString filename = QFileDialog::getSaveFileName(this,
         "Save Table", QDir::currentPath(),
@@ -163,7 +169,7 @@ void MainWindow::about()
             "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
             "\nhttps://github.com/MaxFleur/LightCombatManager"
             "\n"
-            "\nVersion 0.7.8 Beta.");
+            "\nVersion 0.7.9 Beta.");
 }
 
 void MainWindow::aboutQt()

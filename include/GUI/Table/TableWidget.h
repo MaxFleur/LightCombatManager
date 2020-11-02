@@ -20,6 +20,9 @@ public:
     int getHeight() { return height; }
     int getRowEntered() { return rowEntered; }
     int getRoundCounter() { return roundCounter; }
+    
+    // Returns the number of rows
+    int getRowCount() { return tableWidget->rowCount(); }
         
 private slots:
     // Enable drag and drop in the widget

@@ -2,7 +2,7 @@
 LightCombatManager is a small combat manager for DnD-like games, primarliy for Pathfinder I. 
 
 # Tools
-LightCombatManager is written in C++14. The user interface is created with QT [1].
+LightCombatManager is written in C++14. The user interface is created with QT5 [1].
 
 # Installation
 
@@ -22,10 +22,11 @@ There are multiple ways to build this application on Windows. The following desc
 1. Download or clone this repository.
 2. Open up `cmd` or `git bash` and navigate to this repository. 
 3. Create a build folder: `mkdir build`. Navigate into this folder via `cd build`.
-4. Hit `cmake.exe -G “Visual Studio 16 2019” -A x64 ..`. This will create a `sln`-file.
-5. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
-6. Inside the `build`-file, a file named `Debug` or `Release` should have been created. Navigate to this folder.
-7. The `exe`-file for the application should be found here. To successfully run the exe, `qwindows.dll`, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
+4. Set the CMake Prefix Path for `Qt` inside the `CMakeLists.txt`. Example: `set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\")` for `Qt 5.15` and `msvc compiler`
+5. Hit `cmake.exe -G “Visual Studio 16 2019” -A x64 ..`. This will create a `sln`-file. 
+6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
+7. Inside the `build`-file, a file named `Debug` or `Release` should have been created. Navigate to this folder.
+8. The `exe`-file for the application should be found here. To successfully run the exe, `qwindows.dll`, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
    have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug).
 
 [1] https://www.qt.io/

@@ -13,7 +13,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
     setHeight();
     // Connect drag and drop function, enabled each time a row is dragged
     connect(tableWidget, SIGNAL (cellEntered(int,int)), this, SLOT(dragAndDrop(int,int)));
-    connect(removeButton, SIGNAL (clicked ()), this, SLOT(removeRow()));
     connect(tableWidget, SIGNAL (cellClicked(int,int)), this, SLOT(rowSelected()));
 }
 
@@ -115,9 +114,6 @@ void TableWidget::createLowerWidget() {
     exitButton = new QPushButton("Exit");
     // Tooltip
     exitButton->setToolTip("Exit the combat. This cannot be undone.");
-    // Same for the remove button
-    removeButton = new QPushButton("Remove character");
-    removeButton->setToolTip("Removes a character from the list.");
     // We start with the first round, so set the counter to 1
     roundCounterLabel = new QLabel;
     setEnterPlayerLabelData();
@@ -133,7 +129,6 @@ void TableWidget::createLowerWidget() {
     lowerLayout->addSpacing(30);
     lowerLayout->addWidget(enterPlayerLabel);
     lowerLayout->addWidget(spacer);
-    lowerLayout->addWidget(removeButton);
     lowerLayout->addWidget(exitButton);
     tableLayout->addLayout(lowerLayout);
     

@@ -56,8 +56,6 @@ private:
     QHBoxLayout     *lowerLayout;
     // Button to exit the layout
     QPushButton     *exitButton;
-    // Button to remove a row
-    QPushButton     *removeButton;
     // The label displaying the current round number
     QLabel          *roundCounterLabel;
     // The label displaying the current player selected with Enter

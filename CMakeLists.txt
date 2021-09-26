@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.5)
 project(LightCombatManager LANGUAGES CXX)
 
 set(SRC_LIST 
-    include/GUI/mainwindow.h
-    include/GUI/WelcomeWidget.h
-    include/GUI/CharacterCreationWidget.h
-    include/GUI/Table/TableWidget.h
-    include/GUI/Table/CustomTable.h
-    include/GUI/Table/Delegate.h
-    include/FileHandler.h
+    include/GUI/mainwindow.hpp
+    include/GUI/WelcomeWidget.hpp
+    include/GUI/CharacterCreationWidget.hpp
+    include/GUI/Table/TableWidget.hpp
+    include/GUI/Table/CustomTable.hpp
+    include/GUI/Table/Delegate.hpp
+    include/FileHandler.hpp
 
     main.cpp 
     src/GUI/mainwindow.cpp 

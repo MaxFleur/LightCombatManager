@@ -1,14 +1,15 @@
 # LightCombatManager
-LightCombatManager is a small combat manager for DnD-like games, primarliy for Pathfinder I. 
+LightCombatManager is a small combat manager for DnD-like games, primarily for Pathfinder 1e. 
 
 # Tools
-LightCombatManager is written in C++14. The user interface is created with QT5 [1].
+LightCombatManager is written in C++14. The user interface is created with QT5 [1]. The code formatting is done using Uncrustify. [2]
 
 # Installation
 
 ## Linux
 
-`cmake` and `QT5` are required to build this application. QT on Ubuntu can be installed with `qt5-default`, for Manjaro or other Arch-based distributions install `qt5-base`.
+`cmake` and `QT5` are required to build this application. QT on Ubuntu can be installed with `qt5-default`, for Manjaro or other Arch-based distributions install `qt5-base`. `Uncrustify` is also included in most Linux distro packages. \
+For Windows, there are both Pre-Builds for CMake, QT5 and Uncrustify.
 
 1. Download or clone this repository.
 2. Open a terminal and `cd` into this repository.
@@ -28,5 +29,10 @@ There are multiple ways to build this application on Windows. The following desc
 7. Inside the `build`-file, a file named `Debug` or `Release` should have been created. Navigate to this folder.
 8. The `exe`-file for the application should be found here. To successfully run the exe, `qwindows.dll`, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
    have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug).
+   
+# Contribution
 
-[1] https://www.qt.io/
+To contribute, please format your code using the provided `uncrustify.cfg`. 
+
+[1] https://www.qt.io/ \
+[2] https://github.com/uncrustify/uncrustify

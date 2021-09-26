@@ -5,11 +5,12 @@
 
 // This is just a short helping class, disabling the arrow key input
 class CustomTable : public QTableWidget {
-Q_OBJECT
+	Q_OBJECT
 public:
-CustomTable(QWidget *parent = nullptr);
+	CustomTable(QWidget *parent = nullptr);
 
 protected:
-// Key press event that is reimplemented
-void keyPressEvent(QKeyEvent *event) override;
+	// Key press event that is reimplemented
+	void
+	keyPressEvent(QKeyEvent *event) override;
 };

@@ -19,7 +19,8 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 
 
 // This function creates the table of this widget
-void TableWidget::createTableSkeleton()
+void
+TableWidget::createTableSkeleton()
 {
 	// Allocate the table widget
 	tableWidget = new CustomTable();
@@ -51,7 +52,8 @@ void TableWidget::createTableSkeleton()
 
 
 // Set the data inside the table
-void TableWidget::setTableData()
+void
+TableWidget::setTableData()
 {
 	if (m_isDataStored) {
 		// If the data has been stored, take it and split it into rows
@@ -112,7 +114,8 @@ void TableWidget::setTableData()
 
 
 // Create the lower widget, including the button
-void TableWidget::createLowerWidget()
+void
+TableWidget::createLowerWidget()
 {
 	// Allocate
 	lowerLayout = new QHBoxLayout();
@@ -148,7 +151,8 @@ void TableWidget::createLowerWidget()
 }
 
 
-void TableWidget::setHeight()
+void
+TableWidget::setHeight()
 {
 	for (int i = 0; i < tableWidget->rowCount(); i++) {
 		height += tableWidget->rowHeight(i);
@@ -158,14 +162,16 @@ void TableWidget::setHeight()
 
 
 // Passes the name of the player on the move to the player enter label
-void TableWidget::setEnterPlayerLabelData()
+void
+TableWidget::setEnterPlayerLabelData()
 {
 	roundCounterLabel->setText("Round " + QString::number(roundCounter));
 }
 
 
 // Passes the current player's name to the label
-void TableWidget::setCurrentPlayer()
+void
+TableWidget::setCurrentPlayer()
 {
 	enterPlayerLabel->setText("Current: " + tableWidget->item(rowEntered, 0)->text());
 }
@@ -174,7 +180,8 @@ void TableWidget::setCurrentPlayer()
 // This function enables drag and drop of table rows
 // Which works by switching the values of a row with it's upper or lower "neighbor"
 // This is done until the row is at the desired position
-void TableWidget::dragAndDrop(int row, int column)
+void
+TableWidget::dragAndDrop(int row, int column)
 {
 	// New row index
 	int newRow;
@@ -218,7 +225,8 @@ void TableWidget::dragAndDrop(int row, int column)
 
 
 // Remove a row/character of the table
-void TableWidget::removeRow()
+void
+TableWidget::removeRow()
 {
 	// if only one character remains, remove this character
 	// @note This part can change later, because the slot for selected rows is not called if only one row remains
@@ -255,7 +263,8 @@ void TableWidget::removeRow()
 
 
 // Check if a row is selected
-void TableWidget::rowSelected()
+void
+TableWidget::rowSelected()
 {
 	// Set to true if no row has been selected
 	if (!isRowSelected) {
@@ -265,7 +274,8 @@ void TableWidget::rowSelected()
 
 
 // Select a row with the Enter key
-void TableWidget::selectEnteredRow()
+void
+TableWidget::selectEnteredRow()
 {
 	// First, clear all selected rows (not their data, just the selection)
 	tableWidget->selectionModel()->clearSelection();
@@ -275,7 +285,8 @@ void TableWidget::selectEnteredRow()
 
 
 // This function calls the row remove function if the delete key is pressed
-void TableWidget::keyPressEvent(QKeyEvent *event)
+void
+TableWidget::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Delete) {
 		removeRow();

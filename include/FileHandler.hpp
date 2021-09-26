@@ -13,7 +13,8 @@ void saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int 
 // Reopen a saved table
 int getCSVData(QString filename);
 
-QString getData()
+QString
+getData()
 {
 	return m_data;
 }

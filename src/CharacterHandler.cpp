@@ -7,7 +7,8 @@ CharacterHandler::CharacterHandler()
 
 
 // Stores a new character in the vector
-void CharacterHandler::storeCharacter(
+void
+CharacterHandler::storeCharacter(
 	std::string	name,
 	int		initiative = 0,
 	int		modifier = 0,
@@ -21,7 +22,8 @@ void CharacterHandler::storeCharacter(
 
 
 // Sort all created characters according to initiative and modifiers.
-void CharacterHandler::sortCharacters()
+void
+CharacterHandler::sortCharacters()
 {
 	// First, use a lambda to sort the characters by their final initiative in descending order
 	std::sort(characters.begin(), characters.end(), [](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
@@ -50,7 +52,8 @@ void CharacterHandler::sortCharacters()
 
 
 // Remove all characters if the user cancels during character creation
-void CharacterHandler::clearCharacters()
+void
+CharacterHandler::clearCharacters()
 {
 	// Clear if not empty
 	if (!characters.empty()) {

@@ -12,49 +12,56 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 
 
 // Set the name of the current character
-void CharacterCreationWidget::setName(const QString &name)
+void
+CharacterCreationWidget::setName(const QString &name)
 {
 	m_name = name.toStdString();
 }
 
 
 // Set initiative of the current character
-void CharacterCreationWidget::setInitiative(int initiative)
+void
+CharacterCreationWidget::setInitiative(int initiative)
 {
 	m_initiative = initiative;
 }
 
 
 // Set the initiative modifier of the current character
-void CharacterCreationWidget::setModifier(int modifier)
+void
+CharacterCreationWidget::setModifier(int modifier)
 {
 	m_modifier = modifier;
 }
 
 
 // Set if the current character is an NPC or not
-void CharacterCreationWidget::setIsNPC(bool isNPC)
+void
+CharacterCreationWidget::setIsNPC(bool isNPC)
 {
 	m_isNPC = isNPC;
 }
 
 
 // Set the current character's hp
-void CharacterCreationWidget::setHP(int hp)
+void
+CharacterCreationWidget::setHP(int hp)
 {
 	m_hp = hp;
 }
 
 
 // Set some additional information for the current character, if needed
-void CharacterCreationWidget::setAdditionalInformation(const QString &additionalInf)
+void
+CharacterCreationWidget::setAdditionalInformation(const QString &additionalInf)
 {
 	m_additionalInf = additionalInf.toStdString();
 }
 
 
 // Save the current character and reset to create another one
-void CharacterCreationWidget::saveAndCreateNewCharacter()
+void
+CharacterCreationWidget::saveAndCreateNewCharacter()
 {
 	// If no name was entered, display a warning message and abort
 	if (m_name.empty()) {
@@ -70,7 +77,8 @@ void CharacterCreationWidget::saveAndCreateNewCharacter()
 
 
 // This stores the last created character. After this, the table widget will be created.
-void CharacterCreationWidget::storeLastCharacter()
+void
+CharacterCreationWidget::storeLastCharacter()
 {
 	// Don't do anything if no name has been set
 	if (!m_name.empty()) {
@@ -80,7 +88,8 @@ void CharacterCreationWidget::storeLastCharacter()
 
 
 // Reset the current character
-void CharacterCreationWidget::resetCharacter()
+void
+CharacterCreationWidget::resetCharacter()
 {
 	// Reset all displayed values
 	nameEdit->setText("");
@@ -100,7 +109,8 @@ void CharacterCreationWidget::resetCharacter()
 }
 
 
-void CharacterCreationWidget::createWidget()
+void
+CharacterCreationWidget::createWidget()
 {
 	bottomFiller = new QWidget;
 	bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -217,7 +227,8 @@ void CharacterCreationWidget::createWidget()
 
 
 // Connect all widgets to the functions
-void CharacterCreationWidget::connectWidgets()
+void
+CharacterCreationWidget::connectWidgets()
 {
 	connect(nameEdit, SIGNAL(textEdited(const QString&)), this, SLOT(setName(QString)));
 	connect(initiativeBox, SIGNAL(valueChanged(int)), this, SLOT(setInitiative(int)));

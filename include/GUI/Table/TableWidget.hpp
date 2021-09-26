@@ -13,34 +13,40 @@ Q_OBJECT
 public:
 TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data = "", QWidget *parent = 0);
 
-QPushButton *getExitButton()
+QPushButton *
+getExitButton()
 {
 	return exitButton;
 }
 
-QTableWidget *getTableWidget()
+QTableWidget *
+getTableWidget()
 {
 	return tableWidget;
 }
 
 // Return the height of this widget;
-int getHeight()
+int
+getHeight()
 {
 	return height;
 }
 
-int getRowEntered()
+int
+getRowEntered()
 {
 	return rowEntered;
 }
 
-int getRoundCounter()
+int
+getRoundCounter()
 {
 	return roundCounter;
 }
 
 // Returns the number of rows
-int getRowCount()
+int
+getRowCount()
 {
 	return tableWidget->rowCount();
 }

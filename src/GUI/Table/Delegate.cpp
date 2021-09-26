@@ -8,9 +8,10 @@ SpinBoxDelegate::SpinBoxDelegate(QObject *parent)
 }
 
 
-QWidget *SpinBoxDelegate::createEditor(QWidget *parent,
-				       const QStyleOptionViewItem &,
-				       const QModelIndex &) const
+QWidget *
+SpinBoxDelegate::createEditor(QWidget *parent,
+			      const QStyleOptionViewItem &,
+			      const QModelIndex &) const
 {
 	QSpinBox *editor = new QSpinBox(parent);
 

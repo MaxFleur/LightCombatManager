@@ -9,7 +9,8 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 
 
 // This function creates the welcoming widget
-void WelcomeWidget::createWidget()
+void
+WelcomeWidget::createWidget()
 {
 	// First, set all filler widgets
 	topFiller = new QWidget;

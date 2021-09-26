@@ -6,7 +6,8 @@ FileHandler::FileHandler()
 
 
 // Stores a table with characters as a csv file
-void FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter)
+void
+FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter)
 {
 	// Create a file using the given filename
 	QFile file(filename);
@@ -52,7 +53,8 @@ void FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int row
 
 
 // Open an existing csv table and stream it's data to m_data
-int FileHandler::getCSVData(QString filename)
+int
+FileHandler::getCSVData(QString filename)
 {
 	// Create a file using the given path
 	QFile importedCSV(filename);
@@ -75,7 +77,8 @@ int FileHandler::getCSVData(QString filename)
 
 
 // Checks if a table is in the correct format before using it
-bool FileHandler::checkTableFormat(QString data)
+bool
+FileHandler::checkTableFormat(QString data)
 {
 	// Get the stored table row data information
 	QStringList rowDataHeader = data.split("\n").at(0).split(";");

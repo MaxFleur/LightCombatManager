@@ -10,12 +10,14 @@ Q_OBJECT
 public:
 CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent = 0);
 // Return the cancel button, connecting the parent widget to this button
-QPushButton *getCancelButton()
+QPushButton *
+getCancelButton()
 {
 	return cancelButton;
 }
 
-QPushButton *getFinishButton()
+QPushButton *
+getFinishButton()
 {
 	return finishButton;
 }
@@ -23,7 +25,8 @@ QPushButton *getFinishButton()
 // Store the last created character before creating the table widget
 void storeLastCharacter();
 // Returns if a name has been entered
-bool isNameEmpty()
+bool
+isNameEmpty()
 {
 	return m_name.empty();
 }

@@ -17,7 +17,8 @@ MainWindow::MainWindow()
 
 
 // This function is called if the program is closed
-void MainWindow::closeEvent(QCloseEvent *event)
+void
+MainWindow::closeEvent(QCloseEvent *event)
 {
 	// If a game has been started, send a message if the game should be closed
 	if (isCreationActive) {
@@ -53,7 +54,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 
 // Initiate a new combat
-void MainWindow::newCombat()
+void
+MainWindow::newCombat()
 {
 	// Now a game begins, so set to true and reset the widget
 	if (isCreationActive) {
@@ -91,7 +93,8 @@ void MainWindow::newCombat()
 
 
 // Save the table
-void MainWindow::saveTable()
+void
+MainWindow::saveTable()
 {
 	if (tableWidget->getRowCount() < 2) {
 		QMessageBox::StandardButton reply = QMessageBox::critical(this,
@@ -114,7 +117,8 @@ void MainWindow::saveTable()
 
 
 // Open the table
-void MainWindow::openTable()
+void
+MainWindow::openTable()
 {
 	if (isCreationActive) {
 		// If a game is currently running, asks if a table shoud be opened anyway
@@ -173,7 +177,8 @@ void MainWindow::openTable()
 
 
 // Display about message
-void MainWindow::about()
+void
+MainWindow::about()
 {
 	QMessageBox::about(this, "About Light Combat Manager",
 			   "Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
@@ -183,13 +188,15 @@ void MainWindow::about()
 }
 
 
-void MainWindow::aboutQt()
+void
+MainWindow::aboutQt()
 {
 }
 
 
 // Create the user interface actions
-void MainWindow::createActions()
+void
+MainWindow::createActions()
 {
 	// Action to start a new combat
 	newAct = new QAction("&New Combat", this);
@@ -222,7 +229,8 @@ void MainWindow::createActions()
 
 
 // Create the dropdown menus
-void MainWindow::createMenus()
+void
+MainWindow::createMenus()
 {
 	// File menu for starting, saving and opening a combat
 	fileMenu = menuBar()->addMenu("&File");
@@ -238,7 +246,8 @@ void MainWindow::createMenus()
 
 
 // This function cancels the character creation widget and returns to the welcoming widget
-void MainWindow::cancelCreation()
+void
+MainWindow::cancelCreation()
 {
 	// Create the message box
 	QMessageBox::StandardButton reply = QMessageBox::question(this,
@@ -257,7 +266,8 @@ void MainWindow::cancelCreation()
 
 
 // Finishes the character creation, sorting the created characters and switching to the table layout
-void MainWindow::finishCreation()
+void
+MainWindow::finishCreation()
 {
 	// If no character was stored or just one character was stored and the name field of the char creation widget is empty, abort
 	if (m_char->getCharacters().size() == 0 || m_char->getCharacters().size() == 1 && characterCreationWidget->isNameEmpty()) {
@@ -286,7 +296,8 @@ void MainWindow::finishCreation()
 
 
 // Exits the combat and returns to the welcoming widget
-void MainWindow::exitCombat()
+void
+MainWindow::exitCombat()
 {
 	// Standard reply, asking if the user is sure
 	QMessageBox::StandardButton reply = QMessageBox::question(this,
@@ -305,7 +316,8 @@ void MainWindow::exitCombat()
 
 
 // Helper function for setting the welcoming widget
-void MainWindow::setWelcomingWidget()
+void
+MainWindow::setWelcomingWidget()
 {
 	// Set this window as parent for the widgets
 	welcomeWidget = new WelcomeWidget(this);
@@ -319,7 +331,8 @@ void MainWindow::setWelcomingWidget()
 
 
 // Helper function for setting the character creation widget
-void MainWindow::setCharacterCreationWidget()
+void
+MainWindow::setCharacterCreationWidget()
 {
 	// Allocate the character creation widget, passing the char sort reference to it
 	characterCreationWidget = new CharacterCreationWidget(m_char, this);
@@ -334,7 +347,8 @@ void MainWindow::setCharacterCreationWidget()
 
 
 // Helper function for setting the table widget
-void MainWindow::setTableWidget(bool isDataStored, QString data)
+void
+MainWindow::setTableWidget(bool isDataStored, QString data)
 {
 	tableWidget = new TableWidget(m_char, isDataStored, data, this);
 	setCentralWidget(tableWidget);

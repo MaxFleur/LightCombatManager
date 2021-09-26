@@ -40,7 +40,8 @@ void sortCharacters();
 void clearCharacters();
 
 // Check if the vector
-std::vector<std::shared_ptr<Character> > getCharacters()
+std::vector<std::shared_ptr<Character> >
+getCharacters()
 {
 	return characters;
 }

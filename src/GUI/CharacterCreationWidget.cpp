@@ -89,21 +89,21 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	nameInitLayout->addWidget(initLabel);
 	nameInitLayout->addWidget(m_initBox);
 	nameInitLayout->setAlignment(Qt::AlignTop);
-    
-    auto *modHPisNPCLayout = new QHBoxLayout;
-    modHPisNPCLayout->addWidget(initModifierLabel);
+
+	auto *modHPisNPCLayout = new QHBoxLayout;
+	modHPisNPCLayout->addWidget(initModifierLabel);
 	modHPisNPCLayout->addWidget(m_initModifierBox);
 	modHPisNPCLayout->addWidget(hpLabel);
 	modHPisNPCLayout->addWidget(m_hpBox);
 	modHPisNPCLayout->addWidget(isNPCLabel);
 	modHPisNPCLayout->addWidget(m_isNPCBox);
-    
+
 	auto *spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    
-    modHPisNPCLayout->addWidget(spacer);
-    modHPisNPCLayout->setAlignment(Qt::AlignTop);
-    
+
+	modHPisNPCLayout->addWidget(spacer);
+	modHPisNPCLayout->setAlignment(Qt::AlignTop);
+
 	auto *addInfoLayout = new QHBoxLayout;
 	addInfoLayout->addWidget(addInfoLabel);
 	addInfoLayout->addWidget(m_addInfoEdit);
@@ -121,7 +121,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	mainLayout->addSpacing(10);
 	mainLayout->addWidget(headLabel);
 	mainLayout->addSpacing(25);
-    mainLayout->addLayout(nameInitLayout);
+	mainLayout->addLayout(nameInitLayout);
 	mainLayout->addLayout(modHPisNPCLayout);
 	mainLayout->addLayout(addInfoLayout);
 	mainLayout->addSpacing(15);

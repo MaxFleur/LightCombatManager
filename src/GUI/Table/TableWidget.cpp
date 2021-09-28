@@ -28,10 +28,10 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	mp_tableWidget->setShowGrid(true);
 	mp_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	mp_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	mp_tableWidget->setColumnWidth(0, 120);
+	mp_tableWidget->setColumnWidth(0, 180);
 	mp_tableWidget->setColumnWidth(1, 35);
 	mp_tableWidget->setColumnWidth(2, 60);
-	mp_tableWidget->setColumnWidth(3, 395);
+	mp_tableWidget->setColumnWidth(3, 335);
 
 	// Spinbox for the hp column
 	auto *delegate = new SpinBoxDelegate(this);

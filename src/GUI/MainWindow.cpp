@@ -312,7 +312,7 @@ MainWindow::setCharacterCreationWidget()
 		&CharacterCreationWidget::finish,
 		this,
 		&MainWindow::finishCharacterCreation);
-	setFixedSize(640, 260);
+	setFixedSize(640, 280);
 	m_saveAction->setEnabled(false);
 }
 

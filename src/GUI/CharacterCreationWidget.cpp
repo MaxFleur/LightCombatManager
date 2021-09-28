@@ -44,7 +44,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	hpLabel->setAlignment(Qt::AlignLeft);
 	hpLabel->setToolTip("Set the HP of this character. This value is optional.");
 
-	auto *isNPCLabel = new QLabel("Is NPC:");
+	auto *isNPCLabel = new QLabel("Is character NPC:");
 	isNPCLabel->setFrameStyle(QFrame::NoFrame);
 	isNPCLabel->setAlignment(Qt::AlignLeft);
 	isNPCLabel->setToolTip("Set if this character is an NPC or not.");
@@ -83,27 +83,31 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	m_cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
 
 	// Layouts
-	auto *charInfoLayout = new QHBoxLayout;
-	charInfoLayout->addWidget(nameLabel);
-	charInfoLayout->addWidget(m_nameEdit);
-	charInfoLayout->addWidget(initLabel);
-	charInfoLayout->addWidget(m_initBox);
-	charInfoLayout->addWidget(initModifierLabel);
-	charInfoLayout->addWidget(m_initModifierBox);
-	charInfoLayout->addWidget(hpLabel);
-	charInfoLayout->addWidget(m_hpBox);
-	charInfoLayout->addWidget(isNPCLabel);
-	charInfoLayout->addWidget(m_isNPCBox);
-	charInfoLayout->setAlignment(Qt::AlignTop);
-
+	auto *nameInitLayout = new QHBoxLayout;
+	nameInitLayout->addWidget(nameLabel);
+	nameInitLayout->addWidget(m_nameEdit);
+	nameInitLayout->addWidget(initLabel);
+	nameInitLayout->addWidget(m_initBox);
+	nameInitLayout->setAlignment(Qt::AlignTop);
+    
+    auto *modHPisNPCLayout = new QHBoxLayout;
+    modHPisNPCLayout->addWidget(initModifierLabel);
+	modHPisNPCLayout->addWidget(m_initModifierBox);
+	modHPisNPCLayout->addWidget(hpLabel);
+	modHPisNPCLayout->addWidget(m_hpBox);
+	modHPisNPCLayout->addWidget(isNPCLabel);
+	modHPisNPCLayout->addWidget(m_isNPCBox);
+    
+	auto *spacer = new QWidget();
+	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    
+    modHPisNPCLayout->addWidget(spacer);
+    modHPisNPCLayout->setAlignment(Qt::AlignTop);
+    
 	auto *addInfoLayout = new QHBoxLayout;
 	addInfoLayout->addWidget(addInfoLabel);
 	addInfoLayout->addWidget(m_addInfoEdit);
 	addInfoLayout->setAlignment(Qt::AlignTop);
-
-	// Align the buttons to the right side using a spacer
-	auto *spacer = new QWidget();
-	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	auto *buttonLayout = new QHBoxLayout;
 	buttonLayout->addWidget(spacer);
@@ -116,11 +120,11 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	mainLayout->setContentsMargins(5, 5, 5, 5);
 	mainLayout->addSpacing(10);
 	mainLayout->addWidget(headLabel);
-	mainLayout->addSpacing(30);
-	mainLayout->addLayout(charInfoLayout);
-	mainLayout->addSpacing(10);
+	mainLayout->addSpacing(25);
+    mainLayout->addLayout(nameInitLayout);
+	mainLayout->addLayout(modHPisNPCLayout);
 	mainLayout->addLayout(addInfoLayout);
-	mainLayout->addSpacing(10);
+	mainLayout->addSpacing(15);
 	mainLayout->addLayout(buttonLayout);
 	mainLayout->addWidget(bottomWidget);
 

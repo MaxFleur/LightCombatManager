@@ -1,6 +1,7 @@
 #include "../../../include/GUI/Table/TableWidget.hpp"
 
 #include <QAbstractItemView>
+#include <QFont>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -65,8 +66,10 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	for (int i = 0; i < mp_tableWidget->rowCount(); i++) {
 		m_identifiers.push_back(i);
 	}
-	selectEnteredRow();
-	setCurrentPlayer();
+
+	m_defaultFont.setBold(false);
+	m_boldFont.setBold(true);
+	setRowAndPlayer();
 
 	setHeight();
 
@@ -157,14 +160,6 @@ TableWidget::setRoundCounterData()
 }
 
 
-// Passes the current player's name to the label
-void
-TableWidget::setCurrentPlayer()
-{
-	m_currentPlayerLabel->setText("Current: " + mp_tableWidget->item(m_rowEntered, 0)->text());
-}
-
-
 // This function enables drag and drop of table rows
 // Which works by switching the values of a row with it's upper or lower "neighbor"
 // This is done until the row is at the desired position
@@ -230,9 +225,10 @@ TableWidget::removeRow()
 			m_rowEntered = 0;
 		}
 		mp_tableWidget->removeRow(mp_tableWidget->currentIndex().row());
+
 		m_isRowSelected = false;
-		setCurrentPlayer();
-		selectEnteredRow();
+		setRowAndPlayer();
+
 		return;
 	}
 	QMessageBox::StandardButton reply = QMessageBox::warning(
@@ -254,12 +250,28 @@ TableWidget::rowSelected()
 }
 
 
-// Select a row with the Enter key
 void
-TableWidget::selectEnteredRow()
+TableWidget::setRowAndPlayer()
 {
+	// Select row entered with Return key
 	mp_tableWidget->selectionModel()->clearSelection();
+
+	// Clear rows containing bold text
+	for (int i = 0; i < mp_tableWidget->rowCount(); i++) {
+		if (mp_tableWidget->item(i, 0)->font().bold()) {
+			for (int j = 0; j < mp_tableWidget->columnCount(); j++) {
+				mp_tableWidget->item(i, j)->setFont(m_defaultFont);
+			}
+		}
+	}
 	mp_tableWidget->selectRow(m_rowEntered);
+	// Highlight selected row with bold fonts
+	for (int j = 0; j < mp_tableWidget->columnCount(); j++) {
+		mp_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
+	}
+
+	// Display current player
+	m_currentPlayerLabel->setText("Current: " + mp_tableWidget->item(m_rowEntered, 0)->text());
 }
 
 
@@ -281,7 +293,6 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 			m_rowEntered++;
 		}
 		m_rowIdentifier = m_identifiers.at(m_rowEntered);
-		selectEnteredRow();
-		setCurrentPlayer();
+		setRowAndPlayer();
 	}
 }

@@ -10,6 +10,7 @@
 #include "CustomTable.hpp"
 #include "Delegate.hpp"
 
+class QFont;
 class QHBoxLayout;
 class QLabel;
 class QTableWidget;
@@ -91,13 +92,10 @@ private:
 	setRoundCounterData();
 
 	void
-	setCurrentPlayer();
+	setRowAndPlayer();
 
 	void
 	keyPressEvent(QKeyEvent *event);
-
-	void
-	selectEnteredRow();
 
 	// Main table widget and header
 	CustomTable *mp_tableWidget;
@@ -106,6 +104,10 @@ private:
 	QPointer<QPushButton> m_exitButton;
 	QPointer<QLabel> m_roundCounterLabel;
 	QPointer<QLabel> m_currentPlayerLabel;
+
+	// Fonts for highlighting rows
+	QFont m_defaultFont;
+	QFont m_boldFont;
 
 	bool m_isRowSelected = false;
 

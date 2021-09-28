@@ -18,8 +18,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 
 	// Label for the headline
 	auto *headLabel = new QLabel("Please enter the character stats.");
-	QFont f(f.defaultFamily(), 12, QFont::DemiBold);
-	headLabel->setFont(f);
+	headLabel->setStyleSheet("font: 12pt; font-weight: bold;");
 	headLabel->setFrameStyle(QFrame::NoFrame);
 	headLabel->setAlignment(Qt::AlignLeft);
 	headLabel->setAlignment(Qt::AlignTop);

@@ -228,17 +228,22 @@ MainWindow::aboutQt()
 void
 MainWindow::cancelCharacterCreation()
 {
-	QMessageBox::StandardButton reply = QMessageBox::question(
-		this,
-		"Cancel creation?",
-		"Are you sure you want to cancel the character creation? All created characters will be lost.",
-		QMessageBox::Yes | QMessageBox::No);
+	// Ignore if no character is stored yet
+	if (m_char->getCharacters().size() > 0) {
+		QMessageBox::StandardButton reply = QMessageBox::question(
+			this,
+			"Cancel creation?",
+			"Are you sure you want to cancel the character creation? All created characters will be lost.",
+			QMessageBox::Yes | QMessageBox::No);
 
-	if (reply == QMessageBox::Yes) {
-		m_char->clearCharacters();
-		m_isCreationActive = false;
-		setWelcomingWidget();
+		if (reply == QMessageBox::Yes) {
+			m_char->clearCharacters();
+		} else {
+			return;
+		}
 	}
+	m_isCreationActive = false;
+	setWelcomingWidget();
 }
 
 

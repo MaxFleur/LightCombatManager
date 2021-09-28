@@ -1,7 +1,10 @@
 #pragma once
 
-#include <QtWidgets>
 #include <memory>
+
+#include <QString>
+
+class QTableWidget;
 
 // This class handles the saving and reopening of QTableWidgets as csv data
 class FileHandler {
@@ -10,7 +13,10 @@ public:
 	FileHandler();
 	// Save a table of characters
 	void
-	saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter);
+	saveTable(QTableWidget *tableWidget,
+		  QString	filename,
+		  int		rowEntered,
+		  int		roundCounter);
 
 	// Reopen a saved table
 	int

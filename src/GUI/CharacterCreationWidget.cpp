@@ -1,61 +1,159 @@
 #include "../../include/GUI/CharacterCreationWidget.hpp"
 
-// Create the layout at instantiation
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QVBoxLayout>
+#include <QWidget>
+
 CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent)
 	: m_char(charSort)
 {
-	createWidget();
-	connectWidgets();
-	// Reset all character values to standard
+	auto *bottomWidget = new QWidget();
+	bottomWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+	// Label for the headline
+	auto *headLabel = new QLabel("Please enter the character stats.");
+	QFont f(f.defaultFamily(), 12, QFont::DemiBold);
+	headLabel->setFont(f);
+	headLabel->setFrameStyle(QFrame::NoFrame);
+	headLabel->setAlignment(Qt::AlignLeft);
+	headLabel->setAlignment(Qt::AlignTop);
+
+	// Labels for character stats
+	auto *nameLabel = new QLabel("Name:");
+	nameLabel->setFrameStyle(QFrame::NoFrame);
+	nameLabel->setAlignment(Qt::AlignLeft);
+	nameLabel->setToolTip("Set the name of the character.");
+
+	auto *initLabel = new QLabel("Initiative:");
+	initLabel->setFrameStyle(QFrame::NoFrame);
+	initLabel->setAlignment(Qt::AlignLeft);
+	initLabel->setToolTip("Set the initiative. This includes ALL modifiers.");
+
+	auto *initModifierLabel = new QLabel("Init modifier:");
+	initModifierLabel->setFrameStyle(QFrame::NoFrame);
+	initModifierLabel->setAlignment(Qt::AlignLeft);
+	initModifierLabel->setToolTip("Set the modificator of the initiative.");
+
+	auto *hpLabel = new QLabel("HP:");
+	hpLabel->setFrameStyle(QFrame::NoFrame);
+	hpLabel->setAlignment(Qt::AlignLeft);
+	hpLabel->setToolTip("Set the HP of this character. This value is optional.");
+
+	auto *isNPCLabel = new QLabel("Is NPC:");
+	isNPCLabel->setFrameStyle(QFrame::NoFrame);
+	isNPCLabel->setAlignment(Qt::AlignLeft);
+	isNPCLabel->setToolTip("Set if this character is an NPC or not.");
+
+	auto *addInfoLabel = new QLabel("Additional information:");
+	addInfoLabel->setFrameStyle(QFrame::NoFrame);
+	addInfoLabel->setAlignment(Qt::AlignLeft);
+	addInfoLabel->setToolTip("Set some additional information. This is optional.");
+
+	// Main widgets for character creation
+	m_nameEdit = new QLineEdit();
+	m_initBox = new QSpinBox();
+	m_initBox->setMinimum(-20);
+	m_initModifierBox = new QSpinBox();
+	m_initModifierBox->setMinimum(-10);
+	m_hpBox = new QSpinBox();
+	m_hpBox->setRange(-100, 10000);
+	m_isNPCBox = new QCheckBox();
+	m_addInfoEdit = new QLineEdit();
+
+	// Buttons
+	m_saveButton = new QPushButton("Save and create new character");
+	m_saveButton->setFixedWidth(200);
+	m_saveButton->setToolTip("Save this character and create another one.");
+
+	m_finishButton = new QPushButton("Save and finish");
+	m_finishButton->setFixedWidth(110);
+	m_finishButton->setToolTip("Finish the character creation. Once you're finished, you can't go back.");
+
+	m_resetButton = new QPushButton("Reset");
+	m_resetButton->setFixedWidth(60);
+	m_resetButton->setToolTip("Reset the current character.");
+
+	m_cancelButton = new QPushButton("Cancel");
+	m_cancelButton->setFixedWidth(60);
+	m_cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
+
+	// Layouts
+	auto *charInfoLayout = new QHBoxLayout;
+	charInfoLayout->addWidget(nameLabel);
+	charInfoLayout->addWidget(m_nameEdit);
+	charInfoLayout->addWidget(initLabel);
+	charInfoLayout->addWidget(m_initBox);
+	charInfoLayout->addWidget(initModifierLabel);
+	charInfoLayout->addWidget(m_initModifierBox);
+	charInfoLayout->addWidget(hpLabel);
+	charInfoLayout->addWidget(m_hpBox);
+	charInfoLayout->addWidget(isNPCLabel);
+	charInfoLayout->addWidget(m_isNPCBox);
+	charInfoLayout->setAlignment(Qt::AlignTop);
+
+	auto *addInfoLayout = new QHBoxLayout;
+	addInfoLayout->addWidget(addInfoLabel);
+	addInfoLayout->addWidget(m_addInfoEdit);
+	addInfoLayout->setAlignment(Qt::AlignTop);
+
+	// Align the buttons to the right side using a spacer
+	auto *spacer = new QWidget();
+	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	auto *buttonLayout = new QHBoxLayout;
+	buttonLayout->addWidget(spacer);
+	buttonLayout->addWidget(m_saveButton);
+	buttonLayout->addWidget(m_finishButton);
+	buttonLayout->addWidget(m_resetButton);
+	buttonLayout->addWidget(m_cancelButton);
+
+	auto *mainLayout = new QVBoxLayout(this);
+	mainLayout->setContentsMargins(5, 5, 5, 5);
+	mainLayout->addSpacing(10);
+	mainLayout->addWidget(headLabel);
+	mainLayout->addSpacing(30);
+	mainLayout->addLayout(charInfoLayout);
+	mainLayout->addSpacing(10);
+	mainLayout->addLayout(addInfoLayout);
+	mainLayout->addSpacing(10);
+	mainLayout->addLayout(buttonLayout);
+	mainLayout->addWidget(bottomWidget);
+
+	connect(m_saveButton, &QPushButton::clicked, this, &CharacterCreationWidget::saveAndCreateNewCharacter);
+	connect(m_resetButton, &QPushButton::clicked, this, &CharacterCreationWidget::resetCharacter);
+	connect(
+		m_cancelButton,
+		&QPushButton::clicked,
+		this,
+		[this] () {
+			emit cancel();
+		});
+	connect(
+		m_finishButton,
+		&QPushButton::clicked,
+		this,
+		[this] () {
+			emit finish();
+		});
+
+	// Default character values
 	resetCharacter();
 }
 
 
-// Set the name of the current character
+// Store the last created character. After this, the table widget will be created.
 void
-CharacterCreationWidget::setName(const QString &name)
+CharacterCreationWidget::storeLastCharacter()
 {
-	m_name = name.toStdString();
-}
-
-
-// Set initiative of the current character
-void
-CharacterCreationWidget::setInitiative(int initiative)
-{
-	m_initiative = initiative;
-}
-
-
-// Set the initiative modifier of the current character
-void
-CharacterCreationWidget::setModifier(int modifier)
-{
-	m_modifier = modifier;
-}
-
-
-// Set if the current character is an NPC or not
-void
-CharacterCreationWidget::setIsNPC(bool isNPC)
-{
-	m_isNPC = isNPC;
-}
-
-
-// Set the current character's hp
-void
-CharacterCreationWidget::setHP(int hp)
-{
-	m_hp = hp;
-}
-
-
-// Set some additional information for the current character, if needed
-void
-CharacterCreationWidget::setAdditionalInformation(const QString &additionalInf)
-{
-	m_additionalInf = additionalInf.toStdString();
+	if (!m_nameEdit->text().isEmpty()) {
+		storeCharacter();
+	}
 }
 
 
@@ -63,27 +161,16 @@ CharacterCreationWidget::setAdditionalInformation(const QString &additionalInf)
 void
 CharacterCreationWidget::saveAndCreateNewCharacter()
 {
-	// If no name was entered, display a warning message and abort
-	if (m_name.empty()) {
-		QMessageBox::StandardButton reply = QMessageBox::warning(this,
-									 "Creation not possible!",
-									 "No name has been set. Please set at least a name before storing the character!");
+	// Check if character has a name
+	if (m_nameEdit->text().isEmpty()) {
+		QMessageBox::StandardButton reply = QMessageBox::warning(
+			this,
+			"Creation not possible!",
+			"No name has been set. Please set at least a name before storing the character!");
 		return;
 	}
-	// Otherwise store the character and reset the widgets
-	m_char->storeCharacter(m_name, m_initiative, m_modifier, m_isNPC, m_hp, m_additionalInf);
+	storeCharacter();
 	resetCharacter();
-}
-
-
-// This stores the last created character. After this, the table widget will be created.
-void
-CharacterCreationWidget::storeLastCharacter()
-{
-	// Don't do anything if no name has been set
-	if (!m_name.empty()) {
-		m_char->storeCharacter(m_name, m_initiative, m_modifier, m_isNPC, m_hp, m_additionalInf);
-	}
 }
 
 
@@ -92,151 +179,23 @@ void
 CharacterCreationWidget::resetCharacter()
 {
 	// Reset all displayed values
-	nameEdit->setText("");
-	initiativeBox->setValue(0);
-	initModifierBox->setValue(0);
-	isNPCBox->setChecked(false);
-	hpBox->setValue(0);
-	additionalInformationEdit->setText("");
-	// Reset all underlying values
-	m_name = "";
-	m_initiative = 0;
-	m_modifier = 0;
-	m_isNPC = false;
-	m_hp = 0;
-	m_additionalInf = "";
-	this->update();
+	m_nameEdit->clear();
+	m_initBox->setValue(0);
+	m_initModifierBox->setValue(0);
+	m_isNPCBox->setChecked(false);
+	m_hpBox->setValue(0);
+	m_addInfoEdit->clear();
 }
 
 
 void
-CharacterCreationWidget::createWidget()
+CharacterCreationWidget::storeCharacter()
 {
-	bottomFiller = new QWidget;
-	bottomFiller->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	// First, allocate all layouts
-	// The characterCreationLayout will be displayed, so it gets the instance of this class
-	characterCreationLayout = new QVBoxLayout(this);
-	characterInformationLayout = new QHBoxLayout;
-	additionalInformationLayout = new QHBoxLayout;
-	buttonsLayout = new QHBoxLayout;
-	// Now start with the headlining label. Set it's properties and align it to the highest and left position
-	headlineLabel = new QLabel("Please enter the character stats.");
-	QFont f(f.defaultFamily(), 12, QFont::DemiBold);
-
-	headlineLabel->setFont(f);
-	headlineLabel->setFrameStyle(QFrame::NoFrame);
-	headlineLabel->setAlignment(Qt::AlignLeft);
-	headlineLabel->setAlignment(Qt::AlignTop);
-
-	// Now set the text labels, line editing, spin and check boxes for the character information layout
-	nameLabel = new QLabel("Name:");
-	nameLabel->setFrameStyle(QFrame::NoFrame);
-	nameLabel->setAlignment(Qt::AlignLeft);
-	nameLabel->setToolTip("Set the name of the character.");
-	nameEdit = new QLineEdit;
-	initiativeLabel = new QLabel("Initiative:");
-	initiativeLabel->setFrameStyle(QFrame::NoFrame);
-	initiativeLabel->setAlignment(Qt::AlignLeft);
-	initiativeLabel->setToolTip("Set the initiative. This includes ALL modifiers.");
-	initiativeBox = new QSpinBox;
-	// Cap the lowest initiative at -20.
-	// No char will ever have such a bad initiative but we can never know ;-) )
-	initiativeBox->setMinimum(-20);
-	initModifierLabel = new QLabel("Init modifier:");
-	initModifierLabel->setFrameStyle(QFrame::NoFrame);
-	initModifierLabel->setAlignment(Qt::AlignLeft);
-	initModifierLabel->setToolTip("Set the modificator of the initiative.");
-	initModifierBox = new QSpinBox;
-	// Same for the modifier and hp, -10 or -100 are really bad but can still be reached
-	initModifierBox->setMinimum(-10);
-	hpLabel = new QLabel("HP:");
-	hpLabel->setFrameStyle(QFrame::NoFrame);
-	hpLabel->setAlignment(Qt::AlignLeft);
-	hpLabel->setToolTip("Set the HP of this character. This value is optional.");
-	hpBox = new QSpinBox;
-	hpBox->setRange(-100, 10000);
-	isNPCLabel = new QLabel("Is NPC:");
-	isNPCLabel->setFrameStyle(QFrame::NoFrame);
-	isNPCLabel->setAlignment(Qt::AlignLeft);
-	isNPCLabel->setToolTip("Set if this character is an NPC or not.");
-	isNPCBox = new QCheckBox;
-	// Add all these things to the layout
-	characterInformationLayout->addWidget(nameLabel);
-	characterInformationLayout->addWidget(nameEdit);
-	characterInformationLayout->addWidget(initiativeLabel);
-	characterInformationLayout->addWidget(initiativeBox);
-	characterInformationLayout->addWidget(initModifierLabel);
-	characterInformationLayout->addWidget(initModifierBox);
-	characterInformationLayout->addWidget(hpLabel);
-	characterInformationLayout->addWidget(hpBox);
-	characterInformationLayout->addWidget(isNPCLabel);
-	characterInformationLayout->addWidget(isNPCBox);
-	characterInformationLayout->setAlignment(Qt::AlignTop);
-	// Now another edit for addiotional informations is created
-	additionalInformationLabel = new QLabel("Additional information:");
-	additionalInformationLabel->setFrameStyle(QFrame::NoFrame);
-	additionalInformationLabel->setAlignment(Qt::AlignLeft);
-	additionalInformationLabel->setToolTip("Set some additional information. This is optional.");
-	additionalInformationEdit = new QLineEdit;
-	// Add to layout
-	additionalInformationLayout->addWidget(additionalInformationLabel);
-	additionalInformationLayout->addWidget(additionalInformationEdit);
-	additionalInformationLayout->setAlignment(Qt::AlignTop);
-
-	// Now handle the buttons at the lower end
-	saveAnotherButton = new QPushButton("Save and create new character");
-	saveAnotherButton->setFixedWidth(200);
-	saveAnotherButton->setToolTip("Save this character and create another one.");
-	finishButton = new QPushButton("Save and finish");
-	finishButton->setFixedWidth(110);
-	finishButton->setToolTip("Finish the character creation. Once you're finished, you can't go back.");
-	resetButton = new QPushButton("Reset");
-	resetButton->setFixedWidth(60);
-	resetButton->setToolTip("Reset the current character.");
-	cancelButton = new QPushButton("Cancel");
-	cancelButton->setFixedWidth(60);
-	cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
-
-	// Align the buttons to the right side using a spacer
-	QWidget *spacer = new QWidget();
-
-	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	// Add everything to the layout
-	buttonsLayout->addWidget(spacer);
-	buttonsLayout->addWidget(saveAnotherButton);
-	buttonsLayout->addWidget(finishButton);
-	buttonsLayout->addWidget(resetButton);
-	buttonsLayout->addWidget(cancelButton);
-
-	// Noow set everything to the final layouts
-	characterCreationLayout->setContentsMargins(5, 5, 5, 5);
-	characterCreationLayout->addSpacing(10);
-	// Start with the headlining label
-	characterCreationLayout->addWidget(headlineLabel);
-	characterCreationLayout->addSpacing(30);
-	// Then all layouts
-	characterCreationLayout->addLayout(characterInformationLayout);
-	characterCreationLayout->addSpacing(10);
-	characterCreationLayout->addLayout(additionalInformationLayout);
-	characterCreationLayout->addSpacing(10);
-	characterCreationLayout->addLayout(buttonsLayout);
-	// At the end, create some more space using a filler widget
-	characterCreationLayout->addWidget(bottomFiller);
-}
-
-
-// Connect all widgets to the functions
-void
-CharacterCreationWidget::connectWidgets()
-{
-	connect(nameEdit, SIGNAL(textEdited(const QString&)), this, SLOT(setName(QString)));
-	connect(initiativeBox, SIGNAL(valueChanged(int)), this, SLOT(setInitiative(int)));
-	connect(initModifierBox, SIGNAL(valueChanged(int)), this, SLOT(setModifier(int)));
-	connect(hpBox, SIGNAL(valueChanged(int)), this, SLOT(setHP(int)));
-	connect(isNPCBox, SIGNAL(clicked(bool)), this, SLOT(setIsNPC(bool)));
-	connect(additionalInformationEdit, SIGNAL(textEdited(const QString&)), this, SLOT(setAdditionalInformation(QString)));
-
-	connect(saveAnotherButton, SIGNAL(clicked()), this, SLOT(saveAndCreateNewCharacter()));
-	connect(resetButton, SIGNAL(clicked()), this, SLOT(resetCharacter()));
+	m_char->storeCharacter(
+		m_nameEdit->text(),
+		m_initBox->value(),
+		m_initModifierBox->value(),
+		m_isNPCBox->isChecked(),
+		m_hpBox->value(),
+		m_addInfoEdit->text());
 }

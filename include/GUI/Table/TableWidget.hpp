@@ -1,100 +1,98 @@
 #pragma once
 
-#include <QtWidgets>
+#include <iostream>
+
+#include <QPointer>
+#include <QString>
+#include <QWidget>
+
 #include "../../CharacterHandler.hpp"
 #include "CustomTable.hpp"
 #include "Delegate.hpp"
-#include <iostream>
+
+class QHBoxLayout;
+class QLabel;
+class QTableWidget;
+class QVBoxLayout;
+class QPushButton;
 
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {
 	Q_OBJECT
 
 public:
-	TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data = "", QWidget *parent = 0);
-
-	QPushButton *
-	getExitButton()
-	{
-		return exitButton;
-	}
+	TableWidget(CharacterHandlerRef charHandler,
+		    bool		isDataStored,
+		    QString		data = "",
+		    QWidget *		parent = 0);
 
 	QTableWidget *
 	getTableWidget()
 	{
-		return tableWidget;
+		return mp_tableWidget;
 	}
 
 	// Return the height of this widget;
 	int
 	getHeight()
 	{
-		return height;
+		return m_height;
 	}
 
 	int
 	getRowEntered()
 	{
-		return rowEntered;
+		return m_rowEntered;
 	}
 
 	int
 	getRoundCounter()
 	{
-		return roundCounter;
+		return m_roundCounter;
 	}
 
 	// Returns the number of rows
 	int
 	getRowCount()
 	{
-		return tableWidget->rowCount();
+		return mp_tableWidget->rowCount();
 	}
 
-private slots:
-	// Enable drag and drop in the widget
-	void
-	dragAndDrop(int row, int column);
+signals:
 
-	// Remove a row out of te table
+	void
+	exit();
+
+private slots:
+
+	void
+	dragAndDrop(int row,
+		    int column);
+
 	void
 	removeRow();
 
-	// Function activated if a row is selected
 	void
 	rowSelected();
 
 private:
 	CharacterHandlerRef m_char;
-	// Create the table
-	void
-	createTableSkeleton();
 
-	// Set the data inside the table
 	void
 	setTableData();
 
-	// Create the lower widget
-	void
-	createLowerWidget();
-
-	// Set the height of this widget
 	void
 	setHeight();
 
-	// Increments the round counter
 	void
 	incrementRoundCounter();
 
-	// Fill the enterPlayerLabel with some data
 	void
-	setEnterPlayerLabelData();
+	setRoundCounterData();
 
-	// Sets the text displaying the player selected with Enter
 	void
 	setCurrentPlayer();
 
-	// Key event function
 	void
 	keyPressEvent(QKeyEvent *event);
 
@@ -102,37 +100,28 @@ private:
 	selectEnteredRow();
 
 	// Main table widget and header
-	CustomTable *tableWidget;
-	QStringList tableHeader;
-	QHBoxLayout *lowerLayout;
-	// Button to exit the layout
-	QPushButton *exitButton;
-	// The label displaying the current round number
-	QLabel *roundCounterLabel;
-	// The label displaying the current player selected with Enter
-	QLabel *enterPlayerLabel;
-	// The final layout that will be returned
-	QVBoxLayout *tableLayout;
-	// Spin box delegate to set spinboxes into the hp column
-	SpinBoxDelegate *delegate;
+	CustomTable *mp_tableWidget;
 
-	// Has a row been selected via clicking
-	bool isRowSelected = false;
-	// The height of this widget to be set
-	int height = 0;
+	// Widgets
+	QPointer<QPushButton> m_exitButton;
+	QPointer<QLabel> m_roundCounterLabel;
+	QPointer<QLabel> m_currentPlayerLabel;
 
-	// Check if the loaded data has been stored
+	bool m_isRowSelected = false;
+
+	int m_height = 0;
+
 	bool m_isDataStored;
-	// Data to load the table
+
 	QString m_data;
 
-	// The entry number of the row selected with Enter
-	int rowEntered;
-	// Counts the current round
-	int roundCounter;
+	int m_rowEntered;
 
-	// This vector stores unique identifiers for each row
-	std::vector<int> identifiers;
+	int m_roundCounter;
+
+	// Row identifiers
+	std::vector<int> m_identifiers;
+
 	// The row identifier to determine the correct row after drag and drop
-	int rowIdentifier;
+	int m_rowIdentifier;
 };

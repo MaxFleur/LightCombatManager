@@ -36,13 +36,13 @@ MainWindow::MainWindow()
 	connect(m_aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
 	// Menus
-	auto *fileMenu = menuBar()->addMenu("&File");
+	auto* const fileMenu = menuBar()->addMenu("&File");
 	fileMenu->addAction(m_newCombatAction);
 	fileMenu->addAction(m_saveAction);
 	fileMenu->addAction(m_openAction);
 	fileMenu->addSeparator();
 
-	auto *helpMenu = menuBar()->addMenu("&Help");
+	auto* const helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(m_aboutAction);
 	helpMenu->addAction(m_aboutQtAction);
 
@@ -126,7 +126,7 @@ MainWindow::newCombat()
 void
 MainWindow::saveTable()
 {
-	if (mp_tableWidget->getRowCount() < 2) {
+	if (m_tableWidget->getRowCount() < 2) {
 		QMessageBox::StandardButton reply = QMessageBox::critical(
 			this,
 			"Too few table entries!",
@@ -144,10 +144,10 @@ MainWindow::saveTable()
 	}
 
 	m_file->saveTable(
-		mp_tableWidget->getTableWidget(),
+		m_tableWidget->getTableWidget(),
 		filename,
-		mp_tableWidget->getRowEntered(),
-		mp_tableWidget->getRoundCounter());
+		m_tableWidget->getRowEntered(),
+		m_tableWidget->getRoundCounter());
 }
 
 
@@ -252,7 +252,7 @@ MainWindow::finishCharacterCreation()
 {
 	// If no character was stored or just one character was stored and the name field of the char creation widget is empty, abort
 	if (m_char->getCharacters().size() == 0 || m_char->getCharacters().size() == 1 &&
-	    mp_characterCreationWidget->isNameEmpty()) {
+	    m_characterCreationWidget->isNameEmpty()) {
 		QMessageBox::StandardButton reply = QMessageBox::warning(
 			this,
 			"Could not finish!",
@@ -267,7 +267,7 @@ MainWindow::finishCharacterCreation()
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
-		mp_characterCreationWidget->storeLastCharacter();
+		m_characterCreationWidget->storeLastCharacter();
 		m_isCreationActive = false;
 		m_char->sortCharacters();
 		setTableWidget(false);
@@ -295,8 +295,8 @@ MainWindow::exitCombat()
 void
 MainWindow::setWelcomingWidget()
 {
-	mp_welcomeWidget = new WelcomeWidget(this);
-	setCentralWidget(mp_welcomeWidget);
+	m_welcomeWidget = new WelcomeWidget(this);
+	setCentralWidget(m_welcomeWidget);
 	setFixedSize(640, 260);
 	m_saveAction->setEnabled(false);
 }
@@ -305,15 +305,15 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setCharacterCreationWidget()
 {
-	mp_characterCreationWidget = new CharacterCreationWidget(m_char, this);
-	setCentralWidget(mp_characterCreationWidget);
+	m_characterCreationWidget = new CharacterCreationWidget(m_char, this);
+	setCentralWidget(m_characterCreationWidget);
 	connect(
-		mp_characterCreationWidget,
+		m_characterCreationWidget,
 		&CharacterCreationWidget::cancel,
 		this,
 		&MainWindow::cancelCharacterCreation);
 	connect(
-		mp_characterCreationWidget,
+		m_characterCreationWidget,
 		&CharacterCreationWidget::finish,
 		this,
 		&MainWindow::finishCharacterCreation);
@@ -325,11 +325,11 @@ MainWindow::setCharacterCreationWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, QString data)
 {
-	mp_tableWidget = new TableWidget(m_char, isDataStored, data, this);
-	setCentralWidget(mp_tableWidget);
-	connect(mp_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
+	m_tableWidget = new TableWidget(m_char, isDataStored, data, this);
+	setCentralWidget(m_tableWidget);
+	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
 	m_isTableActive = true;
-	setMinimumSize(640, mp_tableWidget->getHeight());
+	setMinimumSize(640, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 }

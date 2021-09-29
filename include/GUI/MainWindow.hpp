@@ -62,9 +62,9 @@ private:
 	setTableWidget(bool	isDataStored,
 		       QString	data = "");
 
-	WelcomeWidget *mp_welcomeWidget;
-	CharacterCreationWidget *mp_characterCreationWidget;
-	TableWidget *mp_tableWidget;
+	QPointer<WelcomeWidget> m_welcomeWidget;
+	QPointer<CharacterCreationWidget> m_characterCreationWidget;
+	QPointer<TableWidget> m_tableWidget;
 
 	QPointer<QAction> m_newCombatAction;
 	QPointer<QAction> m_saveAction;

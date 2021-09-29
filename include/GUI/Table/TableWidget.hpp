@@ -30,7 +30,7 @@ public:
 	QTableWidget *
 	getTableWidget()
 	{
-		return mp_tableWidget;
+		return m_tableWidget;
 	}
 
 	// Return the height of this widget;
@@ -56,7 +56,7 @@ public:
 	int
 	getRowCount()
 	{
-		return mp_tableWidget->rowCount();
+		return m_tableWidget->rowCount();
 	}
 
 signals:
@@ -98,7 +98,7 @@ private:
 	keyPressEvent(QKeyEvent *event);
 
 	// Main table widget and header
-	CustomTable *mp_tableWidget;
+	QPointer<CustomTable> m_tableWidget;
 
 	// Widgets
 	QPointer<QPushButton> m_exitButton;

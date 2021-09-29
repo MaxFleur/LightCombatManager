@@ -13,43 +13,43 @@
 CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent)
 	: m_char(charSort)
 {
-	auto *bottomWidget = new QWidget();
+	auto* const bottomWidget = new QWidget();
 	bottomWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	// Label for the headline
-	auto *headLabel = new QLabel("Please enter the character stats.");
+	auto* const headLabel = new QLabel("Please enter the character stats.");
 	headLabel->setStyleSheet("font: 12pt; font-weight: bold;");
 	headLabel->setFrameStyle(QFrame::NoFrame);
 	headLabel->setAlignment(Qt::AlignLeft);
 	headLabel->setAlignment(Qt::AlignTop);
 
 	// Labels for character stats
-	auto *nameLabel = new QLabel("Name:");
+	auto* const nameLabel = new QLabel("Name:");
 	nameLabel->setFrameStyle(QFrame::NoFrame);
 	nameLabel->setAlignment(Qt::AlignLeft);
 	nameLabel->setToolTip("Set the name of the character.");
 
-	auto *initLabel = new QLabel("Initiative:");
+	auto* const initLabel = new QLabel("Initiative:");
 	initLabel->setFrameStyle(QFrame::NoFrame);
 	initLabel->setAlignment(Qt::AlignLeft);
 	initLabel->setToolTip("Set the initiative. This includes ALL modifiers.");
 
-	auto *initModifierLabel = new QLabel("Init modifier:");
+	auto* const initModifierLabel = new QLabel("Init modifier:");
 	initModifierLabel->setFrameStyle(QFrame::NoFrame);
 	initModifierLabel->setAlignment(Qt::AlignLeft);
 	initModifierLabel->setToolTip("Set the modificator of the initiative.");
 
-	auto *hpLabel = new QLabel("HP:");
+	auto* const hpLabel = new QLabel("HP:");
 	hpLabel->setFrameStyle(QFrame::NoFrame);
 	hpLabel->setAlignment(Qt::AlignLeft);
 	hpLabel->setToolTip("Set the HP of this character. This value is optional.");
 
-	auto *isNPCLabel = new QLabel("Is character NPC:");
+	auto* const isNPCLabel = new QLabel("Is character NPC:");
 	isNPCLabel->setFrameStyle(QFrame::NoFrame);
 	isNPCLabel->setAlignment(Qt::AlignLeft);
 	isNPCLabel->setToolTip("Set if this character is an NPC or not.");
 
-	auto *addInfoLabel = new QLabel("Additional information:");
+	auto* const addInfoLabel = new QLabel("Additional information:");
 	addInfoLabel->setFrameStyle(QFrame::NoFrame);
 	addInfoLabel->setAlignment(Qt::AlignLeft);
 	addInfoLabel->setToolTip("Set some additional information. This is optional.");
@@ -83,14 +83,14 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	m_cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
 
 	// Layouts
-	auto *nameInitLayout = new QHBoxLayout;
+	auto* const nameInitLayout = new QHBoxLayout;
 	nameInitLayout->addWidget(nameLabel);
 	nameInitLayout->addWidget(m_nameEdit);
 	nameInitLayout->addWidget(initLabel);
 	nameInitLayout->addWidget(m_initBox);
 	nameInitLayout->setAlignment(Qt::AlignTop);
 
-	auto *modHPisNPCLayout = new QHBoxLayout;
+	auto* const modHPisNPCLayout = new QHBoxLayout;
 	modHPisNPCLayout->addWidget(initModifierLabel);
 	modHPisNPCLayout->addWidget(m_initModifierBox);
 	modHPisNPCLayout->addWidget(hpLabel);
@@ -98,25 +98,25 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	modHPisNPCLayout->addWidget(isNPCLabel);
 	modHPisNPCLayout->addWidget(m_isNPCBox);
 
-	auto *spacer = new QWidget();
+	auto* const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	modHPisNPCLayout->addWidget(spacer);
 	modHPisNPCLayout->setAlignment(Qt::AlignTop);
 
-	auto *addInfoLayout = new QHBoxLayout;
+	auto* const addInfoLayout = new QHBoxLayout;
 	addInfoLayout->addWidget(addInfoLabel);
 	addInfoLayout->addWidget(m_addInfoEdit);
 	addInfoLayout->setAlignment(Qt::AlignTop);
 
-	auto *buttonLayout = new QHBoxLayout;
+	auto* const buttonLayout = new QHBoxLayout;
 	buttonLayout->addWidget(spacer);
 	buttonLayout->addWidget(m_saveButton);
 	buttonLayout->addWidget(m_finishButton);
 	buttonLayout->addWidget(m_resetButton);
 	buttonLayout->addWidget(m_cancelButton);
 
-	auto *mainLayout = new QVBoxLayout(this);
+	auto* const mainLayout = new QVBoxLayout(this);
 	mainLayout->setContentsMargins(5, 5, 5, 5);
 	mainLayout->addSpacing(10);
 	mainLayout->addWidget(headLabel);

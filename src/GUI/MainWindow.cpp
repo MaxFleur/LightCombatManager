@@ -36,13 +36,13 @@ MainWindow::MainWindow()
 	connect(m_aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
 	// Menus
-	auto* const fileMenu = menuBar()->addMenu("&File");
+	auto *const fileMenu = menuBar()->addMenu("&File");
 	fileMenu->addAction(m_newCombatAction);
 	fileMenu->addAction(m_saveAction);
 	fileMenu->addAction(m_openAction);
 	fileMenu->addSeparator();
 
-	auto* const helpMenu = menuBar()->addMenu("&Help");
+	auto *const helpMenu = menuBar()->addMenu("&Help");
 	helpMenu->addAction(m_aboutAction);
 	helpMenu->addAction(m_aboutQtAction);
 
@@ -119,7 +119,7 @@ MainWindow::newCombat()
 		m_char->clearCharacters();
 	}
 	m_isCreationActive = true;
-	setCharacterCreationWidget();
+	setCharacterCreationWidget(false);
 }
 
 
@@ -293,20 +293,37 @@ MainWindow::exitCombat()
 
 
 void
+MainWindow::addCharacterToCombat()
+{
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	setCharacterCreationWidget(true);
+}
+
+
+void
 MainWindow::setWelcomingWidget()
 {
 	m_welcomeWidget = new WelcomeWidget(this);
 	setCentralWidget(m_welcomeWidget);
-	setFixedSize(640, 260);
+	setFixedSize(700, 260);
 	m_saveAction->setEnabled(false);
 }
 
 
 void
-MainWindow::setCharacterCreationWidget()
+MainWindow::setCharacterCreationWidget(bool isEditMode)
 {
-	m_characterCreationWidget = new CharacterCreationWidget(m_char, this);
+	m_characterCreationWidget = new CharacterCreationWidget(m_char, isEditMode, this);
 	setCentralWidget(m_characterCreationWidget);
+	setFixedSize(700, 280);
+	m_saveAction->setEnabled(false);
+	connectCharacterCreationFunctions(isEditMode);
+}
+
+
+void
+MainWindow::connectCharacterCreationFunctions(bool isEditMode)
+{
 	connect(
 		m_characterCreationWidget,
 		&CharacterCreationWidget::cancel,
@@ -317,8 +334,6 @@ MainWindow::setCharacterCreationWidget()
 		&CharacterCreationWidget::finish,
 		this,
 		&MainWindow::finishCharacterCreation);
-	setFixedSize(640, 280);
-	m_saveAction->setEnabled(false);
 }
 
 
@@ -328,8 +343,9 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	m_tableWidget = new TableWidget(m_char, isDataStored, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
+	connect(m_tableWidget, &TableWidget::addCharacter, this, &MainWindow::addCharacterToCombat);
 	m_isTableActive = true;
-	setMinimumSize(640, m_tableWidget->getHeight());
+	setMinimumSize(700, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 }

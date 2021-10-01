@@ -12,14 +12,14 @@ CharacterHandler::storeCharacter(
 	QString name,
 	int	initiative = 0,
 	int	modifier = 0,
-	bool	isNPC = false,
 	int	hp = 0,
+	bool	isNPC = false,
 	QString additionalInf = "")
 {
 	// Create the shared ptr instance
 	characters.push_back(
 		std::make_shared<Character>(
-			Character { name, initiative, modifier, isNPC, hp,
+			Character { name, initiative, modifier, hp, isNPC,
 				    additionalInf }));
 }
 

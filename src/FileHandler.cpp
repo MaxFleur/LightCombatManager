@@ -25,7 +25,7 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 		QStringList strList;
 
 		// Store the header of the table, used for checking the correct table format if the table is reloaded
-		strList << "Name" << "HP" << "Is NPC" << "Additional information";
+		strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is NPC" << "Additional information";
 		data << strList.join(";") + "\n";
 
 		for (int i = 0; i < tableWidget->rowCount(); ++i) {
@@ -83,15 +83,17 @@ FileHandler::checkTableFormat(QString data)
 	const auto rowDataFirstRow = data.split("\n").at(1).split(";");
 
 	// Test if the table has the correct header columns
-	if (rowDataHeader.size() == 4
+	if (rowDataHeader.size() == 6
 	    && rowDataHeader[0] == "Name"
-	    && rowDataHeader[1] == "HP"
-	    && rowDataHeader[2] == "Is NPC"
-	    && rowDataHeader[3] == "Additional information"
+	    && rowDataHeader[1] == "Initiative"
+	    && rowDataHeader[2] == "INI modifier"
+	    && rowDataHeader[3] == "HP"
+	    && rowDataHeader[4] == "Is NPC"
+	    && rowDataHeader[5] == "Additional information"
 
-	    // The first row is checked -> if it has six entries (5th containing player on the move and
-	    // 6th the round counter), continue
-	    && rowDataFirstRow.size() == 6) {
+	    // The first row is checked -> if the 7th entry contains the player on the move and
+	    // the 8th the round counter, continue
+	    && rowDataFirstRow.size() == 8) {
 		return true;
 	}
 	return false;

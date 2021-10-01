@@ -1,6 +1,7 @@
 #include "../../../include/GUI/Table/TableWidget.hpp"
 
 #include <QAbstractItemView>
+#include <QDebug>
 #include <QFont>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -18,47 +19,52 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)
 {
 	m_tableWidget = new CustomTable();
-	m_tableWidget->setColumnCount(4);
+	m_tableWidget->setColumnCount(6);
 
 	QStringList tableHeader;
-	tableHeader << "Name" << "HP" << "Is NPC" << "Additional information" << "";
+	tableHeader << "Name" << "INI" << "Mod" << "HP" << "Is NPC" << "Additional information" << "";
 
 	m_tableWidget->setHorizontalHeaderLabels(tableHeader);
 	m_tableWidget->verticalHeader()->setVisible(false);
 	m_tableWidget->setShowGrid(true);
 	m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_tableWidget->setColumnWidth(0, 180);
-	m_tableWidget->setColumnWidth(1, 35);
-	m_tableWidget->setColumnWidth(2, 60);
-	m_tableWidget->setColumnWidth(3, 335);
+	m_tableWidget->setColumnWidth(0, 150);
+	m_tableWidget->setColumnWidth(1, 40);
+	m_tableWidget->setColumnWidth(2, 40);
+	m_tableWidget->setColumnWidth(3, 35);
+	m_tableWidget->setColumnWidth(4, 60);
+	m_tableWidget->setColumnWidth(5, 335);
 
 	// Spinbox for the hp column
-	auto* const delegate = new SpinBoxDelegate(this);
+	auto *const delegate = new SpinBoxDelegate(this);
 	m_tableWidget->setItemDelegateForColumn(1, delegate);
 
-	auto* const tableLayout = new QVBoxLayout(this);
+	auto *const tableLayout = new QVBoxLayout(this);
 	tableLayout->addWidget(m_tableWidget);
 	setTableData();
 
 	// Create the exit button
 	m_exitButton = new QPushButton("Exit");
 	m_exitButton->setToolTip("Exit the combat. This cannot be undone.");
+	m_addCharButton = new QPushButton("Add new Character");
+	m_addCharButton->setToolTip("Add a new character to this combat.");
 
 	m_currentPlayerLabel = new QLabel;
 	m_roundCounterLabel = new QLabel;
 	setRoundCounterData();
 
 	// Create a spacer widget to move the button to the right side
-	auto* const spacer = new QWidget();
+	auto *const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	// Lower layout
-	auto* const lowerLayout = new QHBoxLayout();
+	auto *const lowerLayout = new QHBoxLayout();
 	lowerLayout->addWidget(m_roundCounterLabel);
 	lowerLayout->addSpacing(30);
 	lowerLayout->addWidget(m_currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
+	lowerLayout->addWidget(m_addCharButton);
 	lowerLayout->addWidget(m_exitButton);
 	tableLayout->addLayout(lowerLayout);
 
@@ -82,6 +88,13 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 		[this] () {
 			emit exit();
 		});
+	connect(
+		m_addCharButton,
+		&QPushButton::clicked,
+		this,
+		[this] () {
+			emit addCharacter();
+		});
 }
 
 
@@ -101,14 +114,14 @@ TableWidget::setTableData()
 		for (int x = 1; x < rowOfData.size() - 1; x++) {
 			rowData = rowOfData.at(x).split(";");
 			// Create the widget items for the table
-			for (int y = 0; y < 4; y++) {
+			for (int y = 0; y < 6; y++) {
 				m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
 			}
 			// If at the first row (which contains information about round counter and the
 			// player on the move), get this data
 			if (x == 1) {
-				m_rowEntered = rowData[4].toInt();
-				m_roundCounter = rowData[5].toInt();
+				m_rowEntered = rowData[ROWENTERED].toInt();
+				m_roundCounter = rowData[ROUNDCTR].toInt();
 			}
 		}
 	} else {
@@ -117,27 +130,37 @@ TableWidget::setTableData()
 
 		for (int i = 0; i < m_char->getCharacters().size(); i++) {
 			// Store char stats
-			m_tableWidget->setItem(i, 0, new QTableWidgetItem(m_char->getCharacters().at(i)->name));
+			m_tableWidget->setItem(i, NAME, new QTableWidgetItem(m_char->getCharacters().at(i)->name));
 			m_tableWidget->setItem(
 				i,
-				1,
+				HP,
+				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->initiative)));
+			m_tableWidget->setItem(
+				i,
+				INI,
+				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->modifier)));
+			m_tableWidget->setItem(
+				i,
+				MODIFIER,
 				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
 			if (m_char->getCharacters().at(i)->isNPC) {
-				m_tableWidget->setItem(i, 2, new QTableWidgetItem("X"));
+				m_tableWidget->setItem(i, NPC, new QTableWidgetItem("X"));
 			} else {
-				m_tableWidget->setItem(i, 2, new QTableWidgetItem(" "));
+				m_tableWidget->setItem(i, NPC, new QTableWidgetItem(" "));
 			}
 			m_tableWidget->setItem(
 				i,
-				3,
+				ADDITIONAL,
 				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
 		}
 		m_rowEntered = 0;
 		m_roundCounter = 1;
 	}
-	// Set the coluḿns containing the isNPC values as not visible
+	// Set the coluḿns containing the initiative, modifier and NPC values as not visible
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		m_tableWidget->item(i, 2)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		m_tableWidget->item(i, INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		m_tableWidget->item(i, MODIFIER)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		m_tableWidget->item(i, NPC)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }
 

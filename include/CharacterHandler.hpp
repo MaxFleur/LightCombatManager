@@ -17,10 +17,10 @@ private:
 		int	initiative = 0;
 		// Modifiers only
 		int	modifier = 0;
-		// Is the character an NPC or not
-		bool	isNPC = false;
 		// The hp for this character. Optional.
 		int	hp = 0;
+		// Is the character an NPC or not
+		bool	isNPC = false;
 		// Additional information (e.g. status effects). Optional.
 		QString additionalInf = "";
 	};
@@ -36,8 +36,8 @@ public:
 	storeCharacter(QString	name,
 		       int	initiative,
 		       int	modifier,
-		       bool	isNPC,
 		       int	hp,
+		       bool	isNPC,
 		       QString	additionalInf);
 
 	// Sort the stored characters

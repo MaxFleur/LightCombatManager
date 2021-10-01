@@ -10,6 +10,7 @@ set(SRC_LIST
     include/GUI/Table/CustomTable.hpp
     include/GUI/Table/Delegate.hpp
     include/FileHandler.hpp
+    include/Utils.hpp
 
     main.cpp 
     src/GUI/MainWindow.cpp 
@@ -20,6 +21,7 @@ set(SRC_LIST
     src/GUI/Table/Delegate.cpp
     src/CharacterHandler.cpp
     src/FileHandler.cpp
+    src/Utils.cpp
 )
 
 set(CMAKE_AUTOUIC ON)

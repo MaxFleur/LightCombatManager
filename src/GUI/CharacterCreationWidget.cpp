@@ -10,46 +10,46 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent)
-	: m_char(charSort)
+CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, bool isEditCreation, QWidget *parent)
+	: m_char(charSort), m_isEditCreation(isEditCreation)
 {
-	auto* const bottomWidget = new QWidget();
+	auto *const bottomWidget = new QWidget();
 	bottomWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	// Label for the headline
-	auto* const headLabel = new QLabel("Please enter the character stats.");
+	auto *const headLabel = new QLabel("Please enter the character stats.");
 	headLabel->setStyleSheet("font: 12pt; font-weight: bold;");
 	headLabel->setFrameStyle(QFrame::NoFrame);
 	headLabel->setAlignment(Qt::AlignLeft);
 	headLabel->setAlignment(Qt::AlignTop);
 
 	// Labels for character stats
-	auto* const nameLabel = new QLabel("Name:");
+	auto *const nameLabel = new QLabel("Name:");
 	nameLabel->setFrameStyle(QFrame::NoFrame);
 	nameLabel->setAlignment(Qt::AlignLeft);
 	nameLabel->setToolTip("Set the name of the character.");
 
-	auto* const initLabel = new QLabel("Initiative:");
+	auto *const initLabel = new QLabel("Initiative:");
 	initLabel->setFrameStyle(QFrame::NoFrame);
 	initLabel->setAlignment(Qt::AlignLeft);
 	initLabel->setToolTip("Set the initiative. This includes ALL modifiers.");
 
-	auto* const initModifierLabel = new QLabel("Init modifier:");
+	auto *const initModifierLabel = new QLabel("Init modifier:");
 	initModifierLabel->setFrameStyle(QFrame::NoFrame);
 	initModifierLabel->setAlignment(Qt::AlignLeft);
 	initModifierLabel->setToolTip("Set the modificator of the initiative.");
 
-	auto* const hpLabel = new QLabel("HP:");
+	auto *const hpLabel = new QLabel("HP:");
 	hpLabel->setFrameStyle(QFrame::NoFrame);
 	hpLabel->setAlignment(Qt::AlignLeft);
 	hpLabel->setToolTip("Set the HP of this character. This value is optional.");
 
-	auto* const isNPCLabel = new QLabel("Is character NPC:");
+	auto *const isNPCLabel = new QLabel("Is character NPC:");
 	isNPCLabel->setFrameStyle(QFrame::NoFrame);
 	isNPCLabel->setAlignment(Qt::AlignLeft);
 	isNPCLabel->setToolTip("Set if this character is an NPC or not.");
 
-	auto* const addInfoLabel = new QLabel("Additional information:");
+	auto *const addInfoLabel = new QLabel("Additional information:");
 	addInfoLabel->setFrameStyle(QFrame::NoFrame);
 	addInfoLabel->setAlignment(Qt::AlignLeft);
 	addInfoLabel->setToolTip("Set some additional information. This is optional.");
@@ -78,19 +78,15 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	m_resetButton->setFixedWidth(60);
 	m_resetButton->setToolTip("Reset the current character.");
 
-	m_cancelButton = new QPushButton("Cancel");
-	m_cancelButton->setFixedWidth(60);
-	m_cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
-
 	// Layouts
-	auto* const nameInitLayout = new QHBoxLayout;
+	auto *const nameInitLayout = new QHBoxLayout;
 	nameInitLayout->addWidget(nameLabel);
 	nameInitLayout->addWidget(m_nameEdit);
 	nameInitLayout->addWidget(initLabel);
 	nameInitLayout->addWidget(m_initBox);
 	nameInitLayout->setAlignment(Qt::AlignTop);
 
-	auto* const modHPisNPCLayout = new QHBoxLayout;
+	auto *const modHPisNPCLayout = new QHBoxLayout;
 	modHPisNPCLayout->addWidget(initModifierLabel);
 	modHPisNPCLayout->addWidget(m_initModifierBox);
 	modHPisNPCLayout->addWidget(hpLabel);
@@ -98,25 +94,39 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	modHPisNPCLayout->addWidget(isNPCLabel);
 	modHPisNPCLayout->addWidget(m_isNPCBox);
 
-	auto* const spacer = new QWidget();
+	auto *const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	modHPisNPCLayout->addWidget(spacer);
 	modHPisNPCLayout->setAlignment(Qt::AlignTop);
 
-	auto* const addInfoLayout = new QHBoxLayout;
+	auto *const addInfoLayout = new QHBoxLayout;
 	addInfoLayout->addWidget(addInfoLabel);
 	addInfoLayout->addWidget(m_addInfoEdit);
 	addInfoLayout->setAlignment(Qt::AlignTop);
 
-	auto* const buttonLayout = new QHBoxLayout;
+	auto *const buttonLayout = new QHBoxLayout;
 	buttonLayout->addWidget(spacer);
 	buttonLayout->addWidget(m_saveButton);
 	buttonLayout->addWidget(m_finishButton);
 	buttonLayout->addWidget(m_resetButton);
-	buttonLayout->addWidget(m_cancelButton);
+	// If this is the edit mode, canceling is permitted
+	if (!m_isEditCreation) {
+		m_cancelButton = new QPushButton("Cancel");
+		m_cancelButton->setFixedWidth(60);
+		m_cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
+		buttonLayout->addWidget(m_cancelButton);
 
-	auto* const mainLayout = new QVBoxLayout(this);
+		connect(
+			m_cancelButton,
+			&QPushButton::clicked,
+			this,
+			[this] () {
+				emit cancel();
+			});
+	}
+
+	auto *const mainLayout = new QVBoxLayout(this);
 	mainLayout->setContentsMargins(5, 5, 5, 5);
 	mainLayout->addSpacing(10);
 	mainLayout->addWidget(headLabel);
@@ -130,13 +140,6 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 
 	connect(m_saveButton, &QPushButton::clicked, this, &CharacterCreationWidget::saveAndCreateNewCharacter);
 	connect(m_resetButton, &QPushButton::clicked, this, &CharacterCreationWidget::resetCharacter);
-	connect(
-		m_cancelButton,
-		&QPushButton::clicked,
-		this,
-		[this] () {
-			emit cancel();
-		});
 	connect(
 		m_finishButton,
 		&QPushButton::clicked,

@@ -64,6 +64,9 @@ signals:
 	void
 	exit();
 
+	void
+	addCharacter();
+
 private slots:
 
 	void
@@ -102,6 +105,7 @@ private:
 
 	// Widgets
 	QPointer<QPushButton> m_exitButton;
+	QPointer<QPushButton> m_addCharButton;
 	QPointer<QLabel> m_roundCounterLabel;
 	QPointer<QLabel> m_currentPlayerLabel;
 
@@ -126,4 +130,13 @@ private:
 
 	// The row identifier to determine the correct row after drag and drop
 	int m_rowIdentifier;
+
+	static constexpr int NAME = 0;
+	static constexpr int INI = 1;
+	static constexpr int MODIFIER = 2;
+	static constexpr int HP = 3;
+	static constexpr int NPC = 4;
+	static constexpr int ADDITIONAL = 5;
+	static constexpr int ROWENTERED = 6;
+	static constexpr int ROUNDCTR = 7;
 };

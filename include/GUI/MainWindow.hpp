@@ -10,6 +10,7 @@
 #include "Table/TableWidget.hpp"
 #include "../CharacterHandler.hpp"
 #include "../FileHandler.hpp"
+#include "../Utils.hpp"
 
 // This class handles the creation and managing of the main GUI window (the dropdown menu and it's actions).
 // The layouts themselves are created in other classes and given to this class.
@@ -39,13 +40,16 @@ private slots:
 	aboutQt();
 
 	void
+	exitCombat();
+
+	void
 	cancelCharacterCreation();
 
 	void
 	finishCharacterCreation();
 
 	void
-	exitCombat();
+	addCharacterToCombat();
 
 	virtual void
 	closeEvent(QCloseEvent *event);
@@ -56,7 +60,10 @@ private:
 	setWelcomingWidget();
 
 	void
-	setCharacterCreationWidget();
+	setCharacterCreationWidget(bool isEditMode);
+
+	void
+	connectCharacterCreationFunctions(bool isEditMode);
 
 	void
 	setTableWidget(bool	isDataStored,

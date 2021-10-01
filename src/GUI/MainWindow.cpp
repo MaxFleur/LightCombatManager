@@ -316,14 +316,9 @@ MainWindow::setCharacterCreationWidget(bool isEditMode)
 	m_characterCreationWidget = new CharacterCreationWidget(m_char, isEditMode, this);
 	setCentralWidget(m_characterCreationWidget);
 	setFixedSize(700, 280);
+	m_characterCreationWidget->setNameFocus();
 	m_saveAction->setEnabled(false);
-	connectCharacterCreationFunctions(isEditMode);
-}
 
-
-void
-MainWindow::connectCharacterCreationFunctions(bool isEditMode)
-{
 	connect(
 		m_characterCreationWidget,
 		&CharacterCreationWidget::cancel,

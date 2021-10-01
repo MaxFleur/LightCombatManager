@@ -31,6 +31,13 @@ public:
 		return m_nameEdit->text().isEmpty();
 	}
 
+	// Set the focus to the name label at the start of the character creation
+	void
+	setNameFocus()
+	{
+		m_nameEdit->setFocus(Qt::TabFocusReason);
+	}
+
 signals:
 
 	void

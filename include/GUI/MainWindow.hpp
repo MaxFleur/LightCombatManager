@@ -63,9 +63,6 @@ private:
 	setCharacterCreationWidget(bool isEditMode);
 
 	void
-	connectCharacterCreationFunctions(bool isEditMode);
-
-	void
 	setTableWidget(bool	isDataStored,
 		       QString	data = "");
 

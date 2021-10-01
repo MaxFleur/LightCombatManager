@@ -1,5 +1,6 @@
 #include "../../include/GUI/CharacterCreationWidget.hpp"
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <QLabel>

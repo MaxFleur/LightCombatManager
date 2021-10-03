@@ -170,7 +170,7 @@ TableWidget::setHeight()
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_height += m_tableWidget->rowHeight(i);
 	}
-	m_height += 120;
+	m_height += 140;
 }
 
 
@@ -188,6 +188,7 @@ TableWidget::setRoundCounterData()
 void
 TableWidget::dragAndDrop(int row, int column)
 {
+	qDebug() << "Entered" << Qt::endl;
 	// New row index
 	int newRow;
 

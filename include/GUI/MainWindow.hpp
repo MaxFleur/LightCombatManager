@@ -12,8 +12,9 @@
 #include "../FileHandler.hpp"
 #include "../Utils.hpp"
 
-// This class handles the creation and managing of the main GUI window (the dropdown menu and it's actions).
-// The layouts themselves are created in other classes and given to this class.
+// This class handles the creation and managing of the main GUI window. It also serves
+// as "main anchor point", switching between the different widgets the Combat Manager can have.
+// The widgets are created in other classes and given to this class.
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT

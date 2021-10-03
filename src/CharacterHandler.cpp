@@ -24,12 +24,10 @@ CharacterHandler::storeCharacter(
 }
 
 
-// Sort all created characters according to initiative and modifiers.
-// The rules for sorting are defined in the Pathfinder-1E-rulebook.
+// Sort all created characters The rules for sorting are defined in the Pathfinder-1E-rulebook.
 void
 CharacterHandler::sortCharacters()
 {
-	// First, use a lambda to sort the characters by their final initiative in descending order
 	std::sort(
 		characters.begin(),
 		characters.end(),
@@ -38,7 +36,7 @@ CharacterHandler::sortCharacters()
 			if (c1->initiative != c2->initiative) {
 				return c1->initiative > c2->initiative;
 			} else {
-				// If so, check if the modifiers are different
+				// If so, check if the initiative modifiers are different
 				if (c1->modifier != c2->modifier) {
 					return c1->modifier > c2->modifier;
 					// If initiative and modifiers are equal, randomize by using the instance adresses
@@ -52,7 +50,6 @@ CharacterHandler::sortCharacters()
 }
 
 
-// Remove all characters if the user cancels during character creation
 void
 CharacterHandler::clearCharacters()
 {

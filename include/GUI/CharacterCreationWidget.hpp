@@ -20,7 +20,7 @@ public:
 				bool			isEditCreation,
 				QWidget *		parent = 0);
 
-	// Store the last created character before creating the table widget
+	// Store the last created character before opening the table widget
 	void
 	storeLastCharacter();
 
@@ -74,6 +74,6 @@ private:
 
 	bool m_isEditCreation;
 
-	// character sort object to store newly created objects
+	// character sort object to store new created objects
 	CharacterHandlerRef m_char;
 };

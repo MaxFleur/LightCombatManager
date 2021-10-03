@@ -10,6 +10,7 @@
 class CharacterHandler {
 private:
 
+	// Main character instance used for the table generation
 	struct Character {
 		// Name of the character. Because this name must be set manually, it is the only variable without a standard value
 		QString name;

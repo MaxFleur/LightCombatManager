@@ -11,7 +11,6 @@
 WelcomeWidget::WelcomeWidget(QWidget *parent)
 	: QWidget(parent)
 {
-	// Side widgets
 	auto *const topWidget = new QWidget;
 	topWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -24,7 +23,6 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 	auto *const rightWidget = new QWidget;
 	rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	// Create text label
 	auto *const welcomeLabel =
 		new QLabel(
 			tr(
@@ -32,13 +30,11 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 	welcomeLabel->setFrameStyle(QFrame::Box);
 	welcomeLabel->setAlignment(Qt::AlignCenter);
 
-	// Create centered layout
 	auto *const centeredLayout = new QHBoxLayout;
 	centeredLayout->addWidget(leftWidget);
 	centeredLayout->addWidget(welcomeLabel);
 	centeredLayout->addWidget(rightWidget);
 
-	// Create main layout and add widgets
 	auto *const mainLayout = new QVBoxLayout(this);
 	mainLayout->setContentsMargins(5, 5, 5, 5);
 	mainLayout->addWidget(topWidget);

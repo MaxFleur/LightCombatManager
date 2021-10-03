@@ -56,7 +56,7 @@ MainWindow::MainWindow()
 void
 MainWindow::closeEvent(QCloseEvent *event)
 {
-	// If a game has been started, send a message if the game should be closed
+	// If the creation is active, ask if it should be closed
 	if (m_isCreationActive) {
 		QMessageBox::StandardButton reply = QMessageBox::question(
 			this,
@@ -89,8 +89,8 @@ MainWindow::closeEvent(QCloseEvent *event)
 void
 MainWindow::newCombat()
 {
+	// If a creation is currently running, asks if a new combat should be started anyway
 	if (m_isCreationActive) {
-		// If a game is currently running, asks if a new combat should be started anyway
 		QMessageBox::StandardButton reply = QMessageBox::question(
 			this,
 			"Start a new combat?",
@@ -153,8 +153,8 @@ MainWindow::saveTable()
 void
 MainWindow::openTable()
 {
+	// If a creation is currently running, asks if a table shoud be opened anyway
 	if (m_isCreationActive) {
-		// If a game is currently running, asks if a table shoud be opened anyway
 		QMessageBox::StandardButton reply = QMessageBox::question(
 			this,
 			"Open table?",
@@ -249,8 +249,8 @@ MainWindow::cancelCharacterCreation()
 void
 MainWindow::finishCharacterCreation()
 {
-	// If no character was stored or just one character was stored and the name field of the char creation widget is empty, abort
-	if (m_char->getCharacters().size() == 0 || m_char->getCharacters().size() == 1 &&
+	// If no or just one character was stored and the name field of the char creation widget is empty, abort
+	if (m_char->getCharacters().size() < 2 &&
 	    m_characterCreationWidget->isNameEmpty()) {
 		QMessageBox::StandardButton reply = QMessageBox::warning(
 			this,
@@ -258,7 +258,7 @@ MainWindow::finishCharacterCreation()
 			"Please store at least 2 characters before creating the combat table!");
 		return;
 	}
-	// Else, display a question message asking if the creation should be finished
+	// Display a question message asking if the creation should be finished
 	QMessageBox::StandardButton reply = QMessageBox::question(
 		this,
 		"Finish creation?",
@@ -332,9 +332,9 @@ MainWindow::setCharacterCreationWidget(bool isEditMode)
 
 	if (isEditMode) {
 		setWindowTitle("LCM - Reediting existing Combat");
-	} else {
-		setWindowTitle("LCM - Creating new Combat");
+		return;
 	}
+	setWindowTitle("LCM - Creating new Combat");
 }
 
 

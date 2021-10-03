@@ -12,7 +12,7 @@ FileHandler::FileHandler()
 }
 
 
-// Stores a table as a csv file
+// Stores a table as a csv
 void
 FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter)
 {
@@ -35,7 +35,7 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 			for (int j = 0; j < tableWidget->columnCount(); ++j) {
 				const auto *item = tableWidget->item(i, j);
 				if (!item || item->text().isEmpty()) {
-					// Write a whitespace empty cells can be added correctly
+					// Write a whitespace so empty cells can be added correctly
 					tableWidget->setItem(i, j, new QTableWidgetItem(" "));
 				}
 				strList << tableWidget->item(i, j)->text();
@@ -57,7 +57,7 @@ FileHandler::getCSVData(QString filename)
 {
 	QFile importedCSV(filename);
 
-	// If the data can be read, import the csv data to the QFile
+	// If the data can be read, import
 	if (importedCSV.open(QFile::ReadOnly)) {
 		m_data = importedCSV.readAll();
 
@@ -74,7 +74,7 @@ FileHandler::getCSVData(QString filename)
 }
 
 
-// Checks if a table is in the correct format before using it
+// Checks if a table is in the correct format before using
 bool
 FileHandler::checkTableFormat(QString data)
 {
@@ -91,7 +91,7 @@ FileHandler::checkTableFormat(QString data)
 	    && rowDataHeader[4] == "Is NPC"
 	    && rowDataHeader[5] == "Additional information"
 
-	    // The first row is checked -> if the 7th entry contains the player on the move and
+	    // The second row is checked -> if the 7th entry contains the player on the move and
 	    // the 8th the round counter, continue
 	    && rowDataFirstRow.size() == 8) {
 		return true;

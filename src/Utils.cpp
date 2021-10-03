@@ -5,11 +5,13 @@ Utils::Utils()
 }
 
 
-// Stores a table as a csv file
+// Resynchronize the char handler vector. This function is called
+// if an existing combat is reedited
 void
 Utils::resynchronizeCharacters(QPointer<TableWidget>	tableWidget,
 			       CharacterHandlerRef	characterHandler)
 {
+	// Clear everything, then use the table cells to refill the character handler
 	characterHandler->clearCharacters();
 
 	for (int i = 0; i < tableWidget->getTableWidget()->rowCount(); i++) {

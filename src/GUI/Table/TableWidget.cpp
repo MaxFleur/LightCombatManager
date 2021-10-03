@@ -1,7 +1,6 @@
 #include "../../../include/GUI/Table/TableWidget.hpp"
 
 #include <QAbstractItemView>
-#include <QDebug>
 #include <QFont>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -14,7 +13,6 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-// Create the welcome widget at instantiation
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)
 {
@@ -38,13 +36,12 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 
 	// Spinbox for the hp column
 	auto *const delegate = new SpinBoxDelegate(this);
-	m_tableWidget->setItemDelegateForColumn(1, delegate);
+	m_tableWidget->setItemDelegateForColumn(3, delegate);
 
 	auto *const tableLayout = new QVBoxLayout(this);
 	tableLayout->addWidget(m_tableWidget);
 	setTableData();
 
-	// Create the exit button
 	m_exitButton = new QPushButton("Return to Main Window");
 	m_addCharButton = new QPushButton("Add new Character");
 	m_addCharButton->setToolTip("Add a new character to this combat.");
@@ -53,7 +50,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	m_roundCounterLabel = new QLabel;
 	setRoundCounterData();
 
-	// Create a spacer widget to move the button to the right side
+	// Create a spacer widget to move the buttons to the right side
 	auto *const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
@@ -107,7 +104,7 @@ TableWidget::setTableData()
 
 		// @note For some reason, the splitting of the data creates one empty, obsolete line
 		// To ignore this line, decrement the row count and iteration number
-		// The second line is the header and is also ignored, so decrement again and be at -2
+		// The second line is the header and also ignored, so decrement again and be at -2
 		m_tableWidget->setRowCount(rowOfData.size() - 2);
 		// Ignore stored header
 		for (int x = 1; x < rowOfData.size() - 1; x++) {
@@ -125,6 +122,7 @@ TableWidget::setTableData()
 		}
 	} else {
 		// If no data is provided via csv, set the data according to the vector of chars
+		// generated in the character creation
 		m_tableWidget->setRowCount(m_char->getCharacters().size());
 
 		for (int i = 0; i < m_char->getCharacters().size(); i++) {
@@ -155,7 +153,7 @@ TableWidget::setTableData()
 		m_rowEntered = 0;
 		m_roundCounter = 1;
 	}
-	// Set the coluḿns containing the initiative, modifier and NPC values as not visible
+	// Set the coluḿns containing the initiative, modifier and NPC values as not editable
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_tableWidget->item(i, COL_INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		m_tableWidget->item(i, COL_MODIFIER)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -174,7 +172,7 @@ TableWidget::setHeight()
 }
 
 
-// Passes the name of the player on the move to the player enter label
+// Sets round couner number
 void
 TableWidget::setRoundCounterData()
 {
@@ -188,11 +186,10 @@ TableWidget::setRoundCounterData()
 void
 TableWidget::dragAndDrop(int row, int column)
 {
-	qDebug() << "Entered" << Qt::endl;
 	// New row index
 	int newRow;
 
-	// Depending on the current index, set the newRow value
+	// Depending on the current index, set the new row value
 	if (m_tableWidget->currentIndex().row() < row) {
 		newRow = row - 1;
 		// Swap the identifiers so they match correctly with their row
@@ -203,7 +200,7 @@ TableWidget::dragAndDrop(int row, int column)
 	} else {
 		return;
 	}
-	// The Widget Items containing the row data (source and destination)
+	// The widget items containing the row data (source and destination)
 	QList<QTableWidgetItem *> rowItemSrc, rowItemDest;
 
 	// Take the data of the source and destination row
@@ -218,7 +215,7 @@ TableWidget::dragAndDrop(int row, int column)
 	}
 	// After the drag and drop, the correct entered row has to be highlighted
 	for (int i = 0; i < m_identifiers.size(); i++) {
-		// Set row containing the identifier
+		// Set row containing the matching identifier
 		if (m_identifiers.at(i) == m_rowIdentifier) {
 			m_rowEntered = i;
 			break;
@@ -239,7 +236,7 @@ TableWidget::removeRow()
 	}
 	// If a row has been selected, remove this row
 	if (m_isRowSelected) {
-		// If the deleted row is before the current entered row, move rowEnter one up
+		// If the deleted row is before the current entered row, move one up
 		if (m_tableWidget->currentIndex().row() < m_rowEntered) {
 			m_rowEntered--;
 		}
@@ -279,7 +276,7 @@ TableWidget::setRowAndPlayer()
 	// Select row entered with Return key
 	m_tableWidget->selectionModel()->clearSelection();
 
-	// Clear rows containing bold text
+	// Reset bold text rows to standard font
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		if (m_tableWidget->item(i, 0)->font().bold()) {
 			for (int j = 0; j < m_tableWidget->columnCount(); j++) {
@@ -298,20 +295,19 @@ TableWidget::setRowAndPlayer()
 }
 
 
-// This function calls the row remove function if the delete key is pressed
 void
 TableWidget::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Delete) {
 		removeRow();
 	}
-	// Iterate over the rows with the Enter key
 	if (event->key() == Qt::Key_Return) {
 		// If the current selected row is the last one, reset to the first one
 		if (m_rowEntered == m_tableWidget->rowCount() - 1) {
 			m_rowEntered = 0;
 			m_roundCounter++;
 			setRoundCounterData();
+			// Otherwise just increment to select the next row
 		} else {
 			m_rowEntered++;
 		}

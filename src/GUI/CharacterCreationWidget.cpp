@@ -111,7 +111,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	buttonLayout->addWidget(m_saveButton);
 	buttonLayout->addWidget(m_finishButton);
 	buttonLayout->addWidget(m_resetButton);
-	// If this is the edit mode, canceling is permitted
+	// If this is the combat edit mode, canceling is permitted
 	if (!m_isEditCreation) {
 		m_cancelButton = new QPushButton("Cancel");
 		m_cancelButton->setFixedWidth(60);
@@ -154,7 +154,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 }
 
 
-// Store the last created character. After this, the table widget will be created.
+// Store the last created character. After this, the table widget will be opened.
 void
 CharacterCreationWidget::storeLastCharacter()
 {
@@ -168,7 +168,6 @@ CharacterCreationWidget::storeLastCharacter()
 void
 CharacterCreationWidget::saveAndCreateNewCharacter()
 {
-	// Check if character has a name
 	if (m_nameEdit->text().isEmpty()) {
 		QMessageBox::StandardButton reply = QMessageBox::warning(
 			this,

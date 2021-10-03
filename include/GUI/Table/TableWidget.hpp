@@ -52,7 +52,6 @@ public:
 		return m_roundCounter;
 	}
 
-	// Returns the number of rows
 	int
 	getRowCount()
 	{
@@ -100,7 +99,7 @@ private:
 	void
 	keyPressEvent(QKeyEvent *event);
 
-	// Main table widget and header
+	// Main table widget
 	QPointer<CustomTable> m_tableWidget;
 
 	// Widgets

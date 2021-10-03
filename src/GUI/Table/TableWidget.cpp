@@ -45,8 +45,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	setTableData();
 
 	// Create the exit button
-	m_exitButton = new QPushButton("Exit");
-	m_exitButton->setToolTip("Exit the combat. This cannot be undone.");
+	m_exitButton = new QPushButton("Return to Main Window");
 	m_addCharButton = new QPushButton("Add new Character");
 	m_addCharButton->setToolTip("Add a new character to this combat.");
 

@@ -189,7 +189,7 @@ CharacterCreationWidget::resetCharacter()
 	m_nameEdit->clear();
 	m_initBox->setValue(0);
 	m_initModifierBox->setValue(0);
-    m_hpBox->setValue(0);
+	m_hpBox->setValue(0);
 	m_isNPCBox->setChecked(false);
 	m_addInfoEdit->clear();
 }
@@ -202,7 +202,7 @@ CharacterCreationWidget::storeCharacter()
 		m_nameEdit->text(),
 		m_initBox->value(),
 		m_initModifierBox->value(),
-        m_hpBox->value(),
+		m_hpBox->value(),
 		m_isNPCBox->isChecked(),
 		m_addInfoEdit->text());
 }

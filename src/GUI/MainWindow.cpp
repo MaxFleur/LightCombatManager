@@ -158,7 +158,8 @@ MainWindow::openTable()
 		QMessageBox::StandardButton reply = QMessageBox::question(
 			this,
 			"Open table?",
-			"Currently, you are storing characters for a beginning combat. Do you want to open another table anyway?",
+			"Currently, you are storing characters for a beginning combat. Do you want to open another table anyway? "
+			"This will delete all characters you have stored for this combat.",
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			m_char->clearCharacters();
@@ -211,10 +212,9 @@ MainWindow::about()
 	QMessageBox::about(
 		this,
 		"About Light Combat Manager",
-		"Light Combat Manager. A simple Combat Manager for Pathfinder 1e. Code available on Github:"
-		"\nhttps://github.com/MaxFleur/LightCombatManager"
-		"\n"
-		"\nVersion 1.1.0 Beta");
+		"<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e. <br>"
+		"<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
+		"<p>Version 1.1.0 Beta.</p>");
 }
 
 
@@ -262,7 +262,7 @@ MainWindow::finishCharacterCreation()
 	QMessageBox::StandardButton reply = QMessageBox::question(
 		this,
 		"Finish creation?",
-		"Are you sure you want to finish the character creation? Characters can't be added afterwards.",
+		"Are you sure you want to finish the character creation?",
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
@@ -306,7 +306,7 @@ MainWindow::setWelcomingWidget()
 	setCentralWidget(m_welcomeWidget);
 	setFixedSize(700, 260);
 	m_saveAction->setEnabled(false);
-    setWindowTitle("LCM");
+	setWindowTitle("LCM");
 }
 
 
@@ -329,12 +329,12 @@ MainWindow::setCharacterCreationWidget(bool isEditMode)
 		&CharacterCreationWidget::finish,
 		this,
 		&MainWindow::finishCharacterCreation);
-    
-    if(isEditMode) {
-        setWindowTitle("LCM - Reediting existing Combat");
-    } else {
-        setWindowTitle("LCM - Creating new Combat");
-    }
+
+	if (isEditMode) {
+		setWindowTitle("LCM - Reediting existing Combat");
+	} else {
+		setWindowTitle("LCM - Creating new Combat");
+	}
 }
 
 
@@ -349,7 +349,7 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	setMinimumSize(700, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
-    setWindowTitle("LCM - Combat active");
+	setWindowTitle("LCM - Combat active");
 }
 
 

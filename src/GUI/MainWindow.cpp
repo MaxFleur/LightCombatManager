@@ -50,7 +50,6 @@ MainWindow::MainWindow()
 	m_file = std::make_shared<FileHandler>();
 
 	setWelcomingWidget();
-	setWindowTitle("Light Combat Manager");
 }
 
 
@@ -307,6 +306,7 @@ MainWindow::setWelcomingWidget()
 	setCentralWidget(m_welcomeWidget);
 	setFixedSize(700, 260);
 	m_saveAction->setEnabled(false);
+    setWindowTitle("LCM");
 }
 
 
@@ -329,6 +329,12 @@ MainWindow::setCharacterCreationWidget(bool isEditMode)
 		&CharacterCreationWidget::finish,
 		this,
 		&MainWindow::finishCharacterCreation);
+    
+    if(isEditMode) {
+        setWindowTitle("LCM - Reediting existing Combat");
+    } else {
+        setWindowTitle("LCM - Creating new Combat");
+    }
 }
 
 
@@ -343,6 +349,7 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	setMinimumSize(700, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
+    setWindowTitle("LCM - Combat active");
 }
 
 

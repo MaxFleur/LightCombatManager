@@ -212,10 +212,10 @@ MainWindow::about()
 	QMessageBox::about(
 		this,
 		"About Light Combat Manager",
-		"Light Combat Manager. A simple Combat Manager for DnD-like games. Code available on Github:"
+		"Light Combat Manager. A simple Combat Manager for Pathfinder 1e. Code available on Github:"
 		"\nhttps://github.com/MaxFleur/LightCombatManager"
 		"\n"
-		"\nVersion 1.0.0.");
+		"\nVersion 1.1.0 Beta");
 }
 
 

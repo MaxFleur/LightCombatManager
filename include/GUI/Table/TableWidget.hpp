@@ -131,12 +131,12 @@ private:
 	// The row identifier to determine the correct row after drag and drop
 	int m_rowIdentifier;
 
-	static constexpr int NAME = 0;
-	static constexpr int INI = 1;
-	static constexpr int MODIFIER = 2;
-	static constexpr int HP = 3;
-	static constexpr int NPC = 4;
-	static constexpr int ADDITIONAL = 5;
-	static constexpr int ROWENTERED = 6;
-	static constexpr int ROUNDCTR = 7;
+	static constexpr int COL_NAME = 0;
+	static constexpr int COL_INI = 1;
+	static constexpr int COL_MODIFIER = 2;
+	static constexpr int COL_HP = 3;
+	static constexpr int COL_NPC = 4;
+	static constexpr int COL_ADDITIONAL = 5;
+	static constexpr int ROW_ENTERED = 6;
+	static constexpr int ROUND_CTR = 7;
 };

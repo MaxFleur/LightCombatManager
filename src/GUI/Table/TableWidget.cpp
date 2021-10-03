@@ -120,8 +120,8 @@ TableWidget::setTableData()
 			// If at the first row (which contains information about round counter and the
 			// player on the move), get this data
 			if (x == 1) {
-				m_rowEntered = rowData[ROWENTERED].toInt();
-				m_roundCounter = rowData[ROUNDCTR].toInt();
+				m_rowEntered = rowData[ROW_ENTERED].toInt();
+				m_roundCounter = rowData[ROUND_CTR].toInt();
 			}
 		}
 	} else {
@@ -130,27 +130,27 @@ TableWidget::setTableData()
 
 		for (int i = 0; i < m_char->getCharacters().size(); i++) {
 			// Store char stats
-			m_tableWidget->setItem(i, NAME, new QTableWidgetItem(m_char->getCharacters().at(i)->name));
+			m_tableWidget->setItem(i, COL_NAME, new QTableWidgetItem(m_char->getCharacters().at(i)->name));
 			m_tableWidget->setItem(
 				i,
-				HP,
+				COL_INI,
 				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->initiative)));
 			m_tableWidget->setItem(
 				i,
-				INI,
+				COL_MODIFIER,
 				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->modifier)));
 			m_tableWidget->setItem(
 				i,
-				MODIFIER,
+				COL_HP,
 				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
 			if (m_char->getCharacters().at(i)->isNPC) {
-				m_tableWidget->setItem(i, NPC, new QTableWidgetItem("X"));
+				m_tableWidget->setItem(i, COL_NPC, new QTableWidgetItem("X"));
 			} else {
-				m_tableWidget->setItem(i, NPC, new QTableWidgetItem(" "));
+				m_tableWidget->setItem(i, COL_NPC, new QTableWidgetItem(" "));
 			}
 			m_tableWidget->setItem(
 				i,
-				ADDITIONAL,
+				COL_ADDITIONAL,
 				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
 		}
 		m_rowEntered = 0;
@@ -158,9 +158,9 @@ TableWidget::setTableData()
 	}
 	// Set the coluḿns containing the initiative, modifier and NPC values as not visible
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		m_tableWidget->item(i, INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		m_tableWidget->item(i, MODIFIER)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		m_tableWidget->item(i, NPC)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		m_tableWidget->item(i, COL_INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		m_tableWidget->item(i, COL_MODIFIER)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		m_tableWidget->item(i, COL_NPC)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }
 

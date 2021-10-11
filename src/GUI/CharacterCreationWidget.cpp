@@ -177,6 +177,7 @@ CharacterCreationWidget::saveAndCreateNewCharacter()
 	}
 	storeCharacter();
 	resetCharacter();
+	setNameFocus();
 }
 
 

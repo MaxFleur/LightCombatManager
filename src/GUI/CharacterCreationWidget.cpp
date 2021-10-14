@@ -69,11 +69,11 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	m_addInfoEdit = new QLineEdit();
 
 	// Buttons
-	m_saveButton = new QPushButton("Save and create new character");
+	m_saveButton = new QPushButton("Save and create new Character");
 	m_saveButton->setFixedWidth(200);
 	m_saveButton->setToolTip("Save this character and create another one.");
 
-	m_finishButton = new QPushButton("Save and finish");
+	m_finishButton = new QPushButton("Save and Finish");
 	m_finishButton->setFixedWidth(110);
 	m_finishButton->setToolTip("Finish the character creation. Once you're finished, you can't go back.");
 

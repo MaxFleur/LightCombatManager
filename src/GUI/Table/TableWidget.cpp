@@ -368,6 +368,7 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 		m_rowIdentifier = m_identifiers.at(m_rowEntered);
 		setRowAndPlayer();
 	}
+	QWidget::keyPressEvent(event);
 }
 
 

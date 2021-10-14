@@ -3,9 +3,11 @@
 #include <QApplication>
 #include <QCheckBox>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPointer>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QVBoxLayout>
@@ -205,4 +207,14 @@ CharacterCreationWidget::storeCharacter()
 		m_hpBox->value(),
 		m_isNPCBox->isChecked(),
 		m_addInfoEdit->text());
+}
+
+
+void
+CharacterCreationWidget::keyPressEvent(QKeyEvent *event)
+{
+	if (event->key() == Qt::Key_Return) {
+		saveAndCreateNewCharacter();
+	}
+	QWidget::keyPressEvent(event);
 }

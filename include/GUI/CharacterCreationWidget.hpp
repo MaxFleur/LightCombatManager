@@ -10,6 +10,7 @@ class QCheckBox;
 class QLineEdit;
 class QPushButton;
 class QSpinBox;
+class QWidget;
 
 // This class handles the widget used for the creation of characters
 class CharacterCreationWidget : public QWidget {
@@ -58,6 +59,9 @@ private:
 
 	void
 	storeCharacter();
+
+	void
+	keyPressEvent(QKeyEvent *event);
 
 	// Widgets
 	QPointer<QLineEdit> m_nameEdit;

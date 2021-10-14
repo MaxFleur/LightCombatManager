@@ -21,6 +21,8 @@
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)
 {
+	readSettings();
+
 	m_tableWidget = new CustomTable();
 	m_tableWidget->setColumnCount(6);
 
@@ -32,18 +34,16 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	m_tableWidget->setShowGrid(true);
 	m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_tableWidget->setColumnWidth(0, 150);
-	m_tableWidget->setColumnWidth(1, 40);
-	m_tableWidget->setColumnWidth(2, 40);
-	m_tableWidget->setColumnWidth(3, 35);
-	m_tableWidget->setColumnWidth(4, 60);
-	m_tableWidget->setColumnWidth(5, 335);
+	m_tableWidget->setColumnWidth(COL_NAME, WIDTH_NAME);
+	m_tableWidget->setColumnWidth(COL_INI, WIDTH_INI);
+	m_tableWidget->setColumnWidth(COL_MODIFIER, WIDTH_MODIFIER);
+	m_tableWidget->setColumnWidth(COL_HP, WIDTH_HP);
+	m_tableWidget->setColumnWidth(COL_NPC, WIDTH_NPC);
+	setInfoColumnWidth();
 
 	// Spinbox for the hp column
 	auto *const delegate = new SpinBoxDelegate(this);
-	m_tableWidget->setItemDelegateForColumn(3, delegate);
-
-	readSettings();
+	m_tableWidget->setItemDelegateForColumn(COL_HP, delegate);
 
 	auto *const tableLayout = new QVBoxLayout(this);
 	tableLayout->addWidget(m_tableWidget);
@@ -64,7 +64,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	// Lower layout
 	auto *const lowerLayout = new QHBoxLayout();
 	lowerLayout->addWidget(m_roundCounterLabel);
-	lowerLayout->addSpacing(30);
+	lowerLayout->addSpacing(SPACING);
 	lowerLayout->addWidget(m_currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
 	lowerLayout->addWidget(m_addCharButton);
@@ -178,7 +178,23 @@ TableWidget::setHeight()
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_height += m_tableWidget->rowHeight(i);
 	}
-	m_height += 140;
+	m_height += HEIGHT_BUFFER;
+}
+
+
+// Set the length of the additional information column
+// The length depends on whether the INI and Modifier column are shown
+void
+TableWidget::setInfoColumnWidth()
+{
+	auto width = WIDTH_ADDITIONAL;
+	if (!m_isIniShown) {
+		width += WIDTH_INI;
+	}
+	if (!m_isModifierShown) {
+		width += WIDTH_MODIFIER;
+	}
+	m_tableWidget->setColumnWidth(COL_ADDITIONAL, width);
 }
 
 
@@ -281,20 +297,6 @@ TableWidget::rowSelected()
 
 
 void
-TableWidget::showInitiative(bool show)
-{
-	m_tableWidget->setColumnHidden(COL_INI, show);
-}
-
-
-void
-TableWidget::showModifier(bool show)
-{
-	m_tableWidget->setColumnHidden(COL_MODIFIER, show);
-}
-
-
-void
 TableWidget::setRowAndPlayer()
 {
 	// Select row entered with Return key
@@ -383,6 +385,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		[this] (bool show) {
 			m_isIniShown = show;
 			m_tableWidget->setColumnHidden(COL_INI, !show);
+			setInfoColumnWidth();
 		});
 	iniAction->setCheckable(true);
 	iniAction->setChecked(m_isIniShown);
@@ -393,6 +396,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		[this] (bool show) {
 			m_isModifierShown = show;
 			m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
+			setInfoColumnWidth();
 		});
 	modifierAction->setCheckable(true);
 	modifierAction->setChecked(m_isModifierShown);

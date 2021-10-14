@@ -81,12 +81,6 @@ private slots:
 	void
 	rowSelected();
 
-	void
-	showInitiative(bool show);
-
-	void
-	showModifier(bool show);
-
 private:
 	CharacterHandlerRef m_char;
 
@@ -95,6 +89,9 @@ private:
 
 	void
 	setHeight();
+
+	void
+	setInfoColumnWidth();
 
 	void
 	incrementRoundCounter();
@@ -161,4 +158,15 @@ private:
 	static constexpr int COL_ADDITIONAL = 5;
 	static constexpr int ROW_ENTERED = 6;
 	static constexpr int ROUND_CTR = 7;
+
+	static constexpr int SPACING = 30;
+
+	static constexpr int WIDTH_NAME = 150;
+	static constexpr int WIDTH_INI = 40;
+	static constexpr int WIDTH_MODIFIER = 40;
+	static constexpr int WIDTH_HP = 35;
+	static constexpr int WIDTH_NPC = 60;
+	static constexpr int WIDTH_ADDITIONAL = 335;
+
+	static constexpr int HEIGHT_BUFFER = 140;
 };

@@ -2,6 +2,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDebug>
 #include <QDir>
 #include <QFileDialog>
 #include <QKeySequence>
@@ -54,39 +55,6 @@ MainWindow::MainWindow()
 
 
 void
-MainWindow::closeEvent(QCloseEvent *event)
-{
-	// If the creation is active, ask if it should be closed
-	if (m_isCreationActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			"Exit",
-			"You are in the character creation right now! Do you want to exit the program anyway? All stored characters will be lost.",
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			QApplication::exit;
-		} else {
-			event->ignore();
-		}
-	}
-	// If the table is active, send a question if the table should be saved
-	if (m_isTableActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			"Exit",
-			"Currently, you are in a combat. Do you want to save the characters before exiting the program?",
-			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		if (reply == QMessageBox::Yes) {
-			saveTable();
-		} else if (reply == QMessageBox::Cancel) {
-			event->ignore();
-		}
-		QApplication::exit;
-	}
-}
-
-
-void
 MainWindow::newCombat()
 {
 	// If a creation is currently running, asks if a new combat should be started anyway
@@ -122,15 +90,12 @@ MainWindow::newCombat()
 }
 
 
-void
+int
 MainWindow::saveTable()
 {
 	if (m_tableWidget->getRowCount() < 2) {
-		auto const reply = QMessageBox::critical(
-			this,
-			"Too few table entries!",
-			"The table contains less then 2 entries.");
-		return;
+		// Too few rows to save
+		return 2;
 	}
 	auto const filename = QFileDialog::getSaveFileName(
 		this,
@@ -139,7 +104,8 @@ MainWindow::saveTable()
 		"Table (*.csv);;All Files (*)");
 
 	if (filename.isEmpty()) {
-		return;
+		// No file provided or Cancel pressed
+		return 1;
 	}
 
 	m_file->saveTable(
@@ -147,6 +113,8 @@ MainWindow::saveTable()
 		filename,
 		m_tableWidget->getRowEntered(),
 		m_tableWidget->getRoundCounter());
+	// Success
+	return 0;
 }
 
 
@@ -225,6 +193,23 @@ MainWindow::aboutQt()
 
 
 void
+MainWindow::exitCombat()
+{
+	auto const reply = QMessageBox::question(
+		this,
+		"Exit combat?",
+		"Are you sure you want to exit the combat? All created characters will be lost.",
+		QMessageBox::Yes | QMessageBox::No);
+
+	if (reply == QMessageBox::Yes) {
+		m_char->clearCharacters();
+		setWelcomingWidget();
+		m_isTableActive = false;
+	}
+}
+
+
+void
 MainWindow::cancelCharacterCreation()
 {
 	// Ignore if no character is stored yet
@@ -275,27 +260,61 @@ MainWindow::finishCharacterCreation()
 
 
 void
-MainWindow::exitCombat()
-{
-	auto const reply = QMessageBox::question(
-		this,
-		"Exit combat?",
-		"Are you sure you want to exit the combat? All created characters will be lost.",
-		QMessageBox::Yes | QMessageBox::No);
-
-	if (reply == QMessageBox::Yes) {
-		m_char->clearCharacters();
-		setWelcomingWidget();
-		m_isTableActive = false;
-	}
-}
-
-
-void
 MainWindow::addCharacterToCombat()
 {
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 	setCharacterCreationWidget(true);
+}
+
+
+void
+MainWindow::closeEvent(QCloseEvent *event)
+{
+	// If the creation is active, ask if it should be closed
+	if (m_isCreationActive) {
+		auto const reply = QMessageBox::question(
+			this,
+			"Exit",
+			"You are in the character creation right now! Do you want to exit the program anyway? All stored characters will be lost.",
+			QMessageBox::Yes | QMessageBox::No);
+		if (reply == QMessageBox::Yes) {
+			QApplication::exit;
+		} else {
+			event->ignore();
+		}
+	}
+	// If the table is active, send a question if the table should be saved
+	if (m_isTableActive) {
+		auto const reply = QMessageBox::question(
+			this,
+			"Exit",
+			"Currently, you are in a combat. Do you want to save the characters before exiting the program?",
+			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		if (reply == QMessageBox::Yes) {
+			auto const code = saveTable();
+			switch (code) {
+			case 0:
+			{
+				break;
+			}
+			case 1:
+			{
+				event->ignore();
+				break;
+			}
+			case 2:
+				auto const reply = QMessageBox::critical(
+					this,
+					"Too few table entries!",
+					"The table contains less then 2 entries.");
+				event->ignore();
+				break;
+			}
+		} else if (reply == QMessageBox::Cancel) {
+			event->ignore();
+		}
+		QApplication::exit;
+	}
 }
 
 

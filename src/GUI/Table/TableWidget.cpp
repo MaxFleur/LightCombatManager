@@ -251,7 +251,7 @@ TableWidget::removeRow()
 
 		return;
 	}
-	QMessageBox::StandardButton reply = QMessageBox::warning(
+	auto const reply = QMessageBox::warning(
 		this,
 		"Could not remove character!",
 		"Please select a character with the Mouse Key before deleting!");

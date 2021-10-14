@@ -15,8 +15,7 @@ Utils::resynchronizeCharacters(QPointer<TableWidget>	tableWidget,
 	characterHandler->clearCharacters();
 
 	for (int i = 0; i < tableWidget->getTableWidget()->rowCount(); i++) {
-		bool isNPC;
-		tableWidget->getTableWidget()->item(i, 4)->text() == "X" ? isNPC = true : isNPC = false;
+		auto const isNPC = tableWidget->getTableWidget()->item(i, 4)->text() == "X" ? true : false;
 
 		characterHandler->storeCharacter(
 			tableWidget->getTableWidget()->item(i, 0)->text(),

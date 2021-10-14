@@ -58,7 +58,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 {
 	// If the creation is active, ask if it should be closed
 	if (m_isCreationActive) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
+		auto const reply = QMessageBox::question(
 			this,
 			"Exit",
 			"You are in the character creation right now! Do you want to exit the program anyway? All stored characters will be lost.",
@@ -71,7 +71,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 	}
 	// If the table is active, send a question if the table should be saved
 	if (m_isTableActive) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
+		auto const reply = QMessageBox::question(
 			this,
 			"Exit",
 			"Currently, you are in a combat. Do you want to save the characters before exiting the program?",
@@ -91,7 +91,7 @@ MainWindow::newCombat()
 {
 	// If a creation is currently running, asks if a new combat should be started anyway
 	if (m_isCreationActive) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
+		auto const reply = QMessageBox::question(
 			this,
 			"Start a new combat?",
 			"Currently, you are storing characters for a beginning combat. Do you want to create a new combat anyway? "
@@ -104,7 +104,7 @@ MainWindow::newCombat()
 		}
 		// If the table is active right now, asks if the current table should be saved
 	} else if (m_isTableActive) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
+		auto const reply = QMessageBox::question(
 			this,
 			"Start a new combat?",
 			"Do you want to save the current combat before starting a new combat?",
@@ -126,13 +126,13 @@ void
 MainWindow::saveTable()
 {
 	if (m_tableWidget->getRowCount() < 2) {
-		QMessageBox::StandardButton reply = QMessageBox::critical(
+		auto const reply = QMessageBox::critical(
 			this,
 			"Too few table entries!",
 			"The table contains less then 2 entries.");
 		return;
 	}
-	QString filename = QFileDialog::getSaveFileName(
+	auto const filename = QFileDialog::getSaveFileName(
 		this,
 		"Save Table",
 		QDir::currentPath(),
@@ -155,7 +155,7 @@ MainWindow::openTable()
 {
 	// If a creation is currently running, asks if a table shoud be opened anyway
 	if (m_isCreationActive) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
+		auto const reply = QMessageBox::question(
 			this,
 			"Open table?",
 			"Currently, you are storing characters for a beginning combat. Do you want to open another table anyway? "
@@ -168,7 +168,7 @@ MainWindow::openTable()
 		}
 		// If the table is active right now, asks if the current table should be saved
 	} else if (m_isTableActive) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
+		auto const reply = QMessageBox::question(
 			this,
 			"Save current table?",
 			"Do you want to save the current combat before opening another table?",
@@ -179,9 +179,9 @@ MainWindow::openTable()
 			return;
 		}
 	}
-	QString filename = QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
-
-	int code = m_file->getCSVData(filename);
+	auto const filename =
+		QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
+	auto const code = m_file->getCSVData(filename);
 
 	switch (code) {
 	case 0:
@@ -190,7 +190,7 @@ MainWindow::openTable()
 	}
 	case 1:
 	{
-		QMessageBox::StandardButton reply = QMessageBox::critical(
+		auto const reply = QMessageBox::critical(
 			this,
 			"Wrong table format!",
 			"The loading of the table failed because the table has the wrong format.");
@@ -229,7 +229,7 @@ MainWindow::cancelCharacterCreation()
 {
 	// Ignore if no character is stored yet
 	if (m_char->getCharacters().size() > 0) {
-		QMessageBox::StandardButton reply = QMessageBox::question(
+		auto const reply = QMessageBox::question(
 			this,
 			"Cancel creation?",
 			"Are you sure you want to cancel the character creation? All created characters will be lost.",
@@ -252,14 +252,14 @@ MainWindow::finishCharacterCreation()
 	// If no or just one character was stored and the name field of the char creation widget is empty, abort
 	if (m_char->getCharacters().size() < 2 &&
 	    m_characterCreationWidget->isNameEmpty()) {
-		QMessageBox::StandardButton reply = QMessageBox::warning(
+		auto const reply = QMessageBox::warning(
 			this,
 			"Could not finish!",
 			"Please store at least 2 characters before creating the combat table!");
 		return;
 	}
 	// Display a question message asking if the creation should be finished
-	QMessageBox::StandardButton reply = QMessageBox::question(
+	auto const reply = QMessageBox::question(
 		this,
 		"Finish creation?",
 		"Are you sure you want to finish the character creation?",
@@ -277,7 +277,7 @@ MainWindow::finishCharacterCreation()
 void
 MainWindow::exitCombat()
 {
-	QMessageBox::StandardButton reply = QMessageBox::question(
+	auto const reply = QMessageBox::question(
 		this,
 		"Exit combat?",
 		"Are you sure you want to exit the combat? All created characters will be lost.",

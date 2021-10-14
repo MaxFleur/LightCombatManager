@@ -169,7 +169,7 @@ void
 CharacterCreationWidget::saveAndCreateNewCharacter()
 {
 	if (m_nameEdit->text().isEmpty()) {
-		QMessageBox::StandardButton reply = QMessageBox::warning(
+		auto const reply = QMessageBox::warning(
 			this,
 			"Creation not possible!",
 			"No name has been set. Please set at least a name before storing the character!");

@@ -10,6 +10,7 @@
 #include "CustomTable.hpp"
 #include "Delegate.hpp"
 
+class QContextMenuEvent;
 class QFont;
 class QHBoxLayout;
 class QLabel;
@@ -26,6 +27,8 @@ public:
 		    bool		isDataStored,
 		    QString		data = "",
 		    QWidget *		parent = 0);
+
+	~TableWidget();
 
 	QTableWidget *
 	getTableWidget()
@@ -78,6 +81,12 @@ private slots:
 	void
 	rowSelected();
 
+	void
+	showInitiative(bool show);
+
+	void
+	showModifier(bool show);
+
 private:
 	CharacterHandlerRef m_char;
 
@@ -97,7 +106,16 @@ private:
 	setRowAndPlayer();
 
 	void
+	writeSettings();
+
+	void
+	readSettings();
+
+	void
 	keyPressEvent(QKeyEvent *event);
+
+	void
+	contextMenuEvent(QContextMenuEvent *event) override;
 
 	// Main table widget
 	QPointer<CustomTable> m_tableWidget;
@@ -107,6 +125,8 @@ private:
 	QPointer<QPushButton> m_addCharButton;
 	QPointer<QLabel> m_roundCounterLabel;
 	QPointer<QLabel> m_currentPlayerLabel;
+
+	QAction *iniAction;
 
 	// Fonts for highlighting rows
 	QFont m_defaultFont;
@@ -123,6 +143,9 @@ private:
 	int m_rowEntered;
 
 	int m_roundCounter;
+
+	bool m_isIniShown = true;
+	bool m_isModifierShown = true;
 
 	// Row identifiers
 	std::vector<int> m_identifiers;

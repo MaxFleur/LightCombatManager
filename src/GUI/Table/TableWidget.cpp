@@ -1,12 +1,17 @@
 #include "../../../include/GUI/Table/TableWidget.hpp"
 
 #include <QAbstractItemView>
+#include <QAction>
+#include <QContextMenuEvent>
+#include <QDebug>
 #include <QFont>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSettings>
 #include <QSizePolicy>
 #include <QString>
 #include <QStringList>
@@ -37,6 +42,8 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	// Spinbox for the hp column
 	auto *const delegate = new SpinBoxDelegate(this);
 	m_tableWidget->setItemDelegateForColumn(3, delegate);
+
+	readSettings();
 
 	auto *const tableLayout = new QVBoxLayout(this);
 	tableLayout->addWidget(m_tableWidget);
@@ -153,6 +160,9 @@ TableWidget::setTableData()
 		m_rowEntered = 0;
 		m_roundCounter = 1;
 	}
+	m_tableWidget->setColumnHidden(COL_INI, !m_isIniShown);
+	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_isModifierShown);
+
 	// Set the coluḿns containing the initiative, modifier and NPC values as not editable
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_tableWidget->item(i, COL_INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -271,6 +281,20 @@ TableWidget::rowSelected()
 
 
 void
+TableWidget::showInitiative(bool show)
+{
+	m_tableWidget->setColumnHidden(COL_INI, show);
+}
+
+
+void
+TableWidget::showModifier(bool show)
+{
+	m_tableWidget->setColumnHidden(COL_MODIFIER, show);
+}
+
+
+void
 TableWidget::setRowAndPlayer()
 {
 	// Select row entered with Return key
@@ -296,6 +320,36 @@ TableWidget::setRowAndPlayer()
 
 
 void
+TableWidget::writeSettings()
+{
+	QSettings settings("LCM", "LCM");
+
+	settings.beginGroup("TableSettings");
+	settings.setValue("INI", m_isIniShown);
+	settings.setValue("Modifier", m_isModifierShown);
+	settings.endGroup();
+}
+
+
+void
+TableWidget::readSettings()
+{
+	QSettings settings("LCM", "LCM");
+
+	settings.beginGroup("TableSettings");
+	// If the application is called for the first time, initiative and
+	// modifier are shown per default
+	m_isIniShown = settings.value("INI").isValid() ?
+		       m_isIniShown = settings.value("INI").toBool() :
+				      m_isIniShown = true;
+	m_isModifierShown = settings.value("Modifier").isValid() ?
+			    m_isModifierShown = settings.value("Modifier").toBool() :
+						m_isModifierShown = true;
+	settings.endGroup();
+}
+
+
+void
 TableWidget::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Delete) {
@@ -314,4 +368,39 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 		m_rowIdentifier = m_identifiers.at(m_rowEntered);
 		setRowAndPlayer();
 	}
+}
+
+
+void
+TableWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+	QMenu menu(this);
+
+	auto *const iniAction = menu.addAction(
+		"Show Initiatve",
+		this,
+		[this] (bool show) {
+			m_isIniShown = show;
+			m_tableWidget->setColumnHidden(COL_INI, !show);
+		});
+	iniAction->setCheckable(true);
+	iniAction->setChecked(m_isIniShown);
+
+	auto *const modifierAction = menu.addAction(
+		"Show Modifier",
+		this,
+		[this] (bool show) {
+			m_isModifierShown = show;
+			m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
+		});
+	modifierAction->setCheckable(true);
+	modifierAction->setChecked(m_isModifierShown);
+
+	menu.exec(event->globalPos());
+}
+
+
+TableWidget::~TableWidget()
+{
+	writeSettings();
 }

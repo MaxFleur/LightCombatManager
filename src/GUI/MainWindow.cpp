@@ -182,7 +182,7 @@ MainWindow::about()
 		"About Light Combat Manager",
 		"<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e. <br>"
 		"<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-		"<p>Version 1.1.1.</p>");
+		"<p>Version 1.1.2.</p>");
 }
 
 

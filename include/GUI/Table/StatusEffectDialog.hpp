@@ -5,21 +5,29 @@
 
 class QListWidget;
 class QPushButton;
+class QString;
 
 class StatusEffectDialog : public QDialog {
 	Q_OBJECT
 
 public:
-	StatusEffectDialog(const int	rowNumber,
-			   QWidget *	parent = 0);
+	StatusEffectDialog(QWidget *parent = 0);
+
+	QString
+	getEffect()
+	{
+		return m_effect;
+	}
+
+private slots:
+
+	void
+	addEffect();
 
 private:
 
 	void
 	findEffect(const QString filter);
-
-	void
-	animateFindClick();
 
 	QPointer<QPushButton> m_addEffectButton;
 	QPointer<QListWidget> m_list;
@@ -59,5 +67,5 @@ private:
 		"Unconscious"
 	};
 
-	int m_rowNumber;
+	QString m_effect;
 };

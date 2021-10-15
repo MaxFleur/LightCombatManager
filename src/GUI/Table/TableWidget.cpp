@@ -300,10 +300,20 @@ TableWidget::rowSelected()
 
 
 void
-TableWidget::openStatusEffectDialog(int row)
+TableWidget::addStatusEffect()
 {
-	auto *const dialog = new StatusEffectDialog(row, this);
-	dialog->show();
+	// Open dialog
+	auto *const dialog = new StatusEffectDialog(this);
+	// Lock until dialog is closed
+	if (dialog->exec() == QDialog::Accepted) {
+		// If accepted, set text
+		auto itemText = m_tableWidget->item(
+			m_tableWidget->currentIndex().row(),
+			COL_ADDITIONAL)->text();
+		m_tableWidget->item(
+			m_tableWidget->currentIndex().row(),
+			COL_ADDITIONAL)->setText(itemText + dialog->getEffect());
+	}
 }
 
 
@@ -383,7 +393,7 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 	}
 	if (event->key() == Qt::Key_E) {
 		if (event->modifiers() == Qt::ControlModifier) {
-			openStatusEffectDialog(m_rowEntered);
+			addStatusEffect();
 		}
 	}
 	QWidget::keyPressEvent(event);
@@ -400,8 +410,8 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		auto *const statusEffectAction = menu.addAction(
 			"Add Status Effect",
 			this,
-			[this] (int row) {
-				openStatusEffectDialog(row);
+			[this] () {
+				addStatusEffect();
 			});
 	}
 

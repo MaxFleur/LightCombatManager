@@ -1,6 +1,8 @@
 #include "../../../include/GUI/Table/StatusEffectDialog.hpp"
 
+#include <QAbstractItemView>
 #include <QComboBox>
+#include <QDebug>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -9,8 +11,7 @@
 #include <QString>
 #include <QStringList>
 
-StatusEffectDialog::StatusEffectDialog(const int rowNumber, QWidget *parent)
-	: m_rowNumber(rowNumber)
+StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 {
 	setWindowTitle("Add Status Effect");
 
@@ -19,11 +20,12 @@ StatusEffectDialog::StatusEffectDialog(const int rowNumber, QWidget *parent)
 	textComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
 	m_list = new QListWidget;
+	m_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	for (const auto& effect : m_effects) {
 		m_list->addItem(new QListWidgetItem(effect));
 	}
 
-	auto *const m_addEffectButton = new QPushButton("Add Effect");
+	m_addEffectButton = new QPushButton("Add Effect");
 
 	auto *const cancelButton = new QPushButton("Cancel");
 
@@ -41,8 +43,19 @@ StatusEffectDialog::StatusEffectDialog(const int rowNumber, QWidget *parent)
 		[this, textComboBox] () {
 			findEffect(textComboBox->lineEdit()->text());
 		});
+	connect(m_addEffectButton, &QPushButton::clicked, this, &StatusEffectDialog::addEffect);
+	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
+}
 
-	connect(cancelButton, &QPushButton::clicked, this, &QWidget::close);
+
+void
+StatusEffectDialog::addEffect()
+{
+	m_effect.clear();
+	foreach(QListWidgetItem * item, m_list->selectedItems()) {
+		m_effect += item->text() + "; ";
+	}
+	QDialog::accept();
 }
 
 
@@ -53,11 +66,4 @@ StatusEffectDialog::findEffect(const QString filter)
 		auto *item = m_list->item(i);
 		item->setHidden(!item->text().contains(filter, Qt::CaseInsensitive));
 	}
-}
-
-
-void
-StatusEffectDialog::animateFindClick()
-{
-	m_addEffectButton->animateClick();
 }

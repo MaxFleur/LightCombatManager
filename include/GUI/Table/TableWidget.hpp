@@ -79,7 +79,7 @@ private slots:
 	rowSelected();
 
 	void
-	openStatusEffectDialog(int row);
+	addStatusEffect();
 
 private:
 	CharacterHandlerRef m_char;

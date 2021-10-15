@@ -297,6 +297,12 @@ TableWidget::rowSelected()
 
 
 void
+TableWidget::openStatusEffectDialog(int row)
+{
+}
+
+
+void
 TableWidget::setRowAndPlayer()
 {
 	// Select row entered with Return key
@@ -370,6 +376,11 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 		m_rowIdentifier = m_identifiers.at(m_rowEntered);
 		setRowAndPlayer();
 	}
+	if(event->key() == Qt::Key_E) {
+		if (event->modifiers() == Qt::ControlModifier) {
+			openStatusEffectDialog(m_rowEntered);
+        }
+    }
 	QWidget::keyPressEvent(event);
 }
 
@@ -378,8 +389,20 @@ void
 TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu menu(this);
+    
+    // Map from MainWindow coordinates to the Table Widget coordinates
+    if(m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
+        auto *const statusEffectAction = menu.addAction(
+            "Add Status Effect",
+            this,
+            [this] (int row) {
+                openStatusEffectDialog(row);
+            });
+    }
+    
+    auto *const optionMenu = menu.addMenu("Options");
 
-	auto *const iniAction = menu.addAction(
+	auto *const iniAction = optionMenu->addAction(
 		"Show Initiatve",
 		this,
 		[this] (bool show) {
@@ -390,7 +413,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	iniAction->setCheckable(true);
 	iniAction->setChecked(m_isIniShown);
 
-	auto *const modifierAction = menu.addAction(
+	auto *const modifierAction = optionMenu->addAction(
 		"Show Modifier",
 		this,
 		[this] (bool show) {

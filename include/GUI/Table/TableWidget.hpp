@@ -80,6 +80,9 @@ private slots:
 
 	void
 	rowSelected();
+    
+    void
+    openStatusEffectDialog(int row);
 
 private:
 	CharacterHandlerRef m_char;

@@ -13,7 +13,7 @@
 
 StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 {
-	setWindowTitle("Add Status Effect");
+	setWindowTitle(tr("Add Status Effect"));
 
 	auto *const textComboBox = new QComboBox;
 	textComboBox->setEditable(true);
@@ -25,12 +25,12 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 		m_list->addItem(new QListWidgetItem(effect));
 	}
 
-	m_addEffectButton = new QPushButton("Add Effect");
+	m_addEffectButton = new QPushButton(tr("Add Effect"));
 
-	auto *const cancelButton = new QPushButton("Cancel");
+	auto *const cancelButton = new QPushButton(tr("Cancel"));
 
 	auto *const mainLayout = new QGridLayout(this);
-	mainLayout->addWidget(new QLabel("Find:"), 0, 0);
+	mainLayout->addWidget(new QLabel(tr("Find:")), 0, 0);
 	mainLayout->addWidget(textComboBox, 0, 1, 1, 2);
 	mainLayout->addWidget(m_list, 1, 0, 1, 3);
 	mainLayout->addWidget(m_addEffectButton, 2, 1);

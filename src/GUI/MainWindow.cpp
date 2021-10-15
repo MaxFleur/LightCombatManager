@@ -13,37 +13,37 @@
 MainWindow::MainWindow()
 {
 	// Actions
-	m_newCombatAction = new QAction("&New Combat", this);
+	m_newCombatAction = new QAction(tr("&New Combat"), this);
 	m_newCombatAction->setShortcuts(QKeySequence::New);
-	m_newCombatAction->setStatusTip("Start a new combat.");
+	m_newCombatAction->setStatusTip(tr("Start a new Combat."));
 	connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
-	m_saveAction = new QAction("&Save Table", this);
+	m_saveAction = new QAction(tr("&Save Table"), this);
 	m_saveAction->setShortcuts(QKeySequence::Save);
-	m_saveAction->setStatusTip("Save the created table.");
+	m_saveAction->setStatusTip(tr("Save the created Table."));
 	connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
 
-	m_openAction = new QAction("&Open Table", this);
+	m_openAction = new QAction(tr("&Open Table"), this);
 	m_openAction->setShortcuts(QKeySequence::Open);
-	m_openAction->setStatusTip("Open an existing table.");
+	m_openAction->setStatusTip(tr("Open an existing Table."));
 	connect(m_openAction, &QAction::triggered, this, &MainWindow::openTable);
 
-	m_aboutAction = new QAction("&About", this);
-	m_aboutAction->setStatusTip("About Light Combat Manager");
+	m_aboutAction = new QAction(tr("&About"), this);
+	m_aboutAction->setStatusTip(tr("About Light Combat Manager"));
 	connect(m_aboutAction, &QAction::triggered, this, &MainWindow::about);
 
-	m_aboutQtAction = new QAction("About &Qt", this);
-	m_aboutQtAction->setStatusTip("About QT version and license");
+	m_aboutQtAction = new QAction(tr("About &Qt"), this);
+	m_aboutQtAction->setStatusTip(tr("About QT Version and License"));
 	connect(m_aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
 	// Menus
-	auto *const fileMenu = menuBar()->addMenu("&File");
+	auto *const fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(m_newCombatAction);
 	fileMenu->addAction(m_saveAction);
 	fileMenu->addAction(m_openAction);
 	fileMenu->addSeparator();
 
-	auto *const helpMenu = menuBar()->addMenu("&Help");
+	auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(m_aboutAction);
 	helpMenu->addAction(m_aboutQtAction);
 
@@ -57,25 +57,26 @@ MainWindow::MainWindow()
 void
 MainWindow::newCombat()
 {
-	// If a creation is currently running, asks if a new combat should be started anyway
+	// If a creation is currently running, asks if a new Combat should be started anyway
 	if (m_isCreationActive) {
 		auto const reply = QMessageBox::question(
 			this,
-			"Start a new combat?",
-			"Currently, you are storing characters for a beginning combat. Do you want to create a new combat anyway? "
-			"This will delete all characters you have stored for this combat.",
+			tr("Start a new Combat?"),
+			tr(
+				"Currently, you are storing Characters for a beginning Combat. Do you want to create a new Combat anyway? "
+				"This will delete all Characters you have stored for this Combat."),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			m_char->clearCharacters();
 		} else {
 			return;
 		}
-		// If the table is active right now, asks if the current table should be saved
+		// If the Table is active right now, asks if the current Table should be saved
 	} else if (m_isTableActive) {
 		auto const reply = QMessageBox::question(
 			this,
-			"Start a new combat?",
-			"Do you want to save the current combat before starting a new combat?",
+			tr("Start a new Combat?"),
+			tr("Do you want to save the current Combat before starting a new one?"),
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			saveTable();
@@ -99,9 +100,9 @@ MainWindow::saveTable()
 	}
 	auto const filename = QFileDialog::getSaveFileName(
 		this,
-		"Save Table",
+		tr("Save Table"),
 		QDir::currentPath(),
-		"Table (*.csv);;All Files (*)");
+		tr("Table (*.csv);;All Files (*)"));
 
 	if (filename.isEmpty()) {
 		// No file provided or Cancel pressed
@@ -121,25 +122,26 @@ MainWindow::saveTable()
 void
 MainWindow::openTable()
 {
-	// If a creation is currently running, asks if a table shoud be opened anyway
+	// If a creation is currently running, asks if a Table shoud be opened anyway
 	if (m_isCreationActive) {
 		auto const reply = QMessageBox::question(
 			this,
-			"Open table?",
-			"Currently, you are storing characters for a beginning combat. Do you want to open another table anyway? "
-			"This will delete all characters you have stored for this combat.",
+			tr("Open Table?"),
+			tr(
+				"Currently, you are storing Characters for a beginning Combat. Do you want to open another Table anyway? "
+				"This will delete all Characters you have stored for this Combat."),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			m_char->clearCharacters();
 		} else {
 			return;
 		}
-		// If the table is active right now, asks if the current table should be saved
+		// If the Table is active right now, asks if the current Table should be saved
 	} else if (m_isTableActive) {
 		auto const reply = QMessageBox::question(
 			this,
-			"Save current table?",
-			"Do you want to save the current combat before opening another table?",
+			tr("Save current Table?"),
+			tr("Do you want to save the current Combat before opening another Table?"),
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			saveTable();
@@ -160,8 +162,8 @@ MainWindow::openTable()
 	{
 		auto const reply = QMessageBox::critical(
 			this,
-			"Wrong table format!",
-			"The loading of the table failed because the table has the wrong format.");
+			tr("Wrong Table format!"),
+			tr("The loading of the Table failed because the Table has the wrong format."));
 		break;
 	}
 	case 2:
@@ -179,10 +181,11 @@ MainWindow::about()
 {
 	QMessageBox::about(
 		this,
-		"About Light Combat Manager",
-		"<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e. <br>"
-		"<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-		"<p>Version 1.1.2.</p>");
+		tr("About Light Combat Manager"),
+		tr(
+			"<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e. <br>"
+			"<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
+			"<p>Version 1.1.2.</p>"));
 }
 
 
@@ -197,8 +200,8 @@ MainWindow::exitCombat()
 {
 	auto const reply = QMessageBox::question(
 		this,
-		"Exit combat?",
-		"Are you sure you want to exit the combat? All created characters will be lost.",
+		tr("Exit Combat?"),
+		tr("Are you sure you want to exit the Combat? All created Characters will be lost."),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
@@ -212,12 +215,13 @@ MainWindow::exitCombat()
 void
 MainWindow::cancelCharacterCreation()
 {
-	// Ignore if no character is stored yet
+	// Ignore if no Character is stored yet
 	if (m_char->getCharacters().size() > 0) {
 		auto const reply = QMessageBox::question(
 			this,
-			"Cancel creation?",
-			"Are you sure you want to cancel the character creation? All created characters will be lost.",
+			tr("Cancel creation?"),
+			tr(
+				"Are you sure you want to cancel the Character creation? All created Characters will be lost."),
 			QMessageBox::Yes | QMessageBox::No);
 
 		if (reply == QMessageBox::Yes) {
@@ -234,20 +238,20 @@ MainWindow::cancelCharacterCreation()
 void
 MainWindow::finishCharacterCreation()
 {
-	// If no or just one character was stored and the name field of the char creation widget is empty, abort
+	// If no or just one Character was stored and the name field of the char creation widget is empty, abort
 	if (m_char->getCharacters().size() < 2 &&
 	    m_characterCreationWidget->isNameEmpty()) {
 		auto const reply = QMessageBox::warning(
 			this,
-			"Could not finish!",
-			"Please store at least 2 characters before creating the combat table!");
+			tr("Could not finish!"),
+			tr("Please store at least two Characters before creating the Combat Table!"));
 		return;
 	}
 	// Display a question message asking if the creation should be finished
 	auto const reply = QMessageBox::question(
 		this,
-		"Finish creation?",
-		"Are you sure you want to finish the character creation?",
+		tr("Finish creation?"),
+		tr("Are you sure you want to finish the Character creation?"),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
@@ -274,8 +278,9 @@ MainWindow::closeEvent(QCloseEvent *event)
 	if (m_isCreationActive) {
 		auto const reply = QMessageBox::question(
 			this,
-			"Exit",
-			"You are in the character creation right now! Do you want to exit the program anyway? All stored characters will be lost.",
+			tr("Exit"),
+			tr(
+				"You are in the Character Creation right now! Do you want to exit the program anyway? All stored Characters will be lost."),
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			QApplication::exit;
@@ -283,12 +288,13 @@ MainWindow::closeEvent(QCloseEvent *event)
 			event->ignore();
 		}
 	}
-	// If the table is active, send a question if the table should be saved
+	// If the Table is active, send a question if the Table should be saved
 	if (m_isTableActive) {
 		auto const reply = QMessageBox::question(
 			this,
-			"Exit",
-			"Currently, you are in a combat. Do you want to save the characters before exiting the program?",
+			tr("Exit"),
+			tr(
+				"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?"),
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			auto const code = saveTable();
@@ -305,8 +311,8 @@ MainWindow::closeEvent(QCloseEvent *event)
 			case 2:
 				auto const reply = QMessageBox::critical(
 					this,
-					"Too few table entries!",
-					"The table contains less then 2 entries.");
+					tr("Too few Table entries!"),
+					tr("The Table contains less then two entries."));
 				event->ignore();
 				break;
 			}
@@ -350,10 +356,10 @@ MainWindow::setCharacterCreationWidget(bool isEditMode)
 		&MainWindow::finishCharacterCreation);
 
 	if (isEditMode) {
-		setWindowTitle("LCM - Reediting existing Combat");
+		setWindowTitle(tr("LCM - Reediting existing Combat"));
 		return;
 	}
-	setWindowTitle("LCM - Creating new Combat");
+	setWindowTitle(tr("LCM - Creating new Combat"));
 }
 
 
@@ -368,7 +374,7 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	setMinimumSize(700, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
-	setWindowTitle("LCM - Combat active");
+	setWindowTitle(tr("LCM - Combat Active"));
 }
 
 

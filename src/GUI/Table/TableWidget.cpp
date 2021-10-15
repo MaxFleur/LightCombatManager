@@ -30,7 +30,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	m_tableWidget->setColumnCount(6);
 
 	QStringList tableHeader;
-	tableHeader << "Name" << "INI" << "Mod" << "HP" << "Is NPC" << "Additional information" << "";
+	tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is NPC") << tr("Additional information") << "";
 
 	m_tableWidget->setHorizontalHeaderLabels(tableHeader);
 	m_tableWidget->verticalHeader()->setVisible(false);
@@ -52,9 +52,9 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	tableLayout->addWidget(m_tableWidget);
 	setTableData();
 
-	m_exitButton = new QPushButton("Return to Main Window");
-	m_addCharButton = new QPushButton("Add new Character");
-	m_addCharButton->setToolTip("Add a new character to this combat.");
+	m_exitButton = new QPushButton(tr("Return to Main Window"));
+	m_addCharButton = new QPushButton(tr("Add new Character"));
+	m_addCharButton->setToolTip(tr("Add a new Character to this combat."));
 
 	m_currentPlayerLabel = new QLabel;
 	m_roundCounterLabel = new QLabel;
@@ -120,7 +120,7 @@ TableWidget::setTableData()
 		for (int x = 1; x < rowOfData.size() - 1; x++) {
 			rowData = rowOfData.at(x).split(";");
 			// Create the widget items for the table
-			for (int y = 0; y < 6; y++) {
+			for (int y = 0; y < NMBR_COLUMNS; y++) {
 				m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
 			}
 			// If at the first row (which contains information about round counter and the
@@ -282,8 +282,8 @@ TableWidget::removeRow()
 	}
 	auto const reply = QMessageBox::warning(
 		this,
-		"Could not remove character!",
-		"Please select a character with the Mouse Key before deleting!");
+		tr("Could not remove Character!"),
+		tr("Please select a Character with the Mouse Key before deleting!"));
 
 	return;
 }
@@ -338,7 +338,7 @@ TableWidget::setRowAndPlayer()
 	}
 
 	// Display current player
-	m_currentPlayerLabel->setText("Current: " + m_tableWidget->item(m_rowEntered, 0)->text());
+	m_currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
 }
 
 
@@ -408,7 +408,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	// Map from MainWindow coordinates to the Table Widget coordinates
 	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
 		auto *const statusEffectAction = menu.addAction(
-			"Add Status Effect",
+			tr("Add Status Effect"),
 			this,
 			[this] () {
 				addStatusEffect();
@@ -418,7 +418,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	auto *const optionMenu = menu.addMenu("Options");
 
 	auto *const iniAction = optionMenu->addAction(
-		"Show Initiatve",
+		tr("Show Initiatve"),
 		this,
 		[this] (bool show) {
 			m_isIniShown = show;
@@ -429,7 +429,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	iniAction->setChecked(m_isIniShown);
 
 	auto *const modifierAction = optionMenu->addAction(
-		"Show Modifier",
+		tr("Show Modifier"),
 		this,
 		[this] (bool show) {
 			m_isModifierShown = show;

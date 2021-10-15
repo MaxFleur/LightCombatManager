@@ -15,6 +15,7 @@ Utils::resynchronizeCharacters(QPointer<TableWidget>	tableWidget,
 	characterHandler->clearCharacters();
 
 	for (int i = 0; i < tableWidget->getTableWidget()->rowCount(); i++) {
+		// Check if the NPC cell is marked with an X
 		auto const isNPC = tableWidget->getTableWidget()->item(i, 4)->text() == "X" ? true : false;
 
 		characterHandler->storeCharacter(

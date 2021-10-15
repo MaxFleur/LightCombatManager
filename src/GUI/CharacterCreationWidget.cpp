@@ -22,42 +22,42 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	bottomWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	// Label for the headline
-	auto *const headLabel = new QLabel("Please enter the character stats.");
+	auto *const headLabel = new QLabel(tr("Please enter the Character Stats."));
 	headLabel->setStyleSheet("font: 12pt; font-weight: bold;");
 	headLabel->setFrameStyle(QFrame::NoFrame);
 	headLabel->setAlignment(Qt::AlignLeft);
 	headLabel->setAlignment(Qt::AlignTop);
 
 	// Labels for character stats
-	auto *const nameLabel = new QLabel("Name:");
+	auto *const nameLabel = new QLabel(tr("Name:"));
 	nameLabel->setFrameStyle(QFrame::NoFrame);
 	nameLabel->setAlignment(Qt::AlignLeft);
-	nameLabel->setToolTip("Set the name of the character.");
+	nameLabel->setToolTip(tr("Set the name of the Character. A Character can't be stored without a name."));
 
-	auto *const initLabel = new QLabel("Initiative:");
+	auto *const initLabel = new QLabel(tr("Initiative:"));
 	initLabel->setFrameStyle(QFrame::NoFrame);
 	initLabel->setAlignment(Qt::AlignLeft);
-	initLabel->setToolTip("Set the initiative. This includes ALL modifiers.");
+	initLabel->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
 
-	auto *const initModifierLabel = new QLabel("Init modifier:");
+	auto *const initModifierLabel = new QLabel(tr("Init Modifier:"));
 	initModifierLabel->setFrameStyle(QFrame::NoFrame);
 	initModifierLabel->setAlignment(Qt::AlignLeft);
-	initModifierLabel->setToolTip("Set the modificator of the initiative.");
+	initModifierLabel->setToolTip(tr("Set the modificator of the initiative. Optional."));
 
-	auto *const hpLabel = new QLabel("HP:");
+	auto *const hpLabel = new QLabel(tr("HP:"));
 	hpLabel->setFrameStyle(QFrame::NoFrame);
 	hpLabel->setAlignment(Qt::AlignLeft);
-	hpLabel->setToolTip("Set the HP of this character. This value is optional.");
+	hpLabel->setToolTip(tr("Set the HP of this Character. Optional."));
 
-	auto *const isNPCLabel = new QLabel("Is character NPC:");
+	auto *const isNPCLabel = new QLabel(tr("Is Character NPC:"));
 	isNPCLabel->setFrameStyle(QFrame::NoFrame);
 	isNPCLabel->setAlignment(Qt::AlignLeft);
-	isNPCLabel->setToolTip("Set if this character is an NPC or not.");
+	isNPCLabel->setToolTip(tr("Set if the Character is an NPC. Optional."));
 
-	auto *const addInfoLabel = new QLabel("Additional information:");
+	auto *const addInfoLabel = new QLabel(tr("Additional Information:"));
 	addInfoLabel->setFrameStyle(QFrame::NoFrame);
 	addInfoLabel->setAlignment(Qt::AlignLeft);
-	addInfoLabel->setToolTip("Set some additional information. This is optional.");
+	addInfoLabel->setToolTip(tr("Set some additional information. Optional."));
 
 	// Main widgets for character creation
 	m_nameEdit = new QLineEdit();
@@ -71,20 +71,17 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	m_addInfoEdit = new QLineEdit();
 
 	// Buttons
-	m_saveButton = new QPushButton("Save and create new Character");
-	m_saveButton->setFixedWidth(200);
-	m_saveButton->setToolTip("Save this character and create another one.");
+	m_saveButton = new QPushButton(tr("Save and create new Character"));
+	m_saveButton->setToolTip(tr("Save this Character and create another one."));
 
-	m_finishButton = new QPushButton("Save and Finish");
-	m_finishButton->setFixedWidth(110);
-	m_finishButton->setToolTip("Finish the character creation. Once you're finished, you can't go back.");
+	m_finishButton = new QPushButton(tr("Save and Finish"));
+	m_finishButton->setToolTip(tr("Finish the Character Creation. You can reedit the Combat later."));
 
-	m_resetButton = new QPushButton("Reset");
-	m_resetButton->setFixedWidth(60);
-	m_resetButton->setToolTip("Reset the current character.");
+	m_resetButton = new QPushButton(tr("Reset"));
+	m_resetButton->setToolTip(tr("Reset the current Character."));
 
-	auto *const addStatusEffectButton = new QPushButton("Add Status Effect");
-	addStatusEffectButton->setToolTip("Add a Status Effect for this Character.");
+	auto *const addStatusEffectButton = new QPushButton(tr("Add Status Effect"));
+	addStatusEffectButton->setToolTip(tr("Add a Status Effect for this Character."));
 
 	// Layouts
 	auto *const nameInitLayout = new QHBoxLayout;
@@ -121,9 +118,8 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	buttonLayout->addWidget(m_resetButton);
 	// If this is the combat edit mode, canceling is permitted
 	if (!m_isEditCreation) {
-		m_cancelButton = new QPushButton("Cancel");
-		m_cancelButton->setFixedWidth(60);
-		m_cancelButton->setToolTip("Cancel the entire character creation. All changes will be lost.");
+		m_cancelButton = new QPushButton(tr("Cancel"));
+		m_cancelButton->setToolTip(tr("Cancel the entire Character Creation. All changes will be lost."));
 		buttonLayout->addWidget(m_cancelButton);
 
 		connect(
@@ -180,8 +176,8 @@ CharacterCreationWidget::saveAndCreateNewCharacter()
 	if (m_nameEdit->text().isEmpty()) {
 		auto const reply = QMessageBox::warning(
 			this,
-			"Creation not possible!",
-			"No name has been set. Please set at least a name before storing the character!");
+			tr("Creation not possible!"),
+			tr("No name has been set. Please set at least a name before storing the Character!"));
 		return;
 	}
 	storeCharacter();

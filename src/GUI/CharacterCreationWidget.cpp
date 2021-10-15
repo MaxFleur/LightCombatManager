@@ -74,7 +74,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	m_saveButton = new QPushButton(tr("Save and create new Character"));
 	m_saveButton->setToolTip(tr("Save this Character and create another one."));
 
-	m_finishButton = new QPushButton(tr("Save and Finish"));
+	m_finishButton = new QPushButton(tr("Finish"));
 	m_finishButton->setToolTip(tr("Finish the Character Creation. You can reedit the Combat later."));
 
 	m_resetButton = new QPushButton(tr("Reset"));

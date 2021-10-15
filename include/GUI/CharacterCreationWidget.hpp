@@ -25,13 +25,6 @@ public:
 	void
 	storeLastCharacter();
 
-	// Returns if a name has been entered
-	bool
-	isNameEmpty()
-	{
-		return m_nameEdit->text().isEmpty();
-	}
-
 	// Set the focus to the name label at the start of the character creation
 	void
 	setNameFocus()

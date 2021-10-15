@@ -71,13 +71,13 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	m_addInfoEdit = new QLineEdit();
 
 	// Buttons
-	m_saveButton = new QPushButton(tr("Save and create new Character"));
-	m_saveButton->setToolTip(tr("Save this Character and create another one."));
+	m_saveButton = new QPushButton(tr("Save Character"));
+	m_saveButton->setToolTip(tr("Save this Character. After this you can create another Character."));
 
 	m_finishButton = new QPushButton(tr("Finish"));
 	m_finishButton->setToolTip(tr("Finish the Character Creation. You can reedit the Combat later."));
 
-	m_resetButton = new QPushButton(tr("Reset"));
+	m_resetButton = new QPushButton(tr("Reset Character"));
 	m_resetButton->setToolTip(tr("Reset the current Character."));
 
 	auto *const addStatusEffectButton = new QPushButton(tr("Add Status Effect"));

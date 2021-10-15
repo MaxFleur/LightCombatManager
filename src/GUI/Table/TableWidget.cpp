@@ -18,6 +18,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "../../../include/GUI/Table/Delegate.hpp"
+#include "../../../include/GUI/Table/StatusEffectDialog.hpp"
+
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)
 {
@@ -299,6 +302,8 @@ TableWidget::rowSelected()
 void
 TableWidget::openStatusEffectDialog(int row)
 {
+	auto *const dialog = new StatusEffectDialog(row, this);
+	dialog->show();
 }
 
 
@@ -376,11 +381,11 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 		m_rowIdentifier = m_identifiers.at(m_rowEntered);
 		setRowAndPlayer();
 	}
-	if(event->key() == Qt::Key_E) {
+	if (event->key() == Qt::Key_E) {
 		if (event->modifiers() == Qt::ControlModifier) {
 			openStatusEffectDialog(m_rowEntered);
-        }
-    }
+		}
+	}
 	QWidget::keyPressEvent(event);
 }
 
@@ -389,18 +394,18 @@ void
 TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu menu(this);
-    
-    // Map from MainWindow coordinates to the Table Widget coordinates
-    if(m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
-        auto *const statusEffectAction = menu.addAction(
-            "Add Status Effect",
-            this,
-            [this] (int row) {
-                openStatusEffectDialog(row);
-            });
-    }
-    
-    auto *const optionMenu = menu.addMenu("Options");
+
+	// Map from MainWindow coordinates to the Table Widget coordinates
+	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
+		auto *const statusEffectAction = menu.addAction(
+			"Add Status Effect",
+			this,
+			[this] (int row) {
+				openStatusEffectDialog(row);
+			});
+	}
+
+	auto *const optionMenu = menu.addMenu("Options");
 
 	auto *const iniAction = optionMenu->addAction(
 		"Show Initiatve",

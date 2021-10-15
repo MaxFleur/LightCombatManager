@@ -1,14 +1,11 @@
 #pragma once
 
-#include <iostream>
-
 #include <QPointer>
 #include <QString>
 #include <QWidget>
 
 #include "../../CharacterHandler.hpp"
 #include "CustomTable.hpp"
-#include "Delegate.hpp"
 
 class QContextMenuEvent;
 class QFont;
@@ -80,9 +77,9 @@ private slots:
 
 	void
 	rowSelected();
-    
-    void
-    openStatusEffectDialog(int row);
+
+	void
+	openStatusEffectDialog(int row);
 
 private:
 	CharacterHandlerRef m_char;

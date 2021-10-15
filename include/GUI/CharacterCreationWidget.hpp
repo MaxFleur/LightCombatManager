@@ -55,6 +55,9 @@ private slots:
 	void
 	resetCharacter();
 
+	void
+	addStatusEffect();
+
 private:
 
 	void

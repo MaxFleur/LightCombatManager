@@ -6,10 +6,10 @@ set(SRC_LIST
     include/GUI/MainWindow.hpp
     include/GUI/WelcomeWidget.hpp
     include/GUI/CharacterCreationWidget.hpp
+    include/GUI/StatusEffectDialog.hpp
     include/GUI/Table/TableWidget.hpp
     include/GUI/Table/CustomTable.hpp
     include/GUI/Table/Delegate.hpp
-    include/GUI/Table/StatusEffectDialog.hpp
     include/FileHandler.hpp
     include/Utils.hpp
 
@@ -17,10 +17,10 @@ set(SRC_LIST
     src/GUI/MainWindow.cpp 
     src/GUI/WelcomeWidget.cpp 
     src/GUI/CharacterCreationWidget.cpp
+    src/GUI/StatusEffectDialog.cpp
     src/GUI/Table/TableWidget.cpp
     src/GUI/Table/CustomTable.cpp
     src/GUI/Table/Delegate.cpp
-    src/GUI/Table/StatusEffectDialog.cpp
     src/CharacterHandler.cpp
     src/FileHandler.cpp
     src/Utils.cpp

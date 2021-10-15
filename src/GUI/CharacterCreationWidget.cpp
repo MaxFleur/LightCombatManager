@@ -13,6 +13,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "../../include/GUI/StatusEffectDialog.hpp"
+
 CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, bool isEditCreation, QWidget *parent)
 	: m_char(charSort), m_isEditCreation(isEditCreation)
 {
@@ -81,6 +83,9 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	m_resetButton->setFixedWidth(60);
 	m_resetButton->setToolTip("Reset the current character.");
 
+	auto *const addStatusEffectButton = new QPushButton("Add Status Effect");
+	addStatusEffectButton->setToolTip("Add a Status Effect for this Character.");
+
 	// Layouts
 	auto *const nameInitLayout = new QHBoxLayout;
 	nameInitLayout->addWidget(nameLabel);
@@ -106,6 +111,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	auto *const addInfoLayout = new QHBoxLayout;
 	addInfoLayout->addWidget(addInfoLabel);
 	addInfoLayout->addWidget(m_addInfoEdit);
+	addInfoLayout->addWidget(addStatusEffectButton);
 	addInfoLayout->setAlignment(Qt::AlignTop);
 
 	auto *const buttonLayout = new QHBoxLayout;
@@ -141,6 +147,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	mainLayout->addLayout(buttonLayout);
 	mainLayout->addWidget(bottomWidget);
 
+	connect(addStatusEffectButton, &QPushButton::clicked, this, &CharacterCreationWidget::addStatusEffect);
 	connect(m_saveButton, &QPushButton::clicked, this, &CharacterCreationWidget::saveAndCreateNewCharacter);
 	connect(m_resetButton, &QPushButton::clicked, this, &CharacterCreationWidget::resetCharacter);
 	connect(
@@ -211,10 +218,29 @@ CharacterCreationWidget::storeCharacter()
 
 
 void
+CharacterCreationWidget::addStatusEffect()
+{
+	// Open dialog
+	auto *const dialog = new StatusEffectDialog(this);
+	// Lock until dialog is closed
+	if (dialog->exec() == QDialog::Accepted) {
+		// If accepted, set text
+		auto const itemText = m_addInfoEdit->text();
+		m_addInfoEdit->setText(itemText + dialog->getEffect());
+	}
+}
+
+
+void
 CharacterCreationWidget::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Return) {
 		saveAndCreateNewCharacter();
+	}
+	if (event->key() == Qt::Key_E) {
+		if (event->modifiers() == Qt::ControlModifier) {
+			addStatusEffect();
+		}
 	}
 	QWidget::keyPressEvent(event);
 }

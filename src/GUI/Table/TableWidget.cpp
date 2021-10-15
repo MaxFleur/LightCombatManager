@@ -19,7 +19,7 @@
 #include <QWidget>
 
 #include "../../../include/GUI/Table/Delegate.hpp"
-#include "../../../include/GUI/Table/StatusEffectDialog.hpp"
+#include "../../../include/GUI/StatusEffectDialog.hpp"
 
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)
@@ -307,7 +307,7 @@ TableWidget::addStatusEffect()
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// If accepted, set text
-		auto itemText = m_tableWidget->item(
+		auto const itemText = m_tableWidget->item(
 			m_tableWidget->currentIndex().row(),
 			COL_ADDITIONAL)->text();
 		m_tableWidget->item(

@@ -1,5 +1,7 @@
 #include "../include/CharacterHandler.hpp"
 
+#include <QCryptographicHash>
+
 // Set all values
 CharacterHandler::CharacterHandler()
 {
@@ -39,9 +41,14 @@ CharacterHandler::sortCharacters()
 				// If so, check if the initiative modifiers are different
 				if (c1->modifier != c2->modifier) {
 					return c1->modifier > c2->modifier;
-					// If initiative and modifiers are equal, randomize by using the instance adresses
+					// If initiative and modifiers are equal, randomize by using the name hashes
 				} else {
-					return c1.get() > c2.get();
+					return QCryptographicHash::hash(
+						c1->name.toUtf8(),
+						QCryptographicHash::Sha256).toHex() >
+					       QCryptographicHash::hash(
+						c2->name.toUtf8(),
+						QCryptographicHash::Sha256).toHex();
 				}
 			}
 			return false;

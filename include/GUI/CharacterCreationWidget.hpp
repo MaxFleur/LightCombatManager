@@ -20,10 +20,6 @@ public:
 	CharacterCreationWidget(CharacterHandlerRef	charSort,
 				QWidget *		parent = 0);
 
-	// Store the last created character before opening the table widget
-	void
-	storeLastCharacter();
-
 	// Set the focus to the name label at the start of the character creation
 	void
 	setNameFocus()

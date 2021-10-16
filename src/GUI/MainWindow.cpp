@@ -250,11 +250,10 @@ MainWindow::finishCharacterCreation()
 	auto const reply = QMessageBox::question(
 		this,
 		tr("Finish creation?"),
-		tr("Are you sure you want to finish the Character creation?"),
+		tr("Are you sure you want to finish the Character creation? All values not stored will be discarded."),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
-		m_characterCreationWidget->storeLastCharacter();
 		m_isCreationActive = false;
 		m_char->sortCharacters();
 		setTableWidget(false);

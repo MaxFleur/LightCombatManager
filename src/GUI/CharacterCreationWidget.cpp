@@ -141,16 +141,6 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 }
 
 
-// Store the last created character. After this, the table widget will be opened.
-void
-CharacterCreationWidget::storeLastCharacter()
-{
-	if (!m_nameEdit->text().isEmpty()) {
-		storeCharacter();
-	}
-}
-
-
 // Save the current character and reset to create another one
 void
 CharacterCreationWidget::saveAndCreateNewCharacter()

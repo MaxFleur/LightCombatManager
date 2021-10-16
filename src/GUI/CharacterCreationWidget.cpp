@@ -24,39 +24,24 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	// Label for the headline
 	auto *const headLabel = new QLabel(tr("Please enter the Character Stats."));
 	headLabel->setStyleSheet("font: 12pt; font-weight: bold;");
-	headLabel->setFrameStyle(QFrame::NoFrame);
-	headLabel->setAlignment(Qt::AlignLeft);
-	headLabel->setAlignment(Qt::AlignTop);
 
 	// Labels for character stats
 	auto *const nameLabel = new QLabel(tr("Name:"));
-	nameLabel->setFrameStyle(QFrame::NoFrame);
-	nameLabel->setAlignment(Qt::AlignLeft);
 	nameLabel->setToolTip(tr("Set the name of the Character. A Character can't be stored without a name."));
 
 	auto *const initLabel = new QLabel(tr("Initiative:"));
-	initLabel->setFrameStyle(QFrame::NoFrame);
-	initLabel->setAlignment(Qt::AlignLeft);
 	initLabel->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
 
 	auto *const initModifierLabel = new QLabel(tr("Init Modifier:"));
-	initModifierLabel->setFrameStyle(QFrame::NoFrame);
-	initModifierLabel->setAlignment(Qt::AlignLeft);
 	initModifierLabel->setToolTip(tr("Set the modificator of the initiative. Optional."));
 
 	auto *const hpLabel = new QLabel(tr("HP:"));
-	hpLabel->setFrameStyle(QFrame::NoFrame);
-	hpLabel->setAlignment(Qt::AlignLeft);
 	hpLabel->setToolTip(tr("Set the HP of this Character. Optional."));
 
 	auto *const isNPCLabel = new QLabel(tr("Is Character NPC:"));
-	isNPCLabel->setFrameStyle(QFrame::NoFrame);
-	isNPCLabel->setAlignment(Qt::AlignLeft);
 	isNPCLabel->setToolTip(tr("Set if the Character is an NPC. Optional."));
 
 	auto *const addInfoLabel = new QLabel(tr("Additional Information:"));
-	addInfoLabel->setFrameStyle(QFrame::NoFrame);
-	addInfoLabel->setAlignment(Qt::AlignLeft);
 	addInfoLabel->setToolTip(tr("Set some additional information. Optional."));
 
 	// Main widgets for character creation

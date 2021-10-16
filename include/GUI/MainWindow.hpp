@@ -61,7 +61,7 @@ private:
 	setWelcomingWidget();
 
 	void
-	setCharacterCreationWidget(bool isEditMode);
+	setCharacterCreationWidget();
 
 	void
 	setTableWidget(bool	isDataStored,

@@ -6,6 +6,7 @@
 
 #include "../../CharacterHandler.hpp"
 #include "CustomTable.hpp"
+#include "EditCombatDialog.hpp"
 
 class QContextMenuEvent;
 class QFont;
@@ -63,9 +64,6 @@ signals:
 	void
 	exit();
 
-	void
-	addCharacter();
-
 private slots:
 
 	void
@@ -80,6 +78,9 @@ private slots:
 
 	void
 	addStatusEffect();
+
+	void
+	editCombat();
 
 private:
 	CharacterHandlerRef m_char;
@@ -119,7 +120,6 @@ private:
 
 	// Widgets
 	QPointer<QPushButton> m_exitButton;
-	QPointer<QPushButton> m_addCharButton;
 	QPointer<QLabel> m_roundCounterLabel;
 	QPointer<QLabel> m_currentPlayerLabel;
 

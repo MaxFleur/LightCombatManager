@@ -53,8 +53,8 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	setTableData();
 
 	m_exitButton = new QPushButton(tr("Return to Main Window"));
-	m_addCharButton = new QPushButton(tr("Add new Character"));
-	m_addCharButton->setToolTip(tr("Add a new Character to this combat."));
+	auto *const addCharacterButton = new QPushButton(tr("Add new Characters"));
+	addCharacterButton->setToolTip(tr("Add new Characters to the Combat. WARNING: this resets the Combat."));
 
 	m_currentPlayerLabel = new QLabel;
 	m_roundCounterLabel = new QLabel;
@@ -70,7 +70,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	lowerLayout->addSpacing(SPACING);
 	lowerLayout->addWidget(m_currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
-	lowerLayout->addWidget(m_addCharButton);
+	lowerLayout->addWidget(addCharacterButton);
 	lowerLayout->addWidget(m_exitButton);
 	tableLayout->addLayout(lowerLayout);
 
@@ -94,13 +94,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 		[this] () {
 			emit exit();
 		});
-	connect(
-		m_addCharButton,
-		&QPushButton::clicked,
-		this,
-		[this] () {
-			emit addCharacter();
-		});
+	connect(addCharacterButton, &QPushButton::clicked, this, &TableWidget::editCombat);
 }
 
 
@@ -313,6 +307,17 @@ TableWidget::addStatusEffect()
 		m_tableWidget->item(
 			m_tableWidget->currentIndex().row(),
 			COL_ADDITIONAL)->setText(itemText + dialog->getEffect());
+	}
+}
+
+
+void
+TableWidget::editCombat()
+{
+	// Open dialog
+	auto *const dialog = new EditCombatDialog(this);
+	// Lock until dialog is closed
+	if (dialog->exec() == QDialog::Accepted) {
 	}
 }
 

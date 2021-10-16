@@ -87,7 +87,7 @@ MainWindow::newCombat()
 		m_char->clearCharacters();
 	}
 	m_isCreationActive = true;
-	setCharacterCreationWidget(false);
+	setCharacterCreationWidget();
 }
 
 
@@ -266,7 +266,7 @@ void
 MainWindow::addCharacterToCombat()
 {
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
-	setCharacterCreationWidget(true);
+	setCharacterCreationWidget();
 }
 
 
@@ -335,9 +335,9 @@ MainWindow::setWelcomingWidget()
 
 
 void
-MainWindow::setCharacterCreationWidget(bool isEditMode)
+MainWindow::setCharacterCreationWidget()
 {
-	m_characterCreationWidget = new CharacterCreationWidget(m_char, isEditMode, this);
+	m_characterCreationWidget = new CharacterCreationWidget(m_char, this);
 	setCentralWidget(m_characterCreationWidget);
 	setFixedSize(700, 280);
 	m_characterCreationWidget->setNameFocus();
@@ -353,11 +353,6 @@ MainWindow::setCharacterCreationWidget(bool isEditMode)
 		&CharacterCreationWidget::finish,
 		this,
 		&MainWindow::finishCharacterCreation);
-
-	if (isEditMode) {
-		setWindowTitle(tr("LCM - Reediting existing Combat"));
-		return;
-	}
 	setWindowTitle(tr("LCM - Creating new Combat"));
 }
 
@@ -368,7 +363,6 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	m_tableWidget = new TableWidget(m_char, isDataStored, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
-	connect(m_tableWidget, &TableWidget::addCharacter, this, &MainWindow::addCharacterToCombat);
 	m_isTableActive = true;
 	setMinimumSize(700, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);

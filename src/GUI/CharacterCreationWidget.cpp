@@ -15,8 +15,8 @@
 
 #include "../../include/GUI/StatusEffectDialog.hpp"
 
-CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, bool isEditCreation, QWidget *parent)
-	: m_char(charSort), m_isEditCreation(isEditCreation)
+CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent)
+	: m_char(charSort)
 {
 	auto *const bottomWidget = new QWidget();
 	bottomWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -117,19 +117,9 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	buttonLayout->addWidget(m_finishButton);
 	buttonLayout->addWidget(m_resetButton);
 	// If this is the combat edit mode, canceling is permitted
-	if (!m_isEditCreation) {
-		m_cancelButton = new QPushButton(tr("Cancel"));
-		m_cancelButton->setToolTip(tr("Cancel the entire Character Creation. All changes will be lost."));
-		buttonLayout->addWidget(m_cancelButton);
-
-		connect(
-			m_cancelButton,
-			&QPushButton::clicked,
-			this,
-			[this] () {
-				emit cancel();
-			});
-	}
+	m_cancelButton = new QPushButton(tr("Cancel"));
+	m_cancelButton->setToolTip(tr("Cancel the entire Character Creation. All changes will be lost."));
+	buttonLayout->addWidget(m_cancelButton);
 
 	auto *const mainLayout = new QVBoxLayout(this);
 	mainLayout->setContentsMargins(5, 5, 5, 5);
@@ -143,6 +133,9 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 	mainLayout->addLayout(buttonLayout);
 	mainLayout->addWidget(bottomWidget);
 
+	// Default character values
+	resetCharacter();
+
 	connect(addStatusEffectButton, &QPushButton::clicked, this, &CharacterCreationWidget::addStatusEffect);
 	connect(m_saveButton, &QPushButton::clicked, this, &CharacterCreationWidget::saveAndCreateNewCharacter);
 	connect(m_resetButton, &QPushButton::clicked, this, &CharacterCreationWidget::resetCharacter);
@@ -153,9 +146,13 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, b
 		[this] () {
 			emit finish();
 		});
-
-	// Default character values
-	resetCharacter();
+	connect(
+		m_cancelButton,
+		&QPushButton::clicked,
+		this,
+		[this] () {
+			emit cancel();
+		});
 }
 
 

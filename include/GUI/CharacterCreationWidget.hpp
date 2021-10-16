@@ -18,7 +18,6 @@ class CharacterCreationWidget : public QWidget {
 
 public:
 	CharacterCreationWidget(CharacterHandlerRef	charSort,
-				bool			isEditCreation,
 				QWidget *		parent = 0);
 
 	// Store the last created character before opening the table widget
@@ -71,8 +70,6 @@ private:
 	QPointer<QPushButton> m_finishButton;
 	QPointer<QPushButton> m_resetButton;
 	QPointer<QPushButton> m_cancelButton;
-
-	bool m_isEditCreation;
 
 	// character sort object to store new created objects
 	CharacterHandlerRef m_char;

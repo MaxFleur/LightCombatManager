@@ -21,7 +21,7 @@ public:
 
 	// Set the focus to the name label at the start of the character creation
 	void
-	setNameFocus()
+	setFocus()
 	{
 		m_nameEdit->setFocus(Qt::TabFocusReason);
 	}
@@ -50,7 +50,7 @@ private slots:
 	saveAndCreateNewCharacter();
 
 	void
-	resetCharacter();
+	resetLayout();
 
 	void
 	addStatusEffect();
@@ -65,10 +65,10 @@ private:
 
 	// Widgets
 	QPointer<QLineEdit> m_nameEdit;
-	QPointer<QSpinBox> m_initBox;
-	QPointer<QSpinBox> m_initModifierBox;
+	QPointer<QSpinBox> m_iniBox;
+	QPointer<QSpinBox> m_iniModifierBox;
 	QPointer<QSpinBox> m_hpBox;
-	QPointer<QCheckBox> m_isNPCBox;
+	QPointer<QCheckBox> m_npcBox;
 	QPointer<QLineEdit> m_addInfoEdit;
 
 	QPointer<QPushButton> m_saveButton;

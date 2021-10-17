@@ -28,16 +28,16 @@ signals:
 private slots:
 
 	void
-	addNewCharacter();
+	addCharacter();
 
 	void
-	resetCharacter();
+	resetLayout();
 
 
 private:
 
 	void
-	setNameFocus()
+	setFocus()
 	{
 		m_nameEdit->setFocus(Qt::TabFocusReason);
 	}

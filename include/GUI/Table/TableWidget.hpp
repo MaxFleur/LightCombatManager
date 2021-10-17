@@ -6,7 +6,6 @@
 
 #include "../../CharacterHandler.hpp"
 #include "CustomTable.hpp"
-#include "EditCombatDialog.hpp"
 
 class QContextMenuEvent;
 class QFont;
@@ -76,18 +75,18 @@ private slots:
 	rowSelected();
 
 	void
-	addStatusEffect();
+	openStatusEffectDialog();
 
 	void
-	editCombat();
+	openEditCombatDialog();
 
 	void
-	readdCharacter(QString	name,
-		       int	ini,
-		       int	mod,
-		       int	hp,
-		       bool	isNPC,
-		       QString	addInfo);
+	addCharacter(QString	name,
+		     int	ini,
+		     int	mod,
+		     int	hp,
+		     bool	isNPC,
+		     QString	addInfo);
 
 private:
 

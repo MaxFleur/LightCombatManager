@@ -29,30 +29,30 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	auto *const nameLabel = new QLabel(tr("Name:"));
 	nameLabel->setToolTip(tr("Set the name of the Character. A Character can't be stored without a name."));
 
-	auto *const initLabel = new QLabel(tr("Initiative:"));
-	initLabel->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
+	auto *const iniLabel = new QLabel(tr("Initiative:"));
+	iniLabel->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
 
-	auto *const initModifierLabel = new QLabel(tr("Init Modifier:"));
-	initModifierLabel->setToolTip(tr("Set the modificator of the initiative. Optional."));
+	auto *const iniModifierLabel = new QLabel(tr("Init Modifier:"));
+	iniModifierLabel->setToolTip(tr("Set the modificator of the initiative. Optional."));
 
 	auto *const hpLabel = new QLabel(tr("HP:"));
 	hpLabel->setToolTip(tr("Set the HP of this Character. Optional."));
 
-	auto *const isNPCLabel = new QLabel(tr("Is Character NPC:"));
-	isNPCLabel->setToolTip(tr("Set if the Character is an NPC. Optional."));
+	auto *const npcLabel = new QLabel(tr("Is Character NPC:"));
+	npcLabel->setToolTip(tr("Set if the Character is an NPC. Optional."));
 
 	auto *const addInfoLabel = new QLabel(tr("Additional Information:"));
 	addInfoLabel->setToolTip(tr("Set some additional information. Optional."));
 
 	// Main widgets for character creation
 	m_nameEdit = new QLineEdit();
-	m_initBox = new QSpinBox();
-	m_initBox->setMinimum(-20);
-	m_initModifierBox = new QSpinBox();
-	m_initModifierBox->setMinimum(-10);
+	m_iniBox = new QSpinBox();
+	m_iniBox->setMinimum(-20);
+	m_iniModifierBox = new QSpinBox();
+	m_iniModifierBox->setMinimum(-10);
 	m_hpBox = new QSpinBox();
 	m_hpBox->setRange(-100, 10000);
-	m_isNPCBox = new QCheckBox();
+	m_npcBox = new QCheckBox();
 	m_addInfoEdit = new QLineEdit();
 
 	// Buttons
@@ -72,17 +72,17 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	auto *const nameInitLayout = new QHBoxLayout;
 	nameInitLayout->addWidget(nameLabel);
 	nameInitLayout->addWidget(m_nameEdit);
-	nameInitLayout->addWidget(initLabel);
-	nameInitLayout->addWidget(m_initBox);
+	nameInitLayout->addWidget(iniLabel);
+	nameInitLayout->addWidget(m_iniBox);
 	nameInitLayout->setAlignment(Qt::AlignTop);
 
 	auto *const modHPisNPCLayout = new QHBoxLayout;
-	modHPisNPCLayout->addWidget(initModifierLabel);
-	modHPisNPCLayout->addWidget(m_initModifierBox);
+	modHPisNPCLayout->addWidget(iniModifierLabel);
+	modHPisNPCLayout->addWidget(m_iniModifierBox);
 	modHPisNPCLayout->addWidget(hpLabel);
 	modHPisNPCLayout->addWidget(m_hpBox);
-	modHPisNPCLayout->addWidget(isNPCLabel);
-	modHPisNPCLayout->addWidget(m_isNPCBox);
+	modHPisNPCLayout->addWidget(npcLabel);
+	modHPisNPCLayout->addWidget(m_npcBox);
 
 	auto *const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -119,11 +119,11 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	mainLayout->addWidget(bottomWidget);
 
 	// Default character values
-	resetCharacter();
+	resetLayout();
 
 	connect(addStatusEffectButton, &QPushButton::clicked, this, &CharacterCreationWidget::addStatusEffect);
 	connect(m_saveButton, &QPushButton::clicked, this, &CharacterCreationWidget::saveAndCreateNewCharacter);
-	connect(m_resetButton, &QPushButton::clicked, this, &CharacterCreationWidget::resetCharacter);
+	connect(m_resetButton, &QPushButton::clicked, this, &CharacterCreationWidget::resetLayout);
 	connect(
 		m_finishButton,
 		&QPushButton::clicked,
@@ -153,21 +153,21 @@ CharacterCreationWidget::saveAndCreateNewCharacter()
 		return;
 	}
 	storeCharacter();
-	resetCharacter();
-	setNameFocus();
+	resetLayout();
+	setFocus();
 }
 
 
 // Reset the current character
 void
-CharacterCreationWidget::resetCharacter()
+CharacterCreationWidget::resetLayout()
 {
 	// Reset all displayed values
 	m_nameEdit->clear();
-	m_initBox->setValue(0);
-	m_initModifierBox->setValue(0);
+	m_iniBox->setValue(0);
+	m_iniModifierBox->setValue(0);
 	m_hpBox->setValue(0);
-	m_isNPCBox->setChecked(false);
+	m_npcBox->setChecked(false);
 	m_addInfoEdit->clear();
 }
 
@@ -177,10 +177,10 @@ CharacterCreationWidget::storeCharacter()
 {
 	m_char->storeCharacter(
 		m_nameEdit->text(),
-		m_initBox->value(),
-		m_initModifierBox->value(),
+		m_iniBox->value(),
+		m_iniModifierBox->value(),
 		m_hpBox->value(),
-		m_isNPCBox->isChecked(),
+		m_npcBox->isChecked(),
 		m_addInfoEdit->text());
 }
 

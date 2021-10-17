@@ -47,10 +47,11 @@ EditCombatDialog::EditCombatDialog(QWidget *parent)
 	mainLayout->addWidget(resetButton, 4, 2);
 	mainLayout->addWidget(cancelButton, 4, 3);
 
-	setNameFocus();
+	setFocus();
+	setFixedSize(380, 200);
 
-	connect(addCharButton, &QPushButton::clicked, this, &EditCombatDialog::addNewCharacter);
-	connect(resetButton, &QPushButton::clicked, this, &EditCombatDialog::resetCharacter);
+	connect(addCharButton, &QPushButton::clicked, this, &EditCombatDialog::addCharacter);
+	connect(resetButton, &QPushButton::clicked, this, &EditCombatDialog::resetLayout);
 	connect(
 		cancelButton,
 		&QPushButton::clicked,
@@ -62,7 +63,7 @@ EditCombatDialog::EditCombatDialog(QWidget *parent)
 
 
 void
-EditCombatDialog::addNewCharacter()
+EditCombatDialog::addCharacter()
 {
 	if (m_nameEdit->text().isEmpty()) {
 		auto const reply = QMessageBox::warning(
@@ -74,13 +75,13 @@ EditCombatDialog::addNewCharacter()
 	m_somethingStored = true;
 	emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
 			      m_npcBox->isChecked(), m_addInfoEdit->text());
-	resetCharacter();
-	setNameFocus();
+	resetLayout();
+	setFocus();
 }
 
 
 void
-EditCombatDialog::resetCharacter()
+EditCombatDialog::resetLayout()
 {
 	// Reset all displayed values
 	m_nameEdit->clear();
@@ -96,7 +97,7 @@ void
 EditCombatDialog::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Return) {
-		addNewCharacter();
+		addCharacter();
 	}
 	QWidget::keyPressEvent(event);
 }

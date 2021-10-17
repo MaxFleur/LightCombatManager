@@ -20,6 +20,7 @@
 
 #include "../../../include/GUI/Table/Delegate.hpp"
 #include "../../../include/GUI/StatusEffectDialog.hpp"
+#include "../../../include/GUI/Table/EditCombatDialog.hpp"
 
 #include "Utils.hpp"
 
@@ -264,7 +265,7 @@ TableWidget::rowSelected()
 
 
 void
-TableWidget::addStatusEffect()
+TableWidget::openStatusEffectDialog()
 {
 	// Open dialog
 	auto *const dialog = new StatusEffectDialog(this);
@@ -286,12 +287,12 @@ TableWidget::addStatusEffect()
 
 
 void
-TableWidget::editCombat()
+TableWidget::openEditCombatDialog()
 {
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 
 	auto *const dialog = new EditCombatDialog(this);
-	connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::readdCharacter);
+	connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::addCharacter);
 	if (dialog->exec() == QDialog::Accepted) {
 		auto const reply = QMessageBox::question(
 			this,
@@ -308,12 +309,12 @@ TableWidget::editCombat()
 
 
 void
-TableWidget::readdCharacter(QString	name,
-			    int		ini,
-			    int		mod,
-			    int		hp,
-			    bool	isNPC,
-			    QString	addInfo)
+TableWidget::addCharacter(QString	name,
+			  int		ini,
+			  int		mod,
+			  int		hp,
+			  bool		isNPC,
+			  QString	addInfo)
 {
 	m_char->storeCharacter(name, ini, mod, hp, isNPC, addInfo);
 	setTable();
@@ -439,12 +440,12 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 	}
 	if (event->key() == Qt::Key_E) {
 		if (event->modifiers() == Qt::ControlModifier) {
-			addStatusEffect();
+			openStatusEffectDialog();
 		}
 	}
 	if (event->key() == Qt::Key_R) {
 		if (event->modifiers() == Qt::ControlModifier) {
-			editCombat();
+			openEditCombatDialog();
 		}
 	}
 	QWidget::keyPressEvent(event);
@@ -456,11 +457,11 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu menu(this);
 
-	auto *const editCombatAction = menu.addAction(
-		tr("Readd Character"),
+	auto *const openEditCombatDialogAction = menu.addAction(
+		tr("Add new Character(s)"),
 		this,
 		[this] () {
-			editCombat();
+			openEditCombatDialog();
 		});
 
 	// Map from MainWindow coordinates to the Table Widget coordinates
@@ -469,7 +470,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 			tr("Add Status Effect"),
 			this,
 			[this] () {
-				addStatusEffect();
+				openStatusEffectDialog();
 			});
 	}
 

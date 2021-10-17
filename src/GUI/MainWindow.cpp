@@ -278,7 +278,7 @@ MainWindow::setCharacterCreationWidget()
 	m_characterCreationWidget = new CharacterCreationWidget(m_char, this);
 	setCentralWidget(m_characterCreationWidget);
 	setFixedSize(700, 280);
-	m_characterCreationWidget->setNameFocus();
+	m_characterCreationWidget->setFocus();
 	m_saveAction->setEnabled(false);
 
 	connect(

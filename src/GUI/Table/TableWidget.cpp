@@ -54,8 +54,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	tableLayout->addWidget(m_tableWidget);
 
 	m_exitButton = new QPushButton(tr("Return to Main Window"));
-	auto *const addCharacterButton = new QPushButton(tr("Add new Characters"));
-	addCharacterButton->setToolTip(tr("Add new Characters to the Combat. WARNING: this resets the Combat."));
 
 	m_currentPlayerLabel = new QLabel;
 	m_roundCounterLabel = new QLabel;
@@ -73,7 +71,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	lowerLayout->addSpacing(SPACING);
 	lowerLayout->addWidget(m_currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
-	lowerLayout->addWidget(addCharacterButton);
 	lowerLayout->addWidget(m_exitButton);
 	tableLayout->addLayout(lowerLayout);
 
@@ -86,7 +83,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 		[this] () {
 			emit exit();
 		});
-	connect(addCharacterButton, &QPushButton::clicked, this, &TableWidget::editCombat);
 
 	setTable();
 }
@@ -260,42 +256,6 @@ TableWidget::dragAndDrop(int row, int column)
 }
 
 
-// Remove a row/character of the table
-void
-TableWidget::removeRow()
-{
-	// if only one character remains, remove this character
-	// @note This part can change later, because the slot for selected rows is not called if only one row remains
-	if (m_tableWidget->rowCount() == 1) {
-		m_tableWidget->removeRow(0);
-		return;
-	}
-	// If a row has been selected, remove this row
-	if (m_isRowSelected) {
-		// If the deleted row is before the current entered row, move one up
-		if (m_tableWidget->currentIndex().row() < m_rowEntered) {
-			m_rowEntered--;
-		}
-		// If the deleted row was the last one in the table, select to the first row
-		if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
-			m_rowEntered = 0;
-		}
-		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
-
-		m_isRowSelected = false;
-		setRowAndPlayer();
-
-		return;
-	}
-	auto const reply = QMessageBox::warning(
-		this,
-		tr("Could not remove Character!"),
-		tr("Please select a Character with the Mouse Key before deleting!"));
-
-	return;
-}
-
-
 // Check if a row is selected
 void
 TableWidget::rowSelected()
@@ -327,10 +287,18 @@ TableWidget::addStatusEffect()
 void
 TableWidget::editCombat()
 {
-	// Open dialog
-	auto *const dialog = new EditCombatDialog(this);
-	connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::readdCharacter);
-	dialog->exec();
+	auto const reply = QMessageBox::warning(
+		this,
+		tr("Are you sure?"),
+		tr(
+			"Readding characters will reset deleted characters and restore the order to BEFORE the combat. New added characters will remain. <br>"
+			"Are you sure you want to continue?"),
+		QMessageBox::Yes | QMessageBox::No);
+	if (reply == QMessageBox::Yes) {
+		auto *const dialog = new EditCombatDialog(this);
+		connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::readdCharacter);
+		dialog->exec();
+	}
 }
 
 
@@ -373,6 +341,59 @@ TableWidget::setRowAndPlayer()
 }
 
 
+// Remove a row/character of the table
+void
+TableWidget::removeRow()
+{
+	// if only one character remains, remove this character
+	// @note This part can change later, because the slot for selected rows is not called if only one row remains
+	if (m_tableWidget->rowCount() == 1) {
+		m_tableWidget->removeRow(0);
+		return;
+	}
+	// If a row has been selected, remove this row
+	if (m_isRowSelected) {
+		// If the deleted row is before the current entered row, move one up
+		if (m_tableWidget->currentIndex().row() < m_rowEntered) {
+			m_rowEntered--;
+		}
+		// If the deleted row was the last one in the table, select to the first row
+		if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
+			m_rowEntered = 0;
+		}
+		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
+
+		m_isRowSelected = false;
+		setRowAndPlayer();
+
+		return;
+	}
+	auto const reply = QMessageBox::warning(
+		this,
+		tr("Could not remove Character!"),
+		tr("Please select a Character with the Mouse Key before deleting!"));
+
+	return;
+}
+
+
+void
+TableWidget::enteredRowChanged()
+{
+	// If the current selected row is the last one, reset to the first one
+	if (m_rowEntered == m_tableWidget->rowCount() - 1) {
+		m_rowEntered = 0;
+		m_roundCounter++;
+		setRoundCounterData();
+		// Otherwise just increment to select the next row
+	} else {
+		m_rowEntered++;
+	}
+	m_rowIdentifier = m_identifiers.at(m_rowEntered);
+	setRowAndPlayer();
+}
+
+
 void
 TableWidget::writeSettings()
 {
@@ -410,21 +431,16 @@ TableWidget::keyPressEvent(QKeyEvent *event)
 		removeRow();
 	}
 	if (event->key() == Qt::Key_Return) {
-		// If the current selected row is the last one, reset to the first one
-		if (m_rowEntered == m_tableWidget->rowCount() - 1) {
-			m_rowEntered = 0;
-			m_roundCounter++;
-			setRoundCounterData();
-			// Otherwise just increment to select the next row
-		} else {
-			m_rowEntered++;
-		}
-		m_rowIdentifier = m_identifiers.at(m_rowEntered);
-		setRowAndPlayer();
+		enteredRowChanged();
 	}
 	if (event->key() == Qt::Key_E) {
 		if (event->modifiers() == Qt::ControlModifier) {
 			addStatusEffect();
+		}
+	}
+	if (event->key() == Qt::Key_R) {
+		if (event->modifiers() == Qt::ControlModifier) {
+			editCombat();
 		}
 	}
 	QWidget::keyPressEvent(event);
@@ -436,6 +452,13 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu menu(this);
 
+	auto *const editCombatAction = menu.addAction(
+		tr("Readd Character"),
+		this,
+		[this] () {
+			editCombat();
+		});
+
 	// Map from MainWindow coordinates to the Table Widget coordinates
 	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
 		auto *const statusEffectAction = menu.addAction(
@@ -445,6 +468,8 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 				addStatusEffect();
 			});
 	}
+
+	menu.addSeparator();
 
 	auto *const optionMenu = menu.addMenu("Options");
 

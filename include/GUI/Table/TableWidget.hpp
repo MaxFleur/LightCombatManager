@@ -67,9 +67,6 @@ private slots:
 		    int column);
 
 	void
-	removeRow();
-
-	void
 	rowSelected();
 
 	void
@@ -108,6 +105,12 @@ private:
 
 	void
 	setRowAndPlayer();
+
+	void
+	removeRow();
+
+	void
+	enteredRowChanged();
 
 	void
 	writeSettings();

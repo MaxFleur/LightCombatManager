@@ -100,3 +100,10 @@ EditCombatDialog::keyPressEvent(QKeyEvent *event)
 	}
 	QWidget::keyPressEvent(event);
 }
+
+
+void
+EditCombatDialog::closeEvent(QCloseEvent *event)
+{
+	m_somethingStored ? QDialog::accept() : QDialog::reject();
+}

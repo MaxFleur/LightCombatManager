@@ -262,59 +262,6 @@ MainWindow::finishCharacterCreation()
 
 
 void
-MainWindow::closeEvent(QCloseEvent *event)
-{
-	// If the creation is active, ask if it should be closed
-	if (m_isCreationActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Exit"),
-			tr(
-				"You are in the Character Creation right now! Do you want to exit the program anyway? All stored Characters will be lost."),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			QApplication::exit;
-		} else {
-			event->ignore();
-		}
-	}
-	// If the Table is active, send a question if the Table should be saved
-	if (m_isTableActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Exit"),
-			tr(
-				"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?"),
-			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		if (reply == QMessageBox::Yes) {
-			auto const code = saveTable();
-			switch (code) {
-			case 0:
-			{
-				break;
-			}
-			case 1:
-			{
-				event->ignore();
-				break;
-			}
-			case 2:
-				auto const reply = QMessageBox::critical(
-					this,
-					tr("Too few Table entries!"),
-					tr("The Table contains less then two entries."));
-				event->ignore();
-				break;
-			}
-		} else if (reply == QMessageBox::Cancel) {
-			event->ignore();
-		}
-		QApplication::exit;
-	}
-}
-
-
-void
 MainWindow::setWelcomingWidget()
 {
 	m_welcomeWidget = new WelcomeWidget(this);
@@ -367,6 +314,59 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 	setWindowTitle(tr("LCM - Combat Active"));
+}
+
+
+void
+MainWindow::closeEvent(QCloseEvent *event)
+{
+	// If the creation is active, ask if it should be closed
+	if (m_isCreationActive) {
+		auto const reply = QMessageBox::question(
+			this,
+			tr("Exit"),
+			tr(
+				"You are in the Character Creation right now! Do you want to exit the program anyway? All stored Characters will be lost."),
+			QMessageBox::Yes | QMessageBox::No);
+		if (reply == QMessageBox::Yes) {
+			QApplication::exit;
+		} else {
+			event->ignore();
+		}
+	}
+	// If the Table is active, send a question if the Table should be saved
+	if (m_isTableActive) {
+		auto const reply = QMessageBox::question(
+			this,
+			tr("Exit"),
+			tr(
+				"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?"),
+			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		if (reply == QMessageBox::Yes) {
+			auto const code = saveTable();
+			switch (code) {
+			case 0:
+			{
+				break;
+			}
+			case 1:
+			{
+				event->ignore();
+				break;
+			}
+			case 2:
+				auto const reply = QMessageBox::critical(
+					this,
+					tr("Too few Table entries!"),
+					tr("The Table contains less then two entries."));
+				event->ignore();
+				break;
+			}
+		} else if (reply == QMessageBox::Cancel) {
+			event->ignore();
+		}
+		QApplication::exit;
+	}
 }
 
 

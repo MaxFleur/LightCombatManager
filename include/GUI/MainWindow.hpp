@@ -48,9 +48,6 @@ private slots:
 	void
 	finishCharacterCreation();
 
-	virtual void
-	closeEvent(QCloseEvent *event);
-
 private:
 
 	void
@@ -62,6 +59,9 @@ private:
 	void
 	setTableWidget(bool	isDataStored,
 		       QString	data = "");
+
+	void
+	closeEvent(QCloseEvent *event);
 
 	QPointer<WelcomeWidget> m_welcomeWidget;
 	QPointer<CharacterCreationWidget> m_characterCreationWidget;

@@ -45,6 +45,9 @@ private:
 	void
 	keyPressEvent(QKeyEvent *event);
 
+	void
+	closeEvent(QCloseEvent *event);
+
 	QPointer<QLineEdit> m_nameEdit;
 	QPointer<QSpinBox> m_iniBox;
 	QPointer<QSpinBox> m_iniModifierBox;

@@ -34,13 +34,6 @@ public:
 		return m_tableWidget;
 	}
 
-	// Return the height of this widget;
-	int
-	getHeight()
-	{
-		return m_height;
-	}
-
 	int
 	getRowEntered()
 	{
@@ -64,6 +57,9 @@ signals:
 	void
 	exit();
 
+	void
+	tableSet(int height);
+
 private slots:
 
 	void
@@ -82,13 +78,23 @@ private slots:
 	void
 	editCombat();
 
+	void
+	readdCharacter(QString	name,
+		       int	ini,
+		       int	mod,
+		       int	hp,
+		       bool	isNPC,
+		       QString	addInfo);
+
 private:
-	CharacterHandlerRef m_char;
 
 	void
-	setTableData();
+	setTable();
 
 	void
+	setData();
+
+	int
 	setHeight();
 
 	void
@@ -131,8 +137,6 @@ private:
 
 	bool m_isRowSelected = false;
 
-	int m_height = 0;
-
 	bool m_isDataStored;
 
 	QString m_data;
@@ -143,6 +147,8 @@ private:
 
 	bool m_isIniShown = true;
 	bool m_isModifierShown = true;
+
+	CharacterHandlerRef m_char;
 
 	// Row identifiers
 	std::vector<int> m_identifiers;

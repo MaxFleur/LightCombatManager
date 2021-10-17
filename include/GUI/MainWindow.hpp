@@ -10,7 +10,6 @@
 #include "Table/TableWidget.hpp"
 #include "../CharacterHandler.hpp"
 #include "../FileHandler.hpp"
-#include "../Utils.hpp"
 
 // This class handles the creation and managing of the main GUI window. It also serves
 // as "main anchor point", switching between the different widgets the Combat Manager can have.
@@ -48,9 +47,6 @@ private slots:
 
 	void
 	finishCharacterCreation();
-
-	void
-	addCharacterToCombat();
 
 	virtual void
 	closeEvent(QCloseEvent *event);

@@ -1,5 +1,9 @@
 #include "../include/Utils.hpp"
 
+#include <QTableWidget>
+
+#include "GUI/Table/CustomTable.hpp"
+
 Utils::Utils()
 {
 }
@@ -8,22 +12,22 @@ Utils::Utils()
 // Resynchronize the char handler vector. This function is called
 // if an existing combat is reedited
 void
-Utils::resynchronizeCharacters(QPointer<TableWidget>	tableWidget,
+Utils::resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
 			       CharacterHandlerRef	characterHandler)
 {
 	// Clear everything, then use the table cells to refill the character handler
 	characterHandler->clearCharacters();
 
-	for (int i = 0; i < tableWidget->getTableWidget()->rowCount(); i++) {
+	for (int i = 0; i < tableWidget->rowCount(); i++) {
 		// Check if the NPC cell is marked with an X
-		auto const isNPC = tableWidget->getTableWidget()->item(i, 4)->text() == "X" ? true : false;
+		auto const isNPC = tableWidget->item(i, 4)->text() == "X" ? true : false;
 
 		characterHandler->storeCharacter(
-			tableWidget->getTableWidget()->item(i, 0)->text(),
-			tableWidget->getTableWidget()->item(i, 1)->text().toInt(),
-			tableWidget->getTableWidget()->item(i, 2)->text().toInt(),
-			tableWidget->getTableWidget()->item(i, 3)->text().toInt(),
+			tableWidget->item(i, 0)->text(),
+			tableWidget->item(i, 1)->text().toInt(),
+			tableWidget->item(i, 2)->text().toInt(),
+			tableWidget->item(i, 3)->text().toInt(),
 			isNPC,
-			tableWidget->getTableWidget()->item(i, 5)->text());
+			tableWidget->item(i, 5)->text());
 	}
 }

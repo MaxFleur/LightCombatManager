@@ -2,8 +2,10 @@
 
 #include <QPointer>
 
-#include "GUI/Table/TableWidget.hpp"
 #include "CharacterHandler.hpp"
+
+class CustomTable;
+class QTableWidget;
 
 // Utility functions
 class Utils {
@@ -12,6 +14,6 @@ public:
 	Utils();
 
 	static void
-	resynchronizeCharacters(QPointer<TableWidget>	tableWidget,
+	resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
 				CharacterHandlerRef	characterHandler);
 };

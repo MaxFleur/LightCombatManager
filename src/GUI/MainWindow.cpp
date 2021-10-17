@@ -262,14 +262,6 @@ MainWindow::finishCharacterCreation()
 
 
 void
-MainWindow::addCharacterToCombat()
-{
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
-	setCharacterCreationWidget();
-}
-
-
-void
 MainWindow::closeEvent(QCloseEvent *event)
 {
 	// If the creation is active, ask if it should be closed
@@ -362,9 +354,17 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	m_tableWidget = new TableWidget(m_char, isDataStored, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
+	connect(
+		m_tableWidget,
+		&TableWidget::tableSet,
+		this,
+		[this] (int height) {
+			setMinimumSize(700, height);
+			setMaximumWidth(QWIDGETSIZE_MAX);
+		});
 	m_isTableActive = true;
-	setMinimumSize(700, m_tableWidget->getHeight());
-	setMaximumWidth(QWIDGETSIZE_MAX);
+	// setMinimumSize(700, m_tableWidget->getHeight());
+	// setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 	setWindowTitle(tr("LCM - Combat Active"));
 }

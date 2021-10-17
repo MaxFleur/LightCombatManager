@@ -21,6 +21,8 @@
 #include "../../../include/GUI/Table/Delegate.hpp"
 #include "../../../include/GUI/StatusEffectDialog.hpp"
 
+#include "Utils.hpp"
+
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)
 {
@@ -50,7 +52,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 
 	auto *const tableLayout = new QVBoxLayout(this);
 	tableLayout->addWidget(m_tableWidget);
-	setTableData();
 
 	m_exitButton = new QPushButton(tr("Return to Main Window"));
 	auto *const addCharacterButton = new QPushButton(tr("Add new Characters"));
@@ -58,11 +59,13 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 
 	m_currentPlayerLabel = new QLabel;
 	m_roundCounterLabel = new QLabel;
-	setRoundCounterData();
 
 	// Create a spacer widget to move the buttons to the right side
 	auto *const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
+	m_defaultFont.setBold(false);
+	m_boldFont.setBold(true);
 
 	// Lower layout
 	auto *const lowerLayout = new QHBoxLayout();
@@ -74,17 +77,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	lowerLayout->addWidget(m_exitButton);
 	tableLayout->addLayout(lowerLayout);
 
-	// Create the identifiers for the rows
-	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		m_identifiers.push_back(i);
-	}
-
-	m_defaultFont.setBold(false);
-	m_boldFont.setBold(true);
-	setRowAndPlayer();
-
-	setHeight();
-
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
 	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
 	connect(
@@ -95,12 +87,30 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 			emit exit();
 		});
 	connect(addCharacterButton, &QPushButton::clicked, this, &TableWidget::editCombat);
+
+	setTable();
+}
+
+
+void
+TableWidget::setTable()
+{
+	setData();
+	setRoundCounterData();
+
+	// Create the identifiers for the rows
+	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
+		m_identifiers.push_back(i);
+	}
+
+	setRowAndPlayer();
+	emit tableSet(setHeight());
 }
 
 
 // Set the data inside the table
 void
-TableWidget::setTableData()
+TableWidget::setData()
 {
 	if (m_isDataStored) {
 		const auto rowOfData = m_data.split("\n");
@@ -124,6 +134,8 @@ TableWidget::setTableData()
 				m_roundCounter = rowData[ROUND_CTR].toInt();
 			}
 		}
+		Utils::resynchronizeCharacters(m_tableWidget, m_char);
+		m_isDataStored = false;
 	} else {
 		// If no data is provided via csv, set the data according to the vector of chars
 		// generated in the character creation
@@ -169,13 +181,14 @@ TableWidget::setTableData()
 }
 
 
-void
+int
 TableWidget::setHeight()
 {
+	auto height = 0;
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		m_height += m_tableWidget->rowHeight(i);
+		height += m_tableWidget->rowHeight(i);
 	}
-	m_height += HEIGHT_BUFFER;
+	return height += HEIGHT_BUFFER;
 }
 
 
@@ -316,9 +329,22 @@ TableWidget::editCombat()
 {
 	// Open dialog
 	auto *const dialog = new EditCombatDialog(this);
-	// Lock until dialog is closed
-	if (dialog->exec() == QDialog::Accepted) {
-	}
+	connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::readdCharacter);
+	dialog->exec();
+}
+
+
+void
+TableWidget::readdCharacter(QString	name,
+			    int		ini,
+			    int		mod,
+			    int		hp,
+			    bool	isNPC,
+			    QString	addInfo)
+{
+	m_char->storeCharacter(name, ini, mod, hp, isNPC, addInfo);
+	m_char->sortCharacters();
+	setTable();
 }
 
 

@@ -51,7 +51,7 @@ EditCombatDialog::EditCombatDialog(QWidget *parent)
 
 	connect(addCharButton, &QPushButton::clicked, this, &EditCombatDialog::addNewCharacter);
 	connect(resetButton, &QPushButton::clicked, this, &EditCombatDialog::resetCharacter);
-	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
+	connect(cancelButton, &QPushButton::clicked, this, &QDialog::accept);
 }
 
 

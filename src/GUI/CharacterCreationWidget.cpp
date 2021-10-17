@@ -185,6 +185,16 @@ CharacterCreationWidget::storeCharacter()
 }
 
 
+// Store the last created character. After this, the table widget will be opened.
+void
+CharacterCreationWidget::storeLastCharacter()
+{
+	if (!m_nameEdit->text().isEmpty()) {
+		storeCharacter();
+	}
+}
+
+
 void
 CharacterCreationWidget::addStatusEffect()
 {
@@ -211,6 +221,11 @@ CharacterCreationWidget::keyPressEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_E) {
 		if (event->modifiers() == Qt::ControlModifier) {
 			addStatusEffect();
+		}
+	}
+	if (event->key() == Qt::Key_F) {
+		if (event->modifiers() == Qt::ControlModifier) {
+			emit finish();
 		}
 	}
 	QWidget::keyPressEvent(event);

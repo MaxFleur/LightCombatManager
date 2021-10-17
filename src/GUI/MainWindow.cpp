@@ -238,8 +238,9 @@ MainWindow::cancelCharacterCreation()
 void
 MainWindow::finishCharacterCreation()
 {
-	// If no or just one Character was stored and the name field of the char creation widget is empty, abort
-	if (m_char->getCharacters().size() < 2) {
+	// At least two Characters must be stored. Alternative: 1 Character stored and a name has been entered.
+	if ((m_char->getCharacters().size() == 1 &&
+	    m_characterCreationWidget->isNameEmpty()) || m_char->getCharacters().empty()) {
 		auto const reply = QMessageBox::warning(
 			this,
 			tr("Could not finish!"),
@@ -250,10 +251,11 @@ MainWindow::finishCharacterCreation()
 	auto const reply = QMessageBox::question(
 		this,
 		tr("Finish creation?"),
-		tr("Are you sure you want to finish the Character creation? All values not stored will be discarded."),
+		tr("Are you sure you want to finish the Character creation?"),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
+        m_characterCreationWidget->storeLastCharacter();
 		m_isCreationActive = false;
 		m_char->sortCharacters();
 		setTableWidget(false);

@@ -274,9 +274,13 @@ TableWidget::addStatusEffect()
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// If accepted, set text
-		auto const itemText = m_tableWidget->item(
+		auto itemText = m_tableWidget->item(
 			m_tableWidget->currentIndex().row(),
 			COL_ADDITIONAL)->text();
+		if (!itemText.isEmpty() && itemText.back() != " ") {
+			itemText += " ";
+		}
+
 		m_tableWidget->item(
 			m_tableWidget->currentIndex().row(),
 			COL_ADDITIONAL)->setText(itemText + dialog->getEffect());

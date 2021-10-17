@@ -193,7 +193,10 @@ CharacterCreationWidget::addStatusEffect()
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// If accepted, set text
-		auto const itemText = m_addInfoEdit->text();
+		auto itemText = m_addInfoEdit->text();
+		if (!itemText.isEmpty() && itemText.back() != " ") {
+			itemText += " ";
+		}
 		m_addInfoEdit->setText(itemText + dialog->getEffect());
 	}
 }

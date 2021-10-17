@@ -51,7 +51,13 @@ EditCombatDialog::EditCombatDialog(QWidget *parent)
 
 	connect(addCharButton, &QPushButton::clicked, this, &EditCombatDialog::addNewCharacter);
 	connect(resetButton, &QPushButton::clicked, this, &EditCombatDialog::resetCharacter);
-	connect(cancelButton, &QPushButton::clicked, this, &QDialog::accept);
+	connect(
+		cancelButton,
+		&QPushButton::clicked,
+		this,
+		[this] () {
+			m_somethingStored ? QDialog::accept() : QDialog::reject();
+		});
 }
 
 
@@ -65,6 +71,7 @@ EditCombatDialog::addNewCharacter()
 			tr("No name has been set. Please set at least a name before storing the Character!"));
 		return;
 	}
+	m_somethingStored = true;
 	emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
 			      m_npcBox->isChecked(), m_addInfoEdit->text());
 	resetCharacter();

@@ -52,6 +52,12 @@ public:
 		return m_tableWidget->rowCount();
 	}
 
+	int
+	getHeight()
+	{
+		return setHeight();
+	}
+
 signals:
 
 	void
@@ -144,9 +150,8 @@ private:
 
 	QString m_data;
 
-	int m_rowEntered;
-
-	int m_roundCounter;
+	int m_rowEntered = 0;
+	int m_roundCounter = 1;
 
 	bool m_isIniShown = true;
 	bool m_isModifierShown = true;

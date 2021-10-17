@@ -25,16 +25,16 @@ public:
 	{
 		m_nameEdit->setFocus(Qt::TabFocusReason);
 	}
-	
-    // Returns if a name has been entered
+
+	// Returns if a name has been entered
 	bool
 	isNameEmpty()
 	{
 		return m_nameEdit->text().isEmpty();
 	}
-	
+
 	void
-    storeLastCharacter();
+	storeLastCharacter();
 
 signals:
 

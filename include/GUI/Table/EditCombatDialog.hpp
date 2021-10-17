@@ -51,4 +51,6 @@ private:
 	QPointer<QSpinBox> m_hpBox;
 	QPointer<QCheckBox> m_npcBox;
 	QPointer<QLineEdit> m_addInfoEdit;
+
+	bool m_somethingStored = false;
 };

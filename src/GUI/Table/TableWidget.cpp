@@ -74,6 +74,8 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	lowerLayout->addWidget(m_exitButton);
 	tableLayout->addLayout(lowerLayout);
 
+	setTable();
+
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
 	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
 	connect(
@@ -83,8 +85,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 		[this] () {
 			emit exit();
 		});
-
-	setTable();
 }
 
 
@@ -92,14 +92,13 @@ void
 TableWidget::setTable()
 {
 	setData();
-	setRoundCounterData();
-
 	// Create the identifiers for the rows
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_identifiers.push_back(i);
 	}
-
+	setRoundCounterData();
 	setRowAndPlayer();
+	// qDebug() << "Before table setting" << Qt::endl;
 	emit tableSet(setHeight());
 }
 
@@ -162,8 +161,6 @@ TableWidget::setData()
 				COL_ADDITIONAL,
 				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
 		}
-		m_rowEntered = 0;
-		m_roundCounter = 1;
 	}
 	m_tableWidget->setColumnHidden(COL_INI, !m_isIniShown);
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_isModifierShown);
@@ -291,17 +288,21 @@ TableWidget::addStatusEffect()
 void
 TableWidget::editCombat()
 {
-	auto const reply = QMessageBox::warning(
-		this,
-		tr("Are you sure?"),
-		tr(
-			"Readding characters will reset deleted characters and restore the order to BEFORE the combat. New added characters will remain. <br>"
-			"Are you sure you want to continue?"),
-		QMessageBox::Yes | QMessageBox::No);
-	if (reply == QMessageBox::Yes) {
-		auto *const dialog = new EditCombatDialog(this);
-		connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::readdCharacter);
-		dialog->exec();
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+
+	auto *const dialog = new EditCombatDialog(this);
+	connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::readdCharacter);
+	if (dialog->exec() == QDialog::Accepted) {
+		auto const reply = QMessageBox::question(
+			this,
+			tr("Sort characters?"),
+			tr(
+				"Do you want to resort the table? This is only recommended if the combat is right at the start."),
+			QMessageBox::Yes | QMessageBox::No);
+		if (reply == QMessageBox::Yes) {
+			m_char->sortCharacters();
+			setTable();
+		}
 	}
 }
 
@@ -315,7 +316,6 @@ TableWidget::readdCharacter(QString	name,
 			    QString	addInfo)
 {
 	m_char->storeCharacter(name, ini, mod, hp, isNPC, addInfo);
-	m_char->sortCharacters();
 	setTable();
 }
 

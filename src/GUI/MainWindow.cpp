@@ -240,7 +240,7 @@ MainWindow::finishCharacterCreation()
 {
 	// At least two Characters must be stored. Alternative: 1 Character stored and a name has been entered.
 	if ((m_char->getCharacters().size() == 1 &&
-	    m_characterCreationWidget->isNameEmpty()) || m_char->getCharacters().empty()) {
+	     m_characterCreationWidget->isNameEmpty()) || m_char->getCharacters().empty()) {
 		auto const reply = QMessageBox::warning(
 			this,
 			tr("Could not finish!"),
@@ -253,11 +253,9 @@ MainWindow::finishCharacterCreation()
 		tr("Finish creation?"),
 		tr("Are you sure you want to finish the Character creation?"),
 		QMessageBox::Yes | QMessageBox::No);
-
 	if (reply == QMessageBox::Yes) {
-        m_characterCreationWidget->storeLastCharacter();
+		m_characterCreationWidget->storeLastCharacter();
 		m_isCreationActive = false;
-		m_char->sortCharacters();
 		setTableWidget(false);
 	}
 }
@@ -365,8 +363,8 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 			setMaximumWidth(QWIDGETSIZE_MAX);
 		});
 	m_isTableActive = true;
-	// setMinimumSize(700, m_tableWidget->getHeight());
-	// setMaximumWidth(QWIDGETSIZE_MAX);
+	setMinimumSize(700, m_tableWidget->getHeight());
+	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 	setWindowTitle(tr("LCM - Combat Active"));
 }

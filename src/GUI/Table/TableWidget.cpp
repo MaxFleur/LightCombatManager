@@ -337,7 +337,6 @@ TableWidget::setRowAndPlayer()
 	for (int j = 0; j < m_tableWidget->columnCount(); j++) {
 		m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
 	}
-
 	// Display current player
 	m_currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
 }
@@ -347,6 +346,9 @@ TableWidget::setRowAndPlayer()
 void
 TableWidget::removeRow()
 {
+	if (m_tableWidget->rowCount() == 0) {
+		return;
+	}
 	// if only one character remains, remove this character
 	// @note This part can change later, because the slot for selected rows is not called if only one row remains
 	if (m_tableWidget->rowCount() == 1) {
@@ -374,8 +376,6 @@ TableWidget::removeRow()
 		this,
 		tr("Could not remove Character!"),
 		tr("Please select a Character with the Mouse Key before deleting!"));
-
-	return;
 }
 
 

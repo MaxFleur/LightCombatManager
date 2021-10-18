@@ -307,11 +307,11 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 		&TableWidget::tableSet,
 		this,
 		[this] (int height) {
-			setMinimumSize(700, height);
+			setMinimumSize(710, height);
 			setMaximumWidth(QWIDGETSIZE_MAX);
 		});
 	m_isTableActive = true;
-	setMinimumSize(700, m_tableWidget->getHeight());
+	setMinimumSize(710, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 	setWindowTitle(tr("LCM - Combat Active"));

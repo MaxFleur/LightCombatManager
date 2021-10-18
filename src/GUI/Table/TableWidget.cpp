@@ -366,8 +366,8 @@ TableWidget::removeRow()
 				m_rowEntered = 0;
 			}
 		}
+		m_identifiers.erase(std::next(m_identifiers.begin(), m_tableWidget->currentIndex().row()));
 		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
-
 		m_isRowSelected = false;
 		setRowAndPlayer();
 

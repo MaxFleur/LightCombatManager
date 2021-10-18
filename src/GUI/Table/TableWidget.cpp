@@ -199,7 +199,7 @@ TableWidget::setInfoColumnWidth()
 }
 
 
-// Sets round couner number
+// Sets round counter number
 void
 TableWidget::setRoundCounterData()
 {
@@ -362,9 +362,9 @@ TableWidget::removeRow()
 		}
 		// If the deleted row was the last one in the table, select to the first row
 		if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
-            if(m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font() == m_boldFont) {
-                m_rowEntered = 0;
-            }
+			if (m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font() == m_boldFont) {
+				m_rowEntered = 0;
+			}
 		}
 		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
 

@@ -64,13 +64,13 @@ FileHandler::getCSVData(QString filename)
 		importedCSV.close();
 		if (checkTableFormat(m_data)) {
 			// Successfully checked table
-			return 2;
+			return 0;
 		}
 		// Table in false format
 		return 1;
 	}
 	// Unreadable data
-	return 0;
+	return 2;
 }
 
 
@@ -79,8 +79,8 @@ bool
 FileHandler::checkTableFormat(QString data)
 {
 	// Get the stored table row data information
-	const auto rowDataHeader = data.split("\n").at(0).split(";");
-	const auto rowDataFirstRow = data.split("\n").at(1).split(";");
+	auto const rowDataHeader = data.split("\n").at(0).split(";");
+	auto const rowDataFirstRow = data.split("\n").at(1).split(";");
 
 	// Test if the table has the correct header columns
 	if (rowDataHeader.size() == 6

@@ -31,6 +31,7 @@ public:
 private:
 	// Data used to fill the table
 	QString m_data;
+
 	// Checks if a table is in the right format
 	bool
 	checkTableFormat(QString data);

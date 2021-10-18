@@ -2,6 +2,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QCloseEvent>
 #include <QDebug>
 #include <QDir>
 #include <QFileDialog>
@@ -156,6 +157,10 @@ MainWindow::openTable()
 	switch (code) {
 	case 0:
 	{
+		// Table and char creation not active for a short time
+		m_isCreationActive = false;
+		m_isTableActive = false;
+		setTableWidget(true, m_file->getData());
 		break;
 	}
 	case 1:
@@ -167,10 +172,6 @@ MainWindow::openTable()
 		break;
 	}
 	case 2:
-		// Table and char creation not active for a short time
-		m_isCreationActive = false;
-		m_isTableActive = false;
-		setTableWidget(true, m_file->getData());
 		break;
 	}
 }

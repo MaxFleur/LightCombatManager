@@ -1,5 +1,7 @@
 #include "../../../include/GUI/Table/CustomTable.hpp"
 
+#include <QKeyEvent>
+
 CustomTable::CustomTable(QWidget *parent)
 {
 }

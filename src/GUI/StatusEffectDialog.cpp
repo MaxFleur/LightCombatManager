@@ -53,7 +53,6 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 void
 StatusEffectDialog::addEffect()
 {
-	m_effect.clear();
 	foreach(QListWidgetItem * item, m_list->selectedItems()) {
 		m_effect += item->text() + "; ";
 	}

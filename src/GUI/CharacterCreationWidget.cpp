@@ -5,22 +5,16 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
-#include <QLineEdit>
 #include <QMessageBox>
-#include <QPointer>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QVBoxLayout>
-#include <QWidget>
 
 #include "../../include/GUI/StatusEffectDialog.hpp"
 
 CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent)
 	: m_char(charSort)
 {
-	auto *const bottomWidget = new QWidget();
-	bottomWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
 	// Label for the headline
 	auto *const headLabel = new QLabel(tr("Please enter the Character Stats."));
 	headLabel->setStyleSheet("font: 12pt; font-weight: bold;");
@@ -107,16 +101,16 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	buttonLayout->addWidget(m_cancelButton);
 
 	auto *const mainLayout = new QVBoxLayout(this);
-	mainLayout->setContentsMargins(5, 5, 5, 5);
+	mainLayout->setContentsMargins(10, 5, 10, 5);
 	mainLayout->addSpacing(10);
 	mainLayout->addWidget(headLabel);
-	mainLayout->addSpacing(25);
+	mainLayout->addSpacing(10);
 	mainLayout->addLayout(nameInitLayout);
 	mainLayout->addLayout(modHPisNPCLayout);
 	mainLayout->addLayout(addInfoLayout);
 	mainLayout->addSpacing(15);
 	mainLayout->addLayout(buttonLayout);
-	mainLayout->addWidget(bottomWidget);
+	mainLayout->addSpacing(10);
 
 	// Default character values
 	resetLayout();
@@ -149,7 +143,7 @@ CharacterCreationWidget::saveAndCreateNewCharacter()
 		auto const reply = QMessageBox::warning(
 			this,
 			tr("Creation not possible!"),
-			tr("No name has been set. Please set at least a name before storing the Character!"));
+			tr("No name has been set. Please set a name before storing the Character!"));
 		return;
 	}
 	storeCharacter();

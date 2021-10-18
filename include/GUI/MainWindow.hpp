@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QAction>
 #include <QMainWindow>
 #include <QPointer>
 
@@ -10,6 +9,8 @@
 #include "Table/TableWidget.hpp"
 #include "../CharacterHandler.hpp"
 #include "../FileHandler.hpp"
+
+class QAction;
 
 // This class handles the creation and managing of the main GUI window. It also serves
 // as "main anchor point", switching between the different widgets the Combat Manager can have.

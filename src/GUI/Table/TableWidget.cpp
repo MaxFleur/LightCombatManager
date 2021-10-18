@@ -13,10 +13,8 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QSizePolicy>
-#include <QString>
 #include <QStringList>
 #include <QVBoxLayout>
-#include <QWidget>
 
 #include "../../../include/GUI/Table/Delegate.hpp"
 #include "../../../include/GUI/StatusEffectDialog.hpp"
@@ -212,7 +210,6 @@ TableWidget::setRoundCounterData()
 
 // This function enables drag and drop of table rows
 // Which works by switching the values of a row with it's upper or lower "neighbor"
-// This is done until the row is at the desired position
 void
 TableWidget::dragAndDrop(int row, int column)
 {

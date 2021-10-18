@@ -1,7 +1,8 @@
 #pragma once
 
 #include <QTableWidget>
-#include <QKeyEvent>
+
+class QKeyEvent;
 
 // This is a helping class, disabling the arrow key input
 class CustomTable : public QTableWidget {

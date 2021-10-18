@@ -161,7 +161,7 @@ private:
 	std::vector<int> m_identifiers;
 
 	// The row identifier to determine the correct row after drag and drop
-	int m_rowIdentifier;
+	int m_rowIdentifier = 0;
 
 	static constexpr int NMBR_COLUMNS = 6;
 

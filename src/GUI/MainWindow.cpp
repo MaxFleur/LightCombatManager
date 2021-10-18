@@ -80,7 +80,10 @@ MainWindow::newCombat()
 			tr("Do you want to save the current Combat before starting a new one?"),
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
-			saveTable();
+			auto const code = saveTable();
+            if(!code) {
+                return;
+            }
 		} else if (reply == QMessageBox::Cancel) {
 			return;
 		}
@@ -92,12 +95,15 @@ MainWindow::newCombat()
 }
 
 
-int
+bool
 MainWindow::saveTable()
 {
 	if (m_tableWidget->getRowCount() < 2) {
-		// Too few rows to save
-		return 2;
+		auto const reply = QMessageBox::critical(
+					this,
+					tr("Too few Table entries!"),
+					tr("The Table contains less then two entries."));
+		return false;
 	}
 	auto const filename = QFileDialog::getSaveFileName(
 		this,
@@ -107,7 +113,7 @@ MainWindow::saveTable()
 
 	if (filename.isEmpty()) {
 		// No file provided or Cancel pressed
-		return 1;
+		return false;
 	}
 
 	m_file->saveTable(
@@ -116,7 +122,7 @@ MainWindow::saveTable()
 		m_tableWidget->getRowEntered(),
 		m_tableWidget->getRoundCounter());
 	// Success
-	return 0;
+	return true;
 }
 
 
@@ -145,7 +151,10 @@ MainWindow::openTable()
 			tr("Do you want to save the current Combat before opening another Table?"),
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
-			saveTable();
+			auto const code = saveTable();
+            if(!code) {
+                return;
+            }
 		} else if (reply == QMessageBox::Cancel) {
 			return;
 		}
@@ -345,24 +354,9 @@ MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			auto const code = saveTable();
-			switch (code) {
-			case 0:
-			{
-				break;
-			}
-			case 1:
-			{
-				event->ignore();
-				break;
-			}
-			case 2:
-				auto const reply = QMessageBox::critical(
-					this,
-					tr("Too few Table entries!"),
-					tr("The Table contains less then two entries."));
-				event->ignore();
-				break;
-			}
+            if(!code) {
+                event->ignore();
+            }
 		} else if (reply == QMessageBox::Cancel) {
 			event->ignore();
 		}

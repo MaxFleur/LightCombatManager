@@ -28,7 +28,7 @@ private slots:
 	void
 	newCombat();
 
-	int
+	bool
 	saveTable();
 
 	void

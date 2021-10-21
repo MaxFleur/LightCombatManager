@@ -6,7 +6,7 @@
 
 class CustomTable;
 
-// Utility functions
+// Utility functions, no ctor needed
 class Utils {
 public:
 

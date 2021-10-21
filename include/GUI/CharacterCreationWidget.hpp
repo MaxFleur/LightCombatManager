@@ -10,7 +10,7 @@ class QCheckBox;
 class QPushButton;
 class QSpinBox;
 
-// This class handles the widget used for the creation of characters
+// This class is used for the creation of characters
 class CharacterCreationWidget : public QWidget {
 	Q_OBJECT
 

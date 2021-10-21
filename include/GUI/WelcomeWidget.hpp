@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-// This class handles the welcoming widget, creating the welcome textbox
+// This class creates the welcome text
 class WelcomeWidget : public QWidget {
 public:
 	WelcomeWidget(QWidget *parent = 0);

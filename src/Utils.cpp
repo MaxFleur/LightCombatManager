@@ -3,7 +3,7 @@
 #include "GUI/Table/CustomTable.hpp"
 
 // Resynchronize the char handler vector. This function is called
-// if an existing combat is reedited
+// if a table is loaded and/or new characters are readded to a combat
 void
 Utils::resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
 			       CharacterHandlerRef	characterHandler)

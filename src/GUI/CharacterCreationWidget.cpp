@@ -51,16 +51,16 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 
 	// Buttons
 	m_saveButton = new QPushButton(tr("Save Character"));
-	m_saveButton->setToolTip(tr("Save this Character. After this you can create another Character."));
+	m_saveButton->setToolTip(tr("Save this Character and reset Layout to add another one."));
 
 	m_finishButton = new QPushButton(tr("Finish"));
 	m_finishButton->setToolTip(tr("Finish the Character Creation. You can reedit the Combat later."));
 
-	m_resetButton = new QPushButton(tr("Reset Character"));
-	m_resetButton->setToolTip(tr("Reset the current Character."));
+	m_resetButton = new QPushButton(tr("Reset Layout"));
+	m_resetButton->setToolTip(tr("Reset the Layout values."));
 
 	auto *const addStatusEffectButton = new QPushButton(tr("Add Status Effect"));
-	addStatusEffectButton->setToolTip(tr("Add a Status Effect for this Character."));
+	addStatusEffectButton->setToolTip(tr("Add a Status Effect to this Character."));
 
 	// Layouts
 	auto *const nameInitLayout = new QHBoxLayout;
@@ -95,7 +95,7 @@ CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, Q
 	buttonLayout->addWidget(m_saveButton);
 	buttonLayout->addWidget(m_finishButton);
 	buttonLayout->addWidget(m_resetButton);
-	// If this is the combat edit mode, canceling is permitted
+
 	m_cancelButton = new QPushButton(tr("Cancel"));
 	m_cancelButton->setToolTip(tr("Cancel the entire Character Creation. All changes will be lost."));
 	buttonLayout->addWidget(m_cancelButton);
@@ -148,15 +148,15 @@ CharacterCreationWidget::saveAndCreateNewCharacter()
 	}
 	storeCharacter();
 	resetLayout();
+	// Focus back to name label
 	setFocus();
 }
 
 
-// Reset the current character
+// Reset all displayed values
 void
 CharacterCreationWidget::resetLayout()
 {
-	// Reset all displayed values
 	m_nameEdit->clear();
 	m_iniBox->setValue(0);
 	m_iniModifierBox->setValue(0);
@@ -179,7 +179,7 @@ CharacterCreationWidget::storeCharacter()
 }
 
 
-// Store the last created character. After this, the table widget will be opened.
+// Store the last created character. After this, the table widget will be initialized.
 void
 CharacterCreationWidget::storeLastCharacter()
 {
@@ -196,7 +196,7 @@ CharacterCreationWidget::addStatusEffect()
 	auto *const dialog = new StatusEffectDialog(this);
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
-		// If accepted, set text
+		// If accepted, add status effect
 		auto itemText = m_addInfoEdit->text();
 		if (!itemText.isEmpty() && itemText.back() != " ") {
 			itemText += " ";

@@ -58,7 +58,7 @@ MainWindow::MainWindow()
 void
 MainWindow::newCombat()
 {
-	// If a creation is currently running, asks if a new Combat should be started anyway
+	// If a creation is currently running, ask if a new Combat should be started anyway
 	if (m_isCreationActive) {
 		auto const reply = QMessageBox::question(
 			this,
@@ -72,7 +72,7 @@ MainWindow::newCombat()
 		} else {
 			return;
 		}
-		// If the Table is active right now, asks if the current Table should be saved
+		// If the Table is active right now, ask if the current Table should be saved
 	} else if (m_isTableActive) {
 		auto const reply = QMessageBox::question(
 			this,
@@ -129,7 +129,7 @@ MainWindow::saveTable()
 void
 MainWindow::openTable()
 {
-	// If a creation is currently running, asks if a Table shoud be opened anyway
+	// If a creation is currently running, ask if a Table shoud be opened anyway
 	if (m_isCreationActive) {
 		auto const reply = QMessageBox::question(
 			this,
@@ -143,7 +143,7 @@ MainWindow::openTable()
 		} else {
 			return;
 		}
-		// If the Table is active right now, asks if the current Table should be saved
+		// If the Table is active right now, ask if the current Table should be saved
 	} else if (m_isTableActive) {
 		auto const reply = QMessageBox::question(
 			this,
@@ -193,7 +193,7 @@ MainWindow::about()
 		this,
 		tr("About Light Combat Manager"),
 		tr(
-			"<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e. <br>"
+			"<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e.<br>"
 			"<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
 			"<p>Version 1.2.0 Beta.</p>"));
 }
@@ -210,8 +210,8 @@ MainWindow::exitCombat()
 {
 	auto const reply = QMessageBox::question(
 		this,
-		tr("Exit Combat?"),
-		tr("Are you sure you want to exit the Combat? All created Characters will be lost."),
+		tr("Return?"),
+		tr("Are you sure you want to return to the Main Window? All created Characters will be lost."),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
@@ -362,9 +362,4 @@ MainWindow::closeEvent(QCloseEvent *event)
 		}
 		QApplication::exit;
 	}
-}
-
-
-MainWindow::~MainWindow()
-{
 }

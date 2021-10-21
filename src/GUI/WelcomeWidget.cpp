@@ -3,7 +3,6 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-// Create the welcome widget at instantiation
 WelcomeWidget::WelcomeWidget(QWidget *parent)
 	: QWidget(parent)
 {

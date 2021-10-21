@@ -9,6 +9,7 @@ class QCheckBox;
 class QSpinBox;
 class QString;
 
+// Dialog used to add new characters to an existing Combat
 class EditCombatDialog : public QDialog {
 	Q_OBJECT
 

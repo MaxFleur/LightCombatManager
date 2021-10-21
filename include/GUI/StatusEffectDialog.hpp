@@ -7,6 +7,7 @@ class QListWidget;
 class QPushButton;
 class QString;
 
+// Dialog used to add certain status effects to characters
 class StatusEffectDialog : public QDialog {
 	Q_OBJECT
 

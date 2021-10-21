@@ -6,7 +6,7 @@
 
 class QTableWidget;
 
-// This class handles the saving and reopening of QTableWidgets as csv data
+// This class handles the saving and reopening of tables as csv data
 class FileHandler {
 public:
 

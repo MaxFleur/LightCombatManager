@@ -105,5 +105,7 @@ EditCombatDialog::keyPressEvent(QKeyEvent *event)
 void
 EditCombatDialog::closeEvent(QCloseEvent *event)
 {
+	// Accept means that a Characters were stored, whereas Reject
+	// just returns without new Characters stored
 	m_somethingStored ? QDialog::accept() : QDialog::reject();
 }

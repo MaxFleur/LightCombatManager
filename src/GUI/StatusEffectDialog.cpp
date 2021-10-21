@@ -56,6 +56,7 @@ StatusEffectDialog::addEffect()
 	foreach(QListWidgetItem * item, m_list->selectedItems()) {
 		m_effect += item->text() + "; ";
 	}
+	// Close if effects were added
 	QDialog::accept();
 }
 
@@ -63,6 +64,7 @@ StatusEffectDialog::addEffect()
 void
 StatusEffectDialog::findEffect(const QString filter)
 {
+	// Hide effects not containing the filter
 	for (int i = 0; i < m_list->count(); ++i) {
 		auto *item = m_list->item(i);
 		item->setHidden(!item->text().contains(filter, Qt::CaseInsensitive));

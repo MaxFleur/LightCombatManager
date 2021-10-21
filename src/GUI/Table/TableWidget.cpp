@@ -73,6 +73,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	tableLayout->addWidget(m_tableWidget);
 	tableLayout->addLayout(lowerLayout);
 
+	// Sort if the Combat is not loaded directly via a csv file
 	if (!isDataStored) {
 		m_char->sortCharacters();
 	}
@@ -101,7 +102,7 @@ TableWidget::setTable()
 		m_identifiers.push_back(i);
 	}
 	m_rowIdentifier = m_identifiers.at(m_rowEntered);
-
+	// Set data for the lower label
 	setRoundCounterData();
 	setRowAndPlayer();
 	emit tableSet(setHeight());
@@ -134,6 +135,7 @@ TableWidget::setData()
 				m_roundCounter = rowData[ROUND_CTR].toInt();
 			}
 		}
+		// Readd the tables values to the characters
 		Utils::resynchronizeCharacters(m_tableWidget, m_char);
 		m_isDataStored = false;
 	} else {
@@ -274,7 +276,7 @@ TableWidget::openStatusEffectDialog()
 	auto *const dialog = new StatusEffectDialog(this);
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
-		// If accepted, set text
+		// If accepted, add status effect text
 		auto itemText = m_tableWidget->item(
 			m_tableWidget->currentIndex().row(),
 			COL_ADDITIONAL)->text();
@@ -292,10 +294,12 @@ TableWidget::openStatusEffectDialog()
 void
 TableWidget::openEditCombatDialog()
 {
+	// Resynchronize because the table could have been modified
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 
 	auto *const dialog = new EditCombatDialog(this);
 	connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::addCharacter);
+	// Lock this widget, wait until Dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		auto const reply = QMessageBox::question(
 			this,
@@ -329,6 +333,7 @@ TableWidget::setRowAndPlayer()
 {
 	// Select row entered with Return key
 	m_tableWidget->selectionModel()->clearSelection();
+	m_tableWidget->selectRow(m_rowEntered);
 
 	// Reset bold text rows to standard font
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
@@ -338,7 +343,6 @@ TableWidget::setRowAndPlayer()
 			}
 		}
 	}
-	m_tableWidget->selectRow(m_rowEntered);
 	// Highlight selected row with bold fonts
 	for (int j = 0; j < m_tableWidget->columnCount(); j++) {
 		m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
@@ -367,15 +371,17 @@ TableWidget::removeRow()
 		if (m_tableWidget->currentIndex().row() < m_rowEntered) {
 			m_rowEntered--;
 		}
-		// If the deleted row was the last one in the table, select to the first row
+		// If the deleted row was the last one in the table and also the current player, select to the first row
 		if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
 			if (m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font() == m_boldFont) {
 				m_rowEntered = 0;
 			}
 		}
+		// The identifier for this row is not needed anymore, so delete that as well
 		m_identifiers.erase(std::next(m_identifiers.begin(), m_tableWidget->currentIndex().row()));
 		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
 		m_isRowSelected = false;
+		// Update the current player and row
 		setRowAndPlayer();
 
 		return;
@@ -395,10 +401,11 @@ TableWidget::enteredRowChanged()
 		m_rowEntered = 0;
 		m_roundCounter++;
 		setRoundCounterData();
-		// Otherwise just increment to select the next row
+		// Otherwise just select the next row
 	} else {
 		m_rowEntered++;
 	}
+	// Identifier for the entered row changes
 	m_rowIdentifier = m_identifiers.at(m_rowEntered);
 	setRowAndPlayer();
 }
@@ -469,7 +476,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 			openEditCombatDialog();
 		});
 
-	// Map from MainWindow coordinates to the Table Widget coordinates
+	// Map from MainWindow coordinates to Table Widget coordinates
 	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
 		auto *const statusEffectAction = menu.addAction(
 			tr("Add Status Effect"),

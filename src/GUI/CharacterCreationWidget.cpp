@@ -217,10 +217,5 @@ CharacterCreationWidget::keyPressEvent(QKeyEvent *event)
 			addStatusEffect();
 		}
 	}
-	if (event->key() == Qt::Key_F) {
-		if (event->modifiers() == Qt::ControlModifier) {
-			emit finish();
-		}
-	}
 	QWidget::keyPressEvent(event);
 }

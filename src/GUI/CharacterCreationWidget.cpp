@@ -210,7 +210,7 @@ void
 CharacterCreationWidget::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Return) {
-		saveAndCreateNewCharacter();
+		event->modifiers() == Qt::ControlModifier ? emit finish() : saveAndCreateNewCharacter();
 	}
 	if (event->key() == Qt::Key_E) {
 		if (event->modifiers() == Qt::ControlModifier) {

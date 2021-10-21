@@ -49,9 +49,6 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	auto *const delegate = new SpinBoxDelegate(this);
 	m_tableWidget->setItemDelegateForColumn(COL_HP, delegate);
 
-	auto *const tableLayout = new QVBoxLayout(this);
-	tableLayout->addWidget(m_tableWidget);
-
 	m_exitButton = new QPushButton(tr("Return to Main Window"));
 
 	m_currentPlayerLabel = new QLabel;
@@ -71,8 +68,14 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	lowerLayout->addWidget(m_currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
 	lowerLayout->addWidget(m_exitButton);
+
+	auto *const tableLayout = new QVBoxLayout(this);
+	tableLayout->addWidget(m_tableWidget);
 	tableLayout->addLayout(lowerLayout);
 
+	if (!isDataStored) {
+		m_char->sortCharacters();
+	}
 	setTable();
 
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
@@ -91,10 +94,14 @@ void
 TableWidget::setTable()
 {
 	setData();
+
 	// Create the identifiers for the rows
+	m_identifiers.clear();
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_identifiers.push_back(i);
 	}
+	m_rowIdentifier = m_identifiers.at(m_rowEntered);
+
 	setRoundCounterData();
 	setRowAndPlayer();
 	emit tableSet(setHeight());

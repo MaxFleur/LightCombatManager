@@ -81,9 +81,9 @@ MainWindow::newCombat()
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			auto const code = saveTable();
-            if(!code) {
-                return;
-            }
+			if (!code) {
+				return;
+			}
 		} else if (reply == QMessageBox::Cancel) {
 			return;
 		}
@@ -100,9 +100,9 @@ MainWindow::saveTable()
 {
 	if (m_tableWidget->getRowCount() < 2) {
 		auto const reply = QMessageBox::critical(
-					this,
-					tr("Too few Table entries!"),
-					tr("The Table contains less then two entries."));
+			this,
+			tr("Too few Table entries!"),
+			tr("The Table contains less then two entries."));
 		return false;
 	}
 	auto const filename = QFileDialog::getSaveFileName(
@@ -152,9 +152,9 @@ MainWindow::openTable()
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			auto const code = saveTable();
-            if(!code) {
-                return;
-            }
+			if (!code) {
+				return;
+			}
 		} else if (reply == QMessageBox::Cancel) {
 			return;
 		}
@@ -354,9 +354,9 @@ MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			auto const code = saveTable();
-            if(!code) {
-                event->ignore();
-            }
+			if (!code) {
+				event->ignore();
+			}
 		} else if (reply == QMessageBox::Cancel) {
 			event->ignore();
 		}

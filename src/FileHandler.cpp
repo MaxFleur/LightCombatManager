@@ -1,5 +1,6 @@
 #include "../include/FileHandler.hpp"
 
+#include <QDebug>
 #include <QFile>
 #include <QString>
 #include <QStringList>
@@ -35,8 +36,7 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 			for (int j = 0; j < tableWidget->columnCount(); ++j) {
 				const auto *item = tableWidget->item(i, j);
 				if (!item || item->text().isEmpty()) {
-					// Write a whitespace so empty cells can be added correctly
-					tableWidget->setItem(i, j, new QTableWidgetItem(" "));
+					tableWidget->setItem(i, j, new QTableWidgetItem(""));
 				}
 				strList << tableWidget->item(i, j)->text();
 			}
@@ -66,6 +66,7 @@ FileHandler::getCSVData(QString filename)
 			// Successfully checked table
 			return 0;
 		}
+
 		// Table in false format
 		return 1;
 	}

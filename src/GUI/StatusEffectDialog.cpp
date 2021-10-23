@@ -54,7 +54,10 @@ void
 StatusEffectDialog::addEffect()
 {
 	foreach(QListWidgetItem * item, m_list->selectedItems()) {
-		m_effect += item->text() + "; ";
+		m_effect += item->text();
+		if (item != m_list->selectedItems().back()) {
+			m_effect += ", ";
+		}
 	}
 	// Close if effects were added
 	QDialog::accept();

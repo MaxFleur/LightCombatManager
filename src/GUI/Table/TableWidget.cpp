@@ -309,6 +309,7 @@ TableWidget::openEditCombatDialog()
 			QMessageBox::Yes | QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			m_char->sortCharacters();
+			m_rowEntered = 0;
 			setTable();
 		}
 	}

@@ -163,6 +163,7 @@ MainWindow::openTable()
 		QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
 	auto const code = m_file->getCSVData(filename);
 
+
 	switch (code) {
 	case 0:
 	{

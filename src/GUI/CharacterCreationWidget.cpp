@@ -199,7 +199,7 @@ CharacterCreationWidget::addStatusEffect()
 		// If accepted, add status effect
 		auto itemText = m_addInfoEdit->text();
 		if (!itemText.isEmpty() && itemText.back() != " ") {
-			itemText += ", ";
+			itemText += " ";
 		}
 		m_addInfoEdit->setText(itemText + dialog->getEffect());
 	}

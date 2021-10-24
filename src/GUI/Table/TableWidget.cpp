@@ -477,13 +477,26 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 			openEditCombatDialog();
 		});
 
+	// Status Effect and remove options only if the cursor is above an item
 	// Map from MainWindow coordinates to Table Widget coordinates
 	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
+		// Enable row removal
+		rowSelected();
+
 		auto *const statusEffectAction = menu.addAction(
 			tr("Add Status Effect"),
 			this,
 			[this] () {
 				openStatusEffectDialog();
+			});
+
+		menu.addSeparator();
+
+		auto *const removeRowtAction = menu.addAction(
+			tr("Remove this Row"),
+			this,
+			[this] () {
+				removeRow();
 			});
 	}
 

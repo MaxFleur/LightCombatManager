@@ -25,8 +25,6 @@ public:
 		    QString		data = "",
 		    QWidget *		parent = 0);
 
-	~TableWidget();
-
 	QTableWidget *
 	getTableWidget()
 	{
@@ -118,6 +116,12 @@ private:
 	enteredRowChanged();
 
 	void
+	showIniColumn(bool show);
+
+	void
+	showModColumn(bool show);
+
+	void
 	writeSettings();
 
 	void
@@ -152,8 +156,8 @@ private:
 	int m_rowEntered = 0;
 	int m_roundCounter = 1;
 
-	bool m_isIniShown = true;
-	bool m_isModifierShown = true;
+	bool m_isIniShown{ true };
+	bool m_isModifierShown{ true };
 
 	CharacterHandlerRef m_char;
 

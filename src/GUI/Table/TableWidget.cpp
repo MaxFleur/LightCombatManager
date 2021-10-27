@@ -413,9 +413,31 @@ TableWidget::enteredRowChanged()
 
 
 void
+TableWidget::showIniColumn(bool show)
+{
+	m_isIniShown = show;
+	m_tableWidget->setColumnHidden(COL_INI, !show);
+
+	writeSettings();
+	setInfoColumnWidth();
+}
+
+
+void
+TableWidget::showModColumn(bool show)
+{
+	m_isModifierShown = show;
+	m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
+
+	writeSettings();
+	setInfoColumnWidth();
+}
+
+
+void
 TableWidget::writeSettings()
 {
-	QSettings settings("LCM", "LCM");
+	QSettings settings;
 
 	settings.beginGroup("TableSettings");
 	settings.setValue("INI", m_isIniShown);
@@ -427,7 +449,7 @@ TableWidget::writeSettings()
 void
 TableWidget::readSettings()
 {
-	QSettings settings("LCM", "LCM");
+	QSettings settings;
 
 	settings.beginGroup("TableSettings");
 	// If the application is called for the first time, initiative and
@@ -508,9 +530,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		tr("Show Initiatve"),
 		this,
 		[this] (bool show) {
-			m_isIniShown = show;
-			m_tableWidget->setColumnHidden(COL_INI, !show);
-			setInfoColumnWidth();
+			showIniColumn(show);
 		});
 	iniAction->setCheckable(true);
 	iniAction->setChecked(m_isIniShown);
@@ -519,18 +539,10 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		tr("Show Modifier"),
 		this,
 		[this] (bool show) {
-			m_isModifierShown = show;
-			m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
-			setInfoColumnWidth();
+			showModColumn(show);
 		});
 	modifierAction->setCheckable(true);
 	modifierAction->setChecked(m_isModifierShown);
 
 	menu.exec(event->globalPos());
-}
-
-
-TableWidget::~TableWidget()
-{
-	writeSettings();
 }

@@ -9,6 +9,7 @@
 #include <QKeySequence>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QSettings>
 #include <QString>
 
 MainWindow::MainWindow()
@@ -47,6 +48,8 @@ MainWindow::MainWindow()
 	auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(m_aboutAction);
 	helpMenu->addAction(m_aboutQtAction);
+    
+    readSettings();
 
 	m_char = std::make_shared<CharacterHandler>();
 	m_file = std::make_shared<FileHandler>();
@@ -105,22 +108,23 @@ MainWindow::saveTable()
 			tr("The Table contains less then two entries."));
 		return false;
 	}
-	auto const filename = QFileDialog::getSaveFileName(
+	auto const fileName = QFileDialog::getSaveFileName(
 		this,
 		tr("Save Table"),
-		QDir::currentPath(),
+		m_currentDir,
 		tr("Table (*.csv);;All Files (*)"));
 
-	if (filename.isEmpty()) {
+	if (fileName.isEmpty()) {
 		// No file provided or Cancel pressed
 		return false;
 	}
 
 	m_file->saveTable(
 		m_tableWidget->getTableWidget(),
-		filename,
+		fileName,
 		m_tableWidget->getRowEntered(),
 		m_tableWidget->getRoundCounter());
+    writeSettings(fileName);
 	// Success
 	return true;
 }
@@ -159,9 +163,9 @@ MainWindow::openTable()
 			return;
 		}
 	}
-	auto const filename =
-		QFileDialog::getOpenFileName(this, "Open Table", QDir::currentPath(), ("csv File(*.csv)"));
-	auto const code = m_file->getCSVData(filename);
+	auto const fileName =
+		QFileDialog::getOpenFileName(this, "Open Table", m_currentDir, ("csv File(*.csv)"));
+	auto const code = m_file->getCSVData(fileName);
 
 
 	switch (code) {
@@ -170,6 +174,7 @@ MainWindow::openTable()
 		// Table and char creation not active for a short time
 		m_isCreationActive = false;
 		m_isTableActive = false;
+        writeSettings(fileName);
 		setTableWidget(true, m_file->getData());
 		break;
 	}
@@ -325,6 +330,26 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 	setWindowTitle(tr("LCM - Combat Active"));
+}
+
+
+void
+MainWindow::writeSettings(QString fileName)
+{
+    m_currentDir = fileName;
+    
+	QSettings settings;
+	settings.setValue("Dir", fileName);
+}
+
+
+void
+MainWindow::readSettings()
+{
+	QSettings settings;
+	m_currentDir = settings.value("Dir").isValid() ?
+		       m_currentDir = settings.value("Dir").toString() :
+				      m_currentDir = "";
 }
 
 

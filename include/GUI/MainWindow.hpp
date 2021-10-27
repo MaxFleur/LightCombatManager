@@ -59,6 +59,12 @@ private:
 	void
 	setTableWidget(bool	isDataStored,
 		       QString	data = "");
+    
+    void
+	writeSettings(QString fileName);
+
+	void
+	readSettings();
 
 	void
 	closeEvent(QCloseEvent *event);
@@ -72,9 +78,13 @@ private:
 	QPointer<QAction> m_openAction;
 	QPointer<QAction> m_aboutAction;
 	QPointer<QAction> m_aboutQtAction;
+    
+    // QPointer<QSettings> m_settings;
 
 	bool m_isCreationActive = false;
 	bool m_isTableActive = false;
+    
+    QString m_currentDir;
 
 	CharacterHandlerRef m_char;
 	FileHandlerRef m_file;

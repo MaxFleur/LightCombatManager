@@ -101,11 +101,11 @@ MainWindow::newCombat()
 bool
 MainWindow::saveTable()
 {
-	if (m_tableWidget->getRowCount() < 2) {
+	if (m_tableWidget->getRowCount() < 1) {
 		auto const reply = QMessageBox::critical(
 			this,
-			tr("Too few Table entries!"),
-			tr("The Table contains less then two entries."));
+			tr("Table empty!"),
+			tr("Can't save an empty table."));
 		return false;
 	}
 	auto const fileName = QFileDialog::getSaveFileName(
@@ -254,13 +254,12 @@ MainWindow::cancelCharacterCreation()
 void
 MainWindow::finishCharacterCreation()
 {
-	// At least two Characters must be stored. Alternative: 1 Character stored and a name has been entered.
-	if ((m_char->getCharacters().size() == 1 &&
-	     m_characterCreationWidget->isNameEmpty()) || m_char->getCharacters().empty()) {
+	// At least one Character must be stored. Alternative: A name has been entered.
+	if (m_char->getCharacters().empty() && m_characterCreationWidget->isNameEmpty()) {
 		auto const reply = QMessageBox::warning(
 			this,
 			tr("Could not finish!"),
-			tr("Please store at least two Characters before creating the Combat Table!"));
+			tr("Please store at least one Character before creating the Combat Table!"));
 		return;
 	}
 	// Display a question message asking if the creation should be finished

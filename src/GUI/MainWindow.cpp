@@ -48,8 +48,8 @@ MainWindow::MainWindow()
 	auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addAction(m_aboutAction);
 	helpMenu->addAction(m_aboutQtAction);
-    
-    readSettings();
+
+	readSettings();
 
 	m_char = std::make_shared<CharacterHandler>();
 	m_file = std::make_shared<FileHandler>();
@@ -124,7 +124,7 @@ MainWindow::saveTable()
 		fileName,
 		m_tableWidget->getRowEntered(),
 		m_tableWidget->getRoundCounter());
-    writeSettings(fileName);
+	writeSettings(fileName);
 	// Success
 	return true;
 }
@@ -174,7 +174,7 @@ MainWindow::openTable()
 		// Table and char creation not active for a short time
 		m_isCreationActive = false;
 		m_isTableActive = false;
-        writeSettings(fileName);
+		writeSettings(fileName);
 		setTableWidget(true, m_file->getData());
 		break;
 	}
@@ -336,8 +336,8 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 void
 MainWindow::writeSettings(QString fileName)
 {
-    m_currentDir = fileName;
-    
+	m_currentDir = fileName;
+
 	QSettings settings;
 	settings.setValue("Dir", fileName);
 }

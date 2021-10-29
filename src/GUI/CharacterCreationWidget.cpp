@@ -209,10 +209,15 @@ CharacterCreationWidget::addStatusEffect()
 void
 CharacterCreationWidget::keyPressEvent(QKeyEvent *event)
 {
-	if (event->key() == Qt::Key_Return) {
-		event->modifiers() == Qt::ControlModifier ? emit finish() : saveAndCreateNewCharacter();
-	}
-	if (event->key() == Qt::Key_E) {
+	if (event->key() == Qt::Key_S) {
+		if (event->modifiers() == Qt::ControlModifier) {
+			saveAndCreateNewCharacter();
+		}
+	} else if (event->key() == Qt::Key_Return) {
+		if (event->modifiers() == Qt::ControlModifier) {
+			emit finish();
+		}
+	} else if (event->key() == Qt::Key_E) {
 		if (event->modifiers() == Qt::ControlModifier) {
 			addStatusEffect();
 		}

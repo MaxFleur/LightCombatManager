@@ -95,8 +95,10 @@ EditCombatDialog::resetLayout()
 void
 EditCombatDialog::keyPressEvent(QKeyEvent *event)
 {
-	if (event->key() == Qt::Key_Return) {
-		addCharacter();
+	if (event->key() == Qt::Key_S) {
+		if (event->modifiers() == Qt::ControlModifier) {
+			addCharacter();
+		}
 	}
 	QWidget::keyPressEvent(event);
 }

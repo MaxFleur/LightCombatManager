@@ -126,7 +126,14 @@ TableWidget::setData()
 			rowData = rowOfData.at(x).split(";");
 			// Create the widget items for the table
 			for (int y = 0; y < NMBR_COLUMNS; y++) {
-				m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
+				if (y == 0 || y == 5) {
+					m_tableWidget->setItem(
+						x - 1,
+						y,
+						new QTableWidgetItem(Utils::replaceCharacters(rowData[y], false)));
+				} else {
+					m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
+				}
 			}
 			// If at the first row (which contains information about round counter and the
 			// player on the move), get this data

@@ -8,6 +8,8 @@
 #include <QTableWidgetItem>
 #include <QTextStream>
 
+#include "Utils.hpp"
+
 FileHandler::FileHandler()
 {
 }
@@ -38,7 +40,12 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 				if (!item || item->text().isEmpty()) {
 					tableWidget->setItem(i, j, new QTableWidgetItem(""));
 				}
-				strList << tableWidget->item(i, j)->text();
+				// Check if name or additional information contain a semicolon
+				if (j == 0 || j == 5) {
+					strList << Utils::replaceCharacters(tableWidget->item(i, j)->text(), true);
+				} else {
+					strList << tableWidget->item(i, j)->text();
+				}
 			}
 			if (i == 0) {
 				strList << QString::number(rowEntered) << QString::number(roundCounter);

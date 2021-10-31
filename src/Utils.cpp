@@ -22,3 +22,14 @@ Utils::resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
 			tableWidget->item(i, 5)->text());
 	}
 }
+
+
+// If a user manages a Combat, it is likely that value are separated using a semicolon
+// But the file storing uses semicoli to separate the values for the csv
+// So encapsulate user entered semicoli in double quotes if the table is reloaded
+QString
+Utils::replaceCharacters(QString str, bool isSaving)
+{
+	isSaving ? str.replace(';', '";"') : str.replace('";"', ';');
+	return str;
+}

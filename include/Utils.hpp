@@ -13,4 +13,8 @@ public:
 	static void
 	resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
 				CharacterHandlerRef	characterHandler);
+
+	static QString
+	replaceCharacters(QString	str,
+			  bool		isSaving);
 };

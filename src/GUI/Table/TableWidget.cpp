@@ -522,7 +522,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		menu.addSeparator();
 
 		auto *const removeRowtAction = menu.addAction(
-			tr("Remove this Row"),
+			tr("Remove Character"),
 			this,
 			[this] () {
 				removeRow();

@@ -33,24 +33,29 @@ private:
 	QPointer<QPushButton> m_addEffectButton;
 	QPointer<QListWidget> m_list;
 
+	// Status Effects are based on the Pathfinder 1e rulebook
 	QStringList m_effects = {
 		tr("Bleed"),
 		tr("Blinded"),
 		tr("Confused"),
 		tr("Cowering"),
+		tr("Concealed"),
+		tr("Damage Reduction"),
 		tr("Dazed"),
 		tr("Dazzled"),
+		tr("Disabled"),
 		tr("Deafened"),
 		tr("Dying"),
 		tr("Energy Drained"),
+		tr("Energy Resistance"),
 		tr("Entangled"),
-		tr("Disabled"),
 		tr("Exhausted"),
 		tr("Fascinated"),
 		tr("Fatigued"),
 		tr("Flat-footed"),
 		tr("Frightened"),
 		tr("Grappled"),
+		tr("Haste"),
 		tr("Helpless"),
 		tr("Incorporeal"),
 		tr("Invisible"),
@@ -62,6 +67,7 @@ private:
 		tr("Prone"),
 		tr("Shaken"),
 		tr("Sickened"),
+		tr("Spell Resistence"),
 		tr("Stable"),
 		tr("Staggered"),
 		tr("Stunned"),

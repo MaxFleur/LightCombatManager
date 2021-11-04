@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSettings>
+#include <QShortcut>
 #include <QSizePolicy>
 #include <QStringList>
 #include <QVBoxLayout>
@@ -73,6 +74,12 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	tableLayout->addWidget(m_tableWidget);
 	tableLayout->addLayout(lowerLayout);
 
+	// Shortcuts
+	auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
+	auto *const changeRowShortcut = new QShortcut(QKeySequence(Qt::Key_Return), this);
+	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
+	auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
+
 	// Sort if the Combat is not loaded directly via a csv file
 	if (!isDataStored) {
 		m_char->sortCharacters();
@@ -88,6 +95,11 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 		[this] () {
 			emit exit();
 		});
+
+	connect(deleteShortcut, &QShortcut::activated, this, &TableWidget::removeRow);
+	connect(changeRowShortcut, &QShortcut::activated, this, &TableWidget::enteredRowChanged);
+	connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
+	connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openEditCombatDialog);
 }
 
 
@@ -472,29 +484,6 @@ TableWidget::readSettings()
 
 
 void
-TableWidget::keyPressEvent(QKeyEvent *event)
-{
-	if (event->key() == Qt::Key_Delete) {
-		removeRow();
-	}
-	if (event->key() == Qt::Key_Return) {
-		enteredRowChanged();
-	}
-	if (event->key() == Qt::Key_E) {
-		if (event->modifiers() == Qt::ControlModifier) {
-			openStatusEffectDialog();
-		}
-	}
-	if (event->key() == Qt::Key_R) {
-		if (event->modifiers() == Qt::ControlModifier) {
-			openEditCombatDialog();
-		}
-	}
-	QWidget::keyPressEvent(event);
-}
-
-
-void
 TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu menu(this);
@@ -505,6 +494,8 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		[this] () {
 			openEditCombatDialog();
 		});
+	openEditCombatDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
+	openEditCombatDialogAction->setShortcutVisibleInContextMenu(true);
 
 	// Status Effect and remove options only if the cursor is above an item
 	// Map from MainWindow coordinates to Table Widget coordinates
@@ -518,15 +509,19 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 			[this] () {
 				openStatusEffectDialog();
 			});
+		statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
+		statusEffectAction->setShortcutVisibleInContextMenu(true);
 
 		menu.addSeparator();
 
-		auto *const removeRowtAction = menu.addAction(
+		auto *const removeRowAction = menu.addAction(
 			tr("Remove Character"),
 			this,
 			[this] () {
 				removeRow();
 			});
+		removeRowAction->setShortcut(Qt::Key_Delete);
+		removeRowAction->setShortcutVisibleInContextMenu(true);
 	}
 
 	menu.addSeparator();

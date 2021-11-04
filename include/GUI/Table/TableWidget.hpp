@@ -128,9 +128,6 @@ private:
 	readSettings();
 
 	void
-	keyPressEvent(QKeyEvent *event);
-
-	void
 	contextMenuEvent(QContextMenuEvent *event) override;
 
 	// Main table widget

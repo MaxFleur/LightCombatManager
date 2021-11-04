@@ -1,4 +1,4 @@
-#include "../../include/GUI/CharacterCreationWidget.hpp"
+#include "CharacterCreationWidget.hpp"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -10,7 +10,7 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 
-#include "../../include/GUI/StatusEffectDialog.hpp"
+#include "StatusEffectDialog.hpp"
 
 CharacterCreationWidget::CharacterCreationWidget(CharacterHandlerRef charSort, QWidget *parent)
 	: m_char(charSort)

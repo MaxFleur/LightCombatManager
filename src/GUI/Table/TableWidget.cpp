@@ -1,4 +1,4 @@
-#include "../../../include/GUI/Table/TableWidget.hpp"
+#include "TableWidget.hpp"
 
 #include <QAbstractItemView>
 #include <QAction>
@@ -17,11 +17,11 @@
 #include <QStringList>
 #include <QVBoxLayout>
 
-#include "../../../include/GUI/Table/Delegate.hpp"
-#include "../../../include/GUI/StatusEffectDialog.hpp"
-#include "../../../include/GUI/Table/EditCombatDialog.hpp"
+#include "Delegate.hpp"
+#include "../StatusEffectDialog.hpp"
+#include "EditCombatDialog.hpp"
 
-#include "Utils.hpp"
+#include "../../Utils.hpp"
 
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)

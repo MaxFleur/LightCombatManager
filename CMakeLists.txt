@@ -3,29 +3,32 @@ cmake_minimum_required(VERSION 3.5)
 project(LightCombatManager LANGUAGES CXX)
 
 set(SRC_LIST 
-    include/GUI/MainWindow.hpp
-    include/GUI/WelcomeWidget.hpp
-    include/GUI/CharacterCreationWidget.hpp
-    include/GUI/StatusEffectDialog.hpp
-    include/GUI/Table/TableWidget.hpp
-    include/GUI/Table/CustomTable.hpp
-    include/GUI/Table/Delegate.hpp
-    include/GUI/Table/EditCombatDialog.hpp
-    include/FileHandler.hpp
-    include/Utils.hpp
-
-    main.cpp 
-    src/GUI/MainWindow.cpp 
-    src/GUI/WelcomeWidget.cpp 
-    src/GUI/CharacterCreationWidget.cpp
-    src/GUI/StatusEffectDialog.cpp
-    src/GUI/Table/TableWidget.cpp
-    src/GUI/Table/CustomTable.cpp
-    src/GUI/Table/Delegate.cpp
-    src/GUI/Table/EditCombatDialog.cpp
+    src/main.cpp 
+    
+    src/CharacterHandler.hpp
     src/CharacterHandler.cpp
+    src/FileHandler.hpp
     src/FileHandler.cpp
     src/Utils.cpp
+    src/Utils.hpp
+    
+    src/GUI/CharacterCreationWidget.hpp
+    src/GUI/CharacterCreationWidget.cpp
+    src/GUI/MainWindow.cpp
+    src/GUI/MainWindow.hpp
+    src/GUI/StatusEffectDialog.cpp
+    src/GUI/StatusEffectDialog.hpp
+    src/GUI/WelcomeWidget.cpp 
+    src/GUI/WelcomeWidget.hpp 
+    
+    src/GUI/Table/EditCombatDialog.hpp
+    src/GUI/Table/EditCombatDialog.cpp
+    src/GUI/Table/TableWidget.hpp
+    src/GUI/Table/TableWidget.cpp
+    src/GUI/Table/CustomTable.hpp
+    src/GUI/Table/CustomTable.cpp
+    src/GUI/Table/Delegate.hpp
+    src/GUI/Table/Delegate.cpp
 )
 
 set(CMAKE_AUTOUIC ON)

@@ -1,4 +1,4 @@
-#include "../include/Utils.hpp"
+#include "Utils.hpp"
 
 #include "GUI/Table/CustomTable.hpp"
 

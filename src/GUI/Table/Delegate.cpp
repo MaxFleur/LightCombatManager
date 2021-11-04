@@ -1,4 +1,4 @@
-#include "../../../include/GUI/Table/Delegate.hpp"
+#include "Delegate.hpp"
 
 #include <QSpinBox>
 

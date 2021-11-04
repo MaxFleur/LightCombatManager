@@ -1,4 +1,4 @@
-#include "../include/CharacterHandler.hpp"
+#include "CharacterHandler.hpp"
 
 #include <QCryptographicHash>
 

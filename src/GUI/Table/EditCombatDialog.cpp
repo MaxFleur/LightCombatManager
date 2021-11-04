@@ -1,4 +1,4 @@
-#include "../../../include/GUI/Table/EditCombatDialog.hpp"
+#include "EditCombatDialog.hpp"
 
 #include <QCheckBox>
 #include <QGridLayout>

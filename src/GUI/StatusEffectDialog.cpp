@@ -1,4 +1,4 @@
-#include "../../include/GUI/StatusEffectDialog.hpp"
+#include "StatusEffectDialog.hpp"
 
 #include <QAbstractItemView>
 #include <QComboBox>

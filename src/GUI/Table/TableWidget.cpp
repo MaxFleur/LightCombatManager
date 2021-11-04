@@ -21,7 +21,7 @@
 #include "../StatusEffectDialog.hpp"
 #include "EditCombatDialog.hpp"
 
-#include "../../Utils.hpp"
+#include "../../Utils/Utils.hpp"
 
 TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
 	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)

@@ -1,6 +1,6 @@
 #include "Utils.hpp"
 
-#include "GUI/Table/CustomTable.hpp"
+#include "../GUI/Table/CustomTable.hpp"
 
 // Resynchronize the char handler vector. This function is called
 // if a table is loaded and/or new characters are readded to a combat

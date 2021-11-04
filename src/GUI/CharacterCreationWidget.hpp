@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../CharacterHandler.hpp"
+#include "../Handler/CharacterHandler.hpp"
 
 #include <QLineEdit>
 #include <QPointer>

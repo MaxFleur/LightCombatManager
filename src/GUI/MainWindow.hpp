@@ -7,8 +7,8 @@
 #include "WelcomeWidget.hpp"
 #include "CharacterCreationWidget.hpp"
 #include "Table/TableWidget.hpp"
-#include "../CharacterHandler.hpp"
-#include "../FileHandler.hpp"
+#include "../Handler/CharacterHandler.hpp"
+#include "../Handler/FileHandler.hpp"
 
 class QAction;
 

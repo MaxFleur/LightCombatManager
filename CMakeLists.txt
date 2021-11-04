@@ -5,12 +5,13 @@ project(LightCombatManager LANGUAGES CXX)
 set(SRC_LIST 
     src/main.cpp 
     
-    src/CharacterHandler.hpp
-    src/CharacterHandler.cpp
-    src/FileHandler.hpp
-    src/FileHandler.cpp
-    src/Utils.cpp
-    src/Utils.hpp
+    src/Handler/CharacterHandler.hpp
+    src/Handler/CharacterHandler.cpp
+    src/Handler/FileHandler.hpp
+    src/Handler/FileHandler.cpp
+    
+    src/Utils/Utils.cpp
+    src/Utils/Utils.hpp
     
     src/GUI/CharacterCreationWidget.hpp
     src/GUI/CharacterCreationWidget.cpp

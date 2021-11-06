@@ -51,7 +51,6 @@ MainWindow::MainWindow()
 
 	readSettings();
 
-	m_char = std::make_shared<CharacterHandler>();
 	m_file = std::make_shared<FileHandler>();
 
 	setWelcomingWidget();
@@ -61,47 +60,32 @@ MainWindow::MainWindow()
 void
 MainWindow::newCombat()
 {
-	// If a creation is currently running, ask if a new Combat should be started anyway
-	if (m_isCreationActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Start a new Combat?"),
-			tr(
-				"Currently, you are storing Characters for a beginning Combat. Do you want to create a new Combat anyway? "
-				"This will delete all Characters you have stored for this Combat."),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			m_char->clearCharacters();
-		} else {
-			return;
-		}
-		// If the Table is active right now, ask if the current Table should be saved
-	} else if (m_isTableActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Start a new Combat?"),
-			tr("Do you want to save the current Combat before starting a new one?"),
-			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		if (reply == QMessageBox::Yes) {
-			auto const code = saveTable();
-			if (!code) {
+	// If a filled Table is active right now, ask if it should be saved
+	if (m_isTableActive) {
+		if (m_tableWidget->getRowCount() != 0) {
+			auto const reply = QMessageBox::question(
+				this,
+				tr("Start a new Combat?"),
+				tr("Do you want to save the current Combat before starting a new one?"),
+				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes) {
+				auto const code = saveTable();
+				if (!code) {
+					return;
+				}
+			} else if (reply == QMessageBox::Cancel) {
 				return;
 			}
-		} else if (reply == QMessageBox::Cancel) {
-			return;
 		}
-		m_isTableActive = false;
-		m_char->clearCharacters();
 	}
-	m_isCreationActive = true;
-	setCharacterCreationWidget();
+	setTableWidget(false, true);
 }
 
 
 bool
 MainWindow::saveTable()
 {
-	if (m_tableWidget->getRowCount() < 1) {
+	if (m_tableWidget->getRowCount() == 0) {
 		auto const reply = QMessageBox::critical(
 			this,
 			tr("Table empty!"),
@@ -133,34 +117,22 @@ MainWindow::saveTable()
 void
 MainWindow::openTable()
 {
-	// If a creation is currently running, ask if a Table shoud be opened anyway
-	if (m_isCreationActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Open Table?"),
-			tr(
-				"Currently, you are storing Characters for a beginning Combat. Do you want to open another Table anyway? "
-				"This will delete all Characters you have stored for this Combat."),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			m_char->clearCharacters();
-		} else {
-			return;
-		}
-		// If the Table is active right now, ask if the current Table should be saved
-	} else if (m_isTableActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Save current Table?"),
-			tr("Do you want to save the current Combat before opening another Table?"),
-			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		if (reply == QMessageBox::Yes) {
-			auto const code = saveTable();
-			if (!code) {
+	// If a filled Table is active right now, ask if it should be saved
+	if (m_isTableActive) {
+		if (m_tableWidget->getRowCount() != 0) {
+			auto const reply = QMessageBox::question(
+				this,
+				tr("Save current Table?"),
+				tr("Do you want to save the current Combat before opening another Table?"),
+				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes) {
+				auto const code = saveTable();
+				if (!code) {
+					return;
+				}
+			} else if (reply == QMessageBox::Cancel) {
 				return;
 			}
-		} else if (reply == QMessageBox::Cancel) {
-			return;
 		}
 	}
 	auto const fileName =
@@ -171,11 +143,10 @@ MainWindow::openTable()
 	switch (code) {
 	case 0:
 	{
-		// Table and char creation not active for a short time
-		m_isCreationActive = false;
+		// Table not active for a short time
 		m_isTableActive = false;
 		writeSettings(fileName);
-		setTableWidget(true, m_file->getData());
+		setTableWidget(true, false, m_file->getData());
 		break;
 	}
 	case 1:
@@ -217,61 +188,12 @@ MainWindow::exitCombat()
 	auto const reply = QMessageBox::question(
 		this,
 		tr("Return?"),
-		tr("Are you sure you want to return to the Main Window? All created Characters will be lost."),
+		tr("Are you sure you want to return to the Main Window? This will end the current Combat."),
 		QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes) {
-		m_char->clearCharacters();
 		setWelcomingWidget();
 		m_isTableActive = false;
-	}
-}
-
-
-void
-MainWindow::cancelCharacterCreation()
-{
-	// Ignore if no Character is stored yet
-	if (m_char->getCharacters().size() > 0) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Cancel creation?"),
-			tr(
-				"Are you sure you want to cancel the Character creation? All created Characters will be lost."),
-			QMessageBox::Yes | QMessageBox::No);
-
-		if (reply == QMessageBox::Yes) {
-			m_char->clearCharacters();
-		} else {
-			return;
-		}
-	}
-	m_isCreationActive = false;
-	setWelcomingWidget();
-}
-
-
-void
-MainWindow::finishCharacterCreation()
-{
-	// At least one Character must be stored. Alternative: A name has been entered.
-	if (m_char->getCharacters().empty() && m_characterCreationWidget->isNameEmpty()) {
-		auto const reply = QMessageBox::warning(
-			this,
-			tr("Could not finish!"),
-			tr("Please store at least one Character before creating the Combat Table!"));
-		return;
-	}
-	// Display a question message asking if the creation should be finished
-	auto const reply = QMessageBox::question(
-		this,
-		tr("Finish creation?"),
-		tr("Are you sure you want to finish the Character creation?"),
-		QMessageBox::Yes | QMessageBox::No);
-	if (reply == QMessageBox::Yes) {
-		m_characterCreationWidget->storeLastCharacter();
-		m_isCreationActive = false;
-		setTableWidget(false);
 	}
 }
 
@@ -288,32 +210,9 @@ MainWindow::setWelcomingWidget()
 
 
 void
-MainWindow::setCharacterCreationWidget()
+MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString data)
 {
-	m_characterCreationWidget = new CharacterCreationWidget(m_char, this);
-	setCentralWidget(m_characterCreationWidget);
-	setFixedSize(700, 280);
-	m_characterCreationWidget->setFocus();
-	m_saveAction->setEnabled(false);
-
-	connect(
-		m_characterCreationWidget,
-		&CharacterCreationWidget::cancel,
-		this,
-		&MainWindow::cancelCharacterCreation);
-	connect(
-		m_characterCreationWidget,
-		&CharacterCreationWidget::finish,
-		this,
-		&MainWindow::finishCharacterCreation);
-	setWindowTitle(tr("LCM - Creating new Combat"));
-}
-
-
-void
-MainWindow::setTableWidget(bool isDataStored, QString data)
-{
-	m_tableWidget = new TableWidget(m_char, isDataStored, data, this);
+	m_tableWidget = new TableWidget(isDataStored, newCombatStarted, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
 	connect(
@@ -329,6 +228,10 @@ MainWindow::setTableWidget(bool isDataStored, QString data)
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 	setWindowTitle(tr("LCM - Combat Active"));
+
+	if (newCombatStarted) {
+		m_tableWidget->openAddCharacterDialog();
+	}
 }
 
 
@@ -355,22 +258,8 @@ MainWindow::readSettings()
 void
 MainWindow::closeEvent(QCloseEvent *event)
 {
-	// If the creation is active, ask if it should be closed
-	if (m_isCreationActive) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Exit"),
-			tr(
-				"You are in the Character Creation right now! Do you want to exit the program anyway? All stored Characters will be lost."),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			QApplication::exit;
-		} else {
-			event->ignore();
-		}
-	}
-	// If the Table is active, send a question if the Table should be saved
-	if (m_isTableActive) {
+	// If a filled Table is active, ask if it should be saved
+	if (m_isTableActive && m_tableWidget->getRowCount() != 0) {
 		auto const reply = QMessageBox::question(
 			this,
 			tr("Exit"),
@@ -382,9 +271,22 @@ MainWindow::closeEvent(QCloseEvent *event)
 			if (!code) {
 				event->ignore();
 			}
+			event->accept();
+		} else if (reply == QMessageBox::No) {
+			event->accept();
 		} else if (reply == QMessageBox::Cancel) {
 			event->ignore();
 		}
-		QApplication::exit;
+	} else {
+		auto const reply = QMessageBox::question(
+			this,
+			tr("Exit"),
+			tr("Do you really want to exit the application?"),
+			QMessageBox::Yes | QMessageBox::No);
+		if (reply == QMessageBox::Yes) {
+			return;
+		} else {
+			event->ignore();
+		}
 	}
 }

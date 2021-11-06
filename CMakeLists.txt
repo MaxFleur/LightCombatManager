@@ -12,9 +12,7 @@ set(SRC_LIST
     
     src/Utils/Utils.cpp
     src/Utils/Utils.hpp
-    
-    src/GUI/CharacterCreationWidget.hpp
-    src/GUI/CharacterCreationWidget.cpp
+
     src/GUI/MainWindow.cpp
     src/GUI/MainWindow.hpp
     src/GUI/StatusEffectDialog.cpp
@@ -22,8 +20,8 @@ set(SRC_LIST
     src/GUI/WelcomeWidget.cpp 
     src/GUI/WelcomeWidget.hpp 
     
-    src/GUI/Table/EditCombatDialog.hpp
-    src/GUI/Table/EditCombatDialog.cpp
+    src/GUI/Table/AddCharacterDialog.hpp
+    src/GUI/Table/AddCharacterDialog.cpp
     src/GUI/Table/TableWidget.hpp
     src/GUI/Table/TableWidget.cpp
     src/GUI/Table/CustomTable.hpp

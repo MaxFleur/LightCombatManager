@@ -5,7 +5,6 @@
 #include <QPointer>
 
 #include "WelcomeWidget.hpp"
-#include "CharacterCreationWidget.hpp"
 #include "Table/TableWidget.hpp"
 #include "../Handler/CharacterHandler.hpp"
 #include "../Handler/FileHandler.hpp"
@@ -42,22 +41,14 @@ private slots:
 	void
 	exitCombat();
 
-	void
-	cancelCharacterCreation();
-
-	void
-	finishCharacterCreation();
-
 private:
 
 	void
 	setWelcomingWidget();
 
 	void
-	setCharacterCreationWidget();
-
-	void
 	setTableWidget(bool	isDataStored,
+		       bool	newCombatStarted,
 		       QString	data = "");
 
 	void
@@ -70,7 +61,6 @@ private:
 	closeEvent(QCloseEvent *event);
 
 	QPointer<WelcomeWidget> m_welcomeWidget;
-	QPointer<CharacterCreationWidget> m_characterCreationWidget;
 	QPointer<TableWidget> m_tableWidget;
 
 	QPointer<QAction> m_newCombatAction;
@@ -79,14 +69,10 @@ private:
 	QPointer<QAction> m_aboutAction;
 	QPointer<QAction> m_aboutQtAction;
 
-	// QPointer<QSettings> m_settings;
-
-	bool m_isCreationActive = false;
-	bool m_isTableActive = false;
+	bool m_isTableActive{ false };
 
 	QString m_currentDir;
 
-	CharacterHandlerRef m_char;
 	FileHandlerRef m_file;
 };
 #endif

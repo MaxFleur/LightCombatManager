@@ -20,10 +20,10 @@ class TableWidget : public QWidget {
 	Q_OBJECT
 
 public:
-	TableWidget(CharacterHandlerRef charHandler,
-		    bool		isDataStored,
-		    QString		data = "",
-		    QWidget *		parent = 0);
+	TableWidget(bool	isDataStored,
+		    bool	newCombatStarted,
+		    QString	data = "",
+		    QWidget *	parent = 0);
 
 	QTableWidget *
 	getTableWidget()
@@ -55,6 +55,11 @@ public:
 		return setHeight();
 	}
 
+public slots:
+
+	void
+	openAddCharacterDialog();
+
 signals:
 
 	void
@@ -74,9 +79,6 @@ private slots:
 
 	void
 	openStatusEffectDialog();
-
-	void
-	openEditCombatDialog();
 
 	void
 	addCharacter(QString	name,
@@ -144,9 +146,10 @@ private:
 	QFont m_defaultFont;
 	QFont m_boldFont;
 
-	bool m_isRowSelected = false;
+	bool m_isRowSelected{ false };
 
 	bool m_isDataStored;
+	bool m_newCombatStarted;
 
 	QString m_data;
 

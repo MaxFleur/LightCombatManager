@@ -19,14 +19,16 @@
 
 #include "Delegate.hpp"
 #include "../StatusEffectDialog.hpp"
-#include "EditCombatDialog.hpp"
+#include "AddCharacterDialog.hpp"
 
 #include "../../Utils/Utils.hpp"
 
-TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QString data, QWidget *parent)
-	: m_char(charHandler), m_isDataStored(isDataStored), m_data(data)
+TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data, QWidget *parent)
+	: m_isDataStored(isDataStored), m_newCombatStarted(newCombatStarted), m_data(data)
 {
 	readSettings();
+
+	m_char = std::make_shared<CharacterHandler>();
 
 	m_tableWidget = new CustomTable();
 	m_tableWidget->setColumnCount(6);
@@ -80,11 +82,9 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 	auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
-	// Sort if the Combat is not loaded directly via a csv file
-	if (!isDataStored) {
-		m_char->sortCharacters();
+	if (!m_newCombatStarted) {
+		setTable();
 	}
-	setTable();
 
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
 	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
@@ -99,7 +99,7 @@ TableWidget::TableWidget(CharacterHandlerRef charHandler, bool isDataStored, QSt
 	connect(deleteShortcut, &QShortcut::activated, this, &TableWidget::removeRow);
 	connect(changeRowShortcut, &QShortcut::activated, this, &TableWidget::enteredRowChanged);
 	connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
-	connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openEditCombatDialog);
+	connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openAddCharacterDialog);
 }
 
 
@@ -311,25 +311,27 @@ TableWidget::openStatusEffectDialog()
 
 
 void
-TableWidget::openEditCombatDialog()
+TableWidget::openAddCharacterDialog()
 {
 	// Resynchronize because the table could have been modified
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 
-	auto *const dialog = new EditCombatDialog(this);
-	connect(dialog, &EditCombatDialog::characterCreated, this, &TableWidget::addCharacter);
+	auto *const dialog = new AddCharacterDialog(this);
+	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
 	// Lock this widget, wait until Dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Sort characters?"),
-			tr(
-				"Do you want to resort the table? This is only recommended if the combat is right at the start."),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			m_char->sortCharacters();
-			m_rowEntered = 0;
-			setTable();
+		if (m_char->getCharacters().size() > 1) {
+			auto const reply = QMessageBox::question(
+				this,
+				tr("Sort characters?"),
+				tr(
+					"Do you want to sort the table?"),
+				QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes) {
+				m_char->sortCharacters();
+				m_rowEntered = 0;
+				setTable();
+			}
 		}
 	}
 }
@@ -488,14 +490,14 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu menu(this);
 
-	auto *const openEditCombatDialogAction = menu.addAction(
+	auto *const openAddCharacterDialogAction = menu.addAction(
 		tr("Add new Character(s)"),
 		this,
 		[this] () {
-			openEditCombatDialog();
+			openAddCharacterDialog();
 		});
-	openEditCombatDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
-	openEditCombatDialogAction->setShortcutVisibleInContextMenu(true);
+	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
+	openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
 	// Status Effect and remove options only if the cursor is above an item
 	// Map from MainWindow coordinates to Table Widget coordinates

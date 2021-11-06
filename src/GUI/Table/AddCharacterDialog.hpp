@@ -10,11 +10,11 @@ class QSpinBox;
 class QString;
 
 // Dialog used to add new characters to an existing Combat
-class EditCombatDialog : public QDialog {
+class AddCharacterDialog : public QDialog {
 	Q_OBJECT
 
 public:
-	EditCombatDialog(QWidget *parent = 0);
+	AddCharacterDialog(QWidget *parent = 0);
 
 signals:
 
@@ -34,6 +34,8 @@ private slots:
 	void
 	resetLayout();
 
+	void
+	openStatusEffectDialog();
 
 private:
 

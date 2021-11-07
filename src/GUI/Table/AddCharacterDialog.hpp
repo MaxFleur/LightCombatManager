@@ -37,6 +37,9 @@ private slots:
 	void
 	openStatusEffectDialog();
 
+	void
+	animateLabel();
+
 private:
 
 	void
@@ -58,5 +61,12 @@ private:
 	QPointer<QCheckBox> m_npcBox;
 	QPointer<QLineEdit> m_addInfoEdit;
 
-	bool m_somethingStored = false;
+	QPointer<QLabel> m_animatedLabel;
+	QPointer<QTimer> m_timer;
+
+	bool m_somethingStored{ false };
+	bool m_isFirstCharStored{ false };
+
+	static constexpr int LABEL_SHOWN = 1000;
+	static constexpr int LABEL_FADEOUT = 2000;
 };

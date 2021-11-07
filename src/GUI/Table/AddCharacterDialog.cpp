@@ -1,12 +1,15 @@
 #include "AddCharacterDialog.hpp"
 
 #include <QCheckBox>
+#include <QGraphicsEffect>
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QPropertyAnimation>
 #include <QPushButton>
 #include <QShortcut>
 #include <QSpinBox>
+#include <QTimer>
 
 #include "../StatusEffectDialog.hpp"
 
@@ -28,6 +31,10 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	auto *const resetButton = new QPushButton(tr("Reset Layout"));
 	auto *const cancelButton = new QPushButton(tr("Return"));
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects"));
+
+	m_animatedLabel = new QLabel();
+	m_timer = new QTimer(this);
+	m_timer->setSingleShot(true);
 
 	// Labels for character stats
 	auto *const nameLabel = new QLabel(tr("Name:"));
@@ -66,7 +73,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	mainLayout->addWidget(m_addInfoEdit, 3, 1, 1, 2);
 	mainLayout->addWidget(statusEffectButton, 3, 3);
 
-	mainLayout->setRowMinimumHeight(4, 30);
+	mainLayout->addWidget(m_animatedLabel, 4, 0, 1, 2);
 
 	mainLayout->addWidget(addButton, 5, 1);
 	mainLayout->addWidget(resetButton, 5, 2);
@@ -91,6 +98,8 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 
 	connect(saveShortcut, &QShortcut::activated, this, &AddCharacterDialog::addCharacter);
 	connect(statusEffectShortcut, &QShortcut::activated, this, &AddCharacterDialog::openStatusEffectDialog);
+
+	connect(m_timer, &QTimer::timeout, this, &AddCharacterDialog::animateLabel);
 }
 
 
@@ -109,6 +118,15 @@ AddCharacterDialog::addCharacter()
 			      m_npcBox->isChecked(), m_addInfoEdit->text());
 	resetLayout();
 	setFocus();
+
+	// Only set the label text after first stored character
+	if (!m_isFirstCharStored) {
+		m_isFirstCharStored = true;
+		m_animatedLabel->setText(tr("Character saved!"));
+	}
+	// Rest graphics effect and kickoff animation
+	m_animatedLabel->setGraphicsEffect(0);
+	m_timer->start(LABEL_SHOWN);
 }
 
 
@@ -139,6 +157,21 @@ AddCharacterDialog::openStatusEffectDialog()
 		}
 		m_addInfoEdit->setText(itemText + dialog->getEffect());
 	}
+}
+
+
+void
+AddCharacterDialog::animateLabel()
+{
+	auto *const effect = new QGraphicsOpacityEffect;
+	m_animatedLabel->setGraphicsEffect(effect);
+
+	auto *const animation = new QPropertyAnimation(effect, "opacity");
+	animation->setDuration(LABEL_FADEOUT);
+	animation->setStartValue(1.0);
+	animation->setEndValue(0.0);
+	animation->setEasingCurve(QEasingCurve::OutQuad);
+	animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 

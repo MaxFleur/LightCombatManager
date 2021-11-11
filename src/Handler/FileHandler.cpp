@@ -40,7 +40,7 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 				if (!item || item->text().isEmpty()) {
 					tableWidget->setItem(i, j, new QTableWidgetItem(""));
 				}
-                strList << tableWidget->item(i, j)->text();
+				strList << tableWidget->item(i, j)->text();
 			}
 			if (i == 0) {
 				strList << QString::number(rowEntered) << QString::number(roundCounter);

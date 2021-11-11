@@ -5,13 +5,13 @@
 
 #include "../GUI/Table/CustomTable.hpp"
 
-namespace Utils 
+namespace Utils
 {
-    // Resynchronize the char handler vector. This function is called
+// Resynchronize the char handler vector. This function is called
 // if a table is loaded and/or new characters are readded to a combat
 void
-resynchronizeCharacters(QTableWidget *tableWidget,
-			       CharacterHandlerRef	characterHandler)
+resynchronizeCharacters(QTableWidget *		tableWidget,
+			CharacterHandlerRef	characterHandler)
 {
 	// Clear everything, then use the table cells to refill the character handler
 	characterHandler->clearCharacters();
@@ -36,13 +36,13 @@ bool
 containsSemicolon(QTableWidget *tableWidget)
 {
 	for (int i = 0; i < tableWidget->rowCount(); i++) {
-		for(int j = 0; j < tableWidget->columnCount(); j++) {
-            if(j == 0 || j == 5) {
-                if(tableWidget->item(i, j)->text().contains(';')) {
-                    return true;
-                }
-            }
-        }
+		for (int j = 0; j < tableWidget->columnCount(); j++) {
+			if (j == 0 || j == 5) {
+				if (tableWidget->item(i, j)->text().contains(';')) {
+					return true;
+				}
+			}
+		}
 	}
 	return false;
 }

@@ -8,14 +8,12 @@ class CustomTable;
 class QTableWidget;
 
 // Utility functions, no ctor needed
-namespace Utils 
+namespace Utils
 {
-    
 void
-resynchronizeCharacters(QTableWidget *tableWidget,
-                        CharacterHandlerRef	characterHandler);
+resynchronizeCharacters(QTableWidget *		tableWidget,
+			CharacterHandlerRef	characterHandler);
 
 bool
 containsSemicolon(QTableWidget *tableWidget);
-
 }

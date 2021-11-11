@@ -101,7 +101,7 @@ MainWindow::saveTable()
 			tr("Can't save because the table contains semicolons. Please remove them and continue."));
 		return false;
 	}
-	
+
 	auto const fileName = QFileDialog::getSaveFileName(
 		this,
 		tr("Save Table"),

@@ -5,16 +5,17 @@
 #include "../Handler/CharacterHandler.hpp"
 
 class CustomTable;
+class QTableWidget;
 
 // Utility functions, no ctor needed
-class Utils {
-public:
+namespace Utils 
+{
+    
+void
+resynchronizeCharacters(QTableWidget *tableWidget,
+                        CharacterHandlerRef	characterHandler);
 
-	static void
-	resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
-				CharacterHandlerRef	characterHandler);
+bool
+containsSemicolon(QTableWidget *tableWidget);
 
-	static QString
-	replaceCharacters(QString	str,
-			  bool		isSaving);
-};
+}

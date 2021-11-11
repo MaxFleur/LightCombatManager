@@ -1,11 +1,16 @@
 #include "Utils.hpp"
 
+#include <QDebug>
+#include <QTableWidget>
+
 #include "../GUI/Table/CustomTable.hpp"
 
-// Resynchronize the char handler vector. This function is called
+namespace Utils 
+{
+    // Resynchronize the char handler vector. This function is called
 // if a table is loaded and/or new characters are readded to a combat
 void
-Utils::resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
+resynchronizeCharacters(QTableWidget *tableWidget,
 			       CharacterHandlerRef	characterHandler)
 {
 	// Clear everything, then use the table cells to refill the character handler
@@ -25,11 +30,20 @@ Utils::resynchronizeCharacters(QPointer<CustomTable>	tableWidget,
 
 
 // If a user manages a Combat, it is likely that value are separated using a semicolon
-// But the file storing uses semicoli to separate the values for the csv
-// So encapsulate user entered semicoli in double quotes if the table is reloaded
-QString
-Utils::replaceCharacters(QString str, bool isSaving)
+// But the file storing uses semicolons to separate the values for the csv
+// So the name and additional info columns are checked for semicolons
+bool
+containsSemicolon(QTableWidget *tableWidget)
 {
-	isSaving ? str.replace(';', '";"') : str.replace('";"', ';');
-	return str;
+	for (int i = 0; i < tableWidget->rowCount(); i++) {
+		for(int j = 0; j < tableWidget->columnCount(); j++) {
+            if(j == 0 || j == 5) {
+                if(tableWidget->item(i, j)->text().contains(';')) {
+                    return true;
+                }
+            }
+        }
+	}
+	return false;
+}
 }

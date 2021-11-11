@@ -12,6 +12,8 @@
 #include <QSettings>
 #include <QString>
 
+#include "Utils.hpp"
+
 MainWindow::MainWindow()
 {
 	// Actions
@@ -92,6 +94,14 @@ MainWindow::saveTable()
 			tr("Can't save an empty table."));
 		return false;
 	}
+	if (Utils::containsSemicolon(m_tableWidget->getTableWidget())) {
+		auto const reply = QMessageBox::critical(
+			this,
+			tr("Semicolons detected!"),
+			tr("Can't save because the table contains semicolons. Please remove them and continue."));
+		return false;
+	}
+	
 	auto const fileName = QFileDialog::getSaveFileName(
 		this,
 		tr("Save Table"),

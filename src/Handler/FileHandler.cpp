@@ -16,7 +16,7 @@ FileHandler::FileHandler()
 
 
 // Stores a table as a csv
-void
+bool
 FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter)
 {
 	// Create a file
@@ -49,7 +49,9 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 			data << strList.join(";") + "\n";
 		}
 		file.close();
+		return true;
 	}
+	return false;
 }
 
 

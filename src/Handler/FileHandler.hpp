@@ -12,7 +12,7 @@ public:
 
 	FileHandler();
 	// Save a table of characters
-	void
+	bool
 	saveTable(QTableWidget *tableWidget,
 		  QString	filename,
 		  int		rowEntered,

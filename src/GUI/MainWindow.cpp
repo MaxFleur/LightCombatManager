@@ -72,7 +72,7 @@ MainWindow::newCombat()
 				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 			if (reply == QMessageBox::Yes) {
 				auto const code = saveTable();
-				if (!code) {
+				if (code != 0) {
 					return;
 				}
 			} else if (reply == QMessageBox::Cancel) {
@@ -84,7 +84,7 @@ MainWindow::newCombat()
 }
 
 
-bool
+int
 MainWindow::saveTable()
 {
 	if (m_tableWidget->getRowCount() == 0) {
@@ -92,14 +92,14 @@ MainWindow::saveTable()
 			this,
 			tr("Table empty!"),
 			tr("Can't save an empty table."));
-		return false;
+		return 1;
 	}
 	if (Utils::containsSemicolon(m_tableWidget->getTableWidget())) {
 		auto const reply = QMessageBox::critical(
 			this,
 			tr("Semicolons detected!"),
 			tr("Can't save because the table contains semicolons. Please remove them and continue."));
-		return false;
+		return 2;
 	}
 
 	auto const fileName = QFileDialog::getSaveFileName(
@@ -110,17 +110,24 @@ MainWindow::saveTable()
 
 	if (fileName.isEmpty()) {
 		// No file provided or Cancel pressed
-		return false;
+		return 3;
 	}
 
-	m_file->saveTable(
+	auto const code = m_file->saveTable(
 		m_tableWidget->getTableWidget(),
 		fileName,
 		m_tableWidget->getRowEntered(),
 		m_tableWidget->getRoundCounter());
-	writeSettings(fileName);
-	// Success
-	return true;
+	if (code) {
+		writeSettings(fileName);
+		// Success
+		return 0;
+	}
+	auto const reply = QMessageBox::critical(
+		this,
+		tr("Could not save table!"),
+		tr("Failed to write file."));
+	return 4;
 }
 
 
@@ -137,7 +144,7 @@ MainWindow::openTable()
 				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 			if (reply == QMessageBox::Yes) {
 				auto const code = saveTable();
-				if (!code) {
+				if (code != 0) {
 					return;
 				}
 			} else if (reply == QMessageBox::Cancel) {
@@ -278,7 +285,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 		if (reply == QMessageBox::Yes) {
 			auto const code = saveTable();
-			if (!code) {
+			if (code != 0) {
 				event->ignore();
 			}
 			event->accept();

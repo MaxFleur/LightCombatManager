@@ -14,3 +14,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(test)
+
+# Copy testing tables to build directory
+configure_file(resources/TestingTables/workingTable.csv test/TestingTables/workingTable.csv COPYONLY)
+configure_file(resources/TestingTables/brokenTable.csv test/TestingTables/brokenTable.csv COPYONLY)

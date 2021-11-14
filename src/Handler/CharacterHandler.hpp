@@ -34,11 +34,11 @@ public:
 	// Store a new character
 	void
 	storeCharacter(QString	name,
-		       int	initiative,
-		       int	modifier,
-		       int	hp,
-		       bool	isNPC,
-		       QString	additionalInf);
+		       int	initiative = 0,
+		       int	modifier = 0,
+		       int	hp = 0,
+		       bool	isNPC = false,
+		       QString	additionalInf = "");
 
 	// Sort the stored characters
 	void

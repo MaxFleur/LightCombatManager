@@ -19,28 +19,18 @@ TEST_CASE("Util Testing", "[Utils]"){
 		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
 		Utils::resynchronizeCharacters(tableWidget, charHandler);
 
-		SECTION("Check name") {
+		SECTION("Check stats") {
 			REQUIRE(charHandler->getCharacters().at(0)->name == "Fighter");
-		}
-		SECTION("Check INI") {
 			REQUIRE(charHandler->getCharacters().at(0)->initiative == 19);
-		}
-		SECTION("Check modifier") {
 			REQUIRE(charHandler->getCharacters().at(0)->modifier == 2);
-		}
-		SECTION("Check hp") {
 			REQUIRE(charHandler->getCharacters().at(0)->hp == 36);
-		}
-		SECTION("Check empty npc field") {
 			REQUIRE(charHandler->getCharacters().at(0)->isNPC == false);
+			REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Haste");
 		}
 		SECTION("Check filled NPC field") {
 			tableWidget->setItem(0, 4, new QTableWidgetItem("X"));
 			Utils::resynchronizeCharacters(tableWidget, charHandler);
 			REQUIRE(charHandler->getCharacters().at(0)->isNPC == true);
-		}
-		SECTION("Additional information") {
-			REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Haste");
 		}
 	}
 

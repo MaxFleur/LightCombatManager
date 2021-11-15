@@ -1,10 +1,10 @@
-add_library (Table INTERFACE)
+add_library (table INTERFACE)
 
-target_include_directories (Table 
+target_include_directories (table 
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 ) 
 
-target_sources(Table INTERFACE
+target_sources(table INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/AddCharacterDialog.hpp
     ${CMAKE_CURRENT_LIST_DIR}/AddCharacterDialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TableWidget.hpp
@@ -16,6 +16,6 @@ target_sources(Table INTERFACE
 )
 
 
-target_link_libraries(Table 
+target_link_libraries(table 
     INTERFACE Qt5::Widgets
 )

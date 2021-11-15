@@ -1,10 +1,10 @@
-add_library (Handler INTERFACE)
+add_library (handler INTERFACE)
 
-target_include_directories (Handler
+target_include_directories (handler
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 ) 
 
-target_sources(Handler INTERFACE
+target_sources(handler INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/CharacterHandler.hpp
     ${CMAKE_CURRENT_LIST_DIR}/CharacterHandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/FileHandler.hpp
@@ -13,6 +13,6 @@ target_sources(Handler INTERFACE
 )
 
 
-target_link_libraries(Handler 
+target_link_libraries(handler 
     INTERFACE Qt5::Widgets
 )

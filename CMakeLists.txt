@@ -16,5 +16,5 @@ add_subdirectory(src)
 add_subdirectory(test)
 
 # Copy testing tables to build directory
-configure_file(resources/TestingTables/workingTable.csv test/TestingTables/workingTable.csv COPYONLY)
-configure_file(resources/TestingTables/brokenTable.csv test/TestingTables/brokenTable.csv COPYONLY)
+configure_file(resources/tables/workingTable.csv test/TestingTables/workingTable.csv COPYONLY)
+configure_file(resources/tables/brokenTable.csv test/TestingTables/brokenTable.csv COPYONLY)

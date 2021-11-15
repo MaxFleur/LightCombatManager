@@ -2,7 +2,7 @@
 
 #include <QPointer>
 
-#include "../Handler/CharacterHandler.hpp"
+#include "../handler/CharacterHandler.hpp"
 
 class CustomTable;
 class QTableWidget;

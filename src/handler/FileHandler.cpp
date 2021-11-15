@@ -8,7 +8,7 @@
 #include <QTableWidgetItem>
 #include <QTextStream>
 
-#include "../Utils/Utils.hpp"
+#include "../utils/Utils.hpp"
 
 FileHandler::FileHandler()
 {

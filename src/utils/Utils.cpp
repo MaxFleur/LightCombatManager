@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QTableWidget>
 
-#include "../GUI/Table/CustomTable.hpp"
+#include "../ui/table/CustomTable.hpp"
 
 namespace Utils
 {

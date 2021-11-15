@@ -4,7 +4,7 @@
 #include <QString>
 #include <QWidget>
 
-#include "../../Handler/CharacterHandler.hpp"
+#include "../../handler/CharacterHandler.hpp"
 #include "CustomTable.hpp"
 
 class QContextMenuEvent;

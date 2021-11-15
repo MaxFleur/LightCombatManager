@@ -5,9 +5,9 @@
 #include <QPointer>
 
 #include "WelcomeWidget.hpp"
-#include "Table/TableWidget.hpp"
-#include "../Handler/CharacterHandler.hpp"
-#include "../Handler/FileHandler.hpp"
+#include "table/TableWidget.hpp"
+#include "../handler/CharacterHandler.hpp"
+#include "../handler/FileHandler.hpp"
 
 class QAction;
 

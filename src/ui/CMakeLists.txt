@@ -1,12 +1,12 @@
-add_library (GUI INTERFACE)
+add_library (ui INTERFACE)
 
-add_subdirectory(Table)
+add_subdirectory(table)
 
-target_include_directories (GUI 
+target_include_directories (ui 
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
 ) 
 
-target_sources(GUI INTERFACE
+target_sources(ui INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.hpp
     ${CMAKE_CURRENT_LIST_DIR}/StatusEffectDialog.cpp
@@ -15,6 +15,6 @@ target_sources(GUI INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/WelcomeWidget.hpp 
 )
 
-target_link_libraries(GUI 
-    INTERFACE Qt5::Widgets Table
+target_link_libraries(ui 
+    INTERFACE Qt5::Widgets table
 )

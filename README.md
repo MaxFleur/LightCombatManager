@@ -2,14 +2,17 @@
 LightCombatManager is a small combat manager for DnD-like games, primarily for Pathfinder 1e. 
 
 # Tools
-LightCombatManager is written in C++14. The user interface is created with QT5 [1]. The code formatting is done using Uncrustify. [2]
+LightCombatManager is written in C++14. The following tools are used for development:
+* [QT5](https://www.qt.io/) for the user interface
+* [Catch2](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
+* [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 
 # Installation
 
-## Linux
+Qt5 and Catch2 are required to build this application. For most Linux Distros, these libraries should be contained using the official package managers. 
+For Windows, installers for both Qt5 and CMake are available.
 
-`cmake` and `QT5` are required to build this application. QT on Ubuntu can be installed with `qt5-default`, for Manjaro or other Arch-based distributions install `qt5-base`. `Uncrustify` is also included in most Linux distro packages. \
-For Windows, there are both Pre-Builds for CMake, QT5 and Uncrustify.
+## Linux
 
 1. Download or clone this repository.
 2. Open a terminal and `cd` into this repository.
@@ -18,7 +21,7 @@ For Windows, there are both Pre-Builds for CMake, QT5 and Uncrustify.
 
 ## Windows
 
-There are multiple ways to build this application on Windows. The following description is focussed on building the application with `cmake` and Visual Studio 2019. QT5 must be installed on the system.
+The following description is focused on building the application with `cmake` and Visual Studio 2019.
 
 1. Download or clone this repository.
 2. Open up `cmd` or `git bash` and navigate to this repository. 
@@ -30,9 +33,11 @@ There are multiple ways to build this application on Windows. The following desc
 8. The `exe`-file for the application should be found here. To successfully run the exe, `qwindows.dll`, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
    have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug).
    
+## Tests
+
+For fully functioning tests, please run the tests inside the `LightCombatManager/build/test` directory: `./tests`. 
+   
 # Contribution
 
-To contribute, please format your code using the provided `uncrustify.cfg`. 
-
-[1] https://www.qt.io/ \
-[2] https://github.com/uncrustify/uncrustify
+To contribute, please format your code using the provided `uncrustify.cfg`. Uncrustify can be found in most Linux Distro package managers. 
+For Windows, there are installers available.

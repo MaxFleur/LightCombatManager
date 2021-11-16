@@ -22,7 +22,7 @@ private:
 		// Is the character an NPC or not
 		bool	isNPC = false;
 		// Additional information (e.g. status effects). Optional.
-		QString additionalInf = "";
+		QString additionalInf = QString();
 	};
 
 	// Vector storing all created characters
@@ -38,7 +38,7 @@ public:
 		       int	modifier = 0,
 		       int	hp = 0,
 		       bool	isNPC = false,
-		       QString	additionalInf = "");
+		       QString	additionalInf = QString());
 
 	// Sort the stored characters
 	void

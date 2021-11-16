@@ -1,3 +1,6 @@
+#include <filesystem>
+#include <string>
+
 #include <QString>
 #include <QTableWidget>
 
@@ -5,19 +8,40 @@
 
 #include "FileHandler.hpp"
 
+class FileHandlerTestUtils
+{
+public:
 
-TEST_CASE("FileHandler Testing", "[FileHandler]"){
+	QString
+	resolvePath(std::filesystem::path relativeDir)
+	{
+		auto currentDir = std::filesystem::current_path();
+
+		while (currentDir.has_parent_path()) {
+			auto combinedPath = currentDir / relativeDir;
+
+			if (std::filesystem::exists(combinedPath)) {
+				return QString::fromStdString(combinedPath.u8string());
+			}
+			currentDir = currentDir.parent_path();
+		}
+		throw std::runtime_error("File not found!");
+	}
+};
+
+
+TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 	std::shared_ptr<FileHandler> fileHandler = std::make_shared<FileHandler>();
 
 	SECTION("Check format test") {
 		SECTION("Functioning table") {
-			REQUIRE(fileHandler->getCSVData("./TestingTables/workingTable.csv") == 0);
+			REQUIRE(fileHandler->getCSVData(resolvePath("resources/tables/workingTable.csv")) == 0);
 		}
 		SECTION("Broken table") {
-			REQUIRE(fileHandler->getCSVData("./TestingTables/brokenTable.csv") == 1);
+			REQUIRE(fileHandler->getCSVData(resolvePath("resources/tables/brokenTable.csv")) == 1);
 		}
 		SECTION("Non readable/existing table") {
-			REQUIRE(fileHandler->getCSVData("./TestingTables/nonexistingTable.csv") == 2);
+			REQUIRE(fileHandler->getCSVData("dir/to/nonexisting/table.csv") == 2);
 		}
 	}
 

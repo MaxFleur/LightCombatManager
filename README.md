@@ -27,15 +27,11 @@ The following description is focused on building the application with `cmake` an
 2. Open up `cmd` or `git bash` and navigate to this repository. 
 3. Create a build folder: `mkdir build`. Navigate into this folder via `cd build`.
 4. Set the CMake Prefix Path for `Qt` inside the `CMakeLists.txt`. Example: `set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\")` for `Qt 5.15` and `msvc compiler`
-5. Hit `cmake.exe -G “Visual Studio 16 2019” -A x64 ..`. This will create a `sln`-file. 
+5. Hit `cmake.exe -G “Visual Studio 16 2019” -A x64 ..`. This will create an `sln`-file. 
 6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
 7. Inside the `build`-file, a file named `Debug` or `Release` should have been created. Navigate to this folder.
 8. The `exe`-file for the application should be found here. To successfully run the exe, `qwindows.dll`, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
    have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug).
-   
-## Tests
-
-For fully functioning tests, please run the tests inside the `LightCombatManager/build/test` directory: `./tests`. 
    
 # Contribution
 

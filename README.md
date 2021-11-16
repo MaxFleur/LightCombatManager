@@ -2,7 +2,7 @@
 LightCombatManager is a small combat manager for DnD-like games, primarily for Pathfinder 1e. 
 
 # Tools
-LightCombatManager is written in C++14. The following tools are used for development:
+LightCombatManager is written in C++17. The following tools are used for development:
 * [QT5](https://www.qt.io/) for the user interface
 * [Catch2](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.

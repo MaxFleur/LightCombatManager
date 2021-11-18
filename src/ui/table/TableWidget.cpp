@@ -391,7 +391,6 @@ TableWidget::setRowAndPlayer()
 {
 	// Select row entered with Return key
 	m_tableWidget->selectionModel()->clearSelection();
-	m_tableWidget->selectRow(m_rowEntered);
 
 	// Reset bold text rows to standard font
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {

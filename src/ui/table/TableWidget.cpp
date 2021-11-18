@@ -284,9 +284,9 @@ TableWidget::rowSelected()
 void
 TableWidget::openStatusEffectDialog()
 {
-    if(m_tableWidget->rowCount() == 0) {
-        return;
-    }
+	if (m_tableWidget->rowCount() == 0) {
+		return;
+	}
 	// Open dialog
 	auto *const dialog = new StatusEffectDialog(this);
 	// Lock until dialog is closed
@@ -414,9 +414,9 @@ TableWidget::removeRow()
 void
 TableWidget::enteredRowChanged()
 {
-    if(m_tableWidget->rowCount() == 0) {
-        return;
-    }
+	if (m_tableWidget->rowCount() == 0) {
+		return;
+	}
 	// If the current selected row is the last one, reset to the first one
 	if (m_rowEntered == m_tableWidget->rowCount() - 1) {
 		m_rowEntered = 0;

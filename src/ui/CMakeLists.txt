@@ -9,8 +9,6 @@ target_include_directories (ui
 target_sources(ui INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/StatusEffectDialog.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/StatusEffectDialog.hpp
     ${CMAKE_CURRENT_LIST_DIR}/WelcomeWidget.cpp 
     ${CMAKE_CURRENT_LIST_DIR}/WelcomeWidget.hpp 
 )

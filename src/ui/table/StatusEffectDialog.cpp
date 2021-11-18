@@ -36,8 +36,6 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 	mainLayout->addWidget(m_addEffectButton, 2, 1);
 	mainLayout->addWidget(cancelButton, 2, 2);
 
-	setFixedSize(250, 300);
-
 	connect(
 		textComboBox->lineEdit(),
 		&QLineEdit::textChanged,

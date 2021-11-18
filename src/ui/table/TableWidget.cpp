@@ -18,10 +18,9 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
-#include "Delegate.hpp"
-#include "../StatusEffectDialog.hpp"
 #include "AddCharacterDialog.hpp"
-
+#include "Delegate.hpp"
+#include "StatusEffectDialog.hpp"
 #include "Utils.hpp"
 
 TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data, QWidget *parent)

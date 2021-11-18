@@ -11,7 +11,7 @@
 #include <QSpinBox>
 #include <QTimer>
 
-#include "../StatusEffectDialog.hpp"
+#include "StatusEffectDialog.hpp"
 
 AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 {

@@ -80,7 +80,6 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	mainLayout->addWidget(cancelButton, 5, 3);
 
 	setFocus();
-	setFixedSize(380, 240);
 
 	auto *const saveShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this);
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
@@ -175,12 +174,12 @@ AddCharacterDialog::animateLabel()
 }
 
 
-// Normally, pressing the Enter key closes a QDialog, but we do not want that
-// because the user might be entering values right now
+// Normally, pressing the Enter or Escape key closes a QDialog, calling reject but we do not want that
+// The user has to press the Return or the closing "X" button
 void
 AddCharacterDialog::keyPressEvent(QKeyEvent *event)
 {
-	if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+	if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return || event->key() == Qt::Key_Escape) {
 		return;
 	}
 	QDialog::keyPressEvent(event);

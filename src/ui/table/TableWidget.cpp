@@ -15,6 +15,7 @@
 #include <QShortcut>
 #include <QSizePolicy>
 #include <QStringList>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include "Delegate.hpp"
@@ -52,6 +53,14 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	auto *const delegate = new SpinBoxDelegate(this);
 	m_tableWidget->setItemDelegateForColumn(COL_HP, delegate);
 
+	auto *const downButton = new QToolButton;
+	downButton->setArrowType(Qt::DownArrow);
+	downButton->setToolTip(tr("Select next Character (Ctrl + Arrow Down)."));
+
+	auto *const upButton = new QToolButton;
+	upButton->setArrowType(Qt::UpArrow);
+	upButton->setToolTip(tr("Select previous Character (Ctrl + Arrow Up)."));
+
 	m_exitButton = new QPushButton(tr("Return to Main Window"));
 
 	m_currentPlayerLabel = new QLabel;
@@ -70,6 +79,8 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	lowerLayout->addSpacing(SPACING);
 	lowerLayout->addWidget(m_currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
+	lowerLayout->addWidget(upButton);
+	lowerLayout->addWidget(downButton);
 	lowerLayout->addWidget(m_exitButton);
 
 	auto *const tableLayout = new QVBoxLayout(this);
@@ -78,7 +89,8 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 
 	// Shortcuts
 	auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
-	auto *const changeRowShortcut = new QShortcut(QKeySequence(Qt::Key_Return), this);
+	auto *const goUpShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up), this);
+	auto *const goDownShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down), this);
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 	auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
@@ -88,6 +100,21 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
 	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
+
+	connect(
+		upButton,
+		&QPushButton::clicked,
+		this,
+		[this]{
+			enteredRowChanged(false);
+		});
+	connect(
+		downButton,
+		&QPushButton::clicked,
+		this,
+		[this]{
+			enteredRowChanged(true);
+		});
 	connect(
 		m_exitButton,
 		&QPushButton::clicked,
@@ -97,7 +124,20 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 		});
 
 	connect(deleteShortcut, &QShortcut::activated, this, &TableWidget::removeRow);
-	connect(changeRowShortcut, &QShortcut::activated, this, &TableWidget::enteredRowChanged);
+	connect(
+		goUpShortcut,
+		&QShortcut::activated,
+		this,
+		[this]{
+			enteredRowChanged(false);
+		});
+	connect(
+		goDownShortcut,
+		&QShortcut::activated,
+		this,
+		[this]{
+			enteredRowChanged(true);
+		});
 	connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
 	connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openAddCharacterDialog);
 }
@@ -412,19 +452,34 @@ TableWidget::removeRow()
 
 
 void
-TableWidget::enteredRowChanged()
+TableWidget::enteredRowChanged(bool goDown)
 {
 	if (m_tableWidget->rowCount() == 0) {
 		return;
 	}
-	// If the current selected row is the last one, reset to the first one
-	if (m_rowEntered == m_tableWidget->rowCount() - 1) {
-		m_rowEntered = 0;
-		m_roundCounter++;
-		setRoundCounterData();
-		// Otherwise just select the next row
+	// Are we going down or up?
+	if (goDown) {
+		// If the current selected row is the last one, reset to the first row
+		if (m_rowEntered == m_tableWidget->rowCount() - 1) {
+			m_rowEntered = 0;
+			m_roundCounter++;
+			setRoundCounterData();
+			// Otherwise just select the next row
+		} else {
+			m_rowEntered++;
+		}
 	} else {
-		m_rowEntered++;
+		// Stop if first round and first char selected
+		if (m_rowEntered == 0 && m_roundCounter == 1) {
+			return;
+		}
+		if (m_rowEntered == 0) {
+			m_rowEntered = m_tableWidget->rowCount() - 1;
+			m_roundCounter--;
+			setRoundCounterData();
+		} else {
+			m_rowEntered--;
+		}
 	}
 	// Identifier for the entered row changes
 	m_rowIdentifier = m_identifiers.at(m_rowEntered);

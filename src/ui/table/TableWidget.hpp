@@ -115,7 +115,7 @@ private:
 	removeRow();
 
 	void
-	enteredRowChanged();
+	enteredRowChanged(bool goDown);
 
 	void
 	showIniColumn(bool show);

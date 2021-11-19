@@ -156,7 +156,7 @@ TableWidget::setTable()
 	// Set data for the lower label
 	setRoundCounterData();
 	setRowAndPlayer();
-	emit tableSet(setHeight());
+	emit tableSet(getHeight());
 }
 
 
@@ -233,13 +233,13 @@ TableWidget::setData()
 
 
 int
-TableWidget::setHeight()
+TableWidget::getHeight()
 {
 	auto height = 0;
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		height += m_tableWidget->rowHeight(i);
 	}
-	return height += HEIGHT_BUFFER;
+	return height + HEIGHT_BUFFER;
 }
 
 

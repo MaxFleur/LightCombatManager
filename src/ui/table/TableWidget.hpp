@@ -50,10 +50,7 @@ public:
 	}
 
 	int
-	getHeight()
-	{
-		return setHeight();
-	}
+	getHeight();
 
 public slots:
 
@@ -95,9 +92,6 @@ private:
 
 	void
 	setData();
-
-	int
-	setHeight();
 
 	void
 	setInfoColumnWidth();

@@ -55,6 +55,7 @@ MainWindow::MainWindow()
 
 	m_file = std::make_shared<FileHandler>();
 
+	resize(START_WIDTH, START_HEIGHT);
 	setWelcomingWidget();
 }
 
@@ -220,7 +221,6 @@ MainWindow::setWelcomingWidget()
 {
 	m_welcomeWidget = new WelcomeWidget(this);
 	setCentralWidget(m_welcomeWidget);
-	setFixedSize(700, 260);
 	m_saveAction->setEnabled(false);
 	setWindowTitle("LCM");
 }
@@ -237,11 +237,11 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 		&TableWidget::tableSet,
 		this,
 		[this] (int height) {
-			setMinimumSize(710, height);
+			setMinimumSize(START_WIDTH, height);
 			setMaximumWidth(QWIDGETSIZE_MAX);
 		});
 	m_isTableActive = true;
-	setMinimumSize(710, m_tableWidget->getHeight());
+	setMinimumSize(START_WIDTH, m_tableWidget->getHeight());
 	setMaximumWidth(QWIDGETSIZE_MAX);
 	m_saveAction->setEnabled(true);
 	setWindowTitle(tr("LCM - Combat Active"));

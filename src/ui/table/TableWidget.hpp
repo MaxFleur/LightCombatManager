@@ -185,7 +185,7 @@ private:
 	static constexpr int WIDTH_MODIFIER = 40;
 	static constexpr int WIDTH_HP = 35;
 	static constexpr int WIDTH_NPC = 60;
-	static constexpr int WIDTH_ADDITIONAL = 335;
+	static constexpr int WIDTH_ADDITIONAL = 350;
 
 	static constexpr int HEIGHT_BUFFER = 140;
 };

@@ -74,5 +74,8 @@ private:
 	QString m_currentDir;
 
 	FileHandlerRef m_file;
+
+	static constexpr int START_WIDTH = 720;
+	static constexpr int START_HEIGHT = 240;
 };
 #endif

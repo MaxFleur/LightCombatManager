@@ -3,14 +3,15 @@ LightCombatManager is a small combat manager for DnD-like games, primarily for P
 
 # Tools
 LightCombatManager is written in C++17. The following tools are used for development:
-* [QT5](https://www.qt.io/) for the user interface
+* [Qt5](https://www.qt.io/) for the user interface
 * [Catch2](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
+* CMake as build system.
 
 # Installation
 
-Qt5 and Catch2 are required to build this application. For most Linux Distros, these libraries should be contained using the official package managers. 
-For Windows, installers for both Qt5 and CMake are available.
+Qt5, CMake and Catch2 are required to build this application. For most Linux Distros, all these libraries should be contained using the official package managers. 
+For Windows, installers for Qt5, CMake and Catch2 are available.
 
 ## Linux
 

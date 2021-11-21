@@ -174,12 +174,12 @@ private:
 
 	static constexpr int SPACING = 30;
 
-	static constexpr int WIDTH_NAME = 150;
-	static constexpr int WIDTH_INI = 40;
-	static constexpr int WIDTH_MODIFIER = 40;
-	static constexpr int WIDTH_HP = 35;
-	static constexpr int WIDTH_NPC = 60;
-	static constexpr int WIDTH_ADDITIONAL = 350;
+	// Width rations of the first five columns
+	static constexpr float WIDTH_NAME = 0.25;
+	static constexpr float WIDTH_INI = 0.05;
+	static constexpr float WIDTH_MODIFIER = 0.05;
+	static constexpr float WIDTH_HP = 0.05;
+	static constexpr float WIDTH_NPC = 0.08;
 
 	static constexpr int HEIGHT_BUFFER = 140;
 };

@@ -41,12 +41,13 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_tableWidget->setShowGrid(true);
 	m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_tableWidget->setColumnWidth(COL_NAME, WIDTH_NAME);
-	m_tableWidget->setColumnWidth(COL_INI, WIDTH_INI);
-	m_tableWidget->setColumnWidth(COL_MODIFIER, WIDTH_MODIFIER);
-	m_tableWidget->setColumnWidth(COL_HP, WIDTH_HP);
-	m_tableWidget->setColumnWidth(COL_NPC, WIDTH_NPC);
-	setInfoColumnWidth();
+	m_tableWidget->setColumnWidth(COL_NAME, this->width() * WIDTH_NAME);
+	m_tableWidget->setColumnWidth(COL_INI, this->width() * WIDTH_INI);
+	m_tableWidget->setColumnWidth(COL_MODIFIER, this->width() * WIDTH_MODIFIER);
+	m_tableWidget->setColumnWidth(COL_HP, this->width() * WIDTH_HP);
+	m_tableWidget->setColumnWidth(COL_NPC, this->width() * WIDTH_NPC);
+	// Last column just gets remaining space
+	m_tableWidget->horizontalHeader()->setStretchLastSection(true);
 
 	// Spinbox for the hp column
 	auto *const delegate = new SpinBoxDelegate(this);
@@ -240,22 +241,6 @@ TableWidget::getHeight()
 		height += m_tableWidget->rowHeight(i);
 	}
 	return height + HEIGHT_BUFFER;
-}
-
-
-// Set the length of the additional information column
-// The length depends on whether the INI and Modifier column are shown
-void
-TableWidget::setInfoColumnWidth()
-{
-	auto width = WIDTH_ADDITIONAL;
-	if (!m_isIniShown) {
-		width += WIDTH_INI;
-	}
-	if (!m_isModifierShown) {
-		width += WIDTH_MODIFIER;
-	}
-	m_tableWidget->setColumnWidth(COL_ADDITIONAL, width);
 }
 
 
@@ -492,7 +477,6 @@ TableWidget::showIniColumn(bool show)
 	m_tableWidget->setColumnHidden(COL_INI, !show);
 
 	writeSettings();
-	setInfoColumnWidth();
 }
 
 
@@ -503,7 +487,6 @@ TableWidget::showModColumn(bool show)
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
 
 	writeSettings();
-	setInfoColumnWidth();
 }
 
 

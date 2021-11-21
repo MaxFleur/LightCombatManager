@@ -220,6 +220,8 @@ void
 MainWindow::setWelcomingWidget()
 {
 	m_welcomeWidget = new WelcomeWidget(this);
+	setMinimumSize(0, 0);
+	setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 	setCentralWidget(m_welcomeWidget);
 	m_saveAction->setEnabled(false);
 	setWindowTitle("LCM");

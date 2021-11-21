@@ -566,7 +566,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	auto *const optionMenu = menu.addMenu("Options");
 
 	auto *const iniAction = optionMenu->addAction(
-		tr("Show Initiatve"),
+		tr("Show Initiative"),
 		this,
 		[this] (bool show) {
 			showIniColumn(show);

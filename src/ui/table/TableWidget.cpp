@@ -193,7 +193,7 @@ TableWidget::setData()
 	} else {
 		// If no data is provided via csv, set the data according to the vector of chars
 		// generated in the character creation
-		m_tableWidget->setRowCount(m_char->getCharacters().size());
+		m_tableWidget->setRowCount(static_cast<int>(m_char->getCharacters().size()));
 
 		for (int i = 0; i < m_char->getCharacters().size(); i++) {
 			// Store char stats

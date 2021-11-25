@@ -74,7 +74,7 @@ MainWindow::newCombat()
 {
 	// If a filled Table is active right now, ask if it should be saved
 	if (m_isTableActive) {
-		if (m_tableWidget->getRowCount() != 0) {
+		if (!m_tableWidget->isEmpty()) {
 			auto const reply = QMessageBox::question(
 				this,
 				tr("Start a new Combat?"),
@@ -97,7 +97,7 @@ MainWindow::newCombat()
 int
 MainWindow::saveTable()
 {
-	if (m_tableWidget->getRowCount() == 0) {
+	if (m_tableWidget->isEmpty()) {
 		auto const reply = QMessageBox::critical(
 			this,
 			tr("Table empty!"),
@@ -146,7 +146,7 @@ MainWindow::openTable()
 {
 	// If a filled Table is active right now, ask if it should be saved
 	if (m_isTableActive) {
-		if (m_tableWidget->getRowCount() != 0) {
+		if (!m_tableWidget->isEmpty()) {
 			auto const reply = QMessageBox::question(
 				this,
 				tr("Save current Table?"),
@@ -285,7 +285,7 @@ void
 MainWindow::closeEvent(QCloseEvent *event)
 {
 	// If a filled Table is active, ask if it should be saved
-	if (m_isTableActive && m_tableWidget->getRowCount() != 0) {
+	if (m_isTableActive && !m_tableWidget->isEmpty()) {
 		auto const reply = QMessageBox::question(
 			this,
 			tr("Exit"),

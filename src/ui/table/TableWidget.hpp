@@ -35,10 +35,10 @@ public:
 		return m_roundCounter;
 	}
 
-	int
-	getRowCount()
+	bool
+	isEmpty()
 	{
-		return m_tableWidget->rowCount();
+		return m_tableWidget->rowCount() == 0;
 	}
 
 	int

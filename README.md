@@ -1,5 +1,7 @@
 # LightCombatManager
-LightCombatManager is a small combat manager for DnD-like games, primarily for Pathfinder 1e. 
+LightCombatManager is a small combat manager for DnD-like games, primarily for Pathfinder 1e. \
+Using LightCombatManager, you can easily create Characters with initiative values, a HP counter and additional information. You can also add status effects to each Character. After creation, the program automatically sorts all Characters and creates a full Combat Table. Inside this Table, you can easily delete and readd Characters or change the Combat Order by moving Characters around. The program will track the current Character and the round number.\
+If the current Combat is not finished yet, you can save the Table as a csv file and reopen it later. All Characters, the current Character and the round number will be stored.
 
 # Tools
 LightCombatManager is written in C++17. The following tools are used for development:

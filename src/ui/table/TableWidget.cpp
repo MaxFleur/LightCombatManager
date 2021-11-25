@@ -1,6 +1,5 @@
 #include "TableWidget.hpp"
 
-#include <QAbstractItemView>
 #include <QAction>
 #include <QContextMenuEvent>
 #include <QDebug>
@@ -13,7 +12,6 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QShortcut>
-#include <QSizePolicy>
 #include <QStringList>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -61,10 +59,25 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	upButton->setArrowType(Qt::UpArrow);
 	upButton->setToolTip(tr("Select previous Character (Ctrl + Arrow Up)."));
 
-	m_exitButton = new QPushButton(tr("Return to Main Window"));
+	auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
-	m_currentPlayerLabel = new QLabel;
-	m_roundCounterLabel = new QLabel;
+	auto *const roundCounterLabel = new QLabel;
+	auto *const currentPlayerLabel = new QLabel;
+
+	connect(
+		this,
+		&TableWidget::setCurrentPlayer,
+		this,
+		[this, currentPlayerLabel] {
+			currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
+		});
+	connect(
+		this,
+		&TableWidget::roundCounterSet,
+		this,
+		[this, roundCounterLabel] {
+			roundCounterLabel->setText("Round " + QString::number(m_roundCounter));
+		});
 
 	// Create a spacer widget to move the buttons to the right side
 	auto *const spacer = new QWidget();
@@ -75,13 +88,13 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 
 	// Lower layout
 	auto *const lowerLayout = new QHBoxLayout();
-	lowerLayout->addWidget(m_roundCounterLabel);
+	lowerLayout->addWidget(roundCounterLabel);
 	lowerLayout->addSpacing(SPACING);
-	lowerLayout->addWidget(m_currentPlayerLabel);
+	lowerLayout->addWidget(currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
 	lowerLayout->addWidget(upButton);
 	lowerLayout->addWidget(downButton);
-	lowerLayout->addWidget(m_exitButton);
+	lowerLayout->addWidget(exitButton);
 
 	auto *const tableLayout = new QVBoxLayout(this);
 	tableLayout->addWidget(m_tableWidget);
@@ -116,7 +129,7 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 			enteredRowChanged(true);
 		});
 	connect(
-		m_exitButton,
+		exitButton,
 		&QPushButton::clicked,
 		this,
 		[this] () {
@@ -155,7 +168,7 @@ TableWidget::setTable()
 	}
 	m_rowIdentifier = m_identifiers.at(m_rowEntered);
 	// Set data for the lower label
-	setRoundCounterData();
+	emit roundCounterSet();
 	setRowAndPlayer();
 	emit tableSet(getHeight());
 }
@@ -241,14 +254,6 @@ TableWidget::getHeight()
 		height += m_tableWidget->rowHeight(i);
 	}
 	return height + HEIGHT_BUFFER;
-}
-
-
-// Sets round counter number
-void
-TableWidget::setRoundCounterData()
-{
-	m_roundCounterLabel->setText("Round " + QString::number(m_roundCounter));
 }
 
 
@@ -388,8 +393,7 @@ TableWidget::setRowAndPlayer()
 	for (int j = 0; j < m_tableWidget->columnCount(); j++) {
 		m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
 	}
-	// Display current player
-	m_currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
+	emit setCurrentPlayer();
 }
 
 
@@ -446,7 +450,7 @@ TableWidget::enteredRowChanged(bool goDown)
 		if (m_rowEntered == m_tableWidget->rowCount() - 1) {
 			m_rowEntered = 0;
 			m_roundCounter++;
-			setRoundCounterData();
+			emit roundCounterSet();
 			// Otherwise just select the next row
 		} else {
 			m_rowEntered++;
@@ -459,7 +463,7 @@ TableWidget::enteredRowChanged(bool goDown)
 		if (m_rowEntered == 0) {
 			m_rowEntered = m_tableWidget->rowCount() - 1;
 			m_roundCounter--;
-			setRoundCounterData();
+			emit roundCounterSet();
 		} else {
 			m_rowEntered--;
 		}

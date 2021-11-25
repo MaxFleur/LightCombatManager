@@ -1,5 +1,4 @@
-#ifndef DELEGATE_H
-#define DELEGATE_H
+#pragma once
 
 #include <QStyledItemDelegate>
 
@@ -16,4 +15,3 @@ public:
 		     const QStyleOptionViewItem &	option,
 		     const QModelIndex &		index) const override;
 };
-#endif

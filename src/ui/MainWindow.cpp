@@ -12,44 +12,53 @@
 #include <QSettings>
 #include <QString>
 
+#include "table/TableWidget.hpp"
 #include "Utils.hpp"
+#include "WelcomeWidget.hpp"
 
 MainWindow::MainWindow()
 {
 	// Actions
-	m_newCombatAction = new QAction(tr("&New Combat"), this);
-	m_newCombatAction->setShortcuts(QKeySequence::New);
-	m_newCombatAction->setStatusTip(tr("Start a new Combat."));
-	connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
+	auto *const newCombatAction = new QAction(tr("&New Combat"), this);
+	newCombatAction->setShortcuts(QKeySequence::New);
+	newCombatAction->setStatusTip(tr("Start a new Combat."));
+	connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
-	m_saveAction = new QAction(tr("&Save Table"), this);
-	m_saveAction->setShortcuts(QKeySequence::Save);
-	m_saveAction->setStatusTip(tr("Save the created Table."));
-	connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
+	auto *const saveAction = new QAction(tr("&Save Table"), this);
+	saveAction->setShortcuts(QKeySequence::Save);
+	saveAction->setStatusTip(tr("Save the created Table."));
+	connect(saveAction, &QAction::triggered, this, &MainWindow::saveTable);
+	connect(
+		this,
+		&MainWindow::setSaveAction,
+		this,
+		[saveAction] (bool enable) {
+			saveAction->setEnabled(enable);
+		});
 
-	m_openAction = new QAction(tr("&Open Table"), this);
-	m_openAction->setShortcuts(QKeySequence::Open);
-	m_openAction->setStatusTip(tr("Open an existing Table."));
-	connect(m_openAction, &QAction::triggered, this, &MainWindow::openTable);
+	auto *const openAction = new QAction(tr("&Open Table"), this);
+	openAction->setShortcuts(QKeySequence::Open);
+	openAction->setStatusTip(tr("Open an existing Table."));
+	connect(openAction, &QAction::triggered, this, &MainWindow::openTable);
 
-	m_aboutAction = new QAction(tr("&About"), this);
-	m_aboutAction->setStatusTip(tr("About Light Combat Manager"));
-	connect(m_aboutAction, &QAction::triggered, this, &MainWindow::about);
+	auto *const aboutAction = new QAction(tr("&About"), this);
+	aboutAction->setStatusTip(tr("About Light Combat Manager"));
+	connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
 
-	m_aboutQtAction = new QAction(tr("About &Qt"), this);
-	m_aboutQtAction->setStatusTip(tr("About QT Version and License"));
-	connect(m_aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+	auto *const aboutQtAction = new QAction(tr("About &Qt"), this);
+	aboutQtAction->setStatusTip(tr("About QT Version and License"));
+	connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
 	// Menus
 	auto *const fileMenu = menuBar()->addMenu(tr("&File"));
-	fileMenu->addAction(m_newCombatAction);
-	fileMenu->addAction(m_saveAction);
-	fileMenu->addAction(m_openAction);
+	fileMenu->addAction(newCombatAction);
+	fileMenu->addAction(saveAction);
+	fileMenu->addAction(openAction);
 	fileMenu->addSeparator();
 
 	auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
-	helpMenu->addAction(m_aboutAction);
-	helpMenu->addAction(m_aboutQtAction);
+	helpMenu->addAction(aboutAction);
+	helpMenu->addAction(aboutQtAction);
 
 	readSettings();
 
@@ -195,12 +204,6 @@ MainWindow::about()
 
 
 void
-MainWindow::aboutQt()
-{
-}
-
-
-void
 MainWindow::exitCombat()
 {
 	auto const reply = QMessageBox::question(
@@ -223,7 +226,7 @@ MainWindow::setWelcomingWidget()
 	setMinimumSize(0, 0);
 	setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 	setCentralWidget(m_welcomeWidget);
-	m_saveAction->setEnabled(false);
+	emit setSaveAction(false);
 	setWindowTitle("LCM");
 }
 
@@ -249,7 +252,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	isDataStored ? height = m_tableWidget->getHeight() : height = START_HEIGHT;
 	setFixedHeight(height);
 
-	m_saveAction->setEnabled(true);
+	emit setSaveAction(true);
 	setWindowTitle(tr("LCM - Combat Active"));
 
 	if (newCombatStarted) {

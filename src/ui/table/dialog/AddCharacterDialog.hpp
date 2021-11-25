@@ -7,7 +7,6 @@
 
 class QCheckBox;
 class QSpinBox;
-class QString;
 
 // Dialog used to add new characters to an existing Combat
 class AddCharacterDialog : public QDialog {

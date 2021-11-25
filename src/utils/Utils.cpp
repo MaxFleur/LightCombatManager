@@ -1,9 +1,6 @@
 #include "Utils.hpp"
 
-#include <QDebug>
 #include <QTableWidget>
-
-#include "../ui/table/CustomTable.hpp"
 
 namespace Utils
 {

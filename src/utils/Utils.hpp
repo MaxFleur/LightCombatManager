@@ -1,10 +1,7 @@
 #pragma once
 
-#include <QPointer>
-
 #include "../handler/CharacterHandler.hpp"
 
-class CustomTable;
 class QTableWidget;
 
 // Utility functions, no ctor needed

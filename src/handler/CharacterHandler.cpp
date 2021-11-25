@@ -2,12 +2,6 @@
 
 #include <QCryptographicHash>
 
-// Set all values
-CharacterHandler::CharacterHandler()
-{
-}
-
-
 // Stores a new character in the vector
 void
 CharacterHandler::storeCharacter(

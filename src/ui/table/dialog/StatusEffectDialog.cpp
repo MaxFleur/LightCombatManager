@@ -1,6 +1,5 @@
 #include "StatusEffectDialog.hpp"
 
-#include <QAbstractItemView>
 #include <QComboBox>
 #include <QDebug>
 #include <QGridLayout>
@@ -25,15 +24,14 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 		m_list->addItem(new QListWidgetItem(effect));
 	}
 
-	m_addEffectButton = new QPushButton(tr("Add Effect"));
-
+	auto *const addEffectButton = new QPushButton(tr("Add Effect"));
 	auto *const cancelButton = new QPushButton(tr("Cancel"));
 
 	auto *const mainLayout = new QGridLayout(this);
 	mainLayout->addWidget(new QLabel(tr("Find:")), 0, 0);
 	mainLayout->addWidget(textComboBox, 0, 1, 1, 2);
 	mainLayout->addWidget(m_list, 1, 0, 1, 3);
-	mainLayout->addWidget(m_addEffectButton, 2, 1);
+	mainLayout->addWidget(addEffectButton, 2, 1);
 	mainLayout->addWidget(cancelButton, 2, 2);
 
 	connect(
@@ -43,7 +41,7 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 		[this, textComboBox] () {
 			findEffect(textComboBox->lineEdit()->text());
 		});
-	connect(m_addEffectButton, &QPushButton::clicked, this, &StatusEffectDialog::addEffect);
+	connect(addEffectButton, &QPushButton::clicked, this, &StatusEffectDialog::addEffect);
 	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 }
 

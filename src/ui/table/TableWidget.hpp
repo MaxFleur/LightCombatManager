@@ -7,14 +7,6 @@
 #include "../../handler/CharacterHandler.hpp"
 #include "CustomTable.hpp"
 
-class QContextMenuEvent;
-class QFont;
-class QHBoxLayout;
-class QLabel;
-class QTableWidget;
-class QVBoxLayout;
-class QPushButton;
-
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {
 	Q_OBJECT
@@ -65,6 +57,12 @@ signals:
 	void
 	tableSet(int height);
 
+	void
+	setCurrentPlayer();
+
+	void
+	roundCounterSet();
+
 private slots:
 
 	void
@@ -100,9 +98,6 @@ private:
 	incrementRoundCounter();
 
 	void
-	setRoundCounterData();
-
-	void
 	setRowAndPlayer();
 
 	void
@@ -128,13 +123,6 @@ private:
 
 	// Main table widget
 	QPointer<CustomTable> m_tableWidget;
-
-	// Widgets
-	QPointer<QPushButton> m_exitButton;
-	QPointer<QLabel> m_roundCounterLabel;
-	QPointer<QLabel> m_currentPlayerLabel;
-
-	QAction *iniAction;
 
 	// Fonts for highlighting rows
 	QFont m_defaultFont;

@@ -2,11 +2,6 @@
 
 #include <QKeyEvent>
 
-CustomTable::CustomTable(QWidget *parent)
-{
-}
-
-
 void
 CustomTable::keyPressEvent(QKeyEvent *event)
 {

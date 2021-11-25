@@ -10,7 +10,6 @@ class QTableWidget;
 class FileHandler {
 public:
 
-	FileHandler();
 	// Save a table of characters
 	bool
 	saveTable(QTableWidget *tableWidget,

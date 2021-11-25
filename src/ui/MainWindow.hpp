@@ -4,12 +4,10 @@
 #include <QMainWindow>
 #include <QPointer>
 
-#include "WelcomeWidget.hpp"
-#include "table/TableWidget.hpp"
-#include "../handler/CharacterHandler.hpp"
 #include "../handler/FileHandler.hpp"
 
-class QAction;
+class TableWidget;
+class WelcomeWidget;
 
 // This class handles the creation and managing of the main GUI window. It also serves
 // as "main anchor point", switching between the different widgets the Combat Manager can have.
@@ -20,6 +18,11 @@ class MainWindow : public QMainWindow
 
 public:
 	MainWindow();
+
+signals:
+
+	void
+	setSaveAction(bool enable);
 
 private slots:
 
@@ -34,9 +37,6 @@ private slots:
 
 	void
 	about();
-
-	void
-	aboutQt();
 
 	void
 	exitCombat();
@@ -62,12 +62,6 @@ private:
 
 	QPointer<WelcomeWidget> m_welcomeWidget;
 	QPointer<TableWidget> m_tableWidget;
-
-	QPointer<QAction> m_newCombatAction;
-	QPointer<QAction> m_saveAction;
-	QPointer<QAction> m_openAction;
-	QPointer<QAction> m_aboutAction;
-	QPointer<QAction> m_aboutQtAction;
 
 	bool m_isTableActive{ false };
 

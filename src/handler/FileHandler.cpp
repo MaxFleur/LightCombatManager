@@ -2,18 +2,12 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QString>
 #include <QStringList>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QTextStream>
 
 #include "../utils/Utils.hpp"
-
-FileHandler::FileHandler()
-{
-}
-
 
 // Stores a table as a csv
 bool

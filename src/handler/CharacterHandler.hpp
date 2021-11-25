@@ -29,7 +29,6 @@ private:
 	std::vector<std::shared_ptr<Character> > characters;
 
 public:
-	CharacterHandler();
 
 	// Store a new character
 	void

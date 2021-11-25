@@ -4,8 +4,6 @@
 #include <QPointer>
 
 class QListWidget;
-class QPushButton;
-class QString;
 
 // Dialog used to add certain status effects to characters
 class StatusEffectDialog : public QDialog {
@@ -30,7 +28,6 @@ private:
 	void
 	findEffect(const QString filter);
 
-	QPointer<QPushButton> m_addEffectButton;
 	QPointer<QListWidget> m_list;
 
 	// Status Effects are based on the Pathfinder 1e rulebook

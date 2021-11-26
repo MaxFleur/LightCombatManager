@@ -24,13 +24,13 @@ TEST_CASE("Util Testing", "[Utils]"){
 			REQUIRE(charHandler->getCharacters().at(0)->initiative == 19);
 			REQUIRE(charHandler->getCharacters().at(0)->modifier == 2);
 			REQUIRE(charHandler->getCharacters().at(0)->hp == 36);
-			REQUIRE(charHandler->getCharacters().at(0)->isNPC == false);
+			REQUIRE(charHandler->getCharacters().at(0)->isEnemy == false);
 			REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Haste");
 		}
-		SECTION("Check filled NPC field") {
+		SECTION("Check filled enemy field") {
 			tableWidget->setItem(0, 4, new QTableWidgetItem("X"));
 			Utils::resynchronizeCharacters(tableWidget, charHandler);
-			REQUIRE(charHandler->getCharacters().at(0)->isNPC == true);
+			REQUIRE(charHandler->getCharacters().at(0)->isEnemy == true);
 		}
 	}
 

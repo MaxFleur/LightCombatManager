@@ -22,7 +22,7 @@ signals:
 			 int		ini,
 			 int		mod,
 			 int		hp,
-			 bool		isNPC,
+			 bool		isEnemy,
 			 QString	addInfo);
 
 private slots:
@@ -57,7 +57,7 @@ private:
 	QPointer<QSpinBox> m_iniBox;
 	QPointer<QSpinBox> m_iniModifierBox;
 	QPointer<QSpinBox> m_hpBox;
-	QPointer<QCheckBox> m_npcBox;
+	QPointer<QCheckBox> m_enemyBox;
 	QPointer<QLineEdit> m_addInfoEdit;
 
 	QPointer<QLabel> m_animatedLabel;

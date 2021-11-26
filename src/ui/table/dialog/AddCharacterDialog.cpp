@@ -24,7 +24,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	m_iniModifierBox->setMinimum(-10);
 	m_hpBox = new QSpinBox;
 	m_hpBox->setRange(-100, 10000);
-	m_npcBox = new QCheckBox;
+	m_enemyBox = new QCheckBox;
 	m_addInfoEdit = new QLineEdit;
 
 	auto *const addButton = new QPushButton(tr("Add"));
@@ -49,8 +49,8 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	auto *const hpLabel = new QLabel(tr("HP:"));
 	hpLabel->setToolTip(tr("Set the HP of this Character. Optional."));
 
-	auto *const npcLabel = new QLabel(tr("Is NPC:"));
-	npcLabel->setToolTip(tr("Set if the Character is an NPC. Optional."));
+	auto *const enemyLabel = new QLabel(tr("Is Enemy:"));
+	enemyLabel->setToolTip(tr("Set if the Character is an enemy. Optional."));
 
 	auto *const addInfoLabel = new QLabel(tr("Add. Info:"));
 	addInfoLabel->setToolTip(tr("Set additional information, for example status effects. Optional."));
@@ -66,8 +66,8 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 
 	mainLayout->addWidget(hpLabel, 2, 0);
 	mainLayout->addWidget(m_hpBox, 2, 1);
-	mainLayout->addWidget(npcLabel, 2, 2);
-	mainLayout->addWidget(m_npcBox, 2, 3);
+	mainLayout->addWidget(enemyLabel, 2, 2);
+	mainLayout->addWidget(m_enemyBox, 2, 3);
 
 	mainLayout->addWidget(addInfoLabel, 3, 0);
 	mainLayout->addWidget(m_addInfoEdit, 3, 1, 1, 2);
@@ -114,7 +114,7 @@ AddCharacterDialog::addCharacter()
 	}
 	m_somethingStored = true;
 	emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
-			      m_npcBox->isChecked(), m_addInfoEdit->text());
+			      m_enemyBox->isChecked(), m_addInfoEdit->text());
 	resetLayout();
 	setFocus();
 
@@ -137,7 +137,7 @@ AddCharacterDialog::resetLayout()
 	m_iniBox->setValue(0);
 	m_iniModifierBox->setValue(0);
 	m_hpBox->setValue(0);
-	m_npcBox->setChecked(false);
+	m_enemyBox->setChecked(false);
 	m_addInfoEdit->clear();
 }
 

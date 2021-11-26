@@ -9,12 +9,12 @@ CharacterHandler::storeCharacter(
 	int	initiative,
 	int	modifier,
 	int	hp,
-	bool	isNPC,
+	bool	isEnemy,
 	QString additionalInf)
 {
 	characters.push_back(
 		std::make_shared<Character>(
-			Character { name, initiative, modifier, hp, isNPC,
+			Character { name, initiative, modifier, hp, isEnemy,
 				    additionalInf }));
 }
 

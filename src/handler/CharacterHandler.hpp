@@ -19,8 +19,8 @@ private:
 		int	modifier = 0;
 		// The hp for this character. Optional.
 		int	hp = 0;
-		// Is the character an NPC or not
-		bool	isNPC = false;
+		// Is the character an enemy or not
+		bool	isEnemy = false;
 		// Additional information (e.g. status effects). Optional.
 		QString additionalInf = QString();
 	};
@@ -36,7 +36,7 @@ public:
 		       int	initiative = 0,
 		       int	modifier = 0,
 		       int	hp = 0,
-		       bool	isNPC = false,
+		       bool	isEnemy = false,
 		       QString	additionalInf = QString());
 
 	// Sort the stored characters

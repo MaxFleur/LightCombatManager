@@ -32,7 +32,7 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_tableWidget->setColumnCount(7);
 
 	QStringList tableHeader;
-	tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is NPC") << tr("Additional information") << "";
+	tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional information") << "";
 
 	m_tableWidget->setHorizontalHeaderLabels(tableHeader);
 	m_tableWidget->verticalHeader()->setVisible(false);
@@ -43,7 +43,7 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_tableWidget->setColumnWidth(COL_INI, this->width() * WIDTH_INI);
 	m_tableWidget->setColumnWidth(COL_MODIFIER, this->width() * WIDTH_MODIFIER);
 	m_tableWidget->setColumnWidth(COL_HP, this->width() * WIDTH_HP);
-	m_tableWidget->setColumnWidth(COL_NPC, this->width() * WIDTH_NPC);
+	m_tableWidget->setColumnWidth(COL_ENEMY, this->width() * WIDTH_ENEMY);
 	// Last column just gets remaining space
 	m_tableWidget->horizontalHeader()->setStretchLastSection(true);
 	// The last row just contains the row ids, it does not need to be visible
@@ -224,10 +224,10 @@ TableWidget::setData()
 				i,
 				COL_HP,
 				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
-			if (m_char->getCharacters().at(i)->isNPC) {
-				m_tableWidget->setItem(i, COL_NPC, new QTableWidgetItem("X"));
+			if (m_char->getCharacters().at(i)->isEnemy) {
+				m_tableWidget->setItem(i, COL_ENEMY, new QTableWidgetItem("X"));
 			} else {
-				m_tableWidget->setItem(i, COL_NPC, new QTableWidgetItem(" "));
+				m_tableWidget->setItem(i, COL_ENEMY, new QTableWidgetItem(" "));
 			}
 			m_tableWidget->setItem(
 				i,
@@ -238,11 +238,11 @@ TableWidget::setData()
 	m_tableWidget->setColumnHidden(COL_INI, !m_isIniShown);
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_isModifierShown);
 
-	// Set the coluḿns containing the initiative, modifier and NPC values as not editable
+	// Set the coluḿns containing the initiative, modifier and enemy values as not editable
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_tableWidget->item(i, COL_INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		m_tableWidget->item(i, COL_MODIFIER)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		m_tableWidget->item(i, COL_NPC)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+		m_tableWidget->item(i, COL_ENEMY)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }
 
@@ -366,10 +366,10 @@ TableWidget::addCharacter(QString	name,
 			  int		ini,
 			  int		mod,
 			  int		hp,
-			  bool		isNPC,
+			  bool		isEnemy,
 			  QString	addInfo)
 {
-	m_char->storeCharacter(name, ini, mod, hp, isNPC, addInfo);
+	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
 	setTable();
 }
 

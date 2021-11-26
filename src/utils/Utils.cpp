@@ -19,7 +19,7 @@ resynchronizeCharacters(QTableWidget *		tableWidget,
 			tableWidget->item(i, 1)->text().toInt(),
 			tableWidget->item(i, 2)->text().toInt(),
 			tableWidget->item(i, 3)->text().toInt(),
-			// Check if the NPC cell is marked with an X
+			// Check if the enemy cell is marked with an X
 			tableWidget->item(i, 4)->text() == "X" ? true : false,
 			tableWidget->item(i, 5)->text());
 	}

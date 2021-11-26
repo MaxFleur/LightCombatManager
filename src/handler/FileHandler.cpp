@@ -22,7 +22,7 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 		QStringList strList;
 
 		// Store the header of the table, used for checking the correct table format if the table is reloaded
-		strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is NPC" << "Additional information";
+		strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is Enemy" << "Additional information";
 		data << strList.join(";") + "\n";
 
 		for (int i = 0; i < tableWidget->rowCount(); ++i) {
@@ -87,7 +87,7 @@ FileHandler::checkTableFormat(QString data)
 	    && rowDataHeader[1] == "Initiative"
 	    && rowDataHeader[2] == "INI modifier"
 	    && rowDataHeader[3] == "HP"
-	    && rowDataHeader[4] == "Is NPC"
+	    && rowDataHeader[4] == "Is Enemy"
 	    && rowDataHeader[5] == "Additional information"
 
 	    // The second row is checked -> if the 7th entry contains the player on the move and

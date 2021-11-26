@@ -16,7 +16,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(0)->initiative == 14);
 		REQUIRE(charHandler->getCharacters().at(0)->modifier == 5);
 		REQUIRE(charHandler->getCharacters().at(0)->hp == 23);
-		REQUIRE(charHandler->getCharacters().at(0)->isNPC == true);
+		REQUIRE(charHandler->getCharacters().at(0)->isEnemy == true);
 		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Fire Resistance");
 	}
 	SECTION("Minimal Character stored test") {
@@ -27,7 +27,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(0)->initiative == 0);
 		REQUIRE(charHandler->getCharacters().at(0)->modifier == 0);
 		REQUIRE(charHandler->getCharacters().at(0)->hp == 0);
-		REQUIRE(charHandler->getCharacters().at(0)->isNPC == false);
+		REQUIRE(charHandler->getCharacters().at(0)->isEnemy == false);
 		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "");
 	}
 	SECTION("Sort Characters test") {

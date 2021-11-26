@@ -29,7 +29,7 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_char = std::make_shared<CharacterHandler>();
 
 	m_tableWidget = new CustomTable();
-	m_tableWidget->setColumnCount(6);
+	m_tableWidget->setColumnCount(7);
 
 	QStringList tableHeader;
 	tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is NPC") << tr("Additional information") << "";
@@ -46,6 +46,8 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_tableWidget->setColumnWidth(COL_NPC, this->width() * WIDTH_NPC);
 	// Last column just gets remaining space
 	m_tableWidget->horizontalHeader()->setStretchLastSection(true);
+	// The last row just contains the row ids, it does not need to be visible
+	m_tableWidget->setColumnHidden(COL_ROW_ID, true);
 
 	// Spinbox for the hp column
 	auto *const delegate = new SpinBoxDelegate(this);
@@ -162,11 +164,10 @@ TableWidget::setTable()
 	setData();
 
 	// Create the identifiers for the rows
-	m_identifiers.clear();
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		m_identifiers.push_back(i);
+		m_tableWidget->setItem(i, COL_ROW_ID, new QTableWidgetItem(QString::number(i)));
 	}
-	m_rowIdentifier = m_identifiers.at(m_rowEntered);
+	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_ROW_ID)->text().toInt();
 	// Set data for the lower label
 	emit roundCounterSet();
 	setRowAndPlayer();
@@ -268,11 +269,8 @@ TableWidget::dragAndDrop(int row, int column)
 	// Depending on the current index, set the new row value
 	if (m_tableWidget->currentIndex().row() < row) {
 		newRow = row - 1;
-		// Swap the identifiers so they match correctly with their row
-		std::iter_swap(m_identifiers.begin() + newRow, m_identifiers.begin() + row);
 	} else if (m_tableWidget->currentIndex().row() > row) {
 		newRow = row + 1;
-		std::iter_swap(m_identifiers.begin() + newRow, m_identifiers.begin() + row);
 	} else {
 		return;
 	}
@@ -289,10 +287,11 @@ TableWidget::dragAndDrop(int row, int column)
 		m_tableWidget->setItem(newRow, col, rowItemSrc.at(col));
 		m_tableWidget->setItem(row, col, rowItemDest.at(col));
 	}
+
 	// After the drag and drop, the correct entered row has to be highlighted
-	for (int i = 0; i < m_identifiers.size(); i++) {
+	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		// Set row containing the matching identifier
-		if (m_identifiers.at(i) == m_rowIdentifier) {
+		if (m_tableWidget->item(i, COL_ROW_ID)->text().toInt() == m_rowIdentifier) {
 			m_rowEntered = i;
 			break;
 		}
@@ -422,8 +421,6 @@ TableWidget::removeRow()
 				m_rowEntered = 0;
 			}
 		}
-		// The identifier for this row is not needed anymore, so delete that as well
-		m_identifiers.erase(std::next(m_identifiers.begin(), m_tableWidget->currentIndex().row()));
 		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
 		m_isRowSelected = false;
 		// Update the current player and row
@@ -469,7 +466,7 @@ TableWidget::enteredRowChanged(bool goDown)
 		}
 	}
 	// Identifier for the entered row changes
-	m_rowIdentifier = m_identifiers.at(m_rowEntered);
+	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_ROW_ID)->text().toInt();
 	setRowAndPlayer();
 }
 

@@ -143,9 +143,6 @@ private:
 
 	CharacterHandlerRef m_char;
 
-	// Row identifiers
-	std::vector<int> m_identifiers;
-
 	// The row identifier to determine the correct row after drag and drop
 	int m_rowIdentifier = 0;
 
@@ -157,6 +154,8 @@ private:
 	static constexpr int COL_HP = 3;
 	static constexpr int COL_NPC = 4;
 	static constexpr int COL_ADDITIONAL = 5;
+	static constexpr int COL_ROW_ID = 6;
+
 	static constexpr int ROW_ENTERED = 6;
 	static constexpr int ROUND_CTR = 7;
 

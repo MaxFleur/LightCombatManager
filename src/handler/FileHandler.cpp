@@ -28,8 +28,8 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 		for (int i = 0; i < tableWidget->rowCount(); ++i) {
 			// Clear the list at the beginning of every row iteration
 			strList.clear();
-
-			for (int j = 0; j < tableWidget->columnCount(); ++j) {
+			// Ignore the last row, identifiers are not needed
+			for (int j = 0; j < tableWidget->columnCount() - 1; ++j) {
 				const auto *item = tableWidget->item(i, j);
 				if (!item || item->text().isEmpty()) {
 					tableWidget->setItem(i, j, new QTableWidgetItem(""));

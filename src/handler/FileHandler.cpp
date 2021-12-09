@@ -19,6 +19,9 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 	// Check if device is open for writing
 	if (file.open(QFile::WriteOnly | QFile::Truncate)) {
 		QTextStream data(&file);
+		data.setCodec("UTF-8");
+		data.setGenerateByteOrderMark(false);
+
 		QStringList strList;
 
 		// Store the header of the table, used for checking the correct table format if the table is reloaded

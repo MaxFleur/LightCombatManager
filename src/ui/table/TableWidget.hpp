@@ -95,9 +95,6 @@ private:
 	setInfoColumnWidth();
 
 	void
-	incrementRoundCounter();
-
-	void
 	setRowAndPlayer();
 
 	void

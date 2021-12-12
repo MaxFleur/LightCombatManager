@@ -24,6 +24,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	m_iniBox->setMinimum(-20);
 	m_iniModifierBox = new QSpinBox;
 	m_iniModifierBox->setMinimum(-10);
+	m_labelRolled = new QLabel;
 	m_hpBox = new QSpinBox;
 	m_hpBox->setRange(-10000, 10000);
 	m_enemyBox = new QCheckBox;
@@ -37,9 +38,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	auto *const cancelButton = new QPushButton(tr("Return"));
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects"));
 
-	m_labelRolled = new QLabel();
-
-	m_animatedLabel = new QLabel();
+	m_animatedLabel = new QLabel;
 	m_timer = new QTimer(this);
 	m_timer->setSingleShot(true);
 
@@ -171,6 +170,7 @@ AddCharacterDialog::resetValues()
 	m_nameEdit->clear();
 	m_iniBox->setValue(0);
 	m_iniModifierBox->setValue(0);
+	m_labelRolled->setText("");
 	m_hpBox->setValue(0);
 	m_enemyBox->setChecked(false);
 	m_addInfoEdit->clear();

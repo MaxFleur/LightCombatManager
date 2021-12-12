@@ -59,11 +59,10 @@ private:
 	QPointer<QLineEdit> m_nameEdit;
 	QPointer<QSpinBox> m_iniBox;
 	QPointer<QSpinBox> m_iniModifierBox;
+	QPointer<QLabel> m_labelRolled;
 	QPointer<QSpinBox> m_hpBox;
 	QPointer<QCheckBox> m_enemyBox;
 	QPointer<QLineEdit> m_addInfoEdit;
-
-	QPointer<QLabel> m_labelRolled;
 
 	QPointer<QLabel> m_animatedLabel;
 	QPointer<QTimer> m_timer;

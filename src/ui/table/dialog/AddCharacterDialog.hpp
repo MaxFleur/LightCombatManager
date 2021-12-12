@@ -28,6 +28,12 @@ signals:
 private slots:
 
 	void
+	setLabelRolled();
+
+	void
+	animateLabel();
+
+	void
 	addCharacter();
 
 	void
@@ -35,12 +41,6 @@ private slots:
 
 	void
 	openStatusEffectDialog();
-
-	void
-	animateLabel();
-
-	void
-	setLabelRolled();
 
 private:
 

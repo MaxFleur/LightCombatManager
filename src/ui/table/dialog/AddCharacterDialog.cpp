@@ -114,6 +114,30 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 
 
 void
+AddCharacterDialog::setLabelRolled()
+{
+	int rand = Utils::rollDice();
+	m_iniBox->setValue(rand + m_iniModifierBox->value());
+	m_labelRolled->setText(tr("Rolled number: ") + QString::number(rand));
+}
+
+
+void
+AddCharacterDialog::animateLabel()
+{
+	auto *const effect = new QGraphicsOpacityEffect;
+	m_animatedLabel->setGraphicsEffect(effect);
+
+	auto *const animation = new QPropertyAnimation(effect, "opacity");
+	animation->setDuration(LABEL_FADEOUT);
+	animation->setStartValue(1.0);
+	animation->setEndValue(0.0);
+	animation->setEasingCurve(QEasingCurve::OutQuad);
+	animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+
+void
 AddCharacterDialog::addCharacter()
 {
 	if (m_nameEdit->text().isEmpty()) {
@@ -167,30 +191,6 @@ AddCharacterDialog::openStatusEffectDialog()
 		}
 		m_addInfoEdit->setText(itemText + dialog->getEffect());
 	}
-}
-
-
-void
-AddCharacterDialog::animateLabel()
-{
-	auto *const effect = new QGraphicsOpacityEffect;
-	m_animatedLabel->setGraphicsEffect(effect);
-
-	auto *const animation = new QPropertyAnimation(effect, "opacity");
-	animation->setDuration(LABEL_FADEOUT);
-	animation->setStartValue(1.0);
-	animation->setEndValue(0.0);
-	animation->setEasingCurve(QEasingCurve::OutQuad);
-	animation->start(QAbstractAnimation::DeleteWhenStopped);
-}
-
-
-void
-AddCharacterDialog::setLabelRolled()
-{
-	int rand = Utils::rollDice();
-	m_iniBox->setValue(rand + m_iniModifierBox->value());
-	m_labelRolled->setText(tr("Rolled number: ") + QString::number(rand));
 }
 
 

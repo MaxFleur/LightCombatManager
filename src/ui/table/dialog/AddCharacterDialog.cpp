@@ -30,6 +30,8 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	m_addInfoEdit = new QLineEdit;
 
 	auto *const rollButton = new QPushButton(tr("Roll random INI value"));
+	rollButton->setToolTip(tr("Roll the Initiative. The modifier is added to the rolled value."));
+
 	auto *const addButton = new QPushButton(tr("Add"));
 	auto *const resetButton = new QPushButton(tr("Reset Layout"));
 	auto *const cancelButton = new QPushButton(tr("Return"));
@@ -188,7 +190,7 @@ AddCharacterDialog::setLabelRolled()
 {
 	int rand = Utils::rollDice();
 	m_iniBox->setValue(rand + m_iniModifierBox->value());
-	m_labelRolled->setText("Rolled number: " + QString::number(rand));
+	m_labelRolled->setText(tr("Rolled number: ") + QString::number(rand));
 }
 
 

@@ -25,7 +25,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	m_iniModifierBox = new QSpinBox;
 	m_iniModifierBox->setMinimum(-10);
 	m_hpBox = new QSpinBox;
-	m_hpBox->setRange(-100, 10000);
+	m_hpBox->setRange(-10000, 10000);
 	m_enemyBox = new QCheckBox;
 	m_addInfoEdit = new QLineEdit;
 

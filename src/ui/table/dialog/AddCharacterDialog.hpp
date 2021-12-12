@@ -37,7 +37,7 @@ private slots:
 	addCharacter();
 
 	void
-	resetLayout();
+	resetValues();
 
 	void
 	openStatusEffectDialog();

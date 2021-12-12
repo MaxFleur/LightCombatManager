@@ -33,7 +33,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	rollButton->setToolTip(tr("Roll the Initiative. The modifier is added to the rolled value."));
 
 	auto *const addButton = new QPushButton(tr("Add"));
-	auto *const resetButton = new QPushButton(tr("Reset Layout"));
+	auto *const resetButton = new QPushButton(tr("Reset all Values"));
 	auto *const cancelButton = new QPushButton(tr("Return"));
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects"));
 
@@ -96,7 +96,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 
 	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
 	connect(addButton, &QPushButton::clicked, this, &AddCharacterDialog::addCharacter);
-	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetLayout);
+	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetValues);
 	connect(
 		cancelButton,
 		&QPushButton::clicked,
@@ -150,7 +150,7 @@ AddCharacterDialog::addCharacter()
 	m_somethingStored = true;
 	emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
 			      m_enemyBox->isChecked(), m_addInfoEdit->text());
-	resetLayout();
+	resetValues();
 	setFocus();
 
 	// Only set the label text after first stored character
@@ -165,7 +165,7 @@ AddCharacterDialog::addCharacter()
 
 
 void
-AddCharacterDialog::resetLayout()
+AddCharacterDialog::resetValues()
 {
 	// Reset all displayed values
 	m_nameEdit->clear();

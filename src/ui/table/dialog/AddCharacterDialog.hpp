@@ -39,6 +39,9 @@ private slots:
 	void
 	animateLabel();
 
+	void
+	setLabelRolled();
+
 private:
 
 	void
@@ -59,6 +62,8 @@ private:
 	QPointer<QSpinBox> m_hpBox;
 	QPointer<QCheckBox> m_enemyBox;
 	QPointer<QLineEdit> m_addInfoEdit;
+
+	QPointer<QLabel> m_labelRolled;
 
 	QPointer<QLabel> m_animatedLabel;
 	QPointer<QTimer> m_timer;

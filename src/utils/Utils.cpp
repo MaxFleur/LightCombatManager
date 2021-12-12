@@ -1,5 +1,7 @@
 #include "Utils.hpp"
 
+#include <random>
+
 #include <QTableWidget>
 
 namespace Utils
@@ -42,5 +44,17 @@ containsSemicolon(QTableWidget *tableWidget)
 		}
 	}
 	return false;
+}
+
+
+// Roll a 20 sided dice
+int
+rollDice()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> distr(1, 20);
+
+	return distr(gen);
 }
 }

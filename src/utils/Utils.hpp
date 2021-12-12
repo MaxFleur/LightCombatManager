@@ -13,4 +13,7 @@ resynchronizeCharacters(QTableWidget *		tableWidget,
 
 bool
 containsSemicolon(QTableWidget *tableWidget);
+
+int
+rollDice();
 }

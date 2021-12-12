@@ -1,6 +1,7 @@
 #include "AddCharacterDialog.hpp"
 
 #include <QCheckBox>
+#include <QDebug>
 #include <QGraphicsEffect>
 #include <QGridLayout>
 #include <QKeyEvent>
@@ -12,6 +13,7 @@
 #include <QTimer>
 
 #include "StatusEffectDialog.hpp"
+#include "Utils.hpp"
 
 AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 {
@@ -27,10 +29,13 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	m_enemyBox = new QCheckBox;
 	m_addInfoEdit = new QLineEdit;
 
+	auto *const rollButton = new QPushButton(tr("Roll random INI value"));
 	auto *const addButton = new QPushButton(tr("Add"));
 	auto *const resetButton = new QPushButton(tr("Reset Layout"));
 	auto *const cancelButton = new QPushButton(tr("Return"));
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects"));
+
+	m_labelRolled = new QLabel();
 
 	m_animatedLabel = new QLabel();
 	m_timer = new QTimer(this);
@@ -64,26 +69,30 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	mainLayout->addWidget(iniModifierLabel, 1, 2);
 	mainLayout->addWidget(m_iniModifierBox, 1, 3);
 
-	mainLayout->addWidget(hpLabel, 2, 0);
-	mainLayout->addWidget(m_hpBox, 2, 1);
-	mainLayout->addWidget(enemyLabel, 2, 2);
-	mainLayout->addWidget(m_enemyBox, 2, 3);
+	mainLayout->addWidget(m_labelRolled, 2, 0, 1, 2);
+	mainLayout->addWidget(rollButton, 2, 2, 1, 2);
 
-	mainLayout->addWidget(addInfoLabel, 3, 0);
-	mainLayout->addWidget(m_addInfoEdit, 3, 1, 1, 2);
-	mainLayout->addWidget(statusEffectButton, 3, 3);
+	mainLayout->addWidget(hpLabel, 3, 0);
+	mainLayout->addWidget(m_hpBox, 3, 1);
+	mainLayout->addWidget(enemyLabel, 3, 2);
+	mainLayout->addWidget(m_enemyBox, 3, 3);
 
-	mainLayout->addWidget(m_animatedLabel, 4, 0, 1, 2);
+	mainLayout->addWidget(addInfoLabel, 4, 0);
+	mainLayout->addWidget(m_addInfoEdit, 4, 1, 1, 2);
+	mainLayout->addWidget(statusEffectButton, 4, 3);
 
-	mainLayout->addWidget(addButton, 5, 1);
-	mainLayout->addWidget(resetButton, 5, 2);
-	mainLayout->addWidget(cancelButton, 5, 3);
+	mainLayout->addWidget(m_animatedLabel, 5, 0, 1, 2);
+
+	mainLayout->addWidget(addButton, 6, 1);
+	mainLayout->addWidget(resetButton, 6, 2);
+	mainLayout->addWidget(cancelButton, 6, 3);
 
 	setFocus();
 
 	auto *const saveShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this);
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 
+	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
 	connect(addButton, &QPushButton::clicked, this, &AddCharacterDialog::addCharacter);
 	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetLayout);
 	connect(
@@ -171,6 +180,15 @@ AddCharacterDialog::animateLabel()
 	animation->setEndValue(0.0);
 	animation->setEasingCurve(QEasingCurve::OutQuad);
 	animation->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+
+void
+AddCharacterDialog::setLabelRolled()
+{
+	int rand = Utils::rollDice();
+	m_iniBox->setValue(rand + m_iniModifierBox->value());
+	m_labelRolled->setText("Rolled number: " + QString::number(rand));
 }
 
 

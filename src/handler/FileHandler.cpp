@@ -60,14 +60,21 @@ FileHandler::getCSVData(QString filename)
 
 	// If the data can be read, import
 	if (importedCSV.open(QFile::ReadOnly)) {
-		m_data = importedCSV.readAll();
+		QTextStream in(&importedCSV);
+		in.setCodec("UTF-8");
+		in.setGenerateByteOrderMark(false);
+		m_data = QString();
 
+		// Import file line by line
+		while (!in.atEnd()) {
+			m_data.append(in.readLine() + "\n");
+		}
 		importedCSV.close();
+
 		if (checkTableFormat(m_data)) {
 			// Successfully checked table
 			return 0;
 		}
-
 		// Table in false format
 		return 1;
 	}

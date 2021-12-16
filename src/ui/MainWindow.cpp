@@ -72,9 +72,10 @@ MainWindow::MainWindow()
 void
 MainWindow::newCombat()
 {
-	// If a filled Table is active right now, ask if it should be saved
+	// Check if a table is active
 	if (m_isTableActive) {
-		if (!m_tableWidget->isEmpty()) {
+		// Check if it's not empty and if the user has saved before hitting the shortcut
+		if (!m_tableWidget->isEmpty() && m_changeOccured) {
 			auto const reply = QMessageBox::question(
 				this,
 				tr("Start a new Combat?"),
@@ -130,6 +131,8 @@ MainWindow::saveTable()
 		m_tableWidget->getRoundCounter());
 	if (code) {
 		writeSettings(fileName);
+		m_changeOccured = false;
+
 		// Success
 		return 0;
 	}
@@ -144,9 +147,10 @@ MainWindow::saveTable()
 void
 MainWindow::openTable()
 {
-	// If a filled Table is active right now, ask if it should be saved
+	// Check if a table is active right now
 	if (m_isTableActive) {
-		if (!m_tableWidget->isEmpty()) {
+		// Check if the table is filled and if the user has not saved already
+		if (!m_tableWidget->isEmpty() && m_changeOccured) {
 			auto const reply = QMessageBox::question(
 				this,
 				tr("Save current Table?"),
@@ -246,7 +250,15 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 				setFixedHeight(height);
 			}
 		});
+	connect(
+		m_tableWidget,
+		&TableWidget::changeOccured,
+		this,
+		[this] () {
+			m_changeOccured = true;
+		});
 	m_isTableActive = true;
+	m_changeOccured = false;
 
 	auto height = 0;
 	isDataStored ? height = m_tableWidget->getHeight() : height = START_HEIGHT;
@@ -284,35 +296,38 @@ MainWindow::readSettings()
 void
 MainWindow::closeEvent(QCloseEvent *event)
 {
-	// If a filled Table is active, ask if it should be saved
+	// Check if a table is active and filled
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Exit"),
-			tr(
-				"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?"),
-			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-		if (reply == QMessageBox::Yes) {
-			auto const code = saveTable();
-			if (code != 0) {
+		// Just continue if the user has not done anything after saving
+		if (m_changeOccured) {
+			auto const reply = QMessageBox::question(
+				this,
+				tr("Exit"),
+				tr(
+					"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?"),
+				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			if (reply == QMessageBox::Yes) {
+				auto const code = saveTable();
+				if (code != 0) {
+					event->ignore();
+				}
+				event->accept();
+			} else if (reply == QMessageBox::No) {
+				event->accept();
+			} else if (reply == QMessageBox::Cancel) {
 				event->ignore();
 			}
-			event->accept();
-		} else if (reply == QMessageBox::No) {
-			event->accept();
-		} else if (reply == QMessageBox::Cancel) {
-			event->ignore();
-		}
-	} else {
-		auto const reply = QMessageBox::question(
-			this,
-			tr("Exit"),
-			tr("Do you really want to exit the application?"),
-			QMessageBox::Yes | QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			return;
 		} else {
-			event->ignore();
+			auto const reply = QMessageBox::question(
+				this,
+				tr("Exit"),
+				tr("Do you really want to exit the application?"),
+				QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes) {
+				return;
+			} else {
+				event->ignore();
+			}
 		}
 	}
 }

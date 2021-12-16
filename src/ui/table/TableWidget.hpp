@@ -63,6 +63,9 @@ signals:
 	void
 	roundCounterSet();
 
+	void
+	changeOccured();
+
 private slots:
 
 	void

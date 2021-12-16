@@ -65,6 +65,8 @@ private:
 
 	bool m_isTableActive{ false };
 
+	bool m_changeOccured{ false };
+
 	QString m_currentDir;
 
 	FileHandlerRef m_file;

@@ -115,6 +115,13 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
 	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
+	connect(
+		m_tableWidget,
+		&QTableWidget::cellChanged,
+		this,
+		[this] {
+			emit changeOccured();
+		});
 
 	connect(
 		upButton,
@@ -296,6 +303,8 @@ TableWidget::dragAndDrop(int row, int column)
 			break;
 		}
 	}
+
+	emit changeOccured();
 }
 
 

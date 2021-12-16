@@ -310,8 +310,9 @@ MainWindow::closeEvent(QCloseEvent *event)
 				auto const code = saveTable();
 				if (code != 0) {
 					event->ignore();
+				} else {
+					event->accept();
 				}
-				event->accept();
 			} else if (reply == QMessageBox::No) {
 				event->accept();
 			} else if (reply == QMessageBox::Cancel) {

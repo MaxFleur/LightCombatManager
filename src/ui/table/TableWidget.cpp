@@ -1,6 +1,7 @@
 #include "TableWidget.hpp"
 
 #include <QAction>
+#include <QCheckBox>
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QFont>
@@ -50,8 +51,8 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_tableWidget->setColumnHidden(COL_ROW_ID, true);
 
 	// Spinbox for the hp column
-	auto *const delegate = new DelegateSpinBox(this);
-	m_tableWidget->setItemDelegateForColumn(COL_HP, delegate);
+	auto *const delegateSpinBox = new DelegateSpinBox(this);
+	m_tableWidget->setItemDelegateForColumn(COL_HP, delegateSpinBox);
 
 	auto *const downButton = new QToolButton;
 	downButton->setArrowType(Qt::DownArrow);
@@ -175,6 +176,7 @@ TableWidget::setTable()
 		m_tableWidget->setItem(i, COL_ROW_ID, new QTableWidgetItem(QString::number(i)));
 	}
 	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_ROW_ID)->text().toInt();
+
 	// Set data for the lower label
 	emit roundCounterSet();
 	setRowAndPlayer();
@@ -199,7 +201,13 @@ TableWidget::setData()
 			rowData = rowOfData.at(x).split(";");
 			// Create the widget items for the table
 			for (int y = 0; y < NMBR_COLUMNS; y++) {
-				m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
+				if (y == COL_ENEMY) {
+					auto * const checkBox = new QCheckBox;
+					checkBox->setChecked(rowData[y] == "true" ? true : false);
+					m_tableWidget->setCellWidget(x - 1, y, checkBox);
+				} else {
+					m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
+				}
 			}
 			// If at the first row (which contains information about round counter and the
 			// player on the move), get this data
@@ -231,11 +239,11 @@ TableWidget::setData()
 				i,
 				COL_HP,
 				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
-			if (m_char->getCharacters().at(i)->isEnemy) {
-				m_tableWidget->setItem(i, COL_ENEMY, new QTableWidgetItem("X"));
-			} else {
-				m_tableWidget->setItem(i, COL_ENEMY, new QTableWidgetItem(" "));
-			}
+
+			auto * const checkBox = new QCheckBox;
+			checkBox->setChecked(m_char->getCharacters().at(i)->isEnemy);
+			m_tableWidget->setCellWidget(i, COL_ENEMY, checkBox);
+
 			m_tableWidget->setItem(
 				i,
 				COL_ADDITIONAL,
@@ -249,7 +257,6 @@ TableWidget::setData()
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_tableWidget->item(i, COL_INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 		m_tableWidget->item(i, COL_MODIFIER)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		m_tableWidget->item(i, COL_ENEMY)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 	}
 }
 
@@ -393,13 +400,17 @@ TableWidget::setRowAndPlayer()
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		if (m_tableWidget->item(i, 0)->font().bold()) {
 			for (int j = 0; j < m_tableWidget->columnCount(); j++) {
-				m_tableWidget->item(i, j)->setFont(m_defaultFont);
+				if (j != COL_ENEMY) {
+					m_tableWidget->item(i, j)->setFont(m_defaultFont);
+				}
 			}
 		}
 	}
 	// Highlight selected row with bold fonts
 	for (int j = 0; j < m_tableWidget->columnCount(); j++) {
-		m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
+		if (j != COL_ENEMY) {
+			m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
+		}
 	}
 	emit setCurrentPlayer();
 }

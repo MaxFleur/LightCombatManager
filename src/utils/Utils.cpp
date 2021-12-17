@@ -2,6 +2,7 @@
 
 #include <random>
 
+#include <QCheckBox>
 #include <QTableWidget>
 
 namespace Utils
@@ -16,13 +17,14 @@ resynchronizeCharacters(QTableWidget *		tableWidget,
 	characterHandler->clearCharacters();
 
 	for (int i = 0; i < tableWidget->rowCount(); i++) {
+		auto * const checkBox = (QCheckBox *) tableWidget->cellWidget(i, 4);
+
 		characterHandler->storeCharacter(
 			tableWidget->item(i, 0)->text(),
 			tableWidget->item(i, 1)->text().toInt(),
 			tableWidget->item(i, 2)->text().toInt(),
 			tableWidget->item(i, 3)->text().toInt(),
-			// Check if the enemy cell is marked with an X
-			tableWidget->item(i, 4)->text() == "X" ? true : false,
+			checkBox->isChecked() ? true : false,
 			tableWidget->item(i, 5)->text());
 	}
 }

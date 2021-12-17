@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <string>
 
+#include <QCheckBox>
 #include <QString>
 #include <QTableWidget>
 
@@ -47,11 +48,16 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 
 	SECTION("Check file saving") {
 		auto *const tableWidget = new QTableWidget(2, 7);
+		auto *const checkBoxFighter = new QCheckBox;
+		checkBoxFighter->setChecked(false);
+		auto *const checkBoxBoss = new QCheckBox;
+		checkBoxBoss->setChecked(true);
+
 		tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
 		tableWidget->setItem(0, 1, new QTableWidgetItem("19"));
 		tableWidget->setItem(0, 2, new QTableWidgetItem("2"));
 		tableWidget->setItem(0, 3, new QTableWidgetItem("36"));
-		tableWidget->setItem(0, 4, new QTableWidgetItem(""));
+		tableWidget->setCellWidget(0, 4, checkBoxFighter);
 		tableWidget->setItem(0, 5, new QTableWidgetItem("Haste"));
 		tableWidget->setItem(0, 6, new QTableWidgetItem("0"));
 
@@ -59,12 +65,41 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		tableWidget->setItem(1, 1, new QTableWidgetItem("21"));
 		tableWidget->setItem(1, 2, new QTableWidgetItem("7"));
 		tableWidget->setItem(1, 3, new QTableWidgetItem("42"));
-		tableWidget->setItem(1, 4, new QTableWidgetItem("X"));
+		tableWidget->setCellWidget(1, 4, checkBoxBoss);
 		tableWidget->setItem(1, 5, new QTableWidgetItem(""));
 		tableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 
 		fileHandler->saveTable(tableWidget, "./test.csv", 0, 1);
-		REQUIRE(fileHandler->getCSVData("./test.csv") == 0);
+		SECTION("File format correct") {
+			REQUIRE(fileHandler->getCSVData("./test.csv") == 0);
+		}
+
+		SECTION("File content correct") {
+			int code = fileHandler->getCSVData("./test.csv");
+
+			const auto rowOfData = fileHandler->getData().split("\n");
+			QStringList rowData;
+
+			rowData = rowOfData.at(1).split(";");
+			REQUIRE(rowData[0] == "Fighter");
+			REQUIRE(rowData[1] == "19");
+			REQUIRE(rowData[2] == "2");
+			REQUIRE(rowData[3] == "36");
+			REQUIRE(rowData[4] == "false");
+			REQUIRE(rowData[5] == "Haste");
+			REQUIRE(rowData[6] == "0");
+			REQUIRE(rowData[7] == "1");
+
+			rowData = rowOfData.at(2).split(";");
+
+			REQUIRE(rowData[0] == "Boss");
+			REQUIRE(rowData[1] == "21");
+			REQUIRE(rowData[2] == "7");
+			REQUIRE(rowData[3] == "42");
+			REQUIRE(rowData[4] == "true");
+			REQUIRE(rowData[5] == "");
+		}
+
 		std::remove("./test.csv");
 	}
 }

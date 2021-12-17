@@ -1,3 +1,4 @@
+#include <QCheckBox>
 #include <QString>
 #include <QTableWidget>
 
@@ -8,11 +9,14 @@
 
 TEST_CASE("Util Testing", "[Utils]"){
 	auto *const tableWidget = new QTableWidget(1, 6);
+	auto *const checkBox = new QCheckBox;
+	checkBox->setChecked(false);
+
 	tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
 	tableWidget->setItem(0, 1, new QTableWidgetItem("19"));
 	tableWidget->setItem(0, 2, new QTableWidgetItem("2"));
 	tableWidget->setItem(0, 3, new QTableWidgetItem("36"));
-	tableWidget->setItem(0, 4, new QTableWidgetItem(""));
+	tableWidget->setCellWidget(0, 4, checkBox);
 	tableWidget->setItem(0, 5, new QTableWidgetItem("Haste"));
 
 	SECTION("Resynchronizing characters test") {
@@ -28,7 +32,7 @@ TEST_CASE("Util Testing", "[Utils]"){
 			REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Haste");
 		}
 		SECTION("Check filled enemy field") {
-			tableWidget->setItem(0, 4, new QTableWidgetItem("X"));
+			checkBox->setChecked(true);
 			Utils::resynchronizeCharacters(tableWidget, charHandler);
 			REQUIRE(charHandler->getCharacters().at(0)->isEnemy == true);
 		}

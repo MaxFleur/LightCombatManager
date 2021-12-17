@@ -1,5 +1,6 @@
 #include "FileHandler.hpp"
 
+#include <QCheckBox>
 #include <QDebug>
 #include <QFile>
 #include <QStringList>
@@ -33,11 +34,17 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 			strList.clear();
 			// Ignore the last row, identifiers are not needed
 			for (int j = 0; j < tableWidget->columnCount() - 1; ++j) {
-				const auto *item = tableWidget->item(i, j);
-				if (!item || item->text().isEmpty()) {
-					tableWidget->setItem(i, j, new QTableWidgetItem(""));
+				// Get the checkbox value
+				if (j == 4) {
+					auto * const checkBox = (QCheckBox *) tableWidget->cellWidget(i, j);
+					strList << QVariant(checkBox->isChecked()).toString();
+				} else {
+					const auto *item = tableWidget->item(i, j);
+					if (!item || item->text().isEmpty()) {
+						tableWidget->setItem(i, j, new QTableWidgetItem(""));
+					}
+					strList << tableWidget->item(i, j)->text();
 				}
-				strList << tableWidget->item(i, j)->text();
 			}
 			if (i == 0) {
 				strList << QString::number(rowEntered) << QString::number(roundCounter);

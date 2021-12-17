@@ -252,12 +252,6 @@ TableWidget::setData()
 	}
 	m_tableWidget->setColumnHidden(COL_INI, !m_isIniShown);
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_isModifierShown);
-
-	// Set the coluḿns containing the initiative, modifier and enemy values as not editable
-	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		m_tableWidget->item(i, COL_INI)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-		m_tableWidget->item(i, COL_MODIFIER)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-	}
 }
 
 

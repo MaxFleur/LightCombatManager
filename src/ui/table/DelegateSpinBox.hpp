@@ -3,12 +3,12 @@
 #include <QStyledItemDelegate>
 
 // Small helper class so that the hp column in the table contains spinboxes
-class SpinBoxDelegate : public QStyledItemDelegate
+class DelegateSpinBox : public QStyledItemDelegate
 {
 	Q_OBJECT
 
 public:
-	SpinBoxDelegate(QObject *parent = nullptr);
+	DelegateSpinBox(QObject *parent = nullptr);
 
 	QWidget *
 	createEditor(QWidget *				parent,

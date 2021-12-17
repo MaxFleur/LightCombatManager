@@ -16,7 +16,7 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
-#include "Delegate.hpp"
+#include "DelegateSpinBox.hpp"
 #include "dialog/AddCharacterDialog.hpp"
 #include "dialog/StatusEffectDialog.hpp"
 #include "Utils.hpp"
@@ -50,7 +50,7 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_tableWidget->setColumnHidden(COL_ROW_ID, true);
 
 	// Spinbox for the hp column
-	auto *const delegate = new SpinBoxDelegate(this);
+	auto *const delegate = new DelegateSpinBox(this);
 	m_tableWidget->setItemDelegateForColumn(COL_HP, delegate);
 
 	auto *const downButton = new QToolButton;

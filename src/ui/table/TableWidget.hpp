@@ -165,7 +165,7 @@ private:
 	static constexpr float WIDTH_NAME = 0.25f;
 	static constexpr float WIDTH_INI = 0.05f;
 	static constexpr float WIDTH_MODIFIER = 0.05f;
-	static constexpr float WIDTH_HP = 0.05f;
+	static constexpr float WIDTH_HP = 0.11f;
 	static constexpr float WIDTH_ENEMY = 0.12f;
 
 	static constexpr int HEIGHT_BUFFER = 140;

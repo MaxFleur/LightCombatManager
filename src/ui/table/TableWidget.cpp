@@ -278,9 +278,19 @@ TableWidget::dragAndDrop(int row, int column)
 	}
 	// The widget items containing the row data (source and destination)
 	QList<QTableWidgetItem *> rowItemSrc, rowItemDest;
+	// Checkbox values are not obtainable by using takeItem, so take the current
+	// value and reset the boxes with these
+	bool enemySrc, enemyDest;
 
 	// Take the data of the source and destination row
 	for (int col = 0; col < m_tableWidget->columnCount(); ++col) {
+		if (col == COL_ENEMY) {
+			auto * const checkBoxSrc = (QCheckBox *) m_tableWidget->cellWidget(row, col);
+			auto * const checkBoxDest = (QCheckBox *) m_tableWidget->cellWidget(newRow, col);
+
+			enemySrc = checkBoxSrc->isChecked();
+			enemyDest = checkBoxDest->isChecked();
+		}
 		rowItemSrc << m_tableWidget->takeItem(row, col);
 		rowItemDest << m_tableWidget->takeItem(newRow, col);
 	}
@@ -288,6 +298,12 @@ TableWidget::dragAndDrop(int row, int column)
 	for (int col = 0; col < m_tableWidget->columnCount(); ++col) {
 		m_tableWidget->setItem(newRow, col, rowItemSrc.at(col));
 		m_tableWidget->setItem(row, col, rowItemDest.at(col));
+	}
+	// Set the checkbox values, if they are not equal (otherwise we would perform
+	// unnecessary operations)
+	if (enemySrc != enemyDest) {
+		setTableCheckBox(newRow, enemySrc);
+		setTableCheckBox(row, enemyDest);
 	}
 
 	// After the drag and drop, the correct entered row has to be highlighted

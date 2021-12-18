@@ -202,9 +202,7 @@ TableWidget::setData()
 			// Create the widget items for the table
 			for (int y = 0; y < NMBR_COLUMNS; y++) {
 				if (y == COL_ENEMY) {
-					auto * const checkBox = new QCheckBox;
-					checkBox->setChecked(rowData[y] == "true" ? true : false);
-					m_tableWidget->setCellWidget(x - 1, y, checkBox);
+					setTableCheckBox(x - 1, rowData[y] == "true" ? true : false);
 				} else {
 					m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
 				}
@@ -239,11 +237,7 @@ TableWidget::setData()
 				i,
 				COL_HP,
 				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
-
-			auto * const checkBox = new QCheckBox;
-			checkBox->setChecked(m_char->getCharacters().at(i)->isEnemy);
-			m_tableWidget->setCellWidget(i, COL_ENEMY, checkBox);
-
+			setTableCheckBox(i, m_char->getCharacters().at(i)->isEnemy);
 			m_tableWidget->setItem(
 				i,
 				COL_ADDITIONAL,
@@ -502,6 +496,16 @@ TableWidget::showModColumn(bool show)
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
 
 	writeSettings();
+}
+
+
+// Create checkboxes to show the enemy status
+void
+TableWidget::setTableCheckBox(int row, bool checked)
+{
+	auto * const checkBox = new QCheckBox;
+	checkBox->setChecked(checked);
+	m_tableWidget->setCellWidget(row, COL_ENEMY, checkBox);
 }
 
 

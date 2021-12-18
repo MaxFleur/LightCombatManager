@@ -113,6 +113,10 @@ private:
 	showModColumn(bool show);
 
 	void
+	setTableCheckBox(int	row,
+			 bool	checked);
+
+	void
 	writeSettings();
 
 	void

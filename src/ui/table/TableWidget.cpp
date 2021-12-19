@@ -67,20 +67,12 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	auto *const roundCounterLabel = new QLabel;
 	auto *const currentPlayerLabel = new QLabel;
 
-	connect(
-		this,
-		&TableWidget::setCurrentPlayer,
-		this,
-		[this, currentPlayerLabel] {
-			currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
-		});
-	connect(
-		this,
-		&TableWidget::roundCounterSet,
-		this,
-		[this, roundCounterLabel] {
-			roundCounterLabel->setText("Round " + QString::number(m_roundCounter));
-		});
+	connect(this, &TableWidget::setCurrentPlayer, this, [this, currentPlayerLabel] {
+		currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
+	});
+	connect(this, &TableWidget::roundCounterSet, this, [this, roundCounterLabel] {
+		roundCounterLabel->setText("Round " + QString::number(m_roundCounter));
+	});
 
 	// Create a spacer widget to move the buttons to the right side
 	auto *const spacer = new QWidget();
@@ -116,51 +108,27 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
 	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
-	connect(
-		m_tableWidget,
-		&QTableWidget::cellChanged,
-		this,
-		[this] {
-			emit changeOccured();
-		});
+	connect(m_tableWidget, &QTableWidget::cellChanged, this, [this] {
+		emit changeOccured();
+	});
 
-	connect(
-		upButton,
-		&QPushButton::clicked,
-		this,
-		[this]{
-			enteredRowChanged(false);
-		});
-	connect(
-		downButton,
-		&QPushButton::clicked,
-		this,
-		[this]{
-			enteredRowChanged(true);
-		});
-	connect(
-		exitButton,
-		&QPushButton::clicked,
-		this,
-		[this] () {
-			emit exit();
-		});
+	connect(upButton, &QPushButton::clicked, this, [this] {
+		enteredRowChanged(false);
+	});
+	connect(downButton, &QPushButton::clicked, this, [this] {
+		enteredRowChanged(true);
+	});
+	connect(exitButton, &QPushButton::clicked, this, [this] {
+		emit exit();
+	});
 
 	connect(deleteShortcut, &QShortcut::activated, this, &TableWidget::removeRow);
-	connect(
-		goUpShortcut,
-		&QShortcut::activated,
-		this,
-		[this]{
-			enteredRowChanged(false);
-		});
-	connect(
-		goDownShortcut,
-		&QShortcut::activated,
-		this,
-		[this]{
-			enteredRowChanged(true);
-		});
+	connect(goUpShortcut, &QShortcut::activated, this, [this] {
+		enteredRowChanged(false);
+	});
+	connect(goDownShortcut, &QShortcut::activated, this, [this]{
+		enteredRowChanged(true);
+	});
 	connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
 	connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openAddCharacterDialog);
 }
@@ -368,8 +336,7 @@ TableWidget::openAddCharacterDialog()
 			auto const reply = QMessageBox::question(
 				this,
 				tr("Sort characters?"),
-				tr(
-					"Do you want to sort the table?"),
+				tr("Do you want to sort the table?"),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes) {
 				m_char->sortCharacters();
@@ -382,12 +349,13 @@ TableWidget::openAddCharacterDialog()
 
 
 void
-TableWidget::addCharacter(QString	name,
-			  int		ini,
-			  int		mod,
-			  int		hp,
-			  bool		isEnemy,
-			  QString	addInfo)
+TableWidget::addCharacter(
+	QString name,
+	int	ini,
+	int	mod,
+	int	hp,
+	bool	isEnemy,
+	QString addInfo)
 {
 	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
 	setTable();
@@ -427,12 +395,14 @@ TableWidget::removeRow()
 	if (m_tableWidget->rowCount() == 0) {
 		return;
 	}
+
 	// if only one character remains, remove this character
 	// @note This part can change later, because the slot for selected rows is not called if only one row remains
 	if (m_tableWidget->rowCount() == 1) {
 		m_tableWidget->removeRow(0);
 		return;
 	}
+
 	// If a row has been selected, remove this row
 	if (m_isRowSelected) {
 		// If the deleted row is before the current entered row, move one up
@@ -452,6 +422,7 @@ TableWidget::removeRow()
 
 		return;
 	}
+
 	auto const reply = QMessageBox::warning(
 		this,
 		tr("Could not remove Character!"),
@@ -465,6 +436,7 @@ TableWidget::enteredRowChanged(bool goDown)
 	if (m_tableWidget->rowCount() == 0) {
 		return;
 	}
+
 	// Are we going down or up?
 	if (goDown) {
 		// If the current selected row is the last one, reset to the first row
@@ -489,6 +461,7 @@ TableWidget::enteredRowChanged(bool goDown)
 			m_rowEntered--;
 		}
 	}
+
 	// Identifier for the entered row changes
 	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_ROW_ID)->text().toInt();
 	setRowAndPlayer();
@@ -545,12 +518,8 @@ TableWidget::readSettings()
 	settings.beginGroup("TableSettings");
 	// If the application is called for the first time, initiative and
 	// modifier are shown per default
-	m_isIniShown = settings.value("INI").isValid() ?
-		       m_isIniShown = settings.value("INI").toBool() :
-				      m_isIniShown = true;
-	m_isModifierShown = settings.value("Modifier").isValid() ?
-			    m_isModifierShown = settings.value("Modifier").toBool() :
-						m_isModifierShown = true;
+	m_isIniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
+	m_isModifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
 	settings.endGroup();
 }
 
@@ -560,12 +529,9 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	QMenu menu(this);
 
-	auto *const openAddCharacterDialogAction = menu.addAction(
-		tr("Add new Character(s)"),
-		this,
-		[this] () {
-			openAddCharacterDialog();
-		});
+	auto *const openAddCharacterDialogAction = menu.addAction(tr("Add new Character(s)"), this, [this] () {
+		openAddCharacterDialog();
+	});
 	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
 	openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
@@ -575,23 +541,17 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		// Enable row removal
 		rowSelected();
 
-		auto *const statusEffectAction = menu.addAction(
-			tr("Add Status Effect"),
-			this,
-			[this] () {
-				openStatusEffectDialog();
-			});
+		auto *const statusEffectAction = menu.addAction(tr("Add Status Effect"), this, [this] () {
+			openStatusEffectDialog();
+		});
 		statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
 		statusEffectAction->setShortcutVisibleInContextMenu(true);
 
 		menu.addSeparator();
 
-		auto *const removeRowAction = menu.addAction(
-			tr("Remove Character"),
-			this,
-			[this] () {
-				removeRow();
-			});
+		auto *const removeRowAction = menu.addAction(tr("Remove Character"), this, [this] () {
+			removeRow();
+		});
 		removeRowAction->setShortcut(Qt::Key_Delete);
 		removeRowAction->setShortcutVisibleInContextMenu(true);
 	}
@@ -600,21 +560,15 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 
 	auto *const optionMenu = menu.addMenu("Options");
 
-	auto *const iniAction = optionMenu->addAction(
-		tr("Show Initiative"),
-		this,
-		[this] (bool show) {
-			showIniColumn(show);
-		});
+	auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
+		showIniColumn(show);
+	});
 	iniAction->setCheckable(true);
 	iniAction->setChecked(m_isIniShown);
 
-	auto *const modifierAction = optionMenu->addAction(
-		tr("Show Modifier"),
-		this,
-		[this] (bool show) {
-			showModColumn(show);
-		});
+	auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
+		showModColumn(show);
+	});
 	modifierAction->setCheckable(true);
 	modifierAction->setChecked(m_isModifierShown);
 

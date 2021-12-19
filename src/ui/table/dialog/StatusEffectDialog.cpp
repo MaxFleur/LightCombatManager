@@ -34,13 +34,9 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 	mainLayout->addWidget(addEffectButton, 2, 1);
 	mainLayout->addWidget(cancelButton, 2, 2);
 
-	connect(
-		textComboBox->lineEdit(),
-		&QLineEdit::textChanged,
-		this,
-		[this, textComboBox] () {
-			findEffect(textComboBox->lineEdit()->text());
-		});
+	connect(textComboBox->lineEdit(), &QLineEdit::textChanged, this, [this, textComboBox] () {
+		findEffect(textComboBox->lineEdit()->text());
+	});
 	connect(addEffectButton, &QPushButton::clicked, this, &StatusEffectDialog::addEffect);
 	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 }

@@ -12,10 +12,9 @@ CharacterHandler::storeCharacter(
 	bool	isEnemy,
 	QString additionalInf)
 {
-	characters.push_back(
-		std::make_shared<Character>(
-			Character { name, initiative, modifier, hp, isEnemy,
-				    additionalInf }));
+	characters.push_back(std::make_shared<Character>(
+				     Character { name, initiative, modifier, hp, isEnemy, additionalInf }
+				     ));
 }
 
 
@@ -23,30 +22,24 @@ CharacterHandler::storeCharacter(
 void
 CharacterHandler::sortCharacters()
 {
-	std::sort(
-		characters.begin(),
-		characters.end(),
-		[](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
-			// Sort for higher initiative
-			if (c1->initiative != c2->initiative) {
-				return c1->initiative > c2->initiative;
+	std::sort(characters.begin(), characters.end(),
+		  [](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
+		// Sort for higher initiative
+		if (c1->initiative != c2->initiative) {
+			return c1->initiative > c2->initiative;
+		} else {
+			// If initiative is equal, sort for the higher modificator
+			if (c1->modifier != c2->modifier) {
+				return c1->modifier > c2->modifier;
+				// If initiative and modifiers are equal, sort by the name hashes
 			} else {
-				// If initiative is equal, sort for the higher modificator
-				if (c1->modifier != c2->modifier) {
-					return c1->modifier > c2->modifier;
-					// If initiative and modifiers are equal, sort by the name hashes
-				} else {
-					return QCryptographicHash::hash(
-						c1->name.toUtf8(),
-						QCryptographicHash::Sha256).toHex() >
-					       QCryptographicHash::hash(
-						c2->name.toUtf8(),
-						QCryptographicHash::Sha256).toHex();
-				}
+				return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
+				       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();
 			}
-			return false;
 		}
-		);
+		return false;
+	}
+		  );
 }
 
 

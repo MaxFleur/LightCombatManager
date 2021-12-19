@@ -12,7 +12,11 @@
 
 // Stores a table as a csv
 bool
-FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEntered, int roundCounter)
+FileHandler::saveTable(
+	QTableWidget *	tableWidget,
+	QString		filename,
+	int		rowEntered,
+	int		roundCounter)
 {
 	// Create a file
 	QFile file(filename);
@@ -32,6 +36,7 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 		for (int i = 0; i < tableWidget->rowCount(); ++i) {
 			// Clear the list at the beginning of every row iteration
 			strList.clear();
+
 			// Ignore the last row, identifiers are not needed
 			for (int j = 0; j < tableWidget->columnCount() - 1; ++j) {
 				// Get the checkbox value
@@ -49,6 +54,7 @@ FileHandler::saveTable(QTableWidget *tableWidget, QString filename, int rowEnter
 			if (i == 0) {
 				strList << QString::number(rowEntered) << QString::number(roundCounter);
 			}
+
 			// The "\n" guarantees that the rows are set correctly in the csv table
 			data << strList.join(";") + "\n";
 		}

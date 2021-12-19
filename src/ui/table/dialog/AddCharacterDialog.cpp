@@ -96,13 +96,9 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
 	connect(addButton, &QPushButton::clicked, this, &AddCharacterDialog::addCharacter);
 	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetValues);
-	connect(
-		cancelButton,
-		&QPushButton::clicked,
-		this,
-		[this] () {
-			m_somethingStored ? QDialog::accept() : QDialog::reject();
-		});
+	connect(cancelButton, &QPushButton::clicked, this, [this] () {
+		m_somethingStored ? QDialog::accept() : QDialog::reject();
+	});
 	connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);
 
 	connect(saveShortcut, &QShortcut::activated, this, &AddCharacterDialog::addCharacter);

@@ -28,13 +28,9 @@ MainWindow::MainWindow()
 	saveAction->setShortcuts(QKeySequence::Save);
 	saveAction->setStatusTip(tr("Save the created Table."));
 	connect(saveAction, &QAction::triggered, this, &MainWindow::saveTable);
-	connect(
-		this,
-		&MainWindow::setSaveAction,
-		this,
-		[saveAction] (bool enable) {
-			saveAction->setEnabled(enable);
-		});
+	connect(this, &MainWindow::setSaveAction, this, [saveAction] (bool enable) {
+		saveAction->setEnabled(enable);
+	});
 
 	auto *const openAction = new QAction(tr("&Open Table"), this);
 	openAction->setShortcuts(QKeySequence::Open);
@@ -113,11 +109,8 @@ MainWindow::saveTable()
 		return 2;
 	}
 
-	auto const fileName = QFileDialog::getSaveFileName(
-		this,
-		tr("Save Table"),
-		m_currentDir,
-		tr("Table (*.csv);;All Files (*)"));
+	auto const fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_currentDir,
+							   tr("Table (*.csv);;All Files (*)"));
 
 	if (fileName.isEmpty()) {
 		// No file provided or Cancel pressed
@@ -170,7 +163,6 @@ MainWindow::openTable()
 		QFileDialog::getOpenFileName(this, "Open Table", m_currentDir, ("csv File(*.csv)"));
 	auto const code = m_file->getCSVData(fileName);
 
-
 	switch (code) {
 	case 0:
 	{
@@ -200,10 +192,9 @@ MainWindow::about()
 	QMessageBox::about(
 		this,
 		tr("About Light Combat Manager"),
-		tr(
-			"<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e.<br>"
-			"<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-			"<p>Version 1.4.4.</p>"));
+		tr("<p>Light Combat Manager. A simple Combat Manager for Pathfinder 1e.<br>"
+		   "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
+		   "<p>Version 1.4.4.</p>"));
 }
 
 
@@ -241,27 +232,18 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	m_tableWidget = new TableWidget(isDataStored, newCombatStarted, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
-	connect(
-		m_tableWidget,
-		&TableWidget::tableSet,
-		this,
-		[this] (int height) {
-			if (height > START_HEIGHT) {
-				setFixedHeight(height);
-			}
-		});
-	connect(
-		m_tableWidget,
-		&TableWidget::changeOccured,
-		this,
-		[this] () {
-			m_changeOccured = true;
-		});
+	connect(m_tableWidget, &TableWidget::tableSet, this, [this] (int height) {
+		if (height > START_HEIGHT) {
+			setFixedHeight(height);
+		}
+	});
+	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {
+		m_changeOccured = true;
+	});
 	m_isTableActive = true;
 	m_changeOccured = false;
 
-	auto height = 0;
-	isDataStored ? height = m_tableWidget->getHeight() : height = START_HEIGHT;
+	auto height = isDataStored ? m_tableWidget->getHeight() : START_HEIGHT;
 	setFixedHeight(height);
 
 	emit setSaveAction(true);
@@ -287,9 +269,7 @@ void
 MainWindow::readSettings()
 {
 	QSettings settings;
-	m_currentDir = settings.value("Dir").isValid() ?
-		       m_currentDir = settings.value("Dir").toString() :
-				      m_currentDir = "";
+	m_currentDir = settings.value("Dir").isValid() ? settings.value("Dir").toString() : "";
 }
 
 
@@ -303,9 +283,10 @@ MainWindow::closeEvent(QCloseEvent *event)
 			auto const reply = QMessageBox::question(
 				this,
 				tr("Exit"),
-				tr(
-					"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?"),
+				tr("Currently, you are in a Combat. "
+				   "Do you want to save the Characters before exiting the program?"),
 				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
 			if (reply == QMessageBox::Yes) {
 				auto const code = saveTable();
 				if (code != 0) {
@@ -324,6 +305,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 				tr("Exit"),
 				tr("Do you really want to exit the application?"),
 				QMessageBox::Yes | QMessageBox::No);
+
 			if (reply == QMessageBox::Yes) {
 				return;
 			} else {

@@ -494,6 +494,9 @@ TableWidget::setTableCheckBox(int row, bool checked)
 {
 	auto * const checkBox = new QCheckBox;
 	checkBox->setChecked(checked);
+	connect(checkBox, &QCheckBox::stateChanged, this, [this] {
+		emit changeOccured();
+	});
 	m_tableWidget->setCellWidget(row, COL_ENEMY, checkBox);
 }
 

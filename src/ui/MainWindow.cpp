@@ -112,7 +112,7 @@ MainWindow::saveTable()
 
 	QString fileName;
 	if (m_currentDir.isEmpty()) {
-		fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_currentDir,
+		fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), "",
 							tr("Table (*.csv);;All Files (*)"));
 
 		if (fileName.isEmpty()) {
@@ -278,7 +278,21 @@ void
 MainWindow::readSettings()
 {
 	QSettings settings;
-	m_currentDir = settings.value("Dir").isValid() ? settings.value("Dir").toString() : "";
+	// If a dir already exists, use that
+	if (settings.value("Dir").isValid()) {
+		m_currentDir = settings.value("Dir").toString();
+		return;
+	}
+
+	// If not, create a new subdir as standard path and save it
+	QDir dir(QDir::currentPath());
+	if (dir.mkdir("tables")) {
+		const auto tableSubDir = QDir::currentPath() + "/tables";
+		writeSettings(tableSubDir);
+		return;
+	}
+	// Path of executable, if table subdir creation did not work
+	m_currentDir = "";
 }
 
 

@@ -87,6 +87,7 @@ MainWindow::newCombat()
 			}
 		}
 	}
+	m_currentDir = QString();
 	setTableWidget(false, true);
 }
 
@@ -109,12 +110,17 @@ MainWindow::saveTable()
 		return 2;
 	}
 
-	auto const fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_currentDir,
-							   tr("Table (*.csv);;All Files (*)"));
+	QString fileName;
+	if (m_currentDir.isEmpty()) {
+		fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_currentDir,
+							tr("Table (*.csv);;All Files (*)"));
 
-	if (fileName.isEmpty()) {
-		// No file provided or Cancel pressed
-		return 3;
+		if (fileName.isEmpty()) {
+			// No file provided or Cancel pressed
+			return 3;
+		}
+	} else {
+		fileName = m_currentDir;
 	}
 
 	auto const code = m_file->saveTable(

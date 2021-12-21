@@ -125,6 +125,7 @@ MainWindow::saveTable()
 	if (code) {
 		writeSettings(fileName);
 		m_changeOccured = false;
+		setWindowTitle(tr("LCM - Combat Active"));
 
 		// Success
 		return 0;
@@ -239,6 +240,8 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	});
 	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {
 		m_changeOccured = true;
+		// Mark change in window
+		setWindowTitle(tr("LCM - Combat Active *"));
 	});
 	m_isTableActive = true;
 	m_changeOccured = false;

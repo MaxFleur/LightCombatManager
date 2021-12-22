@@ -241,9 +241,17 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	m_tableWidget = new TableWidget(isDataStored, newCombatStarted, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
-	connect(m_tableWidget, &TableWidget::tableSet, this, [this] (int height) {
+	connect(m_tableWidget, &TableWidget::tableHeightSet, this, [this] (int height) {
 		if (height > START_HEIGHT) {
 			setFixedHeight(height);
+		}
+	});
+	connect(m_tableWidget, &TableWidget::tableWidthSet, this, [this] (int width) {
+		if (width > this->width()) {
+			;
+			setFixedWidth(width);
+			setMinimumWidth(0);
+			setMaximumWidth(QWIDGETSIZE_MAX);
 		}
 	});
 	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {

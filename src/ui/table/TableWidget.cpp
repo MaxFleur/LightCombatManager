@@ -148,7 +148,7 @@ TableWidget::setTable()
 	// Set data for the lower label
 	emit roundCounterSet();
 	setRowAndPlayer();
-	emit tableSet(getHeight());
+	emit tableHeightSet(getHeight());
 }
 
 
@@ -358,6 +358,7 @@ TableWidget::addCharacter(
 	QString addInfo)
 {
 	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+	resetNameInfoWidth(name, addInfo);
 	setTable();
 }
 
@@ -498,6 +499,45 @@ TableWidget::setTableCheckBox(int row, bool checked)
 		emit changeOccured();
 	});
 	m_tableWidget->setCellWidget(row, COL_ENEMY, checkBox);
+}
+
+
+// Set a new width for the name and/or additional info column if longer strings are used
+void
+TableWidget::resetNameInfoWidth(QString name, QString addInfo)
+{
+	auto changeOccured = false;
+	const auto nameWidth = Utils::getStringWidth(name, m_boldFont);
+	// Due to the stretch property, the additional info column will be shortened if
+	// the name column is enhanced
+	// To prevent this, we store the old value and reuse it if necessary
+	auto addInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
+
+	// Use the bold font for longer columns
+	if (m_tableWidget->columnWidth(COL_NAME) < nameWidth) {
+		m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_NAME_BUFFER);
+		changeOccured = true;
+	}
+	// additional info might be empty, so possible skip
+	if (!addInfo.isEmpty()) {
+		const auto addInfoNewWidth = Utils::getStringWidth(addInfo, m_boldFont);
+		if (addInfoWidth < addInfoNewWidth) {
+			// Reuse the old value if the new string is too short
+			addInfoWidth = addInfoNewWidth + COL_LENGTH_ADD_BUFFER;
+			changeOccured = true;
+		}
+	}
+
+	if (changeOccured) {
+		// Reset the main window width
+		int mainWidth = 0;
+		// Ignore the stretchable and indentifier column
+		for (int i = 0; i < m_tableWidget->columnCount() - 2; i++) {
+			mainWidth += m_tableWidget->columnWidth(i);
+		}
+		// The main window will adjust and the additional info column will be lenghtened
+		emit tableWidthSet(mainWidth + addInfoWidth + COL_LENGTH_ADD_BUFFER);
+	}
 }
 
 

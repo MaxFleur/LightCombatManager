@@ -3,6 +3,8 @@
 #include <random>
 
 #include <QCheckBox>
+#include <QFont>
+#include <QFontMetrics>
 #include <QTableWidget>
 
 namespace Utils
@@ -58,5 +60,13 @@ rollDice()
 	std::uniform_int_distribution<> distr(1, 20);
 
 	return distr(gen);
+}
+
+
+int
+getStringWidth(QString str, QFont font)
+{
+	const QFontMetrics fm(font);
+	return fm.horizontalAdvance(str);
 }
 }

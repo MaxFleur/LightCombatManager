@@ -55,7 +55,10 @@ signals:
 	exit();
 
 	void
-	tableSet(int height);
+	tableWidthSet(int width);
+
+	void
+	tableHeightSet(int height);
 
 	void
 	setCurrentPlayer();
@@ -117,6 +120,10 @@ private:
 			 bool	checked);
 
 	void
+	resetNameInfoWidth(QString	strName,
+			   QString	strAdd);
+
+	void
 	writeSettings();
 
 	void
@@ -164,6 +171,9 @@ private:
 	static constexpr int ROUND_CTR = 7;
 
 	static constexpr int SPACING = 30;
+
+	static constexpr float COL_LENGTH_NAME_BUFFER = 10;
+	static constexpr float COL_LENGTH_ADD_BUFFER = 20;
 
 	// Width rations of the first five columns
 	static constexpr float WIDTH_NAME = 0.25f;

@@ -2,6 +2,7 @@
 
 #include "../handler/CharacterHandler.hpp"
 
+class QFont;
 class QTableWidget;
 
 // Utility functions, no ctor needed
@@ -16,4 +17,8 @@ containsSemicolon(QTableWidget *tableWidget);
 
 int
 rollDice();
+
+int
+getStringWidth(QString	str,
+	       QFont	font);
 }

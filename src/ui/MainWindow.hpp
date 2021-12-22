@@ -60,6 +60,9 @@ private:
 	void
 	closeEvent(QCloseEvent *event);
 
+	void
+	handleSubDir();
+
 	QPointer<WelcomeWidget> m_welcomeWidget;
 	QPointer<TableWidget> m_tableWidget;
 

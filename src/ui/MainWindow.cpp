@@ -56,6 +56,7 @@ MainWindow::MainWindow()
 	helpMenu->addAction(aboutAction);
 	helpMenu->addAction(aboutQtAction);
 
+	handleSubDir();
 	readSettings();
 
 	m_file = std::make_shared<FileHandler>();
@@ -284,14 +285,6 @@ MainWindow::readSettings()
 		m_currentDir = settings.value("Dir").toString();
 		return;
 	}
-
-	// If not, create a new subdir as standard path and save it
-	QDir dir(QDir::currentPath());
-	if (dir.mkdir("tables")) {
-		const auto tableSubDir = QDir::currentPath() + "/tables";
-		writeSettings(tableSubDir);
-		return;
-	}
 	// Path of executable, if table subdir creation did not work
 	m_currentDir = "";
 }
@@ -336,5 +329,19 @@ MainWindow::closeEvent(QCloseEvent *event)
 				event->ignore();
 			}
 		}
+	}
+}
+
+
+void
+MainWindow::handleSubDir()
+{
+	// Create a subdir to save the tables into
+	QDir dir(QDir::currentPath());
+	// Write into settings so this subdir is used as standard path for saving tables
+	if (dir.mkdir("tables")) {
+		const auto tableSubDir = QDir::currentPath() + "/tables";
+		writeSettings(tableSubDir);
+		return;
 	}
 }

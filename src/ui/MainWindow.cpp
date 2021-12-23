@@ -248,10 +248,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	});
 	connect(m_tableWidget, &TableWidget::tableWidthSet, this, [this] (int width) {
 		if (width > this->width()) {
-			;
-			setFixedWidth(width);
-			setMinimumWidth(0);
-			setMaximumWidth(QWIDGETSIZE_MAX);
+			resize(width, this->height());
 		}
 	});
 	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {

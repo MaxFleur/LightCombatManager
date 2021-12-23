@@ -507,13 +507,12 @@ void
 TableWidget::resetNameInfoWidth(QString name, QString addInfo)
 {
 	auto changeOccured = false;
+	// Use the bold font for longer columns
 	const auto nameWidth = Utils::getStringWidth(name, m_boldFont);
-	// Due to the stretch property, the additional info column will be shortened if
-	// the name column is enhanced
-	// To prevent this, we store the old value and reuse it if necessary
+	// Due to the stretch property, the additional info column will be shortened if the name column
+	// is enhanced. To prevent this, we store the old value and reuse it if necessary
 	auto addInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
 
-	// Use the bold font for longer columns
 	if (m_tableWidget->columnWidth(COL_NAME) < nameWidth) {
 		m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_NAME_BUFFER);
 		changeOccured = true;
@@ -529,7 +528,7 @@ TableWidget::resetNameInfoWidth(QString name, QString addInfo)
 	}
 
 	if (changeOccured) {
-		// Reset the main window width
+		// Change the main window width
 		int mainWidth = 0;
 		// Ignore the stretchable and indentifier column
 		for (int i = 0; i < m_tableWidget->columnCount() - 2; i++) {

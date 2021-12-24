@@ -569,9 +569,9 @@ TableWidget::readSettings()
 void
 TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-	QMenu menu(this);
+	auto * const menu = new QMenu(this);
 
-	auto *const openAddCharacterDialogAction = menu.addAction(tr("Add new Character(s)"), this, [this] () {
+	auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)"), this, [this] () {
 		openAddCharacterDialog();
 	});
 	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
@@ -583,24 +583,24 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		// Enable row removal
 		rowSelected();
 
-		auto *const statusEffectAction = menu.addAction(tr("Add Status Effect"), this, [this] () {
+		auto *const statusEffectAction = menu->addAction(tr("Add Status Effect"), this, [this] () {
 			openStatusEffectDialog();
 		});
 		statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
 		statusEffectAction->setShortcutVisibleInContextMenu(true);
 
-		menu.addSeparator();
+		menu->addSeparator();
 
-		auto *const removeRowAction = menu.addAction(tr("Remove Character"), this, [this] () {
+		auto *const removeRowAction = menu->addAction(tr("Remove Character"), this, [this] () {
 			removeRow();
 		});
 		removeRowAction->setShortcut(Qt::Key_Delete);
 		removeRowAction->setShortcutVisibleInContextMenu(true);
 	}
 
-	menu.addSeparator();
+	menu->addSeparator();
 
-	auto *const optionMenu = menu.addMenu("Options");
+	auto *const optionMenu = menu->addMenu("Options");
 
 	auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
 		showIniColumn(show);
@@ -614,5 +614,5 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	modifierAction->setCheckable(true);
 	modifierAction->setChecked(m_isModifierShown);
 
-	menu.exec(event->globalPos());
+	menu->exec(event->globalPos());
 }

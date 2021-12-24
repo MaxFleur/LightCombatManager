@@ -157,7 +157,7 @@ private:
 	// The row identifier to determine the correct row after drag and drop
 	int m_rowIdentifier = 0;
 
-	static constexpr int NMBR_COLUMNS = 6;
+	static constexpr int NMBR_COLUMNS = 7;
 
 	static constexpr int COL_NAME = 0;
 	static constexpr int COL_INI = 1;

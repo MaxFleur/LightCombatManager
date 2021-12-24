@@ -30,7 +30,7 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	m_char = std::make_shared<CharacterHandler>();
 
 	m_tableWidget = new CustomTable();
-	m_tableWidget->setColumnCount(7);
+	m_tableWidget->setColumnCount(NMBR_COLUMNS);
 
 	QStringList tableHeader;
 	tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional information") << "";
@@ -168,7 +168,7 @@ TableWidget::setData()
 		for (int x = 1; x < rowOfData.size() - 1; x++) {
 			rowData = rowOfData.at(x).split(";");
 			// Create the widget items for the table
-			for (int y = 0; y < NMBR_COLUMNS; y++) {
+			for (int y = 0; y < NMBR_COLUMNS - 1; y++) {
 				if (y == COL_ENEMY) {
 					setTableCheckBox(x - 1, rowData[y] == "true" ? true : false);
 				} else {

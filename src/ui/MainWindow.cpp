@@ -132,7 +132,7 @@ MainWindow::saveTable()
 	if (code) {
 		writeSettings(fileName);
 		m_changeOccured = false;
-		setWindowTitle(tr("LCM - Combat Active"));
+		setCombatTitle();
 
 		// Success
 		return 0;
@@ -226,12 +226,14 @@ MainWindow::exitCombat()
 void
 MainWindow::setWelcomingWidget()
 {
+	setWindowTitle("LCM");
+
 	m_welcomeWidget = new WelcomeWidget(this);
 	setMinimumSize(0, 0);
 	setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
 	setCentralWidget(m_welcomeWidget);
+
 	emit setSaveAction(false);
-	setWindowTitle("LCM");
 }
 
 
@@ -254,22 +256,29 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {
 		m_changeOccured = true;
 		// Mark change in window
-		setWindowTitle(tr("LCM - Combat Active *"));
+		setCombatTitle();
 	});
 
 	if (!newCombatStarted) {
 		m_tableWidget->generateTable();
 		setFixedHeight(m_tableWidget->getHeight());
+		m_changeOccured = false;
+		setCombatTitle();
 	} else {
+		setCombatTitle();
 		setFixedHeight(START_HEIGHT);
 		m_tableWidget->openAddCharacterDialog();
 	}
 
 	m_isTableActive = true;
-	m_changeOccured = false;
-
 	emit setSaveAction(true);
-	setWindowTitle(tr("LCM - Combat Active"));
+}
+
+
+void
+MainWindow::setCombatTitle()
+{
+	m_changeOccured ? setWindowTitle(tr("LCM - Combat Active *")) : setWindowTitle(tr("LCM - Combat Active"));
 }
 
 

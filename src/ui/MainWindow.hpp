@@ -52,6 +52,9 @@ private:
 		       QString	data = "");
 
 	void
+	setCombatTitle();
+
+	void
 	writeSettings(QString fileName);
 
 	void

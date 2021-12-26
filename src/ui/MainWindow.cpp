@@ -261,7 +261,9 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 
 	if (!newCombatStarted) {
 		m_tableWidget->generateTable();
-		setFixedHeight(m_tableWidget->getHeight());
+		const auto height = m_tableWidget->getHeight();
+		height > START_HEIGHT ?  setFixedHeight(height) : setFixedHeight(START_HEIGHT);
+
 		m_changeOccured = false;
 		setCombatTitle();
 	} else {

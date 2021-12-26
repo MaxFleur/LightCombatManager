@@ -22,8 +22,8 @@
 #include "dialog/StatusEffectDialog.hpp"
 #include "Utils.hpp"
 
-TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data, QWidget *parent)
-	: m_isDataStored(isDataStored), m_newCombatStarted(newCombatStarted), m_data(data)
+TableWidget::TableWidget(bool isDataStored, QString data, QWidget *parent)
+	: m_isDataStored(isDataStored), m_data(data)
 {
 	readSettings();
 
@@ -102,10 +102,6 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 	auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
-	if (!m_newCombatStarted) {
-		setTable();
-	}
-
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
 	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
 	connect(m_tableWidget, &QTableWidget::cellChanged, this, [this] {
@@ -135,7 +131,7 @@ TableWidget::TableWidget(bool isDataStored, bool newCombatStarted, QString data,
 
 
 void
-TableWidget::setTable()
+TableWidget::generateTable()
 {
 	setData();
 
@@ -181,6 +177,7 @@ TableWidget::setData()
 				m_rowEntered = rowData[ROW_ENTERED].toInt();
 				m_roundCounter = rowData[ROUND_CTR].toInt();
 			}
+			resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
 		}
 		// Readd the tables values to the characters
 		Utils::resynchronizeCharacters(m_tableWidget, m_char);
@@ -341,7 +338,7 @@ TableWidget::openAddCharacterDialog()
 			if (reply == QMessageBox::Yes) {
 				m_char->sortCharacters();
 				m_rowEntered = 0;
-				setTable();
+				generateTable();
 			}
 		}
 	}
@@ -359,7 +356,7 @@ TableWidget::addCharacter(
 {
 	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
 	resetNameInfoWidth(name, addInfo);
-	setTable();
+	generateTable();
 }
 
 

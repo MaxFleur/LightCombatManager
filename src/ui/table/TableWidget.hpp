@@ -13,9 +13,11 @@ class TableWidget : public QWidget {
 
 public:
 	TableWidget(bool	isDataStored,
-		    bool	newCombatStarted,
 		    QString	data = "",
 		    QWidget *	parent = 0);
+
+	void
+	generateTable();
 
 	QTableWidget *
 	getTableWidget()
@@ -142,7 +144,6 @@ private:
 	bool m_isRowSelected{ false };
 
 	bool m_isDataStored;
-	bool m_newCombatStarted;
 
 	QString m_data;
 

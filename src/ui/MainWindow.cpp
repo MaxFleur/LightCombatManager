@@ -238,7 +238,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString data)
 {
-	m_tableWidget = new TableWidget(isDataStored, newCombatStarted, data, this);
+	m_tableWidget = new TableWidget(isDataStored, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
 	connect(m_tableWidget, &TableWidget::tableHeightSet, this, [this] (int height) {
@@ -256,18 +256,20 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 		// Mark change in window
 		setWindowTitle(tr("LCM - Combat Active *"));
 	});
+
+	if (!newCombatStarted) {
+		m_tableWidget->generateTable();
+		setFixedHeight(m_tableWidget->getHeight());
+	} else {
+		setFixedHeight(START_HEIGHT);
+		m_tableWidget->openAddCharacterDialog();
+	}
+
 	m_isTableActive = true;
 	m_changeOccured = false;
 
-	auto height = isDataStored ? m_tableWidget->getHeight() : START_HEIGHT;
-	setFixedHeight(height);
-
 	emit setSaveAction(true);
 	setWindowTitle(tr("LCM - Combat Active"));
-
-	if (newCombatStarted) {
-		m_tableWidget->openAddCharacterDialog();
-	}
 }
 
 

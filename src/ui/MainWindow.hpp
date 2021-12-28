@@ -55,7 +55,8 @@ private:
 	setCombatTitle();
 
 	void
-	writeSettings(QString fileName);
+	writeSettings(QString	fileName,
+		      bool	setSaveDir);
 
 	void
 	readSettings();
@@ -70,10 +71,11 @@ private:
 	QPointer<TableWidget> m_tableWidget;
 
 	bool m_isTableActive{ false };
-
 	bool m_changeOccured{ false };
+	bool m_tableInFile{ false };
 
-	QString m_currentDir;
+	QString m_openDir;
+	QString m_saveDir;
 
 	FileHandlerRef m_file;
 

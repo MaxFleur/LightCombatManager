@@ -93,22 +93,26 @@ MainWindow::newCombat()
 }
 
 
-int
+bool
 MainWindow::saveTable()
 {
+	if (!m_changeOccured) {
+		return false;
+	}
+
 	if (m_tableWidget->isEmpty()) {
 		auto const reply = QMessageBox::critical(
 			this,
 			tr("Table empty!"),
 			tr("Can't save an empty table."));
-		return 1;
+		return false;
 	}
 	if (Utils::containsSemicolon(m_tableWidget->getTableWidget())) {
 		auto const reply = QMessageBox::critical(
 			this,
 			tr("Semicolons detected!"),
 			tr("Can't save because the table contains semicolons. Please remove them and continue."));
-		return 2;
+		return false;
 	}
 
 	QString fileName;
@@ -119,7 +123,7 @@ MainWindow::saveTable()
 
 		if (fileName.isEmpty()) {
 			// No file provided or Cancel pressed
-			return 3;
+			return false;
 		}
 		// Otherwise, just overwrite the loaded file
 	} else {
@@ -137,14 +141,16 @@ MainWindow::saveTable()
 		writeSettings(fileName, false);
 		setCombatTitle();
 
+		qDebug() << "Saved";
+
 		// Success
-		return 0;
+		return true;
 	}
 	auto const reply = QMessageBox::critical(
 		this,
 		tr("Could not save table!"),
 		tr("Failed to write file."));
-	return 4;
+	return false;
 }
 
 
@@ -161,8 +167,7 @@ MainWindow::openTable()
 				tr("Do you want to save the current Combat before opening another Table?"),
 				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 			if (reply == QMessageBox::Yes) {
-				auto const code = saveTable();
-				if (code != 0) {
+				if (!saveTable()) {
 					return;
 				}
 			} else if (reply == QMessageBox::Cancel) {
@@ -337,8 +342,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
 
 			if (reply == QMessageBox::Yes) {
-				auto const code = saveTable();
-				if (code != 0) {
+				if (!saveTable()) {
 					event->ignore();
 				} else {
 					event->accept();

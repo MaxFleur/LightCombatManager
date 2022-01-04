@@ -33,8 +33,9 @@ The following description is focused on building the application with `cmake` an
 5. Hit `cmake.exe -G “Visual Studio 16 2019” -A x64 ..`. This will create an `sln`-file. 
 6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
 7. Inside the `build`-file, a file named `Debug` or `Release` should have been created. Navigate to this folder.
-8. The `exe`-file for the application should be found here. To successfully run the exe, `qwindows.dll`, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
-   have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug).
+8. The `exe`-file for the application should be found here. To successfully run the exe, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
+   have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug). Also, please create a directory named
+   `platforms` in the same dir as the `exe`-file and copy the `qwindows.dll` into it. 
    
 # Contribution
 

@@ -63,6 +63,9 @@ signals:
 	tableHeightSet(int height);
 
 	void
+	characterNotSelected();
+
+	void
 	setCurrentPlayer();
 
 	void

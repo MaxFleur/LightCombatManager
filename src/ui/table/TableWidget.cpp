@@ -9,7 +9,6 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QMenu>
-#include <QMessageBox>
 #include <QPushButton>
 #include <QSettings>
 #include <QShortcut>
@@ -421,10 +420,7 @@ TableWidget::removeRow()
 		return;
 	}
 
-	auto const reply = QMessageBox::warning(
-		this,
-		tr("Could not remove Character!"),
-		tr("Please select a Character with the Mouse Key before deleting!"));
+	emit characterNotSelected();
 }
 
 

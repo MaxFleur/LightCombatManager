@@ -269,6 +269,12 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 		// Mark change in window
 		setCombatTitle();
 	});
+	connect(m_tableWidget, &TableWidget::characterNotSelected, this, [this] () {
+		auto const reply = QMessageBox::warning(
+			this,
+			tr("Could not remove Character!"),
+			tr("Please select a Character with the Mouse Key before deleting!"));
+	});
 
 	if (!newCombatStarted) {
 		m_tableWidget->generateTable();

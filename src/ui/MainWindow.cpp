@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QString>
+#include <QTimer>
 
 #include "table/TableWidget.hpp"
 #include "Utils.hpp"
@@ -261,7 +262,12 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	});
 	connect(m_tableWidget, &TableWidget::tableWidthSet, this, [this] (int width) {
 		if (width > this->width()) {
-			resize(width, this->height());
+			// @note A single immediate call to resize() won't actually resize the window
+			// So the function is called with a minimal delay of 1 ms, which will actually
+			// resize the main window
+			QTimer::singleShot(1, [this, width]() {
+				resize(width, this->height());
+			});
 		}
 	});
 	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {

@@ -73,18 +73,32 @@ MainWindow::newCombat()
 	// Check if a table is active
 	if (m_isTableActive) {
 		// Check if it's not empty and if the user has saved before hitting the shortcut
-		if (!m_tableWidget->isEmpty() && m_changeOccured) {
-			auto const reply = QMessageBox::question(
-				this,
-				tr("Start a new Combat?"),
-				tr("Do you want to save the current Combat before starting a new one?"),
-				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-			if (reply == QMessageBox::Yes) {
-				auto const code = saveTable();
-				if (code != 0) {
+		if (!m_tableWidget->isEmpty()) {
+			const auto newCombatMessage = m_changeOccured ? tr(
+				"Do you want to save the current Combat before starting a new one?") : tr(
+				"Do you want to start a new Combat?");
+
+			auto const msgBox = new QMessageBox(this);
+			msgBox->setStandardButtons(
+				m_changeOccured ?
+				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
+				QMessageBox::Yes | QMessageBox::No);
+			msgBox->setText(newCombatMessage);
+
+			const auto val = msgBox->exec();
+			switch (val) {
+			case QMessageBox::Save:
+			{
+				if (!saveTable()) {
 					return;
 				}
-			} else if (reply == QMessageBox::Cancel) {
+				break;
+			}
+			case QMessageBox::Discard:
+			case QMessageBox::Yes:
+				break;
+			case QMessageBox::Cancel:
+			case QMessageBox::No:
 				return;
 			}
 		}
@@ -141,9 +155,6 @@ MainWindow::saveTable()
 		m_tableInFile = true;
 		writeSettings(fileName, false);
 		setCombatTitle();
-
-		qDebug() << "Saved";
-
 		// Success
 		return true;
 	}
@@ -161,18 +172,35 @@ MainWindow::openTable()
 	// Check if a table is active right now
 	if (m_isTableActive) {
 		// Check if the table is filled and if the user has not saved already
-		if (!m_tableWidget->isEmpty() && m_changeOccured) {
-			auto const reply = QMessageBox::question(
-				this,
-				tr("Save current Table?"),
-				tr("Do you want to save the current Combat before opening another Table?"),
-				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-			if (reply == QMessageBox::Yes) {
-				if (!saveTable()) {
+		if (!m_tableWidget->isEmpty()) {			
+			if (!m_tableWidget->isEmpty()) {
+				const auto openCombatMessage = m_changeOccured ? tr(
+					"Do you want to save the current Combat before opening another existing Combat?") : tr(
+					"Do you want to open an existing Combat?");
+
+				auto const msgBox = new QMessageBox(this);
+				msgBox->setStandardButtons(
+					m_changeOccured ?
+					QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
+					QMessageBox::Yes | QMessageBox::No);
+				msgBox->setText(openCombatMessage);
+
+				const auto val = msgBox->exec();
+				switch (val) {
+				case QMessageBox::Save:
+				{
+					if (!saveTable()) {
+						return;
+					}
+					break;
+				}
+				case QMessageBox::Discard:
+				case QMessageBox::Yes:
+					break;
+				case QMessageBox::Cancel:
+				case QMessageBox::No:
 					return;
 				}
-			} else if (reply == QMessageBox::Cancel) {
-				return;
 			}
 		}
 	}

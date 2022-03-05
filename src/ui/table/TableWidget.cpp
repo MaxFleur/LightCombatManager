@@ -491,7 +491,15 @@ TableWidget::setTableCheckBox(int row, bool checked)
 	connect(checkBox, &QCheckBox::stateChanged, this, [this] {
 		emit changeOccured();
 	});
-	m_tableWidget->setCellWidget(row, COL_ENEMY, checkBox);
+
+	auto * const widget = new QWidget();
+	auto *layout = new QHBoxLayout(widget);
+	layout->addWidget(checkBox);
+	layout->setAlignment(Qt::AlignCenter);
+	layout->setContentsMargins(0, 0, 0, 0);
+	widget->setLayout(layout);
+
+	m_tableWidget->setCellWidget(row, COL_ENEMY, widget);
 }
 
 

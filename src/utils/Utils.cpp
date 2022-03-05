@@ -19,7 +19,7 @@ resynchronizeCharacters(QTableWidget *		tableWidget,
 	characterHandler->clearCharacters();
 
 	for (int i = 0; i < tableWidget->rowCount(); i++) {
-		auto * const checkBox = (QCheckBox *) tableWidget->cellWidget(i, 4);
+		auto * const checkBox = tableWidget->cellWidget(i, 4)->findChild<QCheckBox *>();
 
 		characterHandler->storeCharacter(
 			tableWidget->item(i, 0)->text(),

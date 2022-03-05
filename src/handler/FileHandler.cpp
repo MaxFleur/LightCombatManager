@@ -41,7 +41,7 @@ FileHandler::saveTable(
 			for (int j = 0; j < tableWidget->columnCount() - 1; ++j) {
 				// Get the checkbox value
 				if (j == 4) {
-					auto * const checkBox = (QCheckBox *) tableWidget->cellWidget(i, j);
+					auto * const checkBox = tableWidget->cellWidget(i, j)->findChild<QCheckBox *>();
 					strList << QVariant(checkBox->isChecked()).toString();
 				} else {
 					const auto *item = tableWidget->item(i, j);

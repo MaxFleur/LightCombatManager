@@ -172,35 +172,33 @@ MainWindow::openTable()
 	// Check if a table is active right now
 	if (m_isTableActive) {
 		// Check if the table is filled and if the user has not saved already
-		if (!m_tableWidget->isEmpty()) {			
-			if (!m_tableWidget->isEmpty()) {
-				const auto openCombatMessage = m_changeOccured ? tr(
-					"Do you want to save the current Combat before opening another existing Combat?") : tr(
-					"Do you want to open an existing Combat?");
+		if (!m_tableWidget->isEmpty()) {
+			const auto openCombatMessage = m_changeOccured ? tr(
+				"Do you want to save the current Combat before opening another existing Combat?") : tr(
+				"Do you want to open an existing Combat?");
 
-				auto const msgBox = new QMessageBox(this);
-				msgBox->setStandardButtons(
-					m_changeOccured ?
-					QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
-					QMessageBox::Yes | QMessageBox::No);
-				msgBox->setText(openCombatMessage);
+			auto const msgBox = new QMessageBox(this);
+			msgBox->setStandardButtons(
+				m_changeOccured ?
+				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
+				QMessageBox::Yes | QMessageBox::No);
+			msgBox->setText(openCombatMessage);
 
-				const auto val = msgBox->exec();
-				switch (val) {
-				case QMessageBox::Save:
-				{
-					if (!saveTable()) {
-						return;
-					}
-					break;
-				}
-				case QMessageBox::Discard:
-				case QMessageBox::Yes:
-					break;
-				case QMessageBox::Cancel:
-				case QMessageBox::No:
+			const auto val = msgBox->exec();
+			switch (val) {
+			case QMessageBox::Save:
+			{
+				if (!saveTable()) {
 					return;
 				}
+				break;
+			}
+			case QMessageBox::Discard:
+			case QMessageBox::Yes:
+				break;
+			case QMessageBox::Cancel:
+			case QMessageBox::No:
+				return;
 			}
 		}
 	}

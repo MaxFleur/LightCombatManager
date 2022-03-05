@@ -370,38 +370,35 @@ MainWindow::closeEvent(QCloseEvent *event)
 {
 	// Check if a table is active and filled
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		// Just continue if the user has not done anything after saving
-		if (m_changeOccured) {
-			auto const reply = QMessageBox::question(
-				this,
-				tr("Exit"),
-				tr("Currently, you are in a Combat. "
-				   "Do you want to save the Characters before exiting the program?"),
-				QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		const auto closeCombatMessage = m_changeOccured ?
+						tr(
+			"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?")
+		:
+						tr("Do you really want to exit the application?");
 
-			if (reply == QMessageBox::Yes) {
-				if (!saveTable()) {
-					event->ignore();
-				} else {
-					event->accept();
-				}
-			} else if (reply == QMessageBox::No) {
-				event->accept();
-			} else if (reply == QMessageBox::Cancel) {
-				event->ignore();
-			}
-		} else {
-			auto const reply = QMessageBox::question(
-				this,
-				tr("Exit"),
-				tr("Do you really want to exit the application?"),
-				QMessageBox::Yes | QMessageBox::No);
+		auto const msgBox = new QMessageBox(this);
+		msgBox->setStandardButtons(
+			m_changeOccured ?
+			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
+			QMessageBox::Yes | QMessageBox::No);
+		msgBox->setText(closeCombatMessage);
 
-			if (reply == QMessageBox::Yes) {
-				return;
-			} else {
-				event->ignore();
-			}
+		const auto val = msgBox->exec();
+		switch (val) {
+		case QMessageBox::Save:
+		{
+			saveTable() ? event->accept() : event->ignore();
+			break;
+		}
+		case QMessageBox::Discard:
+			event->accept();
+			break;
+		case QMessageBox::Yes:
+			return;
+		case QMessageBox::Cancel:
+		case QMessageBox::No:
+			event->ignore();
+			break;
 		}
 	}
 }

@@ -28,7 +28,7 @@ MainWindow::MainWindow()
 	auto *const saveAction = new QAction(tr("&Save Table"), this);
 	saveAction->setShortcuts(QKeySequence::Save);
 	saveAction->setStatusTip(tr("Save the created Table."));
-	connect(saveAction, &QAction::triggered, this, &MainWindow::saveTable);
+	connect(saveAction, &QAction::triggered, this, &MainWindow::saveCombat);
 	connect(this, &MainWindow::setSaveAction, this, [saveAction] (bool enable) {
 		saveAction->setEnabled(enable);
 	});
@@ -36,7 +36,7 @@ MainWindow::MainWindow()
 	auto *const openAction = new QAction(tr("&Open Table"), this);
 	openAction->setShortcuts(QKeySequence::Open);
 	openAction->setStatusTip(tr("Open an existing Table."));
-	connect(openAction, &QAction::triggered, this, &MainWindow::openTable);
+	connect(openAction, &QAction::triggered, this, &MainWindow::loadCombat);
 
 	auto *const aboutAction = new QAction(tr("&About"), this);
 	aboutAction->setStatusTip(tr("About Light Combat Manager"));
@@ -72,13 +72,12 @@ MainWindow::newCombat()
 {
 	// Check if a table is active
 	if (m_isTableActive) {
-		// Check if it's not empty and if the user has saved before hitting the shortcut
 		if (!m_tableWidget->isEmpty()) {
-			const auto newCombatMessage = m_changeOccured ? tr(
-				"Do you want to save the current Combat before starting a new one?") : tr(
-				"Do you want to start a new Combat?");
+			const auto newCombatMessage = m_changeOccured ?
+						      tr("Do you want to save the current Combat before starting a new one?") :
+						      tr("Do you want to start a new Combat?");
 
-			auto const msgBox = new QMessageBox(this);
+			auto *const msgBox = new QMessageBox(this);
 			msgBox->setStandardButtons(
 				m_changeOccured ?
 				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
@@ -89,7 +88,7 @@ MainWindow::newCombat()
 			switch (val) {
 			case QMessageBox::Save:
 			{
-				if (!saveTable()) {
+				if (!saveCombat()) {
 					return;
 				}
 				break;
@@ -109,7 +108,7 @@ MainWindow::newCombat()
 
 
 bool
-MainWindow::saveTable()
+MainWindow::saveCombat()
 {
 	if (!m_changeOccured) {
 		return false;
@@ -167,17 +166,15 @@ MainWindow::saveTable()
 
 
 void
-MainWindow::openTable()
+MainWindow::loadCombat()
 {
 	// Check if a table is active right now
 	if (m_isTableActive) {
-		// Check if the table is filled and if the user has not saved already
 		if (!m_tableWidget->isEmpty()) {
-			const auto openCombatMessage = m_changeOccured ? tr(
-				"Do you want to save the current Combat before opening another existing Combat?") : tr(
-				"Do you want to open an existing Combat?");
-
-			auto const msgBox = new QMessageBox(this);
+			const auto openCombatMessage = m_changeOccured ?
+						       tr("Do you want to save the current Combat before opening another existing Combat?") :
+						       tr("Do you want to open another existing Combat?");
+			auto *const msgBox = new QMessageBox(this);
 			msgBox->setStandardButtons(
 				m_changeOccured ?
 				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
@@ -188,7 +185,7 @@ MainWindow::openTable()
 			switch (val) {
 			case QMessageBox::Save:
 			{
-				if (!saveTable()) {
+				if (!saveCombat()) {
 					return;
 				}
 				break;
@@ -371,12 +368,10 @@ MainWindow::closeEvent(QCloseEvent *event)
 	// Check if a table is active and filled
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
 		const auto closeCombatMessage = m_changeOccured ?
-						tr(
-			"Currently, you are in a Combat. Do you want to save the Characters before exiting the program?")
-		:
+						tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
 						tr("Do you really want to exit the application?");
 
-		auto const msgBox = new QMessageBox(this);
+		auto *const msgBox = new QMessageBox(this);
 		msgBox->setStandardButtons(
 			m_changeOccured ?
 			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
@@ -387,7 +382,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 		switch (val) {
 		case QMessageBox::Save:
 		{
-			saveTable() ? event->accept() : event->ignore();
+			saveCombat() ? event->accept() : event->ignore();
 			break;
 		}
 		case QMessageBox::Discard:

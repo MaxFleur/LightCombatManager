@@ -41,6 +41,7 @@ FileHandler::saveTable(
 			for (int j = 0; j < tableWidget->columnCount() - 1; ++j) {
 				// Get the checkbox value
 				if (j == 4) {
+					// Cell widget is a checkbox within another widget, so find the child
 					auto * const checkBox = tableWidget->cellWidget(i, j)->findChild<QCheckBox *>();
 					strList << QVariant(checkBox->isChecked()).toString();
 				} else {

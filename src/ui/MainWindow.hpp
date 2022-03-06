@@ -30,10 +30,10 @@ private slots:
 	newCombat();
 
 	bool
-	saveTable();
+	saveCombat();
 
 	void
-	openTable();
+	loadCombat();
 
 	void
 	about();

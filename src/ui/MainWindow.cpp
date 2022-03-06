@@ -349,16 +349,8 @@ MainWindow::readSettings()
 {
 	QSettings settings;
 
-	if (settings.value("dir_save").isValid()) {
-		m_saveDir = settings.value("dir_save").toString();
-	} else {
-		m_saveDir = QString();
-	}
-	if (settings.value("dir_open").isValid()) {
-		m_openDir = settings.value("dir_open").toString();
-	} else {
-		m_openDir = QString();
-	}
+	m_saveDir = settings.value("dir_save").isValid() ? settings.value("dir_save").toString() : QString();
+	m_openDir = settings.value("dir_open").isValid() ? settings.value("dir_open").toString() : QString();
 }
 
 

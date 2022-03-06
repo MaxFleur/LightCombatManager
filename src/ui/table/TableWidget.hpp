@@ -5,7 +5,7 @@
 #include <QWidget>
 
 #include "../../handler/CharacterHandler.hpp"
-#include "CustomTable.hpp"
+#include "DisabledArrowKeyTable.hpp"
 
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {
@@ -138,7 +138,7 @@ private:
 	contextMenuEvent(QContextMenuEvent *event) override;
 
 	// Main table widget
-	QPointer<CustomTable> m_tableWidget;
+	QPointer<DisabledArrowKeyTable> m_tableWidget;
 
 	// Fonts for highlighting rows
 	QFont m_defaultFont;

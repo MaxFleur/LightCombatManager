@@ -28,7 +28,7 @@ TableWidget::TableWidget(bool isDataStored, QString data, QWidget *parent)
 
 	m_char = std::make_shared<CharacterHandler>();
 
-	m_tableWidget = new CustomTable();
+	m_tableWidget = new DisabledArrowKeyTable();
 	m_tableWidget->setColumnCount(NMBR_COLUMNS);
 
 	QStringList tableHeader;

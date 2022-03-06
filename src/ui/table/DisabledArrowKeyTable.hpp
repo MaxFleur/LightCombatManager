@@ -3,7 +3,7 @@
 #include <QTableWidget>
 
 // Helper class, disabling arrow key input
-class CustomTable : public QTableWidget {
+class DisabledArrowKeyTable : public QTableWidget {
 	Q_OBJECT
 
 protected:

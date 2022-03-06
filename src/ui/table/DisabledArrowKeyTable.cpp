@@ -1,9 +1,9 @@
-#include "CustomTable.hpp"
+#include "DisabledArrowKeyTable.hpp"
 
 #include <QKeyEvent>
 
 void
-CustomTable::keyPressEvent(QKeyEvent *event)
+DisabledArrowKeyTable::keyPressEvent(QKeyEvent *event)
 {
 	// Ignore event if the arrow keys are pressed
 	if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up) {

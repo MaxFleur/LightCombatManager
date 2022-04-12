@@ -493,11 +493,10 @@ TableWidget::setTableCheckBox(int row, bool checked)
 	});
 
 	// Center the checkboxes
-	auto * const widget = new QWidget();
+	auto * const widget = new QWidget;
 	auto *layout = new QHBoxLayout(widget);
 	layout->addWidget(checkBox);
 	layout->setAlignment(Qt::AlignCenter);
-	layout->setContentsMargins(0, 0, 0, 0);
 	widget->setLayout(layout);
 
 	m_tableWidget->setCellWidget(row, COL_ENEMY, widget);

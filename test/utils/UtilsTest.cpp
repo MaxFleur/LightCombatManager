@@ -1,6 +1,8 @@
 #include <QCheckBox>
+#include <QHBoxLayout>
 #include <QString>
 #include <QTableWidget>
+#include <QWidget>
 
 #include <catch2/catch.hpp>
 
@@ -12,11 +14,18 @@ TEST_CASE("Util Testing", "[Utils]"){
 	auto *const checkBox = new QCheckBox;
 	checkBox->setChecked(false);
 
+	// Center checkbox
+	auto *const widget = new QWidget;
+	auto *layout = new QHBoxLayout(widget);
+	layout->addWidget(checkBox);
+	layout->setAlignment(Qt::AlignCenter);
+	widget->setLayout(layout);
+
 	tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
 	tableWidget->setItem(0, 1, new QTableWidgetItem("19"));
 	tableWidget->setItem(0, 2, new QTableWidgetItem("2"));
 	tableWidget->setItem(0, 3, new QTableWidgetItem("36"));
-	tableWidget->setCellWidget(0, 4, checkBox);
+	tableWidget->setCellWidget(0, 4, widget);
 	tableWidget->setItem(0, 5, new QTableWidgetItem("Haste"));
 
 	SECTION("Resynchronizing characters test") {

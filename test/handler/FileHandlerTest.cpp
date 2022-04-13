@@ -83,7 +83,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		tableWidget->setItem(1, 5, new QTableWidgetItem(""));
 		tableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 
-		fileHandler->saveTable(tableWidget, "./test.csv", 0, 1);
+		bool tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1);
 		SECTION("File format correct") {
 			REQUIRE(fileHandler->getCSVData("./test.csv") == 0);
 		}

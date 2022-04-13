@@ -13,6 +13,7 @@ class AddCharacterDialog : public QDialog {
 	Q_OBJECT
 
 public:
+	explicit
 	AddCharacterDialog(QWidget *parent = 0);
 
 signals:

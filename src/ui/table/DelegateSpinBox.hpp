@@ -8,10 +8,11 @@ class DelegateSpinBox : public QStyledItemDelegate
 	Q_OBJECT
 
 public:
+	explicit
 	DelegateSpinBox(QObject *parent = nullptr);
 
-	QWidget *
+	[[nodiscard]] QWidget *
 	createEditor(QWidget *				parent,
-		     const QStyleOptionViewItem &	option,
-		     const QModelIndex &		index) const override;
+		     const QStyleOptionViewItem&	option,
+		     const QModelIndex&			index) const override;
 };

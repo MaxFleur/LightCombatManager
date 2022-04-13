@@ -12,13 +12,13 @@ void
 resynchronizeCharacters(QTableWidget *		tableWidget,
 			CharacterHandlerRef	characterHandler);
 
-bool
+[[nodiscard]] bool
 containsSemicolon(QTableWidget *tableWidget);
 
-int
+[[nodiscard]] int
 rollDice();
 
-int
+[[nodiscard]] int
 getStringWidth(QString	str,
 	       QFont	font);
 }

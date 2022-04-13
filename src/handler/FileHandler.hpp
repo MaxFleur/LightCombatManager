@@ -11,17 +11,17 @@ class FileHandler {
 public:
 
 	// Save a table of characters
-	bool
+	[[nodiscard]] bool
 	saveTable(QTableWidget *tableWidget,
 		  QString	filename,
 		  int		rowEntered,
 		  int		roundCounter);
 
 	// Reopen a saved table
-	int
+	[[nodiscard]] int
 	getCSVData(QString filename);
 
-	QString
+	[[nodiscard]] QString
 	getData()
 	{
 		return m_data;

@@ -47,7 +47,7 @@ public:
 	void
 	clearCharacters();
 
-	std::vector<std::shared_ptr<Character> >
+	[[nodiscard]] std::vector<std::shared_ptr<Character> >
 	getCharacters()
 	{
 		return characters;

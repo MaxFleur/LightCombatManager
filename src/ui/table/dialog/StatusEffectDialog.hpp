@@ -10,9 +10,10 @@ class StatusEffectDialog : public QDialog {
 	Q_OBJECT
 
 public:
+	explicit
 	StatusEffectDialog(QWidget *parent = 0);
 
-	QString
+	[[nodiscard]] QString
 	getEffect()
 	{
 		return m_effect;

@@ -19,31 +19,31 @@ public:
 	void
 	generateTable();
 
-	QTableWidget *
+	[[nodiscard]] QTableWidget *
 	getTableWidget()
 	{
 		return m_tableWidget;
 	}
 
-	int
+	[[nodiscard]] int
 	getRowEntered()
 	{
 		return m_rowEntered;
 	}
 
-	int
+	[[nodiscard]] int
 	getRoundCounter()
 	{
 		return m_roundCounter;
 	}
 
-	bool
+	[[nodiscard]] bool
 	isEmpty()
 	{
 		return m_tableWidget->rowCount() == 0;
 	}
 
-	int
+	[[nodiscard]] int
 	getHeight();
 
 public slots:

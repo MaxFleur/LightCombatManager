@@ -16,7 +16,7 @@ FileHandler::saveTable(
 	QTableWidget *	tableWidget,
 	QString		filename,
 	int		rowEntered,
-	int		roundCounter)
+	int		roundCounter) const
 {
 	// Create a file
 	QFile file(filename);
@@ -99,7 +99,7 @@ FileHandler::getCSVData(QString filename)
 
 // Checks if a table is in the correct format before using
 bool
-FileHandler::checkTableFormat(QString data)
+FileHandler::checkTableFormat(QString data) const
 {
 	// Get the stored table row data information
 	auto const rowDataHeader = data.split("\n").at(0).split(";");

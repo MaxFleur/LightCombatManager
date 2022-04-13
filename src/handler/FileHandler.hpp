@@ -15,14 +15,14 @@ public:
 	saveTable(QTableWidget *tableWidget,
 		  QString	filename,
 		  int		rowEntered,
-		  int		roundCounter);
+		  int		roundCounter) const;
 
 	// Reopen a saved table
 	[[nodiscard]] int
 	getCSVData(QString filename);
 
 	[[nodiscard]] QString
-	getData()
+	getData() const
 	{
 		return m_data;
 	}
@@ -33,6 +33,6 @@ private:
 
 	// Checks if a table is in the right format
 	bool
-	checkTableFormat(QString data);
+	checkTableFormat(QString data) const;
 };
 using FileHandlerRef = std::shared_ptr<FileHandler>;

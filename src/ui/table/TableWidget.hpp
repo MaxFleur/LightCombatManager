@@ -20,31 +20,31 @@ public:
 	generateTable();
 
 	[[nodiscard]] QTableWidget *
-	getTableWidget()
+	getTableWidget() const
 	{
 		return m_tableWidget;
 	}
 
 	[[nodiscard]] int
-	getRowEntered()
+	getRowEntered() const
 	{
 		return m_rowEntered;
 	}
 
 	[[nodiscard]] int
-	getRoundCounter()
+	getRoundCounter() const
 	{
 		return m_roundCounter;
 	}
 
 	[[nodiscard]] bool
-	isEmpty()
+	isEmpty() const
 	{
 		return m_tableWidget->rowCount() == 0;
 	}
 
 	[[nodiscard]] int
-	getHeight();
+	getHeight() const;
 
 public slots:
 

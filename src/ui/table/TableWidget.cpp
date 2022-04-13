@@ -214,7 +214,7 @@ TableWidget::setData()
 
 
 int
-TableWidget::getHeight()
+TableWidget::getHeight() const
 {
 	auto height = 0;
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {

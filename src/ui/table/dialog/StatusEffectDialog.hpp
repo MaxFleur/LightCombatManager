@@ -14,7 +14,7 @@ public:
 	StatusEffectDialog(QWidget *parent = 0);
 
 	[[nodiscard]] QString
-	getEffect()
+	getEffect() const
 	{
 		return m_effect;
 	}

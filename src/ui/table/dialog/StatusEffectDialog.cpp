@@ -1,6 +1,5 @@
 #include "StatusEffectDialog.hpp"
 
-#include <QComboBox>
 #include <QDebug>
 #include <QGridLayout>
 #include <QLabel>
@@ -14,9 +13,8 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 {
 	setWindowTitle(tr("Add Status Effect"));
 
-	auto *const textComboBox = new QComboBox;
-	textComboBox->setEditable(true);
-	textComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	auto *const textLineEdit = new QLineEdit;
+	textLineEdit->setPlaceholderText(tr("Effect name (e.g. Shaken)"));
 
 	m_list = new QListWidget;
 	m_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -29,13 +27,13 @@ StatusEffectDialog::StatusEffectDialog(QWidget *parent)
 
 	auto *const mainLayout = new QGridLayout(this);
 	mainLayout->addWidget(new QLabel(tr("Find:")), 0, 0);
-	mainLayout->addWidget(textComboBox, 0, 1, 1, 2);
+	mainLayout->addWidget(textLineEdit, 0, 1, 1, 2);
 	mainLayout->addWidget(m_list, 1, 0, 1, 3);
 	mainLayout->addWidget(addEffectButton, 2, 1);
 	mainLayout->addWidget(cancelButton, 2, 2);
 
-	connect(textComboBox->lineEdit(), &QLineEdit::textChanged, this, [this, textComboBox] () {
-		findEffect(textComboBox->lineEdit()->text());
+	connect(textLineEdit, &QLineEdit::textChanged, this, [this, textLineEdit] () {
+		findEffect(textLineEdit->text());
 	});
 	connect(addEffectButton, &QPushButton::clicked, this, &StatusEffectDialog::addEffect);
 	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);

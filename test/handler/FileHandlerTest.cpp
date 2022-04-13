@@ -59,7 +59,6 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		// Centering fighter checkbox
 		auto *layoutFighter = new QHBoxLayout(widgetFighter);
 		layoutFighter->addWidget(checkBoxFighter);
-		layoutFighter->setAlignment(Qt::AlignCenter);
 		widgetFighter->setLayout(layoutFighter);
 
 		tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
@@ -74,7 +73,6 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		auto *const widgetBoss = new QWidget;
 		auto *layoutBoss = new QHBoxLayout(widgetBoss);
 		layoutBoss->addWidget(checkBoxBoss);
-		layoutBoss->setAlignment(Qt::AlignCenter);
 		widgetBoss->setLayout(layoutBoss);
 
 		tableWidget->setItem(1, 0, new QTableWidgetItem("Boss"));

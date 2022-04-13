@@ -18,7 +18,6 @@ TEST_CASE("Util Testing", "[Utils]"){
 	auto *const widget = new QWidget;
 	auto *layout = new QHBoxLayout(widget);
 	layout->addWidget(checkBox);
-	layout->setAlignment(Qt::AlignCenter);
 	widget->setLayout(layout);
 
 	tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));

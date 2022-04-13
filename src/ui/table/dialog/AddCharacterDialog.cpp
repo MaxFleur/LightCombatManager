@@ -36,7 +36,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 	auto *const addButton = new QPushButton(tr("Add"));
 	auto *const resetButton = new QPushButton(tr("Reset all Values"));
 	auto *const cancelButton = new QPushButton(tr("Return"));
-	auto *const statusEffectButton = new QPushButton(tr("Status Effects"));
+	auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
 	m_animatedLabel = new QLabel;
 	m_timer = new QTimer(this);

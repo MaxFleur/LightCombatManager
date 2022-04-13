@@ -572,7 +572,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	auto * const menu = new QMenu(this);
 
-	auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)"), this, [this] () {
+	auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
 		openAddCharacterDialog();
 	});
 	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
@@ -584,7 +584,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		// Enable row removal
 		rowSelected();
 
-		auto *const statusEffectAction = menu->addAction(tr("Add Status Effect"), this, [this] () {
+		auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
 			openStatusEffectDialog();
 		});
 		statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);

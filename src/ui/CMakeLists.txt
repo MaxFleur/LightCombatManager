@@ -1,5 +1,6 @@
 add_library (ui INTERFACE)
 
+add_subdirectory(settings)
 add_subdirectory(table)
 
 target_include_directories (ui 
@@ -14,5 +15,5 @@ target_sources(ui INTERFACE
 )
 
 target_link_libraries(ui 
-    INTERFACE Qt5::Widgets table
+    INTERFACE Qt5::Widgets settings table
 )

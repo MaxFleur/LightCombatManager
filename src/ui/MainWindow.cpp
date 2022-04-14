@@ -13,6 +13,7 @@
 #include <QString>
 #include <QTimer>
 
+#include "settings/SettingsDialog.hpp"
 #include "table/TableWidget.hpp"
 #include "Utils.hpp"
 #include "WelcomeWidget.hpp"
@@ -38,6 +39,9 @@ MainWindow::MainWindow()
 	openAction->setStatusTip(tr("Open an existing Table."));
 	connect(openAction, &QAction::triggered, this, &MainWindow::loadCombat);
 
+	auto *const settingsAction = new QAction(tr("Settings..."), this);
+	connect(settingsAction, &QAction::triggered, this, &MainWindow::openSettings);
+
 	auto *const aboutAction = new QAction(tr("&About"), this);
 	aboutAction->setStatusTip(tr("About Light Combat Manager"));
 	connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
@@ -51,6 +55,7 @@ MainWindow::MainWindow()
 	fileMenu->addAction(newCombatAction);
 	fileMenu->addAction(saveAction);
 	fileMenu->addAction(openAction);
+	fileMenu->addAction(settingsAction);
 	fileMenu->addSeparator();
 
 	auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -225,6 +230,15 @@ MainWindow::loadCombat()
 	case 2:
 		break;
 	}
+}
+
+
+void
+MainWindow::openSettings()
+{
+	auto * const dialog = new SettingsDialog();
+	dialog->setAttribute(Qt::WA_DeleteOnClose);
+	dialog->show();
 }
 
 

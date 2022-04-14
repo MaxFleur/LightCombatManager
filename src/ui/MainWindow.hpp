@@ -4,8 +4,10 @@
 #include <QMainWindow>
 #include <QPointer>
 
+#include "settings/SettingsData.hpp"
 #include "../handler/FileHandler.hpp"
 
+class SettingsData;
 class TableWidget;
 class WelcomeWidget;
 
@@ -81,6 +83,7 @@ private:
 	QString m_saveDir;
 
 	FileHandlerRef m_file;
+	std::shared_ptr<SettingsData> m_settingsData;
 
 	static constexpr int START_WIDTH = 720;
 	static constexpr int START_HEIGHT = 240;

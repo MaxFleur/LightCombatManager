@@ -7,47 +7,54 @@
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
 
 #include "SettingsData.hpp"
 
-SettingsDialog::SettingsDialog(QWidget *parent)
+SettingsDialog::SettingsDialog(std::shared_ptr<SettingsData> settingsData,
+							   bool isTableActive,
+							   QWidget *parent) :
+	m_isTableActive(isTableActive),
+	m_settingsData(settingsData)
 {
 	setWindowTitle(tr("Settings"));
 
-	auto *const rulesetBox = new QComboBox;
-	rulesetBox->addItem("Pathfinder 1E", SettingsData::Ruleset::PATHFINDER_1E);
-	rulesetBox->addItem("Pathfinder 2E", SettingsData::Ruleset::PATHFINDER_2E);
-	rulesetBox->addItem("DnD 3.5E", SettingsData::Ruleset::DND_3_5E);
-	rulesetBox->addItem("DnD 5E", SettingsData::Ruleset::DND_5E);
-
-	auto *const rulesetLayout = new QHBoxLayout();
+	m_rulesetBox = new QComboBox;
+	m_rulesetBox->addItem("Pathfinder 1E", SettingsData::Ruleset::PATHFINDER_1E);
+	m_rulesetBox->addItem("Pathfinder 2E", SettingsData::Ruleset::PATHFINDER_2E);
+	m_rulesetBox->addItem("DnD 3.5E", SettingsData::Ruleset::DND_3_5E);
+	m_rulesetBox->addItem("DnD 5E", SettingsData::Ruleset::DND_5E);
+	m_rulesetBox->setCurrentIndex(m_settingsData->ruleset);
+	
+	auto *const rulesetLayout = new QHBoxLayout;
 	rulesetLayout->setAlignment(Qt::AlignLeft);
 	rulesetLayout->addWidget(new QLabel(tr("Ruleset:")));
-	rulesetLayout->addWidget(rulesetBox);
+	rulesetLayout->addWidget(m_rulesetBox);
 
-	auto *const rollTieBox = new QCheckBox;
+	m_rollTieBox = new QCheckBox;
+	m_rollTieBox->setChecked(m_settingsData->rollAutomatically);
 
-	auto *const rollTieLayout = new QHBoxLayout();
+	auto *const rollTieLayout = new QHBoxLayout;
 	rollTieLayout->setAlignment(Qt::AlignLeft);
-	rollTieLayout->addWidget(rollTieBox);
+	rollTieLayout->addWidget(m_rollTieBox);
 	rollTieLayout->addWidget(new QLabel(tr("Roll automatically for tie")));
 
-	auto *const rulesLayout = new QVBoxLayout();
+	auto *const rulesLayout = new QVBoxLayout;
 	rulesLayout->addLayout(rulesetLayout);
 	rulesLayout->addLayout(rollTieLayout);
 
-	auto * const rulesetGroupBox = new QGroupBox(tr("Rules"), this);
+	auto *const rulesetGroupBox = new QGroupBox(tr("Rules"));
 	rulesetGroupBox->setLayout(rulesLayout);
 
-	auto * const buttonBox = new QDialogButtonBox(this);
-	auto * const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
-	auto * const applyButton = buttonBox->addButton(QDialogButtonBox::Apply);
-	auto * const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
+	auto *const buttonBox = new QDialogButtonBox;
+	auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
+	auto *const applyButton = buttonBox->addButton(QDialogButtonBox::Apply);
+	auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
-	auto *const mainLayout = new QVBoxLayout();
+	auto *const mainLayout = new QVBoxLayout;
 	mainLayout->addWidget(rulesetGroupBox);
 	mainLayout->addWidget(buttonBox);
 	setLayout(mainLayout);
@@ -58,13 +65,30 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 }
 
 
-void
+bool
 SettingsDialog::applyClicked()
 {
+	if(m_rulesetBox->currentIndex() != m_settingsData->ruleset || m_rollTieBox->isChecked() != m_settingsData->rollAutomatically) {
+		if(m_isTableActive) {
+			auto const reply = QMessageBox::critical(
+				this,
+				tr("Combat active!"),
+				tr("You changed the ruleset while a Combat is active. Please save and exit "
+				   "the current Combat before changing the ruleset."));
+			return false;
+		}
+		m_settingsData->ruleset = static_cast<SettingsData::Ruleset>(m_rulesetBox->currentIndex());
+		m_settingsData->rollAutomatically = m_rollTieBox->isChecked();
+		return true;
+	}
+	return true;
 }
 
 
 void
 SettingsDialog::okClicked()
 {
+	if(applyClicked()) {
+		QDialog::accept();
+	}
 }

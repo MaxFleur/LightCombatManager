@@ -1,6 +1,12 @@
 #pragma once
 
 #include <QDialog>
+#include <QPointer>
+
+class SettingsData;
+
+class QCheckBox;
+class QComboBox;
 
 // Dialog for the program settings
 class SettingsDialog : public QDialog {
@@ -8,13 +14,23 @@ class SettingsDialog : public QDialog {
 
 public:
 	explicit
-	SettingsDialog(QWidget *parent = 0);
+	SettingsDialog(std::shared_ptr<SettingsData> settingsData, 
+				   bool isTableActive,
+				   QWidget *parent = 0);
 
 private slots:
 
-	void
+	bool
 	applyClicked();
 
 	void
 	okClicked();
+	
+private:
+	
+	QPointer<QComboBox> m_rulesetBox;
+	QPointer<QCheckBox> m_rollTieBox;
+	
+	std::shared_ptr<SettingsData> m_settingsData;
+	bool m_isTableActive;
 };

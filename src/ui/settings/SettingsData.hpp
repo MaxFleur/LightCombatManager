@@ -12,5 +12,6 @@ public:
 	};
 
 public:
-	Ruleset ruleset;
+	Ruleset ruleset = PATHFINDER_1E;
+    bool rollAutomatically = true;
 };

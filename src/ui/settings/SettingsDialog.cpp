@@ -11,15 +11,17 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+#include "SettingsData.hpp"
+
 SettingsDialog::SettingsDialog(QWidget *parent)
 {
 	setWindowTitle(tr("Settings"));
 
 	auto *const rulesetBox = new QComboBox;
-	rulesetBox->addItem("Pathfinder 1E");
-	rulesetBox->addItem("Pathfinder 2E");
-	rulesetBox->addItem("DnD 3.5E");
-	rulesetBox->addItem("DnD 5E");
+	rulesetBox->addItem("Pathfinder 1E", SettingsData::Ruleset::PATHFINDER_1E);
+	rulesetBox->addItem("Pathfinder 2E", SettingsData::Ruleset::PATHFINDER_2E);
+	rulesetBox->addItem("DnD 3.5E", SettingsData::Ruleset::DND_3_5E);
+	rulesetBox->addItem("DnD 5E", SettingsData::Ruleset::DND_5E);
 
 	auto *const rulesetLayout = new QHBoxLayout();
 	rulesetLayout->setAlignment(Qt::AlignLeft);

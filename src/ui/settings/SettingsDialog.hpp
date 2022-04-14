@@ -2,7 +2,7 @@
 
 #include <QDialog>
 
-// Dialog used to add certain status effects to characters
+// Dialog for the program settings
 class SettingsDialog : public QDialog {
 	Q_OBJECT
 

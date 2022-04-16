@@ -26,6 +26,7 @@ SettingsDialog::SettingsDialog(std::shared_ptr<SettingsData>	settingsData,
 	m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", SettingsData::Ruleset::PATHFINDER_1E_DND_3_5E);
 	m_rulesetBox->addItem("Pathfinder 2E", SettingsData::Ruleset::PATHFINDER_2E);
 	m_rulesetBox->addItem("D&D 5E", SettingsData::Ruleset::DND_5E);
+	m_rulesetBox->setToolTip(tr("The ruleset determines the Table sorting rules and the available status effects."));
 	m_rulesetBox->setCurrentIndex(m_settingsData->m_ruleset);
 
 	auto *const rulesetLayout = new QHBoxLayout;

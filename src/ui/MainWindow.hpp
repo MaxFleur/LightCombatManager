@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QPointer>
 
-#include "settings/SettingsData.hpp"
 #include "../handler/FileHandler.hpp"
 
 class SettingsData;

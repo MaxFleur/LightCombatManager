@@ -7,10 +7,9 @@ public:
 	SettingsData();
 
 	enum Ruleset {
-		PATHFINDER_1E	= 0,
-		PATHFINDER_2E	= 1,
-		DND_3_5E	= 2,
-		DND_5E		= 3
+		PATHFINDER_1E_DND_3_5E	= 0,
+		PATHFINDER_2E		= 1,
+		DND_5E			= 2
 	};
 
 	void
@@ -18,7 +17,7 @@ public:
 		      bool	rollAutomatically);
 
 public:
-	Ruleset m_ruleset = PATHFINDER_1E;
+	Ruleset m_ruleset = PATHFINDER_1E_DND_3_5E;
 	bool m_rollAutomatically = true;
 
 private:

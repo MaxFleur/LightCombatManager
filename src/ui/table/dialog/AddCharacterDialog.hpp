@@ -8,13 +8,16 @@
 class QCheckBox;
 class QSpinBox;
 
+class SettingsData;
+
 // Dialog used to add new characters to an existing Combat
 class AddCharacterDialog : public QDialog {
 	Q_OBJECT
 
 public:
 	explicit
-	AddCharacterDialog(QWidget *parent = 0);
+	AddCharacterDialog(std::shared_ptr<SettingsData>	settingsData,
+			   QWidget *				parent = 0);
 
 signals:
 
@@ -70,6 +73,8 @@ private:
 
 	bool m_somethingStored{ false };
 	bool m_isFirstCharStored{ false };
+
+	std::shared_ptr<SettingsData> m_settingsData;
 
 	static constexpr int LABEL_SHOWN = 1000;
 	static constexpr int LABEL_FADEOUT = 2000;

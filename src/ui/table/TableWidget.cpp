@@ -19,10 +19,11 @@
 #include "DelegateSpinBox.hpp"
 #include "dialog/AddCharacterDialog.hpp"
 #include "dialog/StatusEffectDialog.hpp"
+#include "settings/SettingsData.hpp"
 #include "Utils.hpp"
 
-TableWidget::TableWidget(bool isDataStored, QString data, QWidget *parent)
-	: m_isDataStored(isDataStored), m_data(data)
+TableWidget::TableWidget(bool isDataStored, std::shared_ptr<SettingsData> settingsData, QString data, QWidget *parent)
+	: m_isDataStored(isDataStored), m_settingsData(settingsData), m_data(data)
 {
 	readSettings();
 
@@ -300,7 +301,7 @@ TableWidget::openStatusEffectDialog()
 		return;
 	}
 	// Open dialog
-	auto *const dialog = new StatusEffectDialog(this);
+	auto *const dialog = new StatusEffectDialog(m_settingsData, this);
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// If accepted, add status effect text
@@ -324,7 +325,7 @@ TableWidget::openAddCharacterDialog()
 	// Resynchronize because the table could have been modified
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 
-	auto *const dialog = new AddCharacterDialog(this);
+	auto *const dialog = new AddCharacterDialog(m_settingsData, this);
 	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
 	// Lock this widget, wait until Dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {

@@ -13,6 +13,7 @@
 #include <QString>
 #include <QTimer>
 
+#include "settings/SettingsData.hpp"
 #include "settings/SettingsDialog.hpp"
 #include "table/TableWidget.hpp"
 #include "Utils.hpp"
@@ -290,7 +291,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString data)
 {
-	m_tableWidget = new TableWidget(isDataStored, data, this);
+	m_tableWidget = new TableWidget(isDataStored, m_settingsData, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
 	connect(m_tableWidget, &TableWidget::tableHeightSet, this, [this] (int height) {

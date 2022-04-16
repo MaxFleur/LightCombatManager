@@ -64,7 +64,7 @@ MainWindow::MainWindow()
 
 	m_file = std::make_shared<FileHandler>();
 	m_settingsData = std::make_shared<SettingsData>();
-	
+
 	handleSubDir();
 	readSettings();
 
@@ -356,8 +356,6 @@ MainWindow::writeSettings(QString fileName, bool setSaveDir)
 	if (setSaveDir) {
 		settings.setValue("dir_save", fileName);
 	}
-	// settings.setValue("ruleset", m_settingsData->ruleset);
-	// settings.setValue("roll_auto", m_settingsData->rollAutomatically);
 }
 
 
@@ -365,15 +363,8 @@ void
 MainWindow::readSettings()
 {
 	QSettings settings;
-	qDebug() << settings.fileName();
 	m_saveDir = settings.value("dir_save").isValid() ? settings.value("dir_save").toString() : QString();
 	m_openDir = settings.value("dir_open").isValid() ? settings.value("dir_open").toString() : QString();
-	
-	m_settingsData->ruleset = settings.value("ruleset").isValid() ? 
-							  static_cast<SettingsData::Ruleset>(settings.value("ruleset").toInt()) : 
-							  SettingsData::Ruleset::PATHFINDER_1E;
-	m_settingsData->rollAutomatically = settings.value("roll_auto").isValid() ? 
-										settings.value("roll_auto").toBool() : true;
 }
 
 

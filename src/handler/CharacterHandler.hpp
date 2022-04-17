@@ -5,6 +5,8 @@
 
 #include <QString>
 
+#include "../ui/settings/SettingsData.hpp"
+
 // This class handles the creation, sorting and deletion of the created characters
 class CharacterHandler {
 private:
@@ -41,7 +43,8 @@ public:
 
 	// Sort the stored characters
 	void
-	sortCharacters();
+	sortCharacters(SettingsData::Ruleset	ruleset,
+		       bool			rollAutomatically);
 
 	// Clear all characters
 	void

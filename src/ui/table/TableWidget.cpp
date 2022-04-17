@@ -336,7 +336,7 @@ TableWidget::openAddCharacterDialog()
 				tr("Do you want to sort the table?"),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes) {
-				m_char->sortCharacters();
+				m_char->sortCharacters(m_settingsData->m_ruleset, m_settingsData->m_rollAutomatically);
 				m_rowEntered = 0;
 				generateTable();
 			}

@@ -3,6 +3,7 @@
 #include <catch2/catch.hpp>
 
 #include "CharacterHandler.hpp"
+#include "SettingsData.hpp"
 
 
 TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
@@ -31,7 +32,9 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "");
 	}
 	SECTION("Sort Characters test") {
+		std::shared_ptr<SettingsData> settingsData = std::make_shared<SettingsData>();
 		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+
 		charHandler->storeCharacter("Bard", 12, 2, 29);
 		charHandler->storeCharacter("Zombie", 12, 1, 13, true);
 		charHandler->storeCharacter("Fighter", 19, 4, 36, false, "Shaken");
@@ -39,7 +42,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Cleric", 7, 1, 31, false, "Fascinated");
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false, "Invisible");
 
-		charHandler->sortCharacters();
+		charHandler->sortCharacters(settingsData->m_ruleset, settingsData->m_rollAutomatically);
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
 		REQUIRE(charHandler->getCharacters().at(1)->name == "Undead Boss");
 		REQUIRE(charHandler->getCharacters().at(2)->name == "Fighter");
@@ -48,11 +51,13 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(5)->name == "Cleric");
 	}
 	SECTION("Clear Characters test") {
+		std::shared_ptr<SettingsData> settingsData = std::make_shared<SettingsData>();
 		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+
 		charHandler->storeCharacter("Bard", 12, 2, 29);
 		charHandler->clearCharacters();
 
-		charHandler->sortCharacters();
+		charHandler->sortCharacters(settingsData->m_ruleset, settingsData->m_rollAutomatically);
 		REQUIRE(charHandler->getCharacters().size() == 0);
 	}
 }

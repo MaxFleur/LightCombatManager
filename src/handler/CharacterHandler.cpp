@@ -18,28 +18,50 @@ CharacterHandler::storeCharacter(
 }
 
 
-// Sort all created characters. The rules for sorting are defined in the Pathfinder-1E-rulebook.
+// Sort all created characters
 void
-CharacterHandler::sortCharacters()
+CharacterHandler::sortCharacters(SettingsData::Ruleset ruleset, bool rollAutomatically)
 {
 	std::sort(characters.begin(), characters.end(),
-		  [](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
+		  [ruleset, rollAutomatically](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
 		// Sort for higher initiative
 		if (c1->initiative != c2->initiative) {
 			return c1->initiative > c2->initiative;
 		} else {
-			// If initiative is equal, sort for the higher modificator
-			if (c1->modifier != c2->modifier) {
-				return c1->modifier > c2->modifier;
-				// If initiative and modifiers are equal, sort by the name hashes
-			} else {
-				return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
-				       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();
+			switch (ruleset) {
+				// PF 1E/D&D 3.5 rules: If initiative is equal, sort for higher INI mod
+				// If that's equal, sort automatically or let the party decide
+				case SettingsData::Ruleset::PATHFINDER_1E_DND_3_5E:
+					if (c1->modifier != c2->modifier) {
+						return c1->modifier > c2->modifier;
+					} else {
+						if (rollAutomatically) {
+							return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
+							       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();
+						}
+					}
+				// PF 2E rules: If there is a tie between player and foe, foe goes first
+				// Otherwise sort automatically or let the party decide
+				case SettingsData::Ruleset::PATHFINDER_2E:
+					if (c1->isEnemy != c2->isEnemy) {
+						return c1->isEnemy > c2->isEnemy;
+					} else {
+						if (rollAutomatically) {
+							return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
+							       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();
+						}
+					}
+				// D&D 5E rules: A tie occurs already for equal initiative, so sort automatically
+				// or let the party decide
+				case SettingsData::Ruleset::DND_5E:
+					if (rollAutomatically) {
+						return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
+						       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();
+					}
 			}
 		}
 		return false;
-	}
-		  );
+	});
 }
 
 

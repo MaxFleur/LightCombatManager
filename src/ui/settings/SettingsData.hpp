@@ -18,7 +18,7 @@ public:
 
 public:
 	Ruleset m_ruleset = PATHFINDER_1E_DND_3_5E;
-	bool m_rollAutomatically = true;
+	bool m_rollAutomatically = false;
 
 private:
 

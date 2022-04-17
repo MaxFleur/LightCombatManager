@@ -19,7 +19,7 @@ SettingsData::readSettings()
 		    static_cast<Ruleset>(settings.value("ruleset").toInt()) :
 		    Ruleset::PATHFINDER_1E_DND_3_5E;
 	m_rollAutomatically = settings.value("roll_auto").isValid() ?
-			      settings.value("roll_auto").toBool() : true;
+			      settings.value("roll_auto").toBool() : false;
 	settings.endGroup();
 }
 

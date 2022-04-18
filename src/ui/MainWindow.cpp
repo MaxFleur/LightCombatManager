@@ -11,10 +11,10 @@
 #include <QString>
 #include <QTimer>
 
+#include "DirSettings.hpp"
+#include "MainSettings.hpp"
 #include "MainSettingsDialog.hpp"
-#include "settings/DirSettings.hpp"
-#include "settings/MainSettings.hpp"
-#include "table/TableWidget.hpp"
+#include "TableWidget.hpp"
 #include "Utils.hpp"
 #include "WelcomeWidget.hpp"
 

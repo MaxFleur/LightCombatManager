@@ -1,6 +1,6 @@
 #pragma once
 
-// Store data used for the settings dialog
+// Store the main settings affecting the entire application
 class MainSettings {
 public:
 

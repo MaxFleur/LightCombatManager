@@ -10,7 +10,7 @@
 #include <QString>
 #include <QStringList>
 
-#include "settings/MainSettings.hpp"
+#include "MainSettings.hpp"
 #include "StatusEffectData.hpp"
 
 StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSettings, QWidget *parent) :

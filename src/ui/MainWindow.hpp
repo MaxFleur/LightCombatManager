@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QPointer>
 
-#include "../handler/FileHandler.hpp"
+#include "FileHandler.hpp"
 
 class DirSettings;
 class MainSettings;

@@ -4,7 +4,7 @@
 #include <QString>
 #include <QWidget>
 
-#include "../../handler/CharacterHandler.hpp"
+#include "CharacterHandler.hpp"
 #include "DisabledArrowKeyTable.hpp"
 
 class MainSettings;

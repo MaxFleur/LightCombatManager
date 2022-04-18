@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../handler/CharacterHandler.hpp"
+#include "CharacterHandler.hpp"
 
 class QFont;
 class QTableWidget;

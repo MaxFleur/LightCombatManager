@@ -16,11 +16,11 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
+#include "AddCharacterDialog.hpp"
 #include "DelegateSpinBox.hpp"
-#include "dialog/AddCharacterDialog.hpp"
-#include "dialog/StatusEffectDialog.hpp"
-#include "settings/MainSettings.hpp"
-#include "settings/TableSettings.hpp"
+#include "MainSettings.hpp"
+#include "StatusEffectDialog.hpp"
+#include "TableSettings.hpp"
 #include "Utils.hpp"
 
 TableWidget::TableWidget(bool isDataStored, std::shared_ptr<MainSettings> MainSettings, QString data, QWidget *parent)

@@ -8,7 +8,7 @@
 #include <QTableWidgetItem>
 #include <QTextStream>
 
-#include "../utils/Utils.hpp"
+#include "Utils.hpp"
 
 // Stores a table as a csv
 bool

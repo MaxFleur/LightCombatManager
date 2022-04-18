@@ -2,7 +2,7 @@
 
 #include <QString>
 
-// Store data used for the settings dialog
+// Store data used for setting the opening and saving directories
 class DirSettings {
 public:
 

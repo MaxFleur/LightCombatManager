@@ -5,7 +5,7 @@
 
 #include <QString>
 
-#include "../ui/settings/MainSettings.hpp"
+#include "MainSettings.hpp"
 
 // This class handles the creation, sorting and deletion of the created characters
 class CharacterHandler {

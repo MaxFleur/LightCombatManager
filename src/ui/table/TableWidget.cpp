@@ -488,14 +488,14 @@ TableWidget::showModColumn(bool show)
 void
 TableWidget::setTableCheckBox(int row, bool checked)
 {
-	auto * const checkBox = new QCheckBox;
+	auto *const checkBox = new QCheckBox;
 	checkBox->setChecked(checked);
 	connect(checkBox, &QCheckBox::stateChanged, this, [this] {
 		emit changeOccured();
 	});
 
 	// Center the checkboxes
-	auto * const widget = new QWidget;
+	auto *const widget = new QWidget;
 	auto *layout = new QHBoxLayout(widget);
 	layout->addWidget(checkBox);
 	layout->setAlignment(Qt::AlignCenter);

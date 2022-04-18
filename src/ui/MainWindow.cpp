@@ -238,7 +238,7 @@ MainWindow::loadCombat()
 void
 MainWindow::openSettings()
 {
-	auto * const dialog = new SettingsDialog(m_settingsData, m_isTableActive, this);
+	auto *const dialog = new SettingsDialog(m_settingsData, m_isTableActive, this);
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
 }

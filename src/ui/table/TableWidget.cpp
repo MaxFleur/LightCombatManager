@@ -20,12 +20,12 @@
 #include "DelegateSpinBox.hpp"
 #include "dialog/AddCharacterDialog.hpp"
 #include "dialog/StatusEffectDialog.hpp"
-#include "settings/SettingsData.hpp"
+#include "settings/MainSettings.hpp"
 #include "settings/TableSettings.hpp"
 #include "Utils.hpp"
 
-TableWidget::TableWidget(bool isDataStored, std::shared_ptr<SettingsData> settingsData, QString data, QWidget *parent)
-	: m_isDataStored(isDataStored), m_settingsData(settingsData), m_data(data)
+TableWidget::TableWidget(bool isDataStored, std::shared_ptr<MainSettings> MainSettings, QString data, QWidget *parent)
+	: m_isDataStored(isDataStored), m_mainSettings(MainSettings), m_data(data)
 {
 	m_char = std::make_shared<CharacterHandler>();
 	m_tableSettings = std::make_shared<TableSettings>();
@@ -302,7 +302,7 @@ TableWidget::openStatusEffectDialog()
 		return;
 	}
 	// Open dialog
-	auto *const dialog = new StatusEffectDialog(m_settingsData, this);
+	auto *const dialog = new StatusEffectDialog(m_mainSettings, this);
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// If accepted, add status effect text
@@ -326,7 +326,7 @@ TableWidget::openAddCharacterDialog()
 	// Resynchronize because the table could have been modified
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 
-	auto *const dialog = new AddCharacterDialog(m_settingsData, this);
+	auto *const dialog = new AddCharacterDialog(m_mainSettings, this);
 	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
 	// Lock this widget, wait until Dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
@@ -337,7 +337,7 @@ TableWidget::openAddCharacterDialog()
 				tr("Do you want to sort the table?"),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes) {
-				m_char->sortCharacters(m_settingsData->m_ruleset, m_settingsData->m_rollAutomatically);
+				m_char->sortCharacters(m_mainSettings->m_ruleset, m_mainSettings->m_rollAutomatically);
 				m_rowEntered = 0;
 				generateTable();
 			}

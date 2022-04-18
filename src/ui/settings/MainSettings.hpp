@@ -1,10 +1,10 @@
 #pragma once
 
 // Store data used for the settings dialog
-class SettingsData {
+class MainSettings {
 public:
 
-	SettingsData();
+	MainSettings();
 
 	enum Ruleset {
 		PATHFINDER_1E_DND_3_5E	= 0,
@@ -13,8 +13,8 @@ public:
 	};
 
 	void
-	writeSettings(int	ruleset,
-		      bool	rollAutomatically);
+	write(int	ruleset,
+	      bool	rollAutomatically);
 
 public:
 	Ruleset m_ruleset = PATHFINDER_1E_DND_3_5E;
@@ -23,5 +23,5 @@ public:
 private:
 
 	void
-	readSettings();
+	read();
 };

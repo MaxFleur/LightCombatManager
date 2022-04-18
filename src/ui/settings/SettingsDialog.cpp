@@ -12,22 +12,22 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "SettingsData.hpp"
+#include "MainSettings.hpp"
 
-SettingsDialog::SettingsDialog(std::shared_ptr<SettingsData>	settingsData,
+SettingsDialog::SettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
 			       bool				isTableActive,
 			       QWidget *			parent) :
 	m_isTableActive(isTableActive),
-	m_settingsData(settingsData)
+	m_mainSettings(MainSettings)
 {
 	setWindowTitle(tr("Settings"));
 
 	m_rulesetBox = new QComboBox;
-	m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", SettingsData::Ruleset::PATHFINDER_1E_DND_3_5E);
-	m_rulesetBox->addItem("Pathfinder 2E", SettingsData::Ruleset::PATHFINDER_2E);
-	m_rulesetBox->addItem("D&D 5E", SettingsData::Ruleset::DND_5E);
+	m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E);
+	m_rulesetBox->addItem("Pathfinder 2E", MainSettings::Ruleset::PATHFINDER_2E);
+	m_rulesetBox->addItem("D&D 5E", MainSettings::Ruleset::DND_5E);
 	m_rulesetBox->setToolTip(tr("The ruleset determines the Table sorting rules and the available status effects."));
-	m_rulesetBox->setCurrentIndex(m_settingsData->m_ruleset);
+	m_rulesetBox->setCurrentIndex(m_mainSettings->m_ruleset);
 
 	auto *const rulesetLayout = new QHBoxLayout;
 	rulesetLayout->setAlignment(Qt::AlignLeft);
@@ -35,7 +35,7 @@ SettingsDialog::SettingsDialog(std::shared_ptr<SettingsData>	settingsData,
 	rulesetLayout->addWidget(m_rulesetBox);
 
 	m_rollTieBox = new QCheckBox;
-	m_rollTieBox->setChecked(m_settingsData->m_rollAutomatically);
+	m_rollTieBox->setChecked(m_mainSettings->m_rollAutomatically);
 	auto *const rollTieLabel = new QLabel(tr("Roll automatically for tie"));
 	rollTieLabel->setToolTip(tr("If a tie occurs while Characters are generated for a Combat, the app will "
 				    "automatically decide the turn order."));
@@ -71,7 +71,7 @@ SettingsDialog::SettingsDialog(std::shared_ptr<SettingsData>	settingsData,
 bool
 SettingsDialog::applyClicked()
 {
-	if (m_rulesetBox->currentIndex() != m_settingsData->m_ruleset || m_rollTieBox->isChecked() != m_settingsData->m_rollAutomatically) {
+	if (m_rulesetBox->currentIndex() != m_mainSettings->m_ruleset || m_rollTieBox->isChecked() != m_mainSettings->m_rollAutomatically) {
 		if (m_isTableActive) {
 			auto const reply = QMessageBox::critical(
 				this,
@@ -80,7 +80,7 @@ SettingsDialog::applyClicked()
 				   "the current Combat before changing the ruleset."));
 			return false;
 		}
-		m_settingsData->writeSettings(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
+		m_mainSettings->write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
 		return true;
 	}
 	return true;

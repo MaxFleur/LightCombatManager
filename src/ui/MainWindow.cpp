@@ -13,7 +13,7 @@
 #include <QString>
 #include <QTimer>
 
-#include "settings/SettingsData.hpp"
+#include "settings/MainSettings.hpp"
 #include "settings/SettingsDialog.hpp"
 #include "table/TableWidget.hpp"
 #include "Utils.hpp"
@@ -64,7 +64,7 @@ MainWindow::MainWindow()
 	helpMenu->addAction(aboutQtAction);
 
 	m_file = std::make_shared<FileHandler>();
-	m_settingsData = std::make_shared<SettingsData>();
+	m_mainSettings = std::make_shared<MainSettings>();
 
 	handleSubDir();
 	readSettings();
@@ -238,7 +238,7 @@ MainWindow::loadCombat()
 void
 MainWindow::openSettings()
 {
-	auto *const dialog = new SettingsDialog(m_settingsData, m_isTableActive, this);
+	auto *const dialog = new SettingsDialog(m_mainSettings, m_isTableActive, this);
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
 }
@@ -291,7 +291,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString data)
 {
-	m_tableWidget = new TableWidget(isDataStored, m_settingsData, data, this);
+	m_tableWidget = new TableWidget(isDataStored, m_mainSettings, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
 	connect(m_tableWidget, &TableWidget::tableHeightSet, this, [this] (int height) {

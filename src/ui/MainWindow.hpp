@@ -6,7 +6,7 @@
 
 #include "../handler/FileHandler.hpp"
 
-class SettingsData;
+class MainSettings;
 class TableWidget;
 class WelcomeWidget;
 
@@ -82,7 +82,7 @@ private:
 	QString m_saveDir;
 
 	FileHandlerRef m_file;
-	std::shared_ptr<SettingsData> m_settingsData;
+	std::shared_ptr<MainSettings> m_mainSettings;
 
 	static constexpr int START_WIDTH = 720;
 	static constexpr int START_HEIGHT = 240;

@@ -7,7 +7,7 @@
 #include "../../handler/CharacterHandler.hpp"
 #include "DisabledArrowKeyTable.hpp"
 
-class SettingsData;
+class MainSettings;
 class TableSettings;
 
 // This class handles the creation of the table widget
@@ -16,7 +16,7 @@ class TableWidget : public QWidget {
 
 public:
 	TableWidget(bool				isDataStored,
-		    std::shared_ptr<SettingsData>	settingsData,
+		    std::shared_ptr<MainSettings>	MainSettings,
 		    QString				data = "",
 		    QWidget *				parent = 0);
 
@@ -158,7 +158,7 @@ private:
 	int m_roundCounter = 1;
 
 	CharacterHandlerRef m_char;
-	std::shared_ptr<SettingsData> m_settingsData;
+	std::shared_ptr<MainSettings> m_mainSettings;
 	std::shared_ptr<TableSettings> m_tableSettings;
 
 	// The row identifier to determine the correct row after drag and drop

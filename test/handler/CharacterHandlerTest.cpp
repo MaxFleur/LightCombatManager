@@ -3,7 +3,7 @@
 #include <catch2/catch.hpp>
 
 #include "CharacterHandler.hpp"
-#include "SettingsData.hpp"
+#include "MainSettings.hpp"
 
 
 TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
@@ -32,8 +32,8 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "");
 	}
 	SECTION("Sorting test - PF1/D&D 3.5") {
-		auto const settingsData = std::make_shared<SettingsData>();
-		settingsData->m_ruleset = SettingsData::Ruleset::PATHFINDER_1E_DND_3_5E;
+		auto const mainSettings = std::make_shared<MainSettings>();
+		mainSettings->m_ruleset = MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E;
 
 		auto const charHandler = std::make_shared<CharacterHandler>();
 
@@ -44,7 +44,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Cleric", 7, 1, 31, false);
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
-		charHandler->sortCharacters(settingsData->m_ruleset, settingsData->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
 		REQUIRE(charHandler->getCharacters().at(1)->name == "Undead Boss");
 		REQUIRE(charHandler->getCharacters().at(2)->name == "Fighter");
@@ -53,8 +53,8 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(5)->name == "Cleric");
 	}
 	SECTION("Sorting test - PF2") {
-		auto const settingsData = std::make_shared<SettingsData>();
-		settingsData->m_ruleset = SettingsData::Ruleset::PATHFINDER_2E;
+		auto const mainSettings = std::make_shared<MainSettings>();
+		mainSettings->m_ruleset = MainSettings::Ruleset::PATHFINDER_2E;
 
 		auto const charHandler = std::make_shared<CharacterHandler>();
 
@@ -65,7 +65,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Cleric", 7, 1, 31, false);
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
-		charHandler->sortCharacters(settingsData->m_ruleset, settingsData->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
 		REQUIRE(charHandler->getCharacters().at(1)->name == "Zombie");
 		REQUIRE(charHandler->getCharacters().at(2)->name == "Undead Boss");
@@ -74,8 +74,8 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(5)->name == "Cleric");
 	}
 	SECTION("Sorting test - D&D 5E") {
-		auto const settingsData = std::make_shared<SettingsData>();
-		settingsData->m_ruleset = SettingsData::Ruleset::DND_5E;
+		auto const mainSettings = std::make_shared<MainSettings>();
+		mainSettings->m_ruleset = MainSettings::Ruleset::DND_5E;
 
 		auto const charHandler = std::make_shared<CharacterHandler>();
 
@@ -86,7 +86,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Cleric", 14, 1, 31, false);
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
-		charHandler->sortCharacters(settingsData->m_ruleset, settingsData->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
 		REQUIRE(charHandler->getCharacters().at(1)->name == "Fighter");
 		REQUIRE(charHandler->getCharacters().at(2)->name == "Undead Boss");
@@ -95,13 +95,13 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(5)->name == "Bard");
 	}
 	SECTION("Clear Characters test") {
-		auto const settingsData = std::make_shared<SettingsData>();
+		auto const mainSettings = std::make_shared<MainSettings>();
 		auto const charHandler = std::make_shared<CharacterHandler>();
 
 		charHandler->storeCharacter("Bard", 12, 2, 29);
 		charHandler->clearCharacters();
 
-		charHandler->sortCharacters(settingsData->m_ruleset, settingsData->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
 		REQUIRE(charHandler->getCharacters().size() == 0);
 	}
 }

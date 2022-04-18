@@ -3,7 +3,7 @@
 #include <QDialog>
 #include <QPointer>
 
-class SettingsData;
+class MainSettings;
 
 class QCheckBox;
 class QComboBox;
@@ -14,7 +14,7 @@ class SettingsDialog : public QDialog {
 
 public:
 	explicit
-	SettingsDialog(std::shared_ptr<SettingsData>	settingsData,
+	SettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
 		       bool				isTableActive,
 		       QWidget *			parent = 0);
 
@@ -31,6 +31,6 @@ private:
 	QPointer<QComboBox> m_rulesetBox;
 	QPointer<QCheckBox> m_rollTieBox;
 
-	std::shared_ptr<SettingsData> m_settingsData;
+	std::shared_ptr<MainSettings> m_mainSettings;
 	bool m_isTableActive;
 };

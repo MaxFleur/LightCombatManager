@@ -10,11 +10,11 @@
 #include <QString>
 #include <QStringList>
 
-#include "settings/SettingsData.hpp"
+#include "settings/MainSettings.hpp"
 #include "StatusEffectData.hpp"
 
-StatusEffectDialog::StatusEffectDialog(std::shared_ptr<SettingsData> settingsData, QWidget *parent) :
-	m_settingsData(settingsData)
+StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSettings, QWidget *parent) :
+	m_mainSettings(MainSettings)
 {
 	setWindowTitle(tr("Add Status Effect"));
 
@@ -23,7 +23,7 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<SettingsData> settingsDat
 
 	m_list = new QListWidget;
 	m_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
-	const auto effects = StatusEffectData::getEffectList(m_settingsData->m_ruleset);
+	const auto effects = StatusEffectData::getEffectList(m_mainSettings->m_ruleset);
 	for (const auto& effect : effects) {
 		m_list->addItem(new QListWidgetItem(effect));
 	}

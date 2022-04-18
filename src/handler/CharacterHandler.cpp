@@ -20,7 +20,7 @@ CharacterHandler::storeCharacter(
 
 // Sort all created characters
 void
-CharacterHandler::sortCharacters(SettingsData::Ruleset ruleset, bool rollAutomatically)
+CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomatically)
 {
 	std::sort(characters.begin(), characters.end(),
 		  [ruleset, rollAutomatically](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
@@ -31,7 +31,7 @@ CharacterHandler::sortCharacters(SettingsData::Ruleset ruleset, bool rollAutomat
 			switch (ruleset) {
 				// PF 1E/D&D 3.5 rules: If initiative is equal, sort for higher INI mod
 				// If that's equal, sort automatically or let the party decide
-				case SettingsData::Ruleset::PATHFINDER_1E_DND_3_5E:
+				case MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E:
 					if (c1->modifier != c2->modifier) {
 						return c1->modifier > c2->modifier;
 					} else {
@@ -42,7 +42,7 @@ CharacterHandler::sortCharacters(SettingsData::Ruleset ruleset, bool rollAutomat
 					}
 				// PF 2E rules: If there is a tie between player and foe, foe goes first
 				// Otherwise sort automatically or let the party decide
-				case SettingsData::Ruleset::PATHFINDER_2E:
+				case MainSettings::Ruleset::PATHFINDER_2E:
 					if (c1->isEnemy != c2->isEnemy) {
 						return c1->isEnemy > c2->isEnemy;
 					} else {
@@ -53,7 +53,7 @@ CharacterHandler::sortCharacters(SettingsData::Ruleset ruleset, bool rollAutomat
 					}
 				// D&D 5E rules: A tie occurs already for equal initiative, so sort automatically
 				// or let the party decide
-				case SettingsData::Ruleset::DND_5E:
+				case MainSettings::Ruleset::DND_5E:
 					if (rollAutomatically) {
 						return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
 						       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();

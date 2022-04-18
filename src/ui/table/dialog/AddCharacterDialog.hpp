@@ -9,7 +9,7 @@ class QLineEdit;
 class QMessageBox;
 class QSpinBox;
 
-class SettingsData;
+class MainSettings;
 
 // Dialog used to add new characters to an existing Combat
 class AddCharacterDialog : public QDialog {
@@ -17,7 +17,7 @@ class AddCharacterDialog : public QDialog {
 
 public:
 	explicit
-	AddCharacterDialog(std::shared_ptr<SettingsData>	settingsData,
+	AddCharacterDialog(std::shared_ptr<MainSettings>	MainSettings,
 			   QWidget *				parent = 0);
 
 signals:
@@ -72,7 +72,7 @@ private:
 	bool m_somethingStored{ false };
 	bool m_isFirstCharStored{ false };
 
-	std::shared_ptr<SettingsData> m_settingsData;
+	std::shared_ptr<MainSettings> m_mainSettings;
 
 	static constexpr int LABEL_SHOWN = 1000;
 	static constexpr int LABEL_FADEOUT = 2000;

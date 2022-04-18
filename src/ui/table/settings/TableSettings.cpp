@@ -28,11 +28,8 @@ TableSettings::writeIsIniShown(bool isIniShown)
 	QSettings settings;
 
 	settings.beginGroup("TableSettings");
-	if (m_isIniShown != isIniShown) {
-		m_isIniShown = isIniShown;
-		settings.setValue("INI", m_isIniShown);
-	}
-
+	m_isIniShown = isIniShown;
+	settings.setValue("INI", m_isIniShown);
 	settings.endGroup();
 }
 
@@ -43,10 +40,7 @@ TableSettings::writeIsModifierShown(bool isModifierShown)
 	QSettings settings;
 
 	settings.beginGroup("TableSettings");
-	if (m_isModifierShown != isModifierShown) {
-		m_isModifierShown = isModifierShown;
-		settings.setValue("Modifier", m_isModifierShown);
-	}
-
+	m_isModifierShown = isModifierShown;
+	settings.setValue("Modifier", m_isModifierShown);
 	settings.endGroup();
 }

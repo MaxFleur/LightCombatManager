@@ -40,7 +40,7 @@ MainWindow::MainWindow()
 	connect(openAction, &QAction::triggered, this, &MainWindow::loadCombat);
 
 	auto *const settingsAction = new QAction(tr("Settings..."), this);
-	connect(settingsAction, &QAction::triggered, this, &MainWindow::openSettings);
+	connect(settingsAction, &QAction::triggered, this, &MainWindow::openMainSettings);
 
 	auto *const aboutAction = new QAction(tr("&About"), this);
 	aboutAction->setStatusTip(tr("About Light Combat Manager"));
@@ -233,7 +233,7 @@ MainWindow::loadCombat()
 
 
 void
-MainWindow::openSettings()
+MainWindow::openMainSettings()
 {
 	auto *const dialog = new MainSettingsDialog(m_mainSettings, m_isTableActive, this);
 	dialog->setAttribute(Qt::WA_DeleteOnClose);

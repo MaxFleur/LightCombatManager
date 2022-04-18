@@ -38,7 +38,7 @@ private slots:
 	loadCombat();
 
 	void
-	openSettings();
+	openMainSettings();
 
 	void
 	about();

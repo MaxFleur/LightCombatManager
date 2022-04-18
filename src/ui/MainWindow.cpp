@@ -11,9 +11,9 @@
 #include <QString>
 #include <QTimer>
 
+#include "MainSettingsDialog.hpp"
 #include "settings/DirSettings.hpp"
 #include "settings/MainSettings.hpp"
-#include "settings/SettingsDialog.hpp"
 #include "table/TableWidget.hpp"
 #include "Utils.hpp"
 #include "WelcomeWidget.hpp"
@@ -235,7 +235,7 @@ MainWindow::loadCombat()
 void
 MainWindow::openSettings()
 {
-	auto *const dialog = new SettingsDialog(m_mainSettings, m_isTableActive, this);
+	auto *const dialog = new MainSettingsDialog(m_mainSettings, m_isTableActive, this);
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
 }

@@ -11,8 +11,6 @@ target_sources(settings INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/MainSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TableSettings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/TableSettings.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.cpp
 )
 
 

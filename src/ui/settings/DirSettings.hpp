@@ -9,7 +9,8 @@ public:
 	DirSettings();
 
 	void
-	write(QString fileName, bool setSaveDir);
+	write(QString	fileName,
+	      bool	setSaveDir);
 
 public:
 	QString m_openDir;
@@ -19,6 +20,7 @@ private:
 
 	void
 	read();
-	
-	void handleSubDir();
+
+	void
+	handleSubDir();
 };

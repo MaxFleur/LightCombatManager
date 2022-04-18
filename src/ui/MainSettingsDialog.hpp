@@ -9,14 +9,14 @@ class QCheckBox;
 class QComboBox;
 
 // Dialog for the program settings
-class SettingsDialog : public QDialog {
+class MainSettingsDialog : public QDialog {
 	Q_OBJECT
 
 public:
 	explicit
-	SettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
-		       bool				isTableActive,
-		       QWidget *			parent = 0);
+	MainSettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
+			   bool					isTableActive,
+			   QWidget *				parent = 0);
 
 private slots:
 

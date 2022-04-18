@@ -1,4 +1,4 @@
-#include "SettingsDialog.hpp"
+#include "MainSettingsDialog.hpp"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -14,9 +14,9 @@
 
 #include "MainSettings.hpp"
 
-SettingsDialog::SettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
-			       bool				isTableActive,
-			       QWidget *			parent) :
+MainSettingsDialog::MainSettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
+				       bool				isTableActive,
+				       QWidget *			parent) :
 	m_isTableActive(isTableActive),
 	m_mainSettings(MainSettings)
 {
@@ -62,14 +62,14 @@ SettingsDialog::SettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
 	mainLayout->addWidget(buttonBox);
 	setLayout(mainLayout);
 
-	connect(okButton, &QPushButton::clicked, this, &SettingsDialog::okClicked);
-	connect(applyButton, &QPushButton::clicked, this, &SettingsDialog::applyClicked);
+	connect(okButton, &QPushButton::clicked, this, &MainSettingsDialog::okClicked);
+	connect(applyButton, &QPushButton::clicked, this, &MainSettingsDialog::applyClicked);
 	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 }
 
 
 bool
-SettingsDialog::applyClicked()
+MainSettingsDialog::applyClicked()
 {
 	if (m_rulesetBox->currentIndex() != m_mainSettings->m_ruleset || m_rollTieBox->isChecked() != m_mainSettings->m_rollAutomatically) {
 		if (m_isTableActive) {
@@ -88,7 +88,7 @@ SettingsDialog::applyClicked()
 
 
 void
-SettingsDialog::okClicked()
+MainSettingsDialog::okClicked()
 {
 	if (applyClicked()) {
 		QDialog::accept();

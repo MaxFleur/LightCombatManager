@@ -8,6 +8,8 @@ target_include_directories (ui
 ) 
 
 target_sources(ui INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/MainSettingsDialog.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/MainSettingsDialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.hpp
     ${CMAKE_CURRENT_LIST_DIR}/WelcomeWidget.cpp 

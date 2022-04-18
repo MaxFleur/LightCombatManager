@@ -21,7 +21,7 @@ public:
 		auto currentDir = std::filesystem::current_path();
 
 		while (currentDir.has_parent_path()) {
-			auto combinedPath = currentDir / relativeDir;
+			const auto combinedPath = currentDir / relativeDir;
 
 			if (std::filesystem::exists(combinedPath)) {
 				return QString::fromStdString(combinedPath.u8string());
@@ -34,7 +34,7 @@ public:
 
 
 TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
-	std::shared_ptr<FileHandler> fileHandler = std::make_shared<FileHandler>();
+	auto const fileHandler = std::make_shared<FileHandler>();
 
 	SECTION("Check format test") {
 		SECTION("Functioning table") {
@@ -83,15 +83,15 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		tableWidget->setItem(1, 5, new QTableWidgetItem(""));
 		tableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 
-		bool tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1);
+		const auto tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1);
 		SECTION("File format correct") {
 			REQUIRE(fileHandler->getCSVData("./test.csv") == 0);
 		}
 
 		SECTION("File content correct") {
-			int code = fileHandler->getCSVData("./test.csv");
+			const auto code = fileHandler->getCSVData("./test.csv");
 
-			const auto rowOfData = fileHandler->getData().split("\n");
+			auto rowOfData = fileHandler->getData().split("\n");
 			QStringList rowData;
 
 			rowData = rowOfData.at(1).split(";");

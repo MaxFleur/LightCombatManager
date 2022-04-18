@@ -8,7 +8,7 @@
 
 TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 	SECTION("Full Character stored test") {
-		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+		auto const charHandler = std::make_shared<CharacterHandler>();
 		charHandler->storeCharacter("Witch", 14, 5, 23, true, "Fire Resistance");
 
 		REQUIRE(charHandler->getCharacters().size() == 1);
@@ -21,7 +21,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Fire Resistance");
 	}
 	SECTION("Minimal Character stored test") {
-		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+		auto const charHandler = std::make_shared<CharacterHandler>();
 		charHandler->storeCharacter("Generic Character");
 
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Generic Character");
@@ -32,10 +32,10 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "");
 	}
 	SECTION("Sorting test - PF1/D&D 3.5") {
-		std::shared_ptr<SettingsData> settingsData = std::make_shared<SettingsData>();
+		auto const settingsData = std::make_shared<SettingsData>();
 		settingsData->m_ruleset = SettingsData::Ruleset::PATHFINDER_1E_DND_3_5E;
 
-		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+		auto const charHandler = std::make_shared<CharacterHandler>();
 
 		charHandler->storeCharacter("Bard", 12, 2, 29);
 		charHandler->storeCharacter("Zombie", 12, 1, 13, true);
@@ -53,10 +53,10 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(5)->name == "Cleric");
 	}
 	SECTION("Sorting test - PF2") {
-		std::shared_ptr<SettingsData> settingsData = std::make_shared<SettingsData>();
+		auto const settingsData = std::make_shared<SettingsData>();
 		settingsData->m_ruleset = SettingsData::Ruleset::PATHFINDER_2E;
 
-		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+		auto const charHandler = std::make_shared<CharacterHandler>();
 
 		charHandler->storeCharacter("Bard", 12, 2, 29);
 		charHandler->storeCharacter("Zombie", 12, 1, 13, true);
@@ -74,10 +74,10 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(5)->name == "Cleric");
 	}
 	SECTION("Sorting test - D&D 5E") {
-		std::shared_ptr<SettingsData> settingsData = std::make_shared<SettingsData>();
+		auto const settingsData = std::make_shared<SettingsData>();
 		settingsData->m_ruleset = SettingsData::Ruleset::DND_5E;
 
-		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+		auto const charHandler = std::make_shared<CharacterHandler>();
 
 		charHandler->storeCharacter("Bard", 3, 2, 29);
 		charHandler->storeCharacter("Zombie", 14, 1, 13, true);
@@ -95,8 +95,8 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		REQUIRE(charHandler->getCharacters().at(5)->name == "Bard");
 	}
 	SECTION("Clear Characters test") {
-		std::shared_ptr<SettingsData> settingsData = std::make_shared<SettingsData>();
-		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+		auto const settingsData = std::make_shared<SettingsData>();
+		auto const charHandler = std::make_shared<CharacterHandler>();
 
 		charHandler->storeCharacter("Bard", 12, 2, 29);
 		charHandler->clearCharacters();

@@ -28,7 +28,7 @@ TEST_CASE("Util Testing", "[Utils]"){
 	tableWidget->setItem(0, 5, new QTableWidgetItem("Haste"));
 
 	SECTION("Resynchronizing characters test") {
-		std::shared_ptr<CharacterHandler> charHandler = std::make_shared<CharacterHandler>();
+		auto const charHandler = std::make_shared<CharacterHandler>();
 		Utils::resynchronizeCharacters(tableWidget, charHandler);
 
 		SECTION("Check stats") {

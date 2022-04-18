@@ -9,6 +9,7 @@
 
 #include <catch2/catch.hpp>
 
+#include "MainSettings.hpp"
 #include "FileHandler.hpp"
 
 class FileHandlerTestUtils
@@ -83,7 +84,10 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		tableWidget->setItem(1, 5, new QTableWidgetItem(""));
 		tableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 
-		const auto tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1);
+		auto const mainSettings = std::make_shared<MainSettings>();
+
+		const auto tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1,
+							       mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
 		SECTION("File format correct") {
 			REQUIRE(fileHandler->getCSVData("./test.csv") == 0);
 		}

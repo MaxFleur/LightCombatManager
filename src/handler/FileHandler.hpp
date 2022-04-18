@@ -4,6 +4,8 @@
 
 #include <QString>
 
+#include "MainSettings.hpp"
+
 class QTableWidget;
 
 // This class handles the saving and reopening of tables as csv data
@@ -12,10 +14,12 @@ public:
 
 	// Save a table of characters
 	[[nodiscard]] bool
-	saveTable(QTableWidget *tableWidget,
-		  QString	filename,
-		  int		rowEntered,
-		  int		roundCounter) const;
+	saveTable(QTableWidget *	tableWidget,
+		  QString		filename,
+		  int			rowEntered,
+		  int			roundCounter,
+		  MainSettings::Ruleset ruleset,
+		  bool			rollAutomatically) const;
 
 	// Reopen a saved table
 	[[nodiscard]] int

@@ -13,10 +13,12 @@
 // Stores a table as a csv
 bool
 FileHandler::saveTable(
-	QTableWidget *	tableWidget,
-	QString		filename,
-	int		rowEntered,
-	int		roundCounter) const
+	QTableWidget *		tableWidget,
+	QString			filename,
+	int			rowEntered,
+	int			roundCounter,
+	MainSettings::Ruleset	ruleset,
+	bool			rollAutomatically) const
 {
 	// Create a file
 	QFile file(filename);
@@ -53,7 +55,8 @@ FileHandler::saveTable(
 				}
 			}
 			if (i == 0) {
-				strList << QString::number(rowEntered) << QString::number(roundCounter);
+				strList << QString::number(rowEntered) << QString::number(roundCounter)
+					<< QString::number(ruleset) << QString::number(rollAutomatically);
 			}
 
 			// The "\n" guarantees that the rows are set correctly in the csv table
@@ -114,9 +117,10 @@ FileHandler::checkTableFormat(QString data) const
 	    && rowDataHeader[4] == "Is Enemy"
 	    && rowDataHeader[5] == "Additional information"
 
-	    // The second row is checked -> if the 7th entry contains the player on the move and
-	    // the 8th the round counter, continue
-	    && rowDataFirstRow.size() == 8) {
+	    // The second row is checked
+	    // 7th entry should contain the player on the move, 8th the round counter,
+	    // 9th the ruleset and 10th the roll automatically option
+	    && rowDataFirstRow.size() == 10) {
 		return true;
 	}
 	return false;

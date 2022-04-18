@@ -148,12 +148,13 @@ MainWindow::saveCombat()
 		fileName = m_dirSettings->m_openDir;
 	}
 
-	auto const code = m_file->saveTable(
-		m_tableWidget->getTableWidget(),
-		fileName,
-		m_tableWidget->getRowEntered(),
-		m_tableWidget->getRoundCounter());
-	if (code) {
+	if (m_file->saveTable(
+		    m_tableWidget->getTableWidget(),
+		    fileName,
+		    m_tableWidget->getRowEntered(),
+		    m_tableWidget->getRoundCounter(),
+		    m_mainSettings->m_ruleset,
+		    m_mainSettings->m_rollAutomatically)) {
 		m_changeOccured = false;
 		m_tableInFile = true;
 		m_dirSettings->write(fileName, false);
@@ -210,6 +211,9 @@ MainWindow::loadCombat()
 	switch (code) {
 	case 0:
 	{
+		if (!checkStoredTableRules(m_file->getData())) {
+			qDebug() << "False rules!";
+		}
 		// Table not active for a short time
 		m_isTableActive = false;
 		m_tableInFile = true;
@@ -377,4 +381,17 @@ MainWindow::closeEvent(QCloseEvent *event)
 			break;
 		}
 	}
+}
+
+
+bool
+MainWindow::checkStoredTableRules(QString data)
+{
+	const auto splittedData = data.split("\n");
+	const auto firstRowData = splittedData.at(1).split(";");
+
+	const auto ruleset = static_cast<MainSettings::Ruleset>(firstRowData[8].toInt());
+	const auto rollAutomatically = static_cast<bool>(firstRowData[9].toInt());
+
+	return m_mainSettings->m_ruleset == ruleset && m_mainSettings->m_rollAutomatically == rollAutomatically;
 }

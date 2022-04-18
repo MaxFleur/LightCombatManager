@@ -69,8 +69,8 @@ private:
 	void
 	closeEvent(QCloseEvent *event);
 
-	void
-	handleSubDir();
+	[[nodiscard]] bool
+	checkStoredTableRules(QString data);
 
 	QPointer<WelcomeWidget> m_welcomeWidget;
 	QPointer<TableWidget> m_tableWidget;

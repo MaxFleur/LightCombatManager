@@ -11,7 +11,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSettings>
 #include <QShortcut>
 #include <QStringList>
 #include <QToolButton>

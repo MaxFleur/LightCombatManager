@@ -2,6 +2,7 @@
 
 #include <QCheckBox>
 #include <QDebug>
+#include <QDialogButtonBox>
 #include <QGraphicsEffect>
 #include <QGridLayout>
 #include <QKeyEvent>
@@ -34,9 +35,11 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<SettingsData> settingsDat
 	auto *const rollButton = new QPushButton(tr("Roll random INI value"));
 	rollButton->setToolTip(tr("Roll the Initiative. The modifier is added to the rolled value."));
 
-	auto *const addButton = new QPushButton(tr("Add"));
-	auto *const resetButton = new QPushButton(tr("Reset all Values"));
-	auto *const cancelButton = new QPushButton(tr("Return"));
+	auto *const buttonBox = new QDialogButtonBox;
+	auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
+	auto *const resetButton = buttonBox->addButton(QDialogButtonBox::Reset);
+	auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
+
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
 	m_animatedLabel = new QLabel;
@@ -85,9 +88,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<SettingsData> settingsDat
 
 	mainLayout->addWidget(m_animatedLabel, 5, 0, 1, 2);
 
-	mainLayout->addWidget(addButton, 6, 1);
-	mainLayout->addWidget(resetButton, 6, 2);
-	mainLayout->addWidget(cancelButton, 6, 3);
+	mainLayout->addWidget(buttonBox, 6, 1, 1, 3);
 
 	setFocus();
 
@@ -95,9 +96,9 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<SettingsData> settingsDat
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 
 	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
-	connect(addButton, &QPushButton::clicked, this, &AddCharacterDialog::addCharacter);
+	connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::addCharacter);
 	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetValues);
-	connect(cancelButton, &QPushButton::clicked, this, [this] () {
+	connect(okButton, &QPushButton::clicked, this, [this] () {
 		m_somethingStored ? QDialog::accept() : QDialog::reject();
 	});
 	connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);

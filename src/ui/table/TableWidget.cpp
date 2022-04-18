@@ -9,6 +9,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QMenu>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSettings>
 #include <QShortcut>

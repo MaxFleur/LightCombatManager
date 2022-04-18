@@ -7,6 +7,8 @@
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QLineEdit>
+#include <QMessageBox>
 #include <QPropertyAnimation>
 #include <QPushButton>
 #include <QShortcut>
@@ -189,6 +191,13 @@ AddCharacterDialog::openStatusEffectDialog()
 		}
 		m_addInfoEdit->setText(itemText + dialog->getEffect());
 	}
+}
+
+
+void
+AddCharacterDialog::setFocus()
+{
+	m_nameEdit->setFocus(Qt::TabFocusReason);
 }
 
 

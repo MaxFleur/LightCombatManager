@@ -1,11 +1,12 @@
 #pragma once
 
 #include <QDialog>
-#include <QLineEdit>
-#include <QMessageBox>
 #include <QPointer>
 
 class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QMessageBox;
 class QSpinBox;
 
 class SettingsData;
@@ -49,10 +50,7 @@ private slots:
 private:
 
 	void
-	setFocus()
-	{
-		m_nameEdit->setFocus(Qt::TabFocusReason);
-	}
+	setFocus();
 
 	void
 	keyPressEvent(QKeyEvent *event);

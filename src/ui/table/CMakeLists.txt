@@ -1,6 +1,7 @@
 add_library (table INTERFACE)
 
 add_subdirectory(dialog)
+add_subdirectory(settings)
 
 target_include_directories (table 
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -17,5 +18,5 @@ target_sources(table INTERFACE
 
 
 target_link_libraries(table 
-    INTERFACE Qt5::Widgets dialog
+    INTERFACE Qt5::Widgets dialog tableSettings
 )

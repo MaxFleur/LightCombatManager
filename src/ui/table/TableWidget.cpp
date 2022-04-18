@@ -21,14 +21,14 @@
 #include "dialog/AddCharacterDialog.hpp"
 #include "dialog/StatusEffectDialog.hpp"
 #include "settings/SettingsData.hpp"
+#include "settings/TableSettings.hpp"
 #include "Utils.hpp"
 
 TableWidget::TableWidget(bool isDataStored, std::shared_ptr<SettingsData> settingsData, QString data, QWidget *parent)
 	: m_isDataStored(isDataStored), m_settingsData(settingsData), m_data(data)
 {
-	readSettings();
-
 	m_char = std::make_shared<CharacterHandler>();
+	m_tableSettings = std::make_shared<TableSettings>();
 
 	m_tableWidget = new DisabledArrowKeyTable();
 	m_tableWidget->setColumnCount(NMBR_COLUMNS);
@@ -210,8 +210,8 @@ TableWidget::setData()
 				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
 		}
 	}
-	m_tableWidget->setColumnHidden(COL_INI, !m_isIniShown);
-	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_isModifierShown);
+	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->m_isIniShown);
+	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->m_isModifierShown);
 }
 
 
@@ -467,20 +467,18 @@ TableWidget::enteredRowChanged(bool goDown)
 void
 TableWidget::showIniColumn(bool show)
 {
-	m_isIniShown = show;
 	m_tableWidget->setColumnHidden(COL_INI, !show);
 
-	writeSettings();
+	m_tableSettings->writeIsIniShown(show);
 }
 
 
 void
 TableWidget::showModColumn(bool show)
 {
-	m_isModifierShown = show;
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
 
-	writeSettings();
+	m_tableSettings->writeIsModifierShown(show);
 }
 
 
@@ -544,32 +542,6 @@ TableWidget::resetNameInfoWidth(QString name, QString addInfo)
 
 
 void
-TableWidget::writeSettings()
-{
-	QSettings settings;
-
-	settings.beginGroup("TableSettings");
-	settings.setValue("INI", m_isIniShown);
-	settings.setValue("Modifier", m_isModifierShown);
-	settings.endGroup();
-}
-
-
-void
-TableWidget::readSettings()
-{
-	QSettings settings;
-
-	settings.beginGroup("TableSettings");
-	// If the application is called for the first time, initiative and
-	// modifier are shown per default
-	m_isIniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
-	m_isModifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
-	settings.endGroup();
-}
-
-
-void
 TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	auto *const menu = new QMenu(this);
@@ -609,13 +581,13 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		showIniColumn(show);
 	});
 	iniAction->setCheckable(true);
-	iniAction->setChecked(m_isIniShown);
+	iniAction->setChecked(m_tableSettings->m_isIniShown);
 
 	auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
 		showModColumn(show);
 	});
 	modifierAction->setCheckable(true);
-	modifierAction->setChecked(m_isModifierShown);
+	modifierAction->setChecked(m_tableSettings->m_isModifierShown);
 
 	menu->exec(event->globalPos());
 }

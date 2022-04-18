@@ -8,6 +8,7 @@
 #include "DisabledArrowKeyTable.hpp"
 
 class SettingsData;
+class TableSettings;
 
 // This class handles the creation of the table widget
 class TableWidget : public QWidget {
@@ -156,11 +157,9 @@ private:
 	int m_rowEntered = 0;
 	int m_roundCounter = 1;
 
-	bool m_isIniShown{ true };
-	bool m_isModifierShown{ true };
-
 	CharacterHandlerRef m_char;
 	std::shared_ptr<SettingsData> m_settingsData;
+	std::shared_ptr<TableSettings> m_tableSettings;
 
 	// The row identifier to determine the correct row after drag and drop
 	int m_rowIdentifier = 0;

@@ -532,7 +532,7 @@ TableWidget::resetNameInfoWidth(QString name, QString addInfo)
 
 	if (changeOccured) {
 		// Change the main window width
-		int mainWidth = 0;
+		auto mainWidth = 0;
 		// Ignore the stretchable and indentifier column
 		for (int i = 0; i < m_tableWidget->columnCount() - 2; i++) {
 			mainWidth += m_tableWidget->columnWidth(i);
@@ -572,7 +572,7 @@ TableWidget::readSettings()
 void
 TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-	auto * const menu = new QMenu(this);
+	auto *const menu = new QMenu(this);
 
 	auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
 		openAddCharacterDialog();

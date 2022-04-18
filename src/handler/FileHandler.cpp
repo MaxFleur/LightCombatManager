@@ -102,8 +102,8 @@ bool
 FileHandler::checkTableFormat(QString data) const
 {
 	// Get the stored table row data information
-	auto const rowDataHeader = data.split("\n").at(0).split(";");
-	auto const rowDataFirstRow = data.split("\n").at(1).split(";");
+	const auto rowDataHeader = data.split("\n").at(0).split(";");
+	const auto rowDataFirstRow = data.split("\n").at(1).split(";");
 
 	// Test if the table has the correct header columns
 	if (rowDataHeader.size() == 6

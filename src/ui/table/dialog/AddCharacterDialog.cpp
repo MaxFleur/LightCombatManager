@@ -115,7 +115,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<SettingsData> settingsDat
 void
 AddCharacterDialog::setLabelRolled()
 {
-	int rand = Utils::rollDice();
+	auto rand = Utils::rollDice();
 	m_iniBox->setValue(rand + m_iniModifierBox->value());
 	m_labelRolled->setText(tr("Rolled number: ") + QString::number(rand));
 }

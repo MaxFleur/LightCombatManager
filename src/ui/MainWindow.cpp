@@ -4,15 +4,14 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
-#include <QDir>
 #include <QFileDialog>
 #include <QKeySequence>
 #include <QMenuBar>
 #include <QMessageBox>
-#include <QSettings>
 #include <QString>
 #include <QTimer>
 
+#include "settings/DirSettings.hpp"
 #include "settings/MainSettings.hpp"
 #include "settings/SettingsDialog.hpp"
 #include "table/TableWidget.hpp"
@@ -65,9 +64,7 @@ MainWindow::MainWindow()
 
 	m_file = std::make_shared<FileHandler>();
 	m_mainSettings = std::make_shared<MainSettings>();
-
-	handleSubDir();
-	readSettings();
+	m_dirSettings = std::make_shared<DirSettings>();
 
 	resize(START_WIDTH, START_HEIGHT);
 	setWelcomingWidget();
@@ -139,7 +136,7 @@ MainWindow::saveCombat()
 	QString fileName;
 	// Save to standard save dir if a new combat has been started
 	if (!m_tableInFile) {
-		fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_saveDir,
+		fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings->m_saveDir,
 							tr("Table (*.csv);;All Files (*)"));
 
 		if (fileName.isEmpty()) {
@@ -148,7 +145,7 @@ MainWindow::saveCombat()
 		}
 		// Otherwise, just overwrite the loaded file
 	} else {
-		fileName = m_openDir;
+		fileName = m_dirSettings->m_openDir;
 	}
 
 	auto const code = m_file->saveTable(
@@ -159,7 +156,7 @@ MainWindow::saveCombat()
 	if (code) {
 		m_changeOccured = false;
 		m_tableInFile = true;
-		writeSettings(fileName, false);
+		m_dirSettings->write(fileName, false);
 		setCombatTitle();
 		// Success
 		return true;
@@ -207,7 +204,7 @@ MainWindow::loadCombat()
 		}
 	}
 	auto const fileName =
-		QFileDialog::getOpenFileName(this, "Open Table", m_openDir, ("csv File(*.csv)"));
+		QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->m_openDir, ("csv File(*.csv)"));
 	auto const code = m_file->getCSVData(fileName);
 
 	switch (code) {
@@ -217,7 +214,7 @@ MainWindow::loadCombat()
 		m_isTableActive = false;
 		m_tableInFile = true;
 		// Save the opened file dir
-		writeSettings(fileName, false);
+		m_dirSettings->write(fileName, false);
 		setTableWidget(true, false, m_file->getData());
 		break;
 	}
@@ -347,29 +344,6 @@ MainWindow::setCombatTitle()
 
 
 void
-MainWindow::writeSettings(QString fileName, bool setSaveDir)
-{
-	m_openDir = fileName;
-
-	QSettings settings;
-	settings.setValue("dir_open", fileName);
-	// Only set the standard save dir at the first program start, after that it's saved
-	if (setSaveDir) {
-		settings.setValue("dir_save", fileName);
-	}
-}
-
-
-void
-MainWindow::readSettings()
-{
-	QSettings settings;
-	m_saveDir = settings.value("dir_save").isValid() ? settings.value("dir_save").toString() : QString();
-	m_openDir = settings.value("dir_open").isValid() ? settings.value("dir_open").toString() : QString();
-}
-
-
-void
 MainWindow::closeEvent(QCloseEvent *event)
 {
 	// Check if a table is active and filled
@@ -402,23 +376,5 @@ MainWindow::closeEvent(QCloseEvent *event)
 			event->ignore();
 			break;
 		}
-	}
-}
-
-
-void
-MainWindow::handleSubDir()
-{
-	// Create a subdir to save the tables into
-	QDir dir(QDir::currentPath());
-	// Write into settings so this subdir is used as standard path for saving tables
-	if (dir.mkdir("tables")) {
-		const auto tableSubDir = QDir::currentPath() + "/tables";
-		// Save and open get same directory, user might change it later
-		m_saveDir = tableSubDir;
-		m_openDir = tableSubDir;
-
-		writeSettings(tableSubDir, true);
-		return;
 	}
 }

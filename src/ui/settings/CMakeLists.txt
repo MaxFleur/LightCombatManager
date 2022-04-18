@@ -5,6 +5,8 @@ target_include_directories (mainSettings
 ) 
 
 target_sources(mainSettings INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/DirSettings.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/DirSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/MainSettings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/MainSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.hpp

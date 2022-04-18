@@ -6,6 +6,7 @@
 
 #include "../handler/FileHandler.hpp"
 
+class DirSettings;
 class MainSettings;
 class TableWidget;
 class WelcomeWidget;
@@ -78,11 +79,9 @@ private:
 	bool m_changeOccured{ false };
 	bool m_tableInFile{ false };
 
-	QString m_openDir;
-	QString m_saveDir;
-
 	FileHandlerRef m_file;
 	std::shared_ptr<MainSettings> m_mainSettings;
+	std::shared_ptr<DirSettings> m_dirSettings;
 
 	static constexpr int START_WIDTH = 720;
 	static constexpr int START_HEIGHT = 240;

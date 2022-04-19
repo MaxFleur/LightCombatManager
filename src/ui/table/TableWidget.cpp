@@ -91,9 +91,10 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<MainSettings> MainSe
 	lowerLayout->addWidget(downButton);
 	lowerLayout->addWidget(exitButton);
 
-	auto *const tableLayout = new QVBoxLayout(this);
-	tableLayout->addWidget(m_tableWidget);
-	tableLayout->addLayout(lowerLayout);
+	auto *const mainLayout = new QVBoxLayout(this);
+	mainLayout->addWidget(m_tableWidget);
+	mainLayout->addLayout(lowerLayout);
+	setLayout(mainLayout);
 
 	// Shortcuts
 	auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);

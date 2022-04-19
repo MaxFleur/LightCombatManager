@@ -67,31 +67,32 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<MainSettings> MainSetting
 	auto *const addInfoLabel = new QLabel(tr("Add. Info:"));
 	addInfoLabel->setToolTip(tr("Set additional information, for example status effects. Optional."));
 
-	auto *const mainLayout = new QGridLayout(this);
-	mainLayout->addWidget(nameLabel, 0, 0);
-	mainLayout->addWidget(m_nameEdit, 0, 1, 1, 3);
+	auto *const layout = new QGridLayout(this);
+	layout->addWidget(nameLabel, 0, 0);
+	layout->addWidget(m_nameEdit, 0, 1, 1, 3);
 
-	mainLayout->addWidget(iniLabel, 1, 0);
-	mainLayout->addWidget(m_iniBox, 1, 1);
-	mainLayout->addWidget(iniModifierLabel, 1, 2);
-	mainLayout->addWidget(m_iniModifierBox, 1, 3);
+	layout->addWidget(iniLabel, 1, 0);
+	layout->addWidget(m_iniBox, 1, 1);
+	layout->addWidget(iniModifierLabel, 1, 2);
+	layout->addWidget(m_iniModifierBox, 1, 3);
 
-	mainLayout->addWidget(m_labelRolled, 2, 0, 1, 2);
-	mainLayout->addWidget(rollButton, 2, 2, 1, 2);
+	layout->addWidget(m_labelRolled, 2, 0, 1, 2);
+	layout->addWidget(rollButton, 2, 2, 1, 2);
 
-	mainLayout->addWidget(hpLabel, 3, 0);
-	mainLayout->addWidget(m_hpBox, 3, 1);
-	mainLayout->addWidget(enemyLabel, 3, 2);
-	mainLayout->addWidget(m_enemyBox, 3, 3);
+	layout->addWidget(hpLabel, 3, 0);
+	layout->addWidget(m_hpBox, 3, 1);
+	layout->addWidget(enemyLabel, 3, 2);
+	layout->addWidget(m_enemyBox, 3, 3);
 
-	mainLayout->addWidget(addInfoLabel, 4, 0);
-	mainLayout->addWidget(m_addInfoEdit, 4, 1, 1, 2);
-	mainLayout->addWidget(statusEffectButton, 4, 3);
+	layout->addWidget(addInfoLabel, 4, 0);
+	layout->addWidget(m_addInfoEdit, 4, 1, 1, 2);
+	layout->addWidget(statusEffectButton, 4, 3);
 
-	mainLayout->addWidget(m_animatedLabel, 5, 0, 1, 2);
+	layout->addWidget(m_animatedLabel, 5, 0, 1, 2);
 
-	mainLayout->addWidget(buttonBox, 6, 1, 1, 3);
+	layout->addWidget(buttonBox, 6, 1, 1, 3);
 
+	setLayout(layout);
 	setFocus();
 
 	auto *const saveShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this);

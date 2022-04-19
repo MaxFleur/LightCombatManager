@@ -37,10 +37,11 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSetting
 	auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
 	auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
-	auto *const mainLayout = new QGridLayout(this);
-	mainLayout->addWidget(textLineEdit, 0, 0, 1, 3);
-	mainLayout->addWidget(m_list, 1, 0, 1, 3);
-	mainLayout->addWidget(buttonBox, 2, 1, 1, 2);
+	auto *const layout = new QGridLayout(this);
+	layout->addWidget(textLineEdit, 0, 0, 1, 3);
+	layout->addWidget(m_list, 1, 0, 1, 3);
+	layout->addWidget(buttonBox, 2, 1, 1, 2);
+	setLayout(layout);
 
 	connect(textLineEdit, &QLineEdit::textChanged, this, [this, textLineEdit] () {
 		findEffect(textLineEdit->text());

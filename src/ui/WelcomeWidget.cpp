@@ -12,6 +12,7 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
 			   "'New Combat' or hit Ctrl + N."));
 	welcomeLabel->setAlignment(Qt::AlignCenter);
 
-	auto *const mainLayout = new QVBoxLayout(this);
-	mainLayout->addWidget(welcomeLabel);
+	auto *const layout = new QVBoxLayout(this);
+	layout->addWidget(welcomeLabel);
+	setLayout(layout);
 }

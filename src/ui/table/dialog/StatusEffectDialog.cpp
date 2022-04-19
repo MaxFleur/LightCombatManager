@@ -3,10 +3,10 @@
 #include <QDebug>
 #include <QDialogButtonBox>
 #include <QGridLayout>
-#include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPushButton>
+#include <QShortcut>
 #include <QString>
 #include <QStringList>
 
@@ -19,7 +19,12 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSetting
 	setWindowTitle(tr("Add Status Effect"));
 
 	auto *const textLineEdit = new QLineEdit;
-	textLineEdit->setPlaceholderText(tr("Effect name (e.g. Shaken)"));
+	textLineEdit->setPlaceholderText(tr("Search (Ctrl + F)"));
+
+	auto * const shortcut = new QShortcut(QKeySequence::Find, this);
+	connect(shortcut, &QShortcut::activated, this, [this, textLineEdit] () {
+		textLineEdit->setFocus(Qt::ShortcutFocusReason);
+	});
 
 	m_list = new QListWidget;
 	m_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -33,8 +38,7 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSetting
 	auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
 	auto *const mainLayout = new QGridLayout(this);
-	mainLayout->addWidget(new QLabel(tr("Find:")), 0, 0);
-	mainLayout->addWidget(textLineEdit, 0, 1, 1, 2);
+	mainLayout->addWidget(textLineEdit, 0, 0, 1, 3);
 	mainLayout->addWidget(m_list, 1, 0, 1, 3);
 	mainLayout->addWidget(buttonBox, 2, 1, 1, 2);
 

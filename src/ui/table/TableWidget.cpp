@@ -209,8 +209,8 @@ TableWidget::setData()
 				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
 		}
 	}
-	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->m_isIniShown);
-	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->m_isModifierShown);
+	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
+	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
 }
 
 
@@ -336,7 +336,7 @@ TableWidget::openAddCharacterDialog()
 				tr("Do you want to sort the table?"),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes) {
-				m_char->sortCharacters(m_mainSettings->m_ruleset, m_mainSettings->m_rollAutomatically);
+				m_char->sortCharacters(m_mainSettings->ruleset, m_mainSettings->rollAutomatical);
 				m_rowEntered = 0;
 				generateTable();
 			}
@@ -468,7 +468,7 @@ TableWidget::showIniColumn(bool show)
 {
 	m_tableWidget->setColumnHidden(COL_INI, !show);
 
-	m_tableSettings->writeIsIniShown(show);
+	m_tableSettings->writeIniShown(show);
 }
 
 
@@ -477,7 +477,7 @@ TableWidget::showModColumn(bool show)
 {
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
 
-	m_tableSettings->writeIsModifierShown(show);
+	m_tableSettings->writeModifierShown(show);
 }
 
 
@@ -580,13 +580,13 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		showIniColumn(show);
 	});
 	iniAction->setCheckable(true);
-	iniAction->setChecked(m_tableSettings->m_isIniShown);
+	iniAction->setChecked(m_tableSettings->iniShown);
 
 	auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
 		showModColumn(show);
 	});
 	modifierAction->setCheckable(true);
-	modifierAction->setChecked(m_tableSettings->m_isModifierShown);
+	modifierAction->setChecked(m_tableSettings->modifierShown);
 
 	menu->exec(event->globalPos());
 }

@@ -14,15 +14,15 @@ void
 DirSettings::read()
 {
 	QSettings settings;
-	m_saveDir = settings.value("dir_save").isValid() ? settings.value("dir_save").toString() : QString();
-	m_openDir = settings.value("dir_open").isValid() ? settings.value("dir_open").toString() : QString();
+	saveDir = settings.value("dir_save").isValid() ? settings.value("dir_save").toString() : QString();
+	openDir = settings.value("dir_open").isValid() ? settings.value("dir_open").toString() : QString();
 }
 
 
 void
 DirSettings::write(QString fileName, bool setSaveDir)
 {
-	m_openDir = fileName;
+	openDir = fileName;
 
 	QSettings settings;
 	settings.setValue("dir_open", fileName);
@@ -42,8 +42,8 @@ DirSettings::handleSubDir()
 	if (dir.mkdir("tables")) {
 		const auto tableSubDir = QDir::currentPath() + "/tables";
 		// Save and open get same directory, user might change it later
-		m_saveDir = tableSubDir;
-		m_openDir = tableSubDir;
+		saveDir = tableSubDir;
+		openDir = tableSubDir;
 
 		write(tableSubDir, true);
 		return;

@@ -7,14 +7,14 @@ public:
 	TableSettings();
 
 	void
-	writeIsIniShown(bool isIniShown);
+	writeIniShown(bool iniShown);
 
 	void
-	writeIsModifierShown(bool isModifierShown);
+	writeModifierShown(bool modShown);
 
 public:
-	bool m_isIniShown = false;
-	bool m_isModifierShown = false;
+	bool iniShown = false;
+	bool modifierShown = false;
 
 private:
 

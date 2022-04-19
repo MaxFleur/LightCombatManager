@@ -13,12 +13,12 @@ public:
 	};
 
 	void
-	write(int	ruleset,
-	      bool	rollAutomatically);
+	write(int	newRuleset,
+	      bool	newRollAutomatical);
 
 public:
-	Ruleset m_ruleset = PATHFINDER_1E_DND_3_5E;
-	bool m_rollAutomatically = false;
+	Ruleset ruleset = PATHFINDER_1E_DND_3_5E;
+	bool rollAutomatical = false;
 
 private:
 

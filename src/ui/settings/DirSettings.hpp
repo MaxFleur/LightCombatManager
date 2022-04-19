@@ -13,8 +13,8 @@ public:
 	      bool	setSaveDir);
 
 public:
-	QString m_openDir;
-	QString m_saveDir;
+	QString openDir;
+	QString saveDir;
 
 private:
 

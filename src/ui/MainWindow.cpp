@@ -136,7 +136,7 @@ MainWindow::saveCombat()
 	QString fileName;
 	// Save to standard save dir if a new combat has been started
 	if (!m_tableInFile) {
-		fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings->m_saveDir,
+		fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings->saveDir,
 							tr("Table (*.csv);;All Files (*)"));
 
 		if (fileName.isEmpty()) {
@@ -145,7 +145,7 @@ MainWindow::saveCombat()
 		}
 		// Otherwise, just overwrite the loaded file
 	} else {
-		fileName = m_dirSettings->m_openDir;
+		fileName = m_dirSettings->openDir;
 	}
 
 	if (m_file->saveTable(
@@ -153,8 +153,8 @@ MainWindow::saveCombat()
 		    fileName,
 		    m_tableWidget->getRowEntered(),
 		    m_tableWidget->getRoundCounter(),
-		    m_mainSettings->m_ruleset,
-		    m_mainSettings->m_rollAutomatically)) {
+		    m_mainSettings->ruleset,
+		    m_mainSettings->rollAutomatical)) {
 		m_changeOccured = false;
 		m_tableInFile = true;
 		m_dirSettings->write(fileName, false);
@@ -205,7 +205,7 @@ MainWindow::loadCombat()
 		}
 	}
 	auto const fileName =
-		QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->m_openDir, ("csv File(*.csv)"));
+		QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->openDir, ("csv File(*.csv)"));
 	auto const code = m_file->getCSVData(fileName);
 
 	auto rulesModified = false;
@@ -418,6 +418,6 @@ MainWindow::checkStoredTableRules(QString data)
 	m_loadedTableRule = static_cast<MainSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
 	m_loadedTableRollAutomatically = static_cast<bool>(firstRowData[COL_ROLL_AUTOMATICALLY].toInt());
 
-	return m_mainSettings->m_ruleset == m_loadedTableRule &&
-	       m_mainSettings->m_rollAutomatically == m_loadedTableRollAutomatically;
+	return m_mainSettings->ruleset == m_loadedTableRule &&
+	       m_mainSettings->rollAutomatical == m_loadedTableRollAutomatically;
 }

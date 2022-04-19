@@ -87,7 +87,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		auto const mainSettings = std::make_shared<MainSettings>();
 
 		const auto tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1,
-							       mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
+							       mainSettings->ruleset, mainSettings->rollAutomatical);
 		SECTION("File format correct") {
 			REQUIRE(fileHandler->getCSVData("./test.csv") == 0);
 		}

@@ -27,7 +27,7 @@ MainSettingsDialog::MainSettingsDialog(std::shared_ptr<MainSettings>	MainSetting
 	m_rulesetBox->addItem("Pathfinder 2E", MainSettings::Ruleset::PATHFINDER_2E);
 	m_rulesetBox->addItem("D&D 5E", MainSettings::Ruleset::DND_5E);
 	m_rulesetBox->setToolTip(tr("The ruleset determines the Table sorting rules and the available status effects."));
-	m_rulesetBox->setCurrentIndex(m_mainSettings->m_ruleset);
+	m_rulesetBox->setCurrentIndex(m_mainSettings->ruleset);
 
 	auto *const rulesetLayout = new QHBoxLayout;
 	rulesetLayout->setAlignment(Qt::AlignLeft);
@@ -35,7 +35,7 @@ MainSettingsDialog::MainSettingsDialog(std::shared_ptr<MainSettings>	MainSetting
 	rulesetLayout->addWidget(m_rulesetBox);
 
 	m_rollTieBox = new QCheckBox;
-	m_rollTieBox->setChecked(m_mainSettings->m_rollAutomatically);
+	m_rollTieBox->setChecked(m_mainSettings->rollAutomatical);
 	auto *const rollTieLabel = new QLabel(tr("Roll automatically for tie"));
 	rollTieLabel->setToolTip(tr("If a tie occurs while Characters are generated for a Combat, the app will "
 				    "automatically decide the turn order."));
@@ -71,7 +71,7 @@ MainSettingsDialog::MainSettingsDialog(std::shared_ptr<MainSettings>	MainSetting
 bool
 MainSettingsDialog::applyClicked()
 {
-	if (m_rulesetBox->currentIndex() != m_mainSettings->m_ruleset || m_rollTieBox->isChecked() != m_mainSettings->m_rollAutomatically) {
+	if (m_rulesetBox->currentIndex() != m_mainSettings->ruleset || m_rollTieBox->isChecked() != m_mainSettings->rollAutomatical) {
 		if (m_isTableActive) {
 			auto const reply = QMessageBox::critical(
 				this,

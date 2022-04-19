@@ -33,7 +33,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 	}
 	SECTION("Sorting test - PF1/D&D 3.5") {
 		auto const mainSettings = std::make_shared<MainSettings>();
-		mainSettings->m_ruleset = MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E;
+		mainSettings->ruleset = MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E;
 
 		auto const charHandler = std::make_shared<CharacterHandler>();
 
@@ -44,7 +44,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Cleric", 7, 1, 31, false);
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
-		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->ruleset, mainSettings->rollAutomatical);
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
 		REQUIRE(charHandler->getCharacters().at(1)->name == "Undead Boss");
 		REQUIRE(charHandler->getCharacters().at(2)->name == "Fighter");
@@ -54,7 +54,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 	}
 	SECTION("Sorting test - PF2") {
 		auto const mainSettings = std::make_shared<MainSettings>();
-		mainSettings->m_ruleset = MainSettings::Ruleset::PATHFINDER_2E;
+		mainSettings->ruleset = MainSettings::Ruleset::PATHFINDER_2E;
 
 		auto const charHandler = std::make_shared<CharacterHandler>();
 
@@ -65,7 +65,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Cleric", 7, 1, 31, false);
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
-		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->ruleset, mainSettings->rollAutomatical);
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
 		REQUIRE(charHandler->getCharacters().at(1)->name == "Zombie");
 		REQUIRE(charHandler->getCharacters().at(2)->name == "Undead Boss");
@@ -75,7 +75,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 	}
 	SECTION("Sorting test - D&D 5E") {
 		auto const mainSettings = std::make_shared<MainSettings>();
-		mainSettings->m_ruleset = MainSettings::Ruleset::DND_5E;
+		mainSettings->ruleset = MainSettings::Ruleset::DND_5E;
 
 		auto const charHandler = std::make_shared<CharacterHandler>();
 
@@ -86,7 +86,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Cleric", 14, 1, 31, false);
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
-		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->ruleset, mainSettings->rollAutomatical);
 		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
 		REQUIRE(charHandler->getCharacters().at(1)->name == "Fighter");
 		REQUIRE(charHandler->getCharacters().at(2)->name == "Undead Boss");
@@ -101,7 +101,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Bard", 12, 2, 29);
 		charHandler->clearCharacters();
 
-		charHandler->sortCharacters(mainSettings->m_ruleset, mainSettings->m_rollAutomatically);
+		charHandler->sortCharacters(mainSettings->ruleset, mainSettings->rollAutomatical);
 		REQUIRE(charHandler->getCharacters().size() == 0);
 	}
 }

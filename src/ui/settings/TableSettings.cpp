@@ -16,31 +16,31 @@ TableSettings::read()
 	settings.beginGroup("TableSettings");
 	// If the application is called for the first time, initiative and
 	// modifier are shown per default
-	m_isIniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
-	m_isModifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
+	iniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
+	modifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
 	settings.endGroup();
 }
 
 
 void
-TableSettings::writeIsIniShown(bool isIniShown)
+TableSettings::writeIniShown(bool newIniShown)
 {
 	QSettings settings;
 
 	settings.beginGroup("TableSettings");
-	m_isIniShown = isIniShown;
-	settings.setValue("INI", m_isIniShown);
+	iniShown = newIniShown;
+	settings.setValue("INI", iniShown);
 	settings.endGroup();
 }
 
 
 void
-TableSettings::writeIsModifierShown(bool isModifierShown)
+TableSettings::writeModifierShown(bool newModShown)
 {
 	QSettings settings;
 
 	settings.beginGroup("TableSettings");
-	m_isModifierShown = isModifierShown;
-	settings.setValue("Modifier", m_isModifierShown);
+	modifierShown = newModShown;
+	settings.setValue("Modifier", modifierShown);
 	settings.endGroup();
 }

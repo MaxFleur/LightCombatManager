@@ -26,21 +26,21 @@ MainWindow::MainWindow()
 	newCombatAction->setStatusTip(tr("Start a new Combat."));
 	connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
-	auto *const saveAction = new QAction(tr("&Save Table"), this);
-	saveAction->setShortcuts(QKeySequence::Save);
-	saveAction->setStatusTip(tr("Save the created Table."));
-	connect(saveAction, &QAction::triggered, this, &MainWindow::saveCombat);
-	connect(this, &MainWindow::setSaveAction, this, [saveAction] (bool enable) {
-		saveAction->setEnabled(enable);
+	auto *const saveTableAction = new QAction(tr("&Save"), this);
+	saveTableAction->setShortcuts(QKeySequence::Save);
+	saveTableAction->setStatusTip(tr("Save the created Table."));
+	connect(saveTableAction, &QAction::triggered, this, &MainWindow::saveTable);
+	connect(this, &MainWindow::setSaveAction, this, [saveTableAction] (bool enable) {
+		saveTableAction->setEnabled(enable);
 	});
 
-	auto *const openAction = new QAction(tr("&Open Table"), this);
-	openAction->setShortcuts(QKeySequence::Open);
-	openAction->setStatusTip(tr("Open an existing Table."));
-	connect(openAction, &QAction::triggered, this, &MainWindow::loadCombat);
+	auto *const openTableAction = new QAction(tr("&Open..."), this);
+	openTableAction->setShortcuts(QKeySequence::Open);
+	openTableAction->setStatusTip(tr("Open an existing Table."));
+	connect(openTableAction, &QAction::triggered, this, &MainWindow::openTable);
 
-	auto *const settingsAction = new QAction(tr("Settings..."), this);
-	connect(settingsAction, &QAction::triggered, this, &MainWindow::openMainSettings);
+	auto *const openMainSettingsAction = new QAction(tr("Settings..."), this);
+	connect(openMainSettingsAction, &QAction::triggered, this, &MainWindow::openMainSettings);
 
 	auto *const aboutAction = new QAction(tr("&About"), this);
 	aboutAction->setStatusTip(tr("About Light Combat Manager"));
@@ -53,9 +53,9 @@ MainWindow::MainWindow()
 	// Menus
 	auto *const fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(newCombatAction);
-	fileMenu->addAction(saveAction);
-	fileMenu->addAction(openAction);
-	fileMenu->addAction(settingsAction);
+	fileMenu->addAction(saveTableAction);
+	fileMenu->addAction(openTableAction);
+	fileMenu->addAction(openMainSettingsAction);
 	fileMenu->addSeparator();
 
 	auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -92,7 +92,7 @@ MainWindow::newCombat()
 			switch (val) {
 			case QMessageBox::Save:
 			{
-				if (!saveCombat()) {
+				if (!saveTable()) {
 					return;
 				}
 				break;
@@ -112,7 +112,7 @@ MainWindow::newCombat()
 
 
 bool
-MainWindow::saveCombat()
+MainWindow::saveTable()
 {
 	if (!m_changeOccured) {
 		return false;
@@ -171,37 +171,35 @@ MainWindow::saveCombat()
 
 
 void
-MainWindow::loadCombat()
+MainWindow::openTable()
 {
 	// Check if a table is active right now
-	if (m_isTableActive) {
-		if (!m_tableWidget->isEmpty()) {
-			const auto openCombatMessage = m_changeOccured ?
-						       tr("Do you want to save the current Combat before opening another existing Combat?") :
-						       tr("Do you want to open another existing Combat?");
-			auto *const msgBox = new QMessageBox(this);
-			msgBox->setStandardButtons(
-				m_changeOccured ?
-				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
-				QMessageBox::Yes | QMessageBox::No);
-			msgBox->setText(openCombatMessage);
+	if (m_isTableActive && !m_tableWidget->isEmpty()) {
+		const auto openCombatMessage = m_changeOccured ?
+					       tr("Do you want to save the current Combat before opening another existing Combat?") :
+					       tr("Do you want to open another existing Combat?");
+		auto *const msgBox = new QMessageBox(this);
+		msgBox->setStandardButtons(
+			m_changeOccured ?
+			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
+			QMessageBox::Yes | QMessageBox::No);
+		msgBox->setText(openCombatMessage);
 
-			const auto val = msgBox->exec();
-			switch (val) {
-			case QMessageBox::Save:
-			{
-				if (!saveCombat()) {
-					return;
-				}
-				break;
-			}
-			case QMessageBox::Discard:
-			case QMessageBox::Yes:
-				break;
-			case QMessageBox::Cancel:
-			case QMessageBox::No:
+		const auto val = msgBox->exec();
+		switch (val) {
+		case QMessageBox::Save:
+		{
+			if (!saveTable()) {
 				return;
 			}
+			break;
+		}
+		case QMessageBox::Discard:
+		case QMessageBox::Yes:
+			break;
+		case QMessageBox::Cancel:
+		case QMessageBox::No:
+			return;
 		}
 	}
 	auto const fileName =
@@ -392,7 +390,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 		switch (val) {
 		case QMessageBox::Save:
 		{
-			saveCombat() ? event->accept() : event->ignore();
+			saveTable() ? event->accept() : event->ignore();
 			break;
 		}
 		case QMessageBox::Discard:

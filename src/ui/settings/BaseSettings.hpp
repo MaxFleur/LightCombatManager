@@ -7,6 +7,5 @@ public:
 private:
 
 	virtual void
-    read() = 0;
+	read() = 0;
 };
- 

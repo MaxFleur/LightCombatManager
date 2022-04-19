@@ -16,10 +16,10 @@ MainSettings::read()
 	settings.beginGroup("RuleSettings");
 
 	ruleset = settings.value("ruleset").isValid() ?
-		    static_cast<Ruleset>(settings.value("ruleset").toInt()) :
-		    Ruleset::PATHFINDER_1E_DND_3_5E;
+		  static_cast<Ruleset>(settings.value("ruleset").toInt()) :
+		  Ruleset::PATHFINDER_1E_DND_3_5E;
 	rollAutomatical = settings.value("roll_auto").isValid() ?
-			      settings.value("roll_auto").toBool() : false;
+			  settings.value("roll_auto").toBool() : false;
 	settings.endGroup();
 }
 

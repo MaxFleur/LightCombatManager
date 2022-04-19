@@ -208,11 +208,29 @@ MainWindow::loadCombat()
 		QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->m_openDir, ("csv File(*.csv)"));
 	auto const code = m_file->getCSVData(fileName);
 
+	auto rulesModified = false;
+
 	switch (code) {
 	case 0:
 	{
 		if (!checkStoredTableRules(m_file->getData())) {
-			qDebug() << "False rules!";
+			auto const reply = QMessageBox::warning(
+				this,
+				tr("Different rulesets detected!"),
+				tr("The Table you are trying to load uses different rules than you currently have in your rule settings! "
+				   "Do you want to apply the stored Table rules to your settings or ignore them?"),
+				QMessageBox::Apply | QMessageBox::Ignore | QMessageBox::Cancel);
+
+			switch (reply) {
+			case QMessageBox::Apply:
+				m_mainSettings->write(m_loadedTableRule, m_loadedTableRollAutomatically);
+				break;
+			case QMessageBox::Ignore:
+				rulesModified = true;
+				break;
+			case QMessageBox::Cancel:
+				return;
+			}
 		}
 		// Table not active for a short time
 		m_isTableActive = false;
@@ -220,6 +238,13 @@ MainWindow::loadCombat()
 		// Save the opened file dir
 		m_dirSettings->write(fileName, false);
 		setTableWidget(true, false, m_file->getData());
+
+		// Rechanging so the rule change can be saved properly
+		if (rulesModified) {
+			m_changeOccured = true;
+			setCombatTitle();
+		}
+
 		break;
 	}
 	case 1:
@@ -325,7 +350,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 	if (!newCombatStarted) {
 		m_tableWidget->generateTable();
 		const auto height = m_tableWidget->getHeight();
-		height > START_HEIGHT ?  setFixedHeight(height) : setFixedHeight(START_HEIGHT);
+		height > START_HEIGHT ? setFixedHeight(height) : setFixedHeight(START_HEIGHT);
 
 		m_changeOccured = false;
 		setCombatTitle();
@@ -387,11 +412,12 @@ MainWindow::closeEvent(QCloseEvent *event)
 bool
 MainWindow::checkStoredTableRules(QString data)
 {
-	const auto splittedData = data.split("\n");
-	const auto firstRowData = splittedData.at(1).split(";");
+	// Get the first row of the stored table
+	const auto firstRowData = data.split("\n").at(1).split(";");
+	// Get the loaded ruleset and roll automatically variable
+	m_loadedTableRule = static_cast<MainSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
+	m_loadedTableRollAutomatically = static_cast<bool>(firstRowData[COL_ROLL_AUTOMATICALLY].toInt());
 
-	const auto ruleset = static_cast<MainSettings::Ruleset>(firstRowData[8].toInt());
-	const auto rollAutomatically = static_cast<bool>(firstRowData[9].toInt());
-
-	return m_mainSettings->m_ruleset == ruleset && m_mainSettings->m_rollAutomatically == rollAutomatically;
+	return m_mainSettings->m_ruleset == m_loadedTableRule &&
+	       m_mainSettings->m_rollAutomatically == m_loadedTableRollAutomatically;
 }

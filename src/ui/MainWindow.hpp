@@ -83,7 +83,13 @@ private:
 	std::shared_ptr<MainSettings> m_mainSettings;
 	std::shared_ptr<DirSettings> m_dirSettings;
 
+	MainSettings::Ruleset m_loadedTableRule;
+	bool m_loadedTableRollAutomatically;
+
 	static constexpr int START_WIDTH = 720;
 	static constexpr int START_HEIGHT = 240;
+
+	static constexpr int COL_RULESET = 8;
+	static constexpr int COL_ROLL_AUTOMATICALLY = 9;
 };
 #endif

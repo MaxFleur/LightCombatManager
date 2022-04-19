@@ -21,12 +21,17 @@
 MainWindow::MainWindow()
 {
 	// Actions
-	auto *const newCombatAction = new QAction(tr("&New Combat"), this);
+	auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New Combat"), this);
 	newCombatAction->setShortcuts(QKeySequence::New);
 	newCombatAction->setStatusTip(tr("Start a new Combat."));
 	connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
-	auto *const saveTableAction = new QAction(tr("&Save"), this);
+	auto *const openTableAction = new QAction(style()->standardIcon(QStyle::SP_DirOpenIcon), tr("&Open..."), this);
+	openTableAction->setShortcuts(QKeySequence::Open);
+	openTableAction->setStatusTip(tr("Open an existing Table."));
+	connect(openTableAction, &QAction::triggered, this, &MainWindow::openTable);
+
+	auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
 	saveTableAction->setShortcuts(QKeySequence::Save);
 	saveTableAction->setStatusTip(tr("Save the created Table."));
 	connect(saveTableAction, &QAction::triggered, this, &MainWindow::saveTable);
@@ -34,27 +39,22 @@ MainWindow::MainWindow()
 		saveTableAction->setEnabled(enable);
 	});
 
-	auto *const openTableAction = new QAction(tr("&Open..."), this);
-	openTableAction->setShortcuts(QKeySequence::Open);
-	openTableAction->setStatusTip(tr("Open an existing Table."));
-	connect(openTableAction, &QAction::triggered, this, &MainWindow::openTable);
-
 	auto *const openMainSettingsAction = new QAction(tr("Settings..."), this);
 	connect(openMainSettingsAction, &QAction::triggered, this, &MainWindow::openMainSettings);
 
-	auto *const aboutAction = new QAction(tr("&About"), this);
+	auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);
 	aboutAction->setStatusTip(tr("About Light Combat Manager"));
 	connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
 
-	auto *const aboutQtAction = new QAction(tr("About &Qt"), this);
+	auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
 	aboutQtAction->setStatusTip(tr("About QT Version and License"));
 	connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
 	// Menus
 	auto *const fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(newCombatAction);
-	fileMenu->addAction(saveTableAction);
 	fileMenu->addAction(openTableAction);
+	fileMenu->addAction(saveTableAction);
 	fileMenu->addAction(openMainSettingsAction);
 	fileMenu->addSeparator();
 

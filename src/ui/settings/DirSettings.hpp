@@ -2,8 +2,10 @@
 
 #include <QString>
 
+#include "BaseSettings.hpp"
+
 // Store data used for setting the opening and saving directories
-class DirSettings {
+class DirSettings : public BaseSettings {
 public:
 
 	DirSettings();
@@ -19,7 +21,7 @@ public:
 private:
 
 	void
-	read();
+	read() override;
 
 	void
 	handleSubDir();

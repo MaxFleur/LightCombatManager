@@ -1,7 +1,9 @@
 #pragma once
 
+#include "BaseSettings.hpp"
+
 // Store the main settings affecting the entire application
-class MainSettings {
+class MainSettings : public BaseSettings {
 public:
 
 	MainSettings();
@@ -23,5 +25,5 @@ public:
 private:
 
 	void
-	read();
+	read() override;
 };

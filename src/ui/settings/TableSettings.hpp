@@ -1,7 +1,9 @@
 #pragma once
 
+#include "BaseSettings.hpp"
+
 // Store data used for the table
-class TableSettings {
+class TableSettings : public BaseSettings {
 public:
 
 	TableSettings();
@@ -19,5 +21,5 @@ public:
 private:
 
 	void
-	read();
+	read() override;
 };

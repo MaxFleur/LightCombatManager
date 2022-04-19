@@ -39,10 +39,10 @@ private slots:
 	animateLabel();
 
 	void
-	addCharacter();
+	saveButtonClicked();
 
 	void
-	resetValues();
+	resetButtonClicked();
 
 	void
 	openStatusEffectDialog();

@@ -25,7 +25,7 @@ public:
 private slots:
 
 	void
-	addEffect();
+	saveButtonClicked();
 
 private:
 

@@ -45,13 +45,13 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSetting
 	connect(textLineEdit, &QLineEdit::textChanged, this, [this, textLineEdit] () {
 		findEffect(textLineEdit->text());
 	});
-	connect(saveButton, &QPushButton::clicked, this, &StatusEffectDialog::addEffect);
+	connect(saveButton, &QPushButton::clicked, this, &StatusEffectDialog::saveButtonClicked);
 	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 }
 
 
 void
-StatusEffectDialog::addEffect()
+StatusEffectDialog::saveButtonClicked()
 {
 	foreach(QListWidgetItem * item, m_list->selectedItems()) {
 		m_effect += item->text();

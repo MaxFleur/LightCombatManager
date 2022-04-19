@@ -98,14 +98,14 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<MainSettings> MainSetting
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 
 	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
-	connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::addCharacter);
-	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetValues);
+	connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
+	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
 	connect(okButton, &QPushButton::clicked, this, [this] () {
 		m_somethingStored ? QDialog::accept() : QDialog::reject();
 	});
 	connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);
 
-	connect(saveShortcut, &QShortcut::activated, this, &AddCharacterDialog::addCharacter);
+	connect(saveShortcut, &QShortcut::activated, this, &AddCharacterDialog::saveButtonClicked);
 	connect(statusEffectShortcut, &QShortcut::activated, this, &AddCharacterDialog::openStatusEffectDialog);
 
 	connect(m_timer, &QTimer::timeout, this, &AddCharacterDialog::animateLabel);
@@ -137,7 +137,7 @@ AddCharacterDialog::animateLabel()
 
 
 void
-AddCharacterDialog::addCharacter()
+AddCharacterDialog::saveButtonClicked()
 {
 	if (m_nameEdit->text().isEmpty()) {
 		auto const reply = QMessageBox::warning(
@@ -149,7 +149,7 @@ AddCharacterDialog::addCharacter()
 	m_somethingStored = true;
 	emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
 			      m_enemyBox->isChecked(), m_addInfoEdit->text());
-	resetValues();
+	resetButtonClicked();
 	setFocus();
 
 	// Only set the label text after first stored character
@@ -164,7 +164,7 @@ AddCharacterDialog::addCharacter()
 
 
 void
-AddCharacterDialog::resetValues()
+AddCharacterDialog::resetButtonClicked()
 {
 	// Reset all displayed values
 	m_nameEdit->clear();

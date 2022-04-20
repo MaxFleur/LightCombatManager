@@ -31,6 +31,16 @@ MainWindow::MainWindow()
 	openTableAction->setStatusTip(tr("Open an existing Table."));
 	connect(openTableAction, &QAction::triggered, this, &MainWindow::openTable);
 
+	auto *const closeTableAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarCloseButton), tr("&Close"), this);
+	closeTableAction->setShortcuts(QKeySequence::Close);
+	connect(closeTableAction, &QAction::triggered, this, [this] () {
+		if (m_isTableActive) {
+			exitCombat();
+		} else {
+			QApplication::quit();
+		}
+	});
+
 	auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
 	saveTableAction->setShortcuts(QKeySequence::Save);
 	saveTableAction->setStatusTip(tr("Save the created Table."));
@@ -54,6 +64,7 @@ MainWindow::MainWindow()
 	auto *const fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(newCombatAction);
 	fileMenu->addAction(openTableAction);
+	fileMenu->addAction(closeTableAction);
 	fileMenu->addAction(saveTableAction);
 	fileMenu->addAction(openMainSettingsAction);
 	fileMenu->addSeparator();

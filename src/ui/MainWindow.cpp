@@ -42,8 +42,14 @@ MainWindow::MainWindow()
 	auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
 	saveTableAction->setShortcuts(QKeySequence::Save);
 	connect(saveTableAction, &QAction::triggered, this, &MainWindow::saveTable);
-	connect(this, &MainWindow::setSaveAction, this, [saveTableAction] (bool enable) {
+
+	auto *const saveAsAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save As..."), this);
+	saveAsAction->setShortcuts(QKeySequence::SaveAs);
+	connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+
+	connect(this, &MainWindow::setSaveAction, this, [saveTableAction, saveAsAction] (bool enable) {
 		saveTableAction->setEnabled(enable);
+		saveAsAction->setEnabled(enable);
 	});
 
 	auto *const openMainSettingsAction = new QAction(tr("Settings..."), this);
@@ -61,6 +67,7 @@ MainWindow::MainWindow()
 	fileMenu->addAction(openTableAction);
 	fileMenu->addAction(closeTableAction);
 	fileMenu->addAction(saveTableAction);
+	fileMenu->addAction(saveAsAction);
 	fileMenu->addAction(openMainSettingsAction);
 	fileMenu->addSeparator();
 
@@ -149,6 +156,24 @@ MainWindow::saveTable()
 		tr("Could not save table!"),
 		tr("Failed to write file."));
 	return false;
+}
+
+
+void
+MainWindow::saveAs()
+{
+	// Save state
+	const auto saveChangeOccured = m_changeOccured;
+	const auto saveTableInFile = m_tableInFile;
+
+	// Change variables so saveTable calls the file dialog
+	m_changeOccured = true;
+	m_tableInFile = false;
+	// Restore old state if the save fails
+	if (!saveTable()) {
+		m_changeOccured = saveChangeOccured;
+		m_tableInFile = saveTableInFile;
+	}
 }
 
 

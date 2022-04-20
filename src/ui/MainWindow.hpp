@@ -35,6 +35,9 @@ private slots:
 	saveTable();
 
 	void
+	saveAs();
+
+	void
 	openTable();
 
 	void

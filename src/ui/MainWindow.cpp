@@ -77,18 +77,10 @@ MainWindow::newCombat()
 	// Check if a table is active
 	if (m_isTableActive) {
 		if (!m_tableWidget->isEmpty()) {
-			const auto newCombatMessage = m_changeOccured ?
-						      tr("Do you want to save the current Combat before starting a new one?") :
-						      tr("Do you want to start a new Combat?");
+			const auto val = createSaveMessageBox(m_changeOccured ?
+							      tr("Do you want to save the current Combat before starting a new one?") :
+							      tr("Do you want to start a new Combat?"));
 
-			auto *const msgBox = new QMessageBox(this);
-			msgBox->setStandardButtons(
-				m_changeOccured ?
-				QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
-				QMessageBox::Yes | QMessageBox::No);
-			msgBox->setText(newCombatMessage);
-
-			const auto val = msgBox->exec();
 			switch (val) {
 			case QMessageBox::Save:
 			{
@@ -175,17 +167,10 @@ MainWindow::openTable()
 {
 	// Check if a table is active right now
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		const auto openCombatMessage = m_changeOccured ?
-					       tr("Do you want to save the current Combat before opening another existing Combat?") :
-					       tr("Do you want to open another existing Combat?");
-		auto *const msgBox = new QMessageBox(this);
-		msgBox->setStandardButtons(
-			m_changeOccured ?
-			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
-			QMessageBox::Yes | QMessageBox::No);
-		msgBox->setText(openCombatMessage);
+		const auto val = createSaveMessageBox(m_changeOccured ?
+						      tr("Do you want to save the current Combat before opening another existing Combat?") :
+						      tr("Do you want to open another existing Combat?"));
 
-		const auto val = msgBox->exec();
 		switch (val) {
 		case QMessageBox::Save:
 		{
@@ -370,23 +355,30 @@ MainWindow::setCombatTitle()
 }
 
 
+int
+MainWindow::createSaveMessageBox(QString tableMessage)
+{
+	auto *const msgBox = new QMessageBox(this);
+	msgBox->setIcon(QMessageBox::Question);
+	msgBox->setStandardButtons(
+		m_changeOccured ?
+		QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
+		QMessageBox::Yes | QMessageBox::No);
+	msgBox->setText(tableMessage);
+
+	return msgBox->exec();
+}
+
+
 void
 MainWindow::closeEvent(QCloseEvent *event)
 {
 	// Check if a table is active and filled
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		const auto closeCombatMessage = m_changeOccured ?
-						tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
-						tr("Do you really want to exit the application?");
+		const auto val = createSaveMessageBox(m_changeOccured ?
+						      tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
+						      tr("Do you really want to exit the application?"));
 
-		auto *const msgBox = new QMessageBox(this);
-		msgBox->setStandardButtons(
-			m_changeOccured ?
-			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
-			QMessageBox::Yes | QMessageBox::No);
-		msgBox->setText(closeCombatMessage);
-
-		const auto val = msgBox->exec();
 		switch (val) {
 		case QMessageBox::Save:
 		{

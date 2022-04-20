@@ -59,12 +59,8 @@ private:
 	void
 	setCombatTitle();
 
-	void
-	writeSettings(QString	fileName,
-		      bool	setSaveDir);
-
-	void
-	readSettings();
+	[[nodiscard]] int
+	createSaveMessageBox(QString tableMessage);
 
 	void
 	closeEvent(QCloseEvent *event);

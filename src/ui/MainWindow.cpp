@@ -77,23 +77,9 @@ MainWindow::newCombat()
 	// Check if a table is active
 	if (m_isTableActive) {
 		if (!m_tableWidget->isEmpty()) {
-			const auto val = createSaveMessageBox(m_changeOccured ?
-							      tr("Do you want to save the current Combat before starting a new one?") :
-							      tr("Do you want to start a new Combat?"));
-
-			switch (val) {
-			case QMessageBox::Save:
-			{
-				if (!saveTable()) {
-					return;
-				}
-				break;
-			}
-			case QMessageBox::Discard:
-			case QMessageBox::Yes:
-				break;
-			case QMessageBox::Cancel:
-			case QMessageBox::No:
+			if (createSaveMessageBox(m_changeOccured ?
+						 tr("Do you want to save the current Combat before starting a new one?") :
+						 tr("Do you want to start a new Combat?"), false) == 0) {
 				return;
 			}
 		}
@@ -167,23 +153,9 @@ MainWindow::openTable()
 {
 	// Check if a table is active right now
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		const auto val = createSaveMessageBox(m_changeOccured ?
-						      tr("Do you want to save the current Combat before opening another existing Combat?") :
-						      tr("Do you want to open another existing Combat?"));
-
-		switch (val) {
-		case QMessageBox::Save:
-		{
-			if (!saveTable()) {
-				return;
-			}
-			break;
-		}
-		case QMessageBox::Discard:
-		case QMessageBox::Yes:
-			break;
-		case QMessageBox::Cancel:
-		case QMessageBox::No:
+		if (createSaveMessageBox(m_changeOccured ?
+					 tr("Do you want to save the current Combat before opening another existing Combat?") :
+					 tr("Do you want to open another existing Combat?"), false) == 0) {
 			return;
 		}
 	}
@@ -356,7 +328,7 @@ MainWindow::setCombatTitle()
 
 
 int
-MainWindow::createSaveMessageBox(QString tableMessage)
+MainWindow::createSaveMessageBox(QString tableMessage, bool isClosing)
 {
 	auto *const msgBox = new QMessageBox(this);
 	msgBox->setIcon(QMessageBox::Question);
@@ -365,6 +337,26 @@ MainWindow::createSaveMessageBox(QString tableMessage)
 		QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
 		QMessageBox::Yes | QMessageBox::No);
 	msgBox->setText(tableMessage);
+
+	/* openTable and newCombat use an identical message box, so do the handling directly */
+	if (!isClosing) {
+		switch (msgBox->exec()) {
+		case QMessageBox::Save:
+		{
+			if (!saveTable()) {
+				return 0;
+			}
+			break;
+		}
+		case QMessageBox::Discard:
+		case QMessageBox::Yes:
+			break;
+		case QMessageBox::Cancel:
+		case QMessageBox::No:
+			return 0;
+		}
+		return 1;
+	}
 
 	return msgBox->exec();
 }
@@ -377,7 +369,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
 		const auto val = createSaveMessageBox(m_changeOccured ?
 						      tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
-						      tr("Do you really want to exit the application?"));
+						      tr("Do you really want to exit the application?"), true);
 
 		switch (val) {
 		case QMessageBox::Save:

@@ -60,7 +60,8 @@ private:
 	setCombatTitle();
 
 	[[nodiscard]] int
-	createSaveMessageBox(QString tableMessage);
+	createSaveMessageBox(QString	tableMessage,
+			     bool	isClosing);
 
 	void
 	closeEvent(QCloseEvent *event);

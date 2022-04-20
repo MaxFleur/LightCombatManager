@@ -1,6 +1,3 @@
-Na	Initiative	INI er	HP	Is Enemy	Additional information	
-UBERBoss	35	17	142	X	Blinded, Dazed, Fatigued,	0
-Paladin	25	6	69	 	Grappled	
-Wizard	18	7	41	 		
-Barbarian	18	2	82	 		
-Bard	13	3	52	 	Invisible	
+Nam	Initiative	INI modifier	HP	Is Ene _my	Additional information				
+UBERBOSS	31	15	150	true	Damage Reduction	0	1		0
+Paladin	23	5	78	false					

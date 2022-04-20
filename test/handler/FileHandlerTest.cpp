@@ -85,6 +85,8 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 		tableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 
 		auto const mainSettings = std::make_shared<MainSettings>();
+		mainSettings->ruleset = MainSettings::Ruleset::PATHFINDER_2E;
+		mainSettings->rollAutomatical = true;
 
 		const auto tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1,
 							       mainSettings->ruleset, mainSettings->rollAutomatical);
@@ -107,6 +109,8 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 			REQUIRE(rowData[5] == "Haste");
 			REQUIRE(rowData[6] == "0");
 			REQUIRE(rowData[7] == "1");
+			REQUIRE(rowData[8] == "1");
+			REQUIRE(rowData[9] == "1");
 
 			rowData = rowOfData.at(2).split(";");
 

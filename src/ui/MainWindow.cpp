@@ -75,13 +75,11 @@ void
 MainWindow::newCombat()
 {
 	// Check if a table is active
-	if (m_isTableActive) {
-		if (!m_tableWidget->isEmpty()) {
-			if (createSaveMessageBox(m_changeOccured ?
-						 tr("Do you want to save the current Combat before starting a new one?") :
-						 tr("Do you want to start a new Combat?"), false) == 0) {
-				return;
-			}
+	if (m_isTableActive && !m_tableWidget->isEmpty()) {
+		if (createSaveMessageBox(m_changeOccured ?
+					 tr("Do you want to save the current Combat before starting a new one?") :
+					 tr("Do you want to start a new Combat?"), false) == 0) {
+			return;
 		}
 	}
 	m_tableInFile = false;
@@ -199,7 +197,6 @@ MainWindow::openTable()
 			m_changeOccured = true;
 			setCombatTitle();
 		}
-
 		break;
 	}
 	case 1:
@@ -302,15 +299,17 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 			tr("Please select a Character with the Mouse Key before deleting!"));
 	});
 
+	m_changeOccured = false;
+	setCombatTitle();
+
 	if (!newCombatStarted) {
 		m_tableWidget->generateTable();
-		const auto height = m_tableWidget->getHeight();
-		height > START_HEIGHT ? setFixedHeight(height) : setFixedHeight(START_HEIGHT);
-
+		// Setting the table emits changeOccured because the cells are altered, so reset
 		m_changeOccured = false;
 		setCombatTitle();
+		const auto height = m_tableWidget->getHeight();
+		height > START_HEIGHT ? setFixedHeight(height) : setFixedHeight(START_HEIGHT);
 	} else {
-		setCombatTitle();
 		setFixedHeight(START_HEIGHT);
 		m_tableWidget->openAddCharacterDialog();
 	}

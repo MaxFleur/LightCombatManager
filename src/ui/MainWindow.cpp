@@ -23,12 +23,10 @@ MainWindow::MainWindow()
 	// Actions
 	auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New Combat"), this);
 	newCombatAction->setShortcuts(QKeySequence::New);
-	newCombatAction->setStatusTip(tr("Start a new Combat."));
 	connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
 	auto *const openTableAction = new QAction(style()->standardIcon(QStyle::SP_DirOpenIcon), tr("&Open..."), this);
 	openTableAction->setShortcuts(QKeySequence::Open);
-	openTableAction->setStatusTip(tr("Open an existing Table."));
 	connect(openTableAction, &QAction::triggered, this, &MainWindow::openTable);
 
 	auto *const closeTableAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarCloseButton), tr("&Close"), this);
@@ -43,7 +41,6 @@ MainWindow::MainWindow()
 
 	auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
 	saveTableAction->setShortcuts(QKeySequence::Save);
-	saveTableAction->setStatusTip(tr("Save the created Table."));
 	connect(saveTableAction, &QAction::triggered, this, &MainWindow::saveTable);
 	connect(this, &MainWindow::setSaveAction, this, [saveTableAction] (bool enable) {
 		saveTableAction->setEnabled(enable);
@@ -53,11 +50,9 @@ MainWindow::MainWindow()
 	connect(openMainSettingsAction, &QAction::triggered, this, &MainWindow::openMainSettings);
 
 	auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);
-	aboutAction->setStatusTip(tr("About Light Combat Manager"));
 	connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
 
 	auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
-	aboutQtAction->setStatusTip(tr("About QT Version and License"));
 	connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
 	// Menus

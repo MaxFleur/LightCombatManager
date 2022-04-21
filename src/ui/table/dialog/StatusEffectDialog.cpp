@@ -19,12 +19,12 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSetting
 	setWindowTitle(tr("Add Status Effect"));
 
 	auto *const textLineEdit = new QLineEdit;
-	textLineEdit->setPlaceholderText(tr("Search (Ctrl + F)"));
-
-	auto * const shortcut = new QShortcut(QKeySequence::Find, this);
+	auto *const shortcut = new QShortcut(QKeySequence::Find, this);
 	connect(shortcut, &QShortcut::activated, this, [this, textLineEdit] () {
 		textLineEdit->setFocus(Qt::ShortcutFocusReason);
 	});
+
+	textLineEdit->setPlaceholderText(tr("Search (%1)").arg(shortcut->key().toString(QKeySequence::NativeText)));
 
 	m_list = new QListWidget;
 	m_list->setSelectionMode(QAbstractItemView::ExtendedSelection);

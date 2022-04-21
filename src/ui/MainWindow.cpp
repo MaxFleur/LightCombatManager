@@ -269,16 +269,13 @@ MainWindow::about()
 void
 MainWindow::exitCombat()
 {
-	auto const reply = QMessageBox::question(
-		this,
-		tr("Return?"),
-		tr("Are you sure you want to return to the Main Window? This will end the current Combat."),
-		QMessageBox::Yes | QMessageBox::No);
-
-	if (reply == QMessageBox::Yes) {
-		setWelcomingWidget();
-		m_isTableActive = false;
+	if (createSaveMessageBox(m_changeOccured ?
+				 tr("Do you want to save the current Combat before exiting to the Main Window?") :
+				 tr("Are you sure you want to return to the Main Window? This will end the current Combat."), false) == 0) {
+		return;
 	}
+	setWelcomingWidget();
+	m_isTableActive = false;
 }
 
 

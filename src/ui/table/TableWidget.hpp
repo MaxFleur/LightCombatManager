@@ -101,13 +101,7 @@ private slots:
 private:
 
 	void
-	setTable();
-
-	void
 	setData();
-
-	void
-	setInfoColumnWidth();
 
 	void
 	setRowAndPlayer();
@@ -131,12 +125,6 @@ private:
 	void
 	resetNameInfoWidth(QString	strName,
 			   QString	strAdd);
-
-	void
-	writeSettings();
-
-	void
-	readSettings();
 
 	void
 	contextMenuEvent(QContextMenuEvent *event) override;

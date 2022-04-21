@@ -101,9 +101,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<MainSettings> MainSetting
 	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
 	connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
 	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
-	connect(okButton, &QPushButton::clicked, this, [this] () {
-		m_somethingStored ? QDialog::accept() : QDialog::reject();
-	});
+	connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
 	connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);
 
 	connect(saveShortcut, &QShortcut::activated, this, &AddCharacterDialog::saveButtonClicked);
@@ -175,6 +173,17 @@ AddCharacterDialog::resetButtonClicked()
 	m_hpBox->setValue(0);
 	m_enemyBox->setChecked(false);
 	m_addInfoEdit->clear();
+}
+
+
+void
+AddCharacterDialog::okButtonClicked()
+{
+	if (!m_nameEdit->text().isEmpty()) {
+		saveButtonClicked();
+		QDialog::accept();
+	}
+	QDialog::reject();
 }
 
 

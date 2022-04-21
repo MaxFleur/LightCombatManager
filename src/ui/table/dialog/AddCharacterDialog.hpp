@@ -45,6 +45,9 @@ private slots:
 	resetButtonClicked();
 
 	void
+	okButtonClicked();
+
+	void
 	openStatusEffectDialog();
 
 private:

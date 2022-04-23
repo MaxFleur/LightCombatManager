@@ -60,7 +60,7 @@ private:
 		       QString	data = "");
 
 	void
-	setCombatTitle();
+	setCombatTitle(bool isCombatActive);
 
 	[[nodiscard]] int
 	createSaveMessageBox(QString	tableMessage,

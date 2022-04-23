@@ -144,10 +144,9 @@ MainWindow::saveTable()
 		    m_tableWidget->getRoundCounter(),
 		    m_mainSettings->ruleset,
 		    m_mainSettings->rollAutomatical)) {
-		m_changeOccured = false;
 		m_tableInFile = true;
 		m_dirSettings->write(fileName, false);
-		setCombatTitle();
+		setCombatTitle(false);
 		// Success
 		return true;
 	}
@@ -223,10 +222,9 @@ MainWindow::openTable()
 		m_dirSettings->write(fileName, false);
 		setTableWidget(true, false, m_file->getData());
 
-		// Rechanging so the rule change can be saved properly
+		// If the settings rules are applied to the table, it is modified
 		if (rulesModified) {
-			m_changeOccured = true;
-			setCombatTitle();
+			setCombatTitle(rulesModified);
 		}
 		break;
 	}
@@ -316,9 +314,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 		}
 	});
 	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {
-		m_changeOccured = true;
-		// Mark change in window
-		setCombatTitle();
+		setCombatTitle(true);
 	});
 	connect(m_tableWidget, &TableWidget::characterNotSelected, this, [this] () {
 		auto const reply = QMessageBox::warning(
@@ -327,14 +323,12 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 			tr("Please select a Character with the Mouse Key before deleting!"));
 	});
 
-	m_changeOccured = false;
-	setCombatTitle();
+	setCombatTitle(false);
 
 	if (!newCombatStarted) {
 		m_tableWidget->generateTable();
 		// Setting the table emits changeOccured because the cells are altered, so reset
-		m_changeOccured = false;
-		setCombatTitle();
+		setCombatTitle(false);
 		const auto height = m_tableWidget->getHeight();
 		height > START_HEIGHT ? setFixedHeight(height) : setFixedHeight(START_HEIGHT);
 	} else {
@@ -348,8 +342,9 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 
 
 void
-MainWindow::setCombatTitle()
+MainWindow::setCombatTitle(bool isCombatActive)
 {
+	m_changeOccured = isCombatActive;
 	m_changeOccured ? setWindowTitle(tr("LCM - Combat Active *")) : setWindowTitle(tr("LCM - Combat Active"));
 }
 

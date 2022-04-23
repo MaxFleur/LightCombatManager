@@ -2,7 +2,7 @@
 
 #include "BaseSettings.hpp"
 
-// Store data used for the table
+// Store settings used for customizing the table
 class TableSettings : public BaseSettings {
 public:
 

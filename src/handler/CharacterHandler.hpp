@@ -41,12 +41,11 @@ public:
 		       bool	isEnemy = false,
 		       QString	additionalInf = QString());
 
-	// Sort the stored characters
+	// Sort the stored characters, depending on the ruleset
 	void
 	sortCharacters(MainSettings::Ruleset	ruleset,
 		       bool			rollAutomatically);
 
-	// Clear all characters
 	void
 	clearCharacters();
 

@@ -72,6 +72,7 @@ bool
 MainSettingsDialog::applyClicked()
 {
 	if (m_rulesetBox->currentIndex() != m_mainSettings->ruleset || m_rollTieBox->isChecked() != m_mainSettings->rollAutomatical) {
+		// It could be dangerous to change the combat rules while a combat is active, so abort instead
 		if (m_isTableActive) {
 			auto const reply = QMessageBox::critical(
 				this,

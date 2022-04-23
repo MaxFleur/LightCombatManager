@@ -46,7 +46,7 @@ MainWindow::MainWindow()
 	auto *const saveAsAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save As..."), this);
 	saveAsAction->setShortcuts(QKeySequence::SaveAs);
 	connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
-
+	// Both options have to be enabled or disabled simultaneously
 	connect(this, &MainWindow::setSaveAction, this, [saveTableAction, saveAsAction] (bool enable) {
 		saveTableAction->setEnabled(enable);
 		saveAsAction->setEnabled(enable);
@@ -61,7 +61,6 @@ MainWindow::MainWindow()
 	auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
 	connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
-	// Menus
 	auto *const fileMenu = menuBar()->addMenu(tr("&File"));
 	fileMenu->addAction(newCombatAction);
 	fileMenu->addAction(openTableAction);

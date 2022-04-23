@@ -212,7 +212,7 @@ AddCharacterDialog::setFocus()
 
 
 // Normally, pressing the Enter or Escape key closes a QDialog, calling reject but we do not want that
-// The user has to press the Return or the closing "X" button
+// The user has to press Return or the closing "X" button
 void
 AddCharacterDialog::keyPressEvent(QKeyEvent *event)
 {

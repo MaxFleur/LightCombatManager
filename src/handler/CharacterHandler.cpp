@@ -24,12 +24,12 @@ CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomat
 {
 	std::sort(characters.begin(), characters.end(),
 		  [ruleset, rollAutomatically](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
-		// Sort for higher initiative
+		// Common for all rulesets: Sort for higher initiative
 		if (c1->initiative != c2->initiative) {
 			return c1->initiative > c2->initiative;
 		} else {
 			switch (ruleset) {
-				// PF 1E/D&D 3.5 rules: If initiative is equal, sort for higher INI mod
+				// PF 1E/D&D 3.5 rules: Sort for higher INI mod
 				// If that's equal, sort automatically or let the party decide
 				case MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E:
 					if (c1->modifier != c2->modifier) {
@@ -51,8 +51,7 @@ CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomat
 							       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();
 						}
 					}
-				// D&D 5E rules: A tie occurs already for equal initiative, so sort automatically
-				// or let the party decide
+				// D&D 5E rules: Just sort automatically or let the party decide
 				case MainSettings::Ruleset::DND_5E:
 					if (rollAutomatically) {
 						return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >

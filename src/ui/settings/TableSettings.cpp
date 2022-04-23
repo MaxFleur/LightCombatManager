@@ -14,8 +14,6 @@ TableSettings::read()
 	QSettings settings;
 
 	settings.beginGroup("TableSettings");
-	// If the application is called for the first time, initiative and
-	// modifier are shown per default
 	iniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
 	modifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
 	settings.endGroup();

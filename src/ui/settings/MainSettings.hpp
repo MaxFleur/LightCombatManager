@@ -19,8 +19,8 @@ public:
 	      bool	newRollAutomatical);
 
 public:
-	Ruleset ruleset = PATHFINDER_1E_DND_3_5E;
-	bool rollAutomatical = false;
+	Ruleset ruleset;
+	bool rollAutomatical;
 
 private:
 

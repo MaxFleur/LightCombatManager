@@ -34,7 +34,7 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSetting
 	}
 
 	auto *const buttonBox = new QDialogButtonBox;
-	auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
+	auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
 	auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
 	auto *const layout = new QGridLayout(this);
@@ -46,13 +46,13 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<MainSettings> MainSetting
 	connect(textLineEdit, &QLineEdit::textChanged, this, [this, textLineEdit] () {
 		findEffect(textLineEdit->text());
 	});
-	connect(saveButton, &QPushButton::clicked, this, &StatusEffectDialog::saveButtonClicked);
+	connect(okButton, &QPushButton::clicked, this, &StatusEffectDialog::okButtonClicked);
 	connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
 }
 
 
 void
-StatusEffectDialog::saveButtonClicked()
+StatusEffectDialog::okButtonClicked()
 {
 	foreach(QListWidgetItem * item, m_list->selectedItems()) {
 		m_effect += item->text();

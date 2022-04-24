@@ -222,9 +222,7 @@ MainWindow::openTable()
 		setTableWidget(true, false, m_file->getData());
 
 		// If the settings rules are applied to the table, it is modified
-		if (rulesModified) {
-			setCombatTitle(rulesModified);
-		}
+		setCombatTitle(rulesModified);
 		break;
 	}
 	case 1:
@@ -343,6 +341,9 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString dat
 void
 MainWindow::setCombatTitle(bool isCombatActive)
 {
+	if (m_changeOccured == isCombatActive) {
+		return;
+	}
 	m_changeOccured = isCombatActive;
 	m_changeOccured ? setWindowTitle(tr("LCM - Combat Active *")) : setWindowTitle(tr("LCM - Combat Active"));
 }

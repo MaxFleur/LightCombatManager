@@ -39,7 +39,7 @@ const QList<QStringList> m_effects = {
 		QObject::tr("Prone"),
 		QObject::tr("Shaken"),
 		QObject::tr("Sickened"),
-		QObject::tr("Spell Resistence"),
+		QObject::tr("Spell Resistance"),
 		QObject::tr("Stable"),
 		QObject::tr("Staggered"),
 		QObject::tr("Stunned"),

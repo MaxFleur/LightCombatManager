@@ -23,10 +23,10 @@ MainSettingsDialog::MainSettingsDialog(std::shared_ptr<MainSettings>	MainSetting
 	setWindowTitle(tr("Settings"));
 
 	m_rulesetBox = new QComboBox;
-	m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E);
+	m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", MainSettings::Ruleset::PATHFINDER_1E_DND_35E);
 	m_rulesetBox->addItem("Pathfinder 2E", MainSettings::Ruleset::PATHFINDER_2E);
 	m_rulesetBox->addItem("D&D 5E", MainSettings::Ruleset::DND_5E);
-	m_rulesetBox->addItem("D&D 3.0E", MainSettings::Ruleset::DND_3_0E);
+	m_rulesetBox->addItem("D&D 3.0E", MainSettings::Ruleset::DND_30E);
 	m_rulesetBox->addItem("Starfinder", MainSettings::Ruleset::STARFINDER);
 	m_rulesetBox->setToolTip(tr("The ruleset determines the Table sorting rules and the available status effects."));
 	m_rulesetBox->setCurrentIndex(m_mainSettings->ruleset);

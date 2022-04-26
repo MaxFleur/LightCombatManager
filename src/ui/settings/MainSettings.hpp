@@ -9,10 +9,10 @@ public:
 	MainSettings();
 
 	enum Ruleset {
-		PATHFINDER_1E_DND_3_5E	= 0,
+		PATHFINDER_1E_DND_35E	= 0,
 		PATHFINDER_2E		= 1,
 		DND_5E			= 2,
-		DND_3_0E		= 3,
+		DND_30E			= 3,
 		STARFINDER		= 4
 	};
 

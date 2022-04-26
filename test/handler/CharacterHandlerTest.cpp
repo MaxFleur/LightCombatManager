@@ -33,7 +33,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 	}
 	SECTION("Sorting test - PF1/D&D 3.5/D&D 3.0/Starfinder") {
 		auto const mainSettings = std::make_shared<MainSettings>();
-		mainSettings->ruleset = MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E;
+		mainSettings->ruleset = MainSettings::Ruleset::PATHFINDER_1E_DND_35E;
 
 		auto const charHandler = std::make_shared<CharacterHandler>();
 

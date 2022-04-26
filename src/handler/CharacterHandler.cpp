@@ -31,11 +31,11 @@ CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomat
 			switch (ruleset) {
 				// PF 1E/D&D 3.5/Starfinder rules: Sort for higher INI mod
 				// If that's equal, sort automatically or let the party decide
-				case MainSettings::Ruleset::PATHFINDER_1E_DND_3_5E:
+				case MainSettings::Ruleset::PATHFINDER_1E_DND_35E:
 				case MainSettings::Ruleset::STARFINDER:
 				// D&D 3.0 uses the dex value for ties, but this is essentially another variant
 				// of the mod value, so no additional changes are necessary
-				case MainSettings::Ruleset::DND_3_0E:
+				case MainSettings::Ruleset::DND_30E:
 					if (c1->modifier != c2->modifier) {
 						return c1->modifier > c2->modifier;
 					} else {

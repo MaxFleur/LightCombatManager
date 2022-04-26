@@ -68,6 +68,6 @@ int
 getStringWidth(QString str, QFont font)
 {
 	const QFontMetrics fm(font);
-	return fm.horizontalAdvance(str);
+	return fm.boundingRect(str).width();
 }
 }

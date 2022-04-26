@@ -167,7 +167,7 @@ private:
 
 	static constexpr int SPACING = 30;
 
-	static constexpr float COL_LENGTH_NAME_BUFFER = 10;
+	static constexpr float COL_LENGTH_NAME_BUFFER = 20;
 	static constexpr float COL_LENGTH_ADD_BUFFER = 20;
 
 	// Width rations of the first five columns

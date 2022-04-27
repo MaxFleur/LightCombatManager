@@ -21,4 +21,7 @@ rollDice();
 [[nodiscard]] int
 getStringWidth(QString	str,
 	       QFont	font);
+
+[[nodiscard]] QString
+getCSVName(QString filePath);
 }

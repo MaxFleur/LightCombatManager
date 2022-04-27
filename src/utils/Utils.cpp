@@ -3,6 +3,7 @@
 #include <random>
 
 #include <QCheckBox>
+#include <QFileInfo>
 #include <QFont>
 #include <QFontMetrics>
 #include <QTableWidget>
@@ -69,5 +70,13 @@ getStringWidth(QString str, QFont font)
 {
 	const QFontMetrics fm(font);
 	return fm.boundingRect(str).width();
+}
+
+
+QString
+getCSVName(QString filePath)
+{
+	QFileInfo fileInfo(filePath);
+	return fileInfo.fileName().toLatin1();
 }
 }

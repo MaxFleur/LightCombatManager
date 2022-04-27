@@ -95,6 +95,7 @@ MainWindow::newCombat()
 		}
 	}
 	m_tableInFile = false;
+	m_fileName = QString();
 	setTableWidget(false, true);
 }
 
@@ -145,6 +146,8 @@ MainWindow::saveTable()
 		    m_mainSettings->rollAutomatical)) {
 		m_tableInFile = true;
 		m_dirSettings->write(fileName, false);
+		m_fileName = Utils::getCSVName(fileName);
+
 		setCombatTitle(false);
 		// Success
 		return true;
@@ -219,6 +222,7 @@ MainWindow::openTable()
 		m_tableInFile = true;
 		// Save the opened file dir
 		m_dirSettings->write(fileName, false);
+		m_fileName = Utils::getCSVName(fileName);
 		setTableWidget(true, false, m_file->getData());
 
 		// If the settings rules are applied to the table, it is modified
@@ -345,7 +349,14 @@ MainWindow::setCombatTitle(bool isCombatActive)
 		return;
 	}
 	m_changeOccured = isCombatActive;
-	m_changeOccured ? setWindowTitle(tr("LCM - Combat Active *")) : setWindowTitle(tr("LCM - Combat Active"));
+
+	QString title = "LCM";
+	m_fileName.isEmpty() ? title.append(" - Combat Active") : title.append(" - " + m_fileName);
+	// Indicate a change in the title
+	if (m_changeOccured) {
+		title.append(" *");
+	}
+	setWindowTitle(title);
 }
 
 

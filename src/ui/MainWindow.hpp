@@ -79,6 +79,8 @@ private:
 	bool m_changeOccured{ false };
 	bool m_tableInFile{ false };
 
+	QString m_fileName{ "" };
+
 	FileHandlerRef m_file;
 	std::shared_ptr<MainSettings> m_mainSettings;
 	std::shared_ptr<DirSettings> m_dirSettings;

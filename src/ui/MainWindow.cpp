@@ -359,6 +359,7 @@ MainWindow::createSaveMessageBox(QString tableMessage, bool isClosing)
 		QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
 		QMessageBox::Yes | QMessageBox::No);
 	msgBox->setText(tableMessage);
+	msgBox->setWindowTitle(tr("Save Combat?"));
 
 	/* openTable and newCombat use an identical message box, so do the handling directly */
 	if (!isClosing) {

@@ -215,6 +215,15 @@ TableWidget::setData()
 }
 
 
+void
+TableWidget::sortTable()
+{
+	m_char->sortCharacters(m_mainSettings->ruleset, m_mainSettings->rollAutomatical);
+	m_rowEntered = 0;
+	generateTable();
+}
+
+
 int
 TableWidget::getHeight() const
 {
@@ -337,9 +346,7 @@ TableWidget::openAddCharacterDialog()
 				tr("Do you want to sort the table?"),
 				QMessageBox::Yes | QMessageBox::No);
 			if (reply == QMessageBox::Yes) {
-				m_char->sortCharacters(m_mainSettings->ruleset, m_mainSettings->rollAutomatical);
-				m_rowEntered = 0;
-				generateTable();
+				sortTable();
 			}
 		}
 	}
@@ -574,6 +581,14 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	}
 
 	menu->addSeparator();
+
+	if (m_tableWidget->rowCount() > 1) {
+		auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
+			sortTable();
+		});
+
+		menu->addSeparator();
+	}
 
 	auto *const optionMenu = menu->addMenu("Options");
 

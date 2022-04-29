@@ -104,6 +104,9 @@ private:
 	setData();
 
 	void
+	sortTable();
+
+	void
 	setRowAndPlayer();
 
 	void

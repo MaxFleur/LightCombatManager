@@ -202,14 +202,17 @@ MainWindow::openTable()
 	case 0:
 	{
 		if (!checkStoredTableRules(m_file->getData())) {
-			auto const reply = QMessageBox::warning(
-				this,
+			auto *const msgBox = new QMessageBox(
+				QMessageBox::Warning,
 				tr("Different rulesets detected!"),
 				tr("The Table you are trying to load uses different rules than you currently have in your rule settings! "
 				   "Do you want to apply the stored Table rules to your settings or ignore them?"),
 				QMessageBox::Apply | QMessageBox::Ignore | QMessageBox::Cancel);
 
-			switch (reply) {
+			msgBox->setButtonText(QMessageBox::Apply, tr("Apply loaded Table rules to Settings"));
+			msgBox->setButtonText(QMessageBox::Ignore, tr("Ignore loaded Table rules"));
+
+			switch (msgBox->exec()) {
 			case QMessageBox::Apply:
 				m_ruleSettings->write(m_loadedTableRule, m_loadedTableRollAutomatically);
 				break;

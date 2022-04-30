@@ -5,7 +5,7 @@
 
 #include <QString>
 
-#include "MainSettings.hpp"
+#include "RuleSettings.hpp"
 
 // This class handles the creation, sorting and deletion of the created characters
 class CharacterHandler {
@@ -43,7 +43,7 @@ public:
 
 	// Sort the stored characters, depending on the ruleset
 	void
-	sortCharacters(MainSettings::Ruleset	ruleset,
+	sortCharacters(RuleSettings::Ruleset	ruleset,
 		       bool			rollAutomatically);
 
 	void

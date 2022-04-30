@@ -20,7 +20,7 @@ CharacterHandler::storeCharacter(
 
 // Sort all created characters
 void
-CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomatically)
+CharacterHandler::sortCharacters(RuleSettings::Ruleset ruleset, bool rollAutomatically)
 {
 	std::sort(characters.begin(), characters.end(),
 		  [ruleset, rollAutomatically](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
@@ -31,11 +31,11 @@ CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomat
 			switch (ruleset) {
 				// PF 1E/D&D 3.5/Starfinder rules: Sort for higher INI mod
 				// If that's equal, sort automatically or let the party decide
-				case MainSettings::Ruleset::PATHFINDER_1E_DND_35E:
-				case MainSettings::Ruleset::STARFINDER:
+				case RuleSettings::Ruleset::PATHFINDER_1E_DND_35E:
+				case RuleSettings::Ruleset::STARFINDER:
 				// D&D 3.0 uses the dex value for ties, but this is essentially another variant
 				// of the mod value, so no additional changes are necessary
-				case MainSettings::Ruleset::DND_30E:
+				case RuleSettings::Ruleset::DND_30E:
 					if (c1->modifier != c2->modifier) {
 						return c1->modifier > c2->modifier;
 					} else {
@@ -46,7 +46,7 @@ CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomat
 					}
 				// PF 2E rules: If there is a tie between player and foe, foe goes first
 				// Otherwise sort automatically or let the party decide
-				case MainSettings::Ruleset::PATHFINDER_2E:
+				case RuleSettings::Ruleset::PATHFINDER_2E:
 					if (c1->isEnemy != c2->isEnemy) {
 						return c1->isEnemy > c2->isEnemy;
 					} else {
@@ -56,7 +56,7 @@ CharacterHandler::sortCharacters(MainSettings::Ruleset ruleset, bool rollAutomat
 						}
 					}
 				// D&D 5E rules: Just sort automatically or let the party decide
-				case MainSettings::Ruleset::DND_5E:
+				case RuleSettings::Ruleset::DND_5E:
 					if (rollAutomatically) {
 						return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
 						       QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();

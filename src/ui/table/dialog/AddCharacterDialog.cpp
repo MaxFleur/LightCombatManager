@@ -18,8 +18,8 @@
 #include "StatusEffectDialog.hpp"
 #include "Utils.hpp"
 
-AddCharacterDialog::AddCharacterDialog(std::shared_ptr<MainSettings> MainSettings, QWidget *parent) :
-	m_mainSettings(MainSettings)
+AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings, QWidget *parent) :
+	m_ruleSettings(RuleSettings)
 {
 	setWindowTitle(tr("Add new Characters"));
 
@@ -192,7 +192,7 @@ void
 AddCharacterDialog::openStatusEffectDialog()
 {
 	// Open dialog
-	auto *const dialog = new StatusEffectDialog(m_mainSettings, this);
+	auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// If accepted, add status effect

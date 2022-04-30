@@ -4,7 +4,7 @@
 
 #include <QString>
 
-#include "MainSettings.hpp"
+#include "RuleSettings.hpp"
 
 class QTableWidget;
 
@@ -18,7 +18,7 @@ public:
 		  QString		filename,
 		  int			rowEntered,
 		  int			roundCounter,
-		  MainSettings::Ruleset ruleset,
+		  RuleSettings::Ruleset ruleset,
 		  bool			rollAutomatically) const;
 
 	// Reopen a saved table

@@ -12,8 +12,8 @@
 #include <QTimer>
 
 #include "DirSettings.hpp"
-#include "MainSettings.hpp"
-#include "MainSettingsDialog.hpp"
+#include "RuleSettings.hpp"
+#include "SettingsDialog.hpp"
 #include "TableWidget.hpp"
 #include "Utils.hpp"
 #include "WelcomeWidget.hpp"
@@ -52,8 +52,8 @@ MainWindow::MainWindow()
 		saveAsAction->setEnabled(enable);
 	});
 
-	auto *const openMainSettingsAction = new QAction(tr("Settings..."), this);
-	connect(openMainSettingsAction, &QAction::triggered, this, &MainWindow::openMainSettings);
+	auto *const openSettingsAction = new QAction(tr("Settings..."), this);
+	connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 
 	auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);
 	connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
@@ -67,7 +67,7 @@ MainWindow::MainWindow()
 	fileMenu->addAction(closeTableAction);
 	fileMenu->addAction(saveTableAction);
 	fileMenu->addAction(saveAsAction);
-	fileMenu->addAction(openMainSettingsAction);
+	fileMenu->addAction(openSettingsAction);
 	fileMenu->addSeparator();
 
 	auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -75,7 +75,7 @@ MainWindow::MainWindow()
 	helpMenu->addAction(aboutQtAction);
 
 	m_file = std::make_shared<FileHandler>();
-	m_mainSettings = std::make_shared<MainSettings>();
+	m_ruleSettings = std::make_shared<RuleSettings>();
 	m_dirSettings = std::make_shared<DirSettings>();
 
 	resize(START_WIDTH, START_HEIGHT);
@@ -145,8 +145,8 @@ MainWindow::saveTable()
 		    fileName,
 		    m_tableWidget->getRowEntered(),
 		    m_tableWidget->getRoundCounter(),
-		    m_mainSettings->ruleset,
-		    m_mainSettings->rollAutomatical)) {
+		    m_ruleSettings->ruleset,
+		    m_ruleSettings->rollAutomatical)) {
 		m_tableInFile = true;
 		m_dirSettings->write(fileName, false);
 		m_fileName = Utils::getCSVName(fileName);
@@ -211,7 +211,7 @@ MainWindow::openTable()
 
 			switch (reply) {
 			case QMessageBox::Apply:
-				m_mainSettings->write(m_loadedTableRule, m_loadedTableRollAutomatically);
+				m_ruleSettings->write(m_loadedTableRule, m_loadedTableRollAutomatically);
 				break;
 			case QMessageBox::Ignore:
 				rulesModified = true;
@@ -247,9 +247,9 @@ MainWindow::openTable()
 
 
 void
-MainWindow::openMainSettings()
+MainWindow::openSettings()
 {
-	auto *const dialog = new MainSettingsDialog(m_mainSettings, m_isTableActive, this);
+	auto *const dialog = new SettingsDialog(m_ruleSettings, m_isTableActive, this);
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
 	dialog->show();
 }
@@ -299,7 +299,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString data)
 {
-	m_tableWidget = new TableWidget(isDataStored, m_mainSettings, data, this);
+	m_tableWidget = new TableWidget(isDataStored, m_ruleSettings, data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
 	connect(m_tableWidget, &TableWidget::tableHeightSet, this, [this] (int height) {
@@ -435,9 +435,9 @@ MainWindow::checkStoredTableRules(QString data)
 	// Get the first row of the stored table
 	const auto firstRowData = data.split("\n").at(1).split(";");
 	// Get the loaded ruleset and roll automatically variable
-	m_loadedTableRule = static_cast<MainSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
+	m_loadedTableRule = static_cast<RuleSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
 	m_loadedTableRollAutomatically = static_cast<bool>(firstRowData[COL_ROLL_AUTOMATICALLY].toInt());
 
-	return m_mainSettings->ruleset == m_loadedTableRule &&
-	       m_mainSettings->rollAutomatical == m_loadedTableRollAutomatically;
+	return m_ruleSettings->ruleset == m_loadedTableRule &&
+	       m_ruleSettings->rollAutomatical == m_loadedTableRollAutomatically;
 }

@@ -3,10 +3,10 @@
 #include "BaseSettings.hpp"
 
 // Store the main settings affecting the entire application
-class MainSettings : public BaseSettings {
+class RuleSettings : public BaseSettings {
 public:
 
-	MainSettings();
+	RuleSettings();
 
 	enum Ruleset {
 		PATHFINDER_1E_DND_35E	= 0,

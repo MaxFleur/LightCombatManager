@@ -17,7 +17,7 @@ FileHandler::saveTable(
 	QString			filename,
 	int			rowEntered,
 	int			roundCounter,
-	MainSettings::Ruleset	ruleset,
+	RuleSettings::Ruleset	ruleset,
 	bool			rollAutomatically) const
 {
 	// Create a file

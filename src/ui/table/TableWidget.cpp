@@ -18,13 +18,13 @@
 
 #include "AddCharacterDialog.hpp"
 #include "DelegateSpinBox.hpp"
-#include "MainSettings.hpp"
+#include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
 #include "TableSettings.hpp"
 #include "Utils.hpp"
 
-TableWidget::TableWidget(bool isDataStored, std::shared_ptr<MainSettings> MainSettings, QString data, QWidget *parent)
-	: m_isDataStored(isDataStored), m_mainSettings(MainSettings), m_data(data)
+TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings, QString data, QWidget *parent)
+	: m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_data(data)
 {
 	m_char = std::make_shared<CharacterHandler>();
 	m_tableSettings = std::make_shared<TableSettings>();
@@ -218,7 +218,7 @@ TableWidget::setData()
 void
 TableWidget::sortTable()
 {
-	m_char->sortCharacters(m_mainSettings->ruleset, m_mainSettings->rollAutomatical);
+	m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
 	m_rowEntered = 0;
 	generateTable();
 }
@@ -311,7 +311,7 @@ TableWidget::openStatusEffectDialog()
 		return;
 	}
 	// Open dialog
-	auto *const dialog = new StatusEffectDialog(m_mainSettings, this);
+	auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
 	// Lock until dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// If accepted, add status effect text
@@ -335,7 +335,7 @@ TableWidget::openAddCharacterDialog()
 	// Resynchronize because the table could have been modified
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 
-	auto *const dialog = new AddCharacterDialog(m_mainSettings, this);
+	auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
 	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
 	// Lock this widget, wait until Dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {

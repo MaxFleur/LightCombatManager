@@ -7,7 +7,7 @@
 #include "FileHandler.hpp"
 
 class DirSettings;
-class MainSettings;
+class RuleSettings;
 class TableWidget;
 class WelcomeWidget;
 
@@ -41,7 +41,7 @@ private slots:
 	openTable();
 
 	void
-	openMainSettings();
+	openSettings();
 
 	void
 	about();
@@ -83,10 +83,10 @@ private:
 	QString m_fileName{ "" };
 
 	FileHandlerRef m_file;
-	std::shared_ptr<MainSettings> m_mainSettings;
+	std::shared_ptr<RuleSettings> m_ruleSettings;
 	std::shared_ptr<DirSettings> m_dirSettings;
 
-	MainSettings::Ruleset m_loadedTableRule;
+	RuleSettings::Ruleset m_loadedTableRule;
 	bool m_loadedTableRollAutomatically;
 
 	static constexpr int START_WIDTH = 720;

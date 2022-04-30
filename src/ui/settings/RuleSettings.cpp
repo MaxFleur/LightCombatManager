@@ -1,15 +1,15 @@
-#include "MainSettings.hpp"
+#include "RuleSettings.hpp"
 
 #include <QSettings>
 
-MainSettings::MainSettings()
+RuleSettings::RuleSettings()
 {
 	read();
 }
 
 
 void
-MainSettings::read()
+RuleSettings::read()
 {
 	QSettings settings;
 
@@ -25,7 +25,7 @@ MainSettings::read()
 
 
 void
-MainSettings::write(int newRuleset, bool newRollAutomatical)
+RuleSettings::write(int newRuleset, bool newRollAutomatical)
 {
 	QSettings settings;
 

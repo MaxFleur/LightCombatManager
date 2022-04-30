@@ -5,7 +5,7 @@
 
 class QListWidget;
 
-class MainSettings;
+class RuleSettings;
 
 // Dialog used to add certain status effects to characters
 class StatusEffectDialog : public QDialog {
@@ -13,7 +13,7 @@ class StatusEffectDialog : public QDialog {
 
 public:
 	explicit
-	StatusEffectDialog(std::shared_ptr<MainSettings>	MainSettings,
+	StatusEffectDialog(std::shared_ptr<RuleSettings>	RuleSettings,
 			   QWidget *				parent = 0);
 
 	[[nodiscard]] QString
@@ -36,5 +36,5 @@ private:
 
 	QString m_effect;
 
-	std::shared_ptr<MainSettings> m_mainSettings;
+	std::shared_ptr<RuleSettings> m_ruleSettings;
 };

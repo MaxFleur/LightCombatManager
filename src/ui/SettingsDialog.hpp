@@ -3,20 +3,20 @@
 #include <QDialog>
 #include <QPointer>
 
-class MainSettings;
+class RuleSettings;
 
 class QCheckBox;
 class QComboBox;
 
 // Dialog for the main program settings
-class MainSettingsDialog : public QDialog {
+class SettingsDialog : public QDialog {
 	Q_OBJECT
 
 public:
 	explicit
-	MainSettingsDialog(std::shared_ptr<MainSettings>	MainSettings,
-			   bool					isTableActive,
-			   QWidget *				parent = 0);
+	SettingsDialog(std::shared_ptr<RuleSettings>	RuleSettings,
+		       bool				isTableActive,
+		       QWidget *			parent = 0);
 
 private slots:
 
@@ -31,6 +31,6 @@ private:
 	QPointer<QComboBox> m_rulesetBox;
 	QPointer<QCheckBox> m_rollTieBox;
 
-	std::shared_ptr<MainSettings> m_mainSettings;
+	std::shared_ptr<RuleSettings> m_ruleSettings;
 	bool m_isTableActive;
 };

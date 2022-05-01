@@ -24,4 +24,10 @@ getStringWidth(QString	str,
 
 [[nodiscard]] QString
 getCSVName(QString filePath);
+
+[[nodiscard]] QString
+getRulesetName(int ruleset);
+
+[[nodiscard]] QString
+getAutoRollEnabled(int autoRollEnabled);
 }

@@ -79,4 +79,38 @@ getCSVName(QString filePath)
 	QFileInfo fileInfo(filePath);
 	return fileInfo.fileName().toLatin1();
 }
+
+
+QString
+getRulesetName(int ruleset)
+{
+	switch(ruleset)
+	{
+		case 0:
+			return "Pathfinder 1E/D&D 3.5E";
+			break;
+		case 1:
+			return "Pathfinder 2E";
+			break;
+		case 2:
+			return "D&D 5E";
+			break;
+		case 3:
+			return "D&D 3.0E";
+			break;
+		case 4:
+			return "Starfinder";
+			break;
+		default:
+			return "";
+			break;
+	}
+}
+
+
+QString
+getAutoRollEnabled(int autoRollEnabled) 
+{
+	return (autoRollEnabled == 1) ? "automatic rolling enabled" : "automatic rolling disabled";
+}
 }

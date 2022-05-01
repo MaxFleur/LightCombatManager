@@ -6,6 +6,8 @@
 
 #include "FileHandler.hpp"
 
+class QMessageBox;
+
 class DirSettings;
 class RuleSettings;
 class TableWidget;
@@ -66,6 +68,9 @@ private:
 	[[nodiscard]] int
 	createSaveMessageBox(QString	tableMessage,
 			     bool	isClosing);
+	
+	[[nodiscard]] QMessageBox*
+	createRuleChangeMessageBox();
 
 	void
 	closeEvent(QCloseEvent *event);

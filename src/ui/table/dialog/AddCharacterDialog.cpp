@@ -181,10 +181,8 @@ AddCharacterDialog::okButtonClicked()
 {
 	if (!m_nameEdit->text().isEmpty()) {
 		saveButtonClicked();
-		QDialog::accept();
-	} else {
-		QDialog::reject();
 	}
+	QDialog::accept();
 }
 
 

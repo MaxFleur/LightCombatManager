@@ -334,12 +334,14 @@ TableWidget::openAddCharacterDialog()
 {
 	// Resynchronize because the table could have been modified
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	const auto sizeBeforeDialog = m_char->getCharacters().size();
 
 	auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
 	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
 	// Lock this widget, wait until Dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
-		if (m_char->getCharacters().size() > 1) {
+		// Only ask to sort if there are enough chars and additional chars have been added
+		if (m_char->getCharacters().size() > 1 && m_char->getCharacters().size() != sizeBeforeDialog) {
 			auto const reply = QMessageBox::question(
 				this,
 				tr("Sort characters?"),

@@ -13,7 +13,7 @@ namespace Utils
 // Resynchronize the char handler vector. This function is called
 // if a table is loaded and/or new characters are readded to a combat
 void
-resynchronizeCharacters(QTableWidget *		tableWidget,
+resynchronizeCharacters(const QTableWidget *	tableWidget,
 			CharacterHandlerRef	characterHandler)
 {
 	// Clear everything, then use the table cells to refill the character handler
@@ -38,7 +38,7 @@ resynchronizeCharacters(QTableWidget *		tableWidget,
 // But the file storing uses semicolons to separate the values for the csv
 // So the name and additional info columns are checked for semicolons
 bool
-containsSemicolon(QTableWidget *tableWidget)
+containsSemicolon(const QTableWidget *tableWidget)
 {
 	for (int i = 0; i < tableWidget->rowCount(); i++) {
 		for (int j = 0; j < tableWidget->columnCount(); j++) {
@@ -66,15 +66,15 @@ rollDice()
 
 
 int
-getStringWidth(QString str, QFont font)
+getStringWidth(const QString& str, const QFont& font)
 {
-	const QFontMetrics fm(font);
-	return fm.boundingRect(str).width();
+	const QFontMetrics fontMetrics(font);
+	return fontMetrics.boundingRect(str).width();
 }
 
 
 QString
-getCSVName(QString filePath)
+getCSVName(const QString& filePath)
 {
 	QFileInfo fileInfo(filePath);
 	return fileInfo.fileName().toLatin1();
@@ -82,7 +82,7 @@ getCSVName(QString filePath)
 
 
 QString
-getRulesetName(int ruleset)
+getRulesetName(unsigned int ruleset)
 {
 	switch (ruleset) {
 	case 0:
@@ -108,7 +108,7 @@ getRulesetName(int ruleset)
 
 
 QString
-getAutoRollEnabled(int autoRollEnabled)
+getAutoRollEnabled(unsigned int autoRollEnabled)
 {
 	return (autoRollEnabled == 1) ? "automatic rolling enabled" : "automatic rolling disabled";
 }

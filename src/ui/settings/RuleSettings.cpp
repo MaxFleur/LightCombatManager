@@ -25,7 +25,7 @@ RuleSettings::read()
 
 
 void
-RuleSettings::write(int newRuleset, bool newRollAutomatical)
+RuleSettings::write(unsigned int newRuleset, bool newRollAutomatical)
 {
 	QSettings settings;
 

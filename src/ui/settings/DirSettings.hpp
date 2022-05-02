@@ -11,8 +11,8 @@ public:
 	DirSettings();
 
 	void
-	write(QString	fileName,
-	      bool	setSaveDir);
+	write(const QString&	fileName,
+	      bool		setSaveDir);
 
 public:
 	QString openDir;

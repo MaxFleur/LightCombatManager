@@ -13,12 +13,12 @@
 // Stores a table as a csv
 bool
 FileHandler::saveTable(
-	QTableWidget *		tableWidget,
-	QString			filename,
-	int			rowEntered,
-	int			roundCounter,
-	RuleSettings::Ruleset	ruleset,
-	bool			rollAutomatically) const
+	QTableWidget *			tableWidget,
+	const QString&			filename,
+	unsigned int			rowEntered,
+	unsigned int			roundCounter,
+	const RuleSettings::Ruleset&	ruleset,
+	bool				rollAutomatically) const
 {
 	// Create a file
 	QFile file(filename);
@@ -71,7 +71,7 @@ FileHandler::saveTable(
 
 // Open an existing csv table and stream it's data
 int
-FileHandler::getCSVData(QString filename)
+FileHandler::getCSVData(const QString& filename)
 {
 	QFile importedCSV(filename);
 
@@ -102,7 +102,7 @@ FileHandler::getCSVData(QString filename)
 
 // Checks if a table is in the correct format before using
 bool
-FileHandler::checkTableFormat(QString data) const
+FileHandler::checkTableFormat(const QString& data) const
 {
 	// Get the stored table row data information
 	const auto rowDataHeader = data.split("\n").at(0).split(";");

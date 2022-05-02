@@ -9,25 +9,25 @@ class QTableWidget;
 namespace Utils
 {
 void
-resynchronizeCharacters(QTableWidget *		tableWidget,
+resynchronizeCharacters(const QTableWidget *	tableWidget,
 			CharacterHandlerRef	characterHandler);
 
 [[nodiscard]] bool
-containsSemicolon(QTableWidget *tableWidget);
+containsSemicolon(const QTableWidget *tableWidget);
 
 [[nodiscard]] int
 rollDice();
 
 [[nodiscard]] int
-getStringWidth(QString	str,
-	       QFont	font);
+getStringWidth(const QString&	str,
+	       const QFont&	font);
 
 [[nodiscard]] QString
-getCSVName(QString filePath);
+getCSVName(const QString& filePath);
 
 [[nodiscard]] QString
-getRulesetName(int ruleset);
+getRulesetName(unsigned int ruleset);
 
 [[nodiscard]] QString
-getAutoRollEnabled(int autoRollEnabled);
+getAutoRollEnabled(unsigned int autoRollEnabled);
 }

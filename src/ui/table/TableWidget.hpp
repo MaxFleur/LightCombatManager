@@ -29,13 +29,13 @@ public:
 		return m_tableWidget;
 	}
 
-	[[nodiscard]] int
+	[[nodiscard]] unsigned int
 	getRowEntered() const
 	{
 		return m_rowEntered;
 	}
 
-	[[nodiscard]] int
+	[[nodiscard]] unsigned int
 	getRoundCounter() const
 	{
 		return m_roundCounter;
@@ -47,7 +47,7 @@ public:
 		return m_tableWidget->rowCount() == 0;
 	}
 
-	[[nodiscard]] int
+	[[nodiscard]] unsigned int
 	getHeight() const;
 
 public slots:
@@ -61,10 +61,10 @@ signals:
 	exit();
 
 	void
-	tableWidthSet(int width);
+	tableWidthSet(unsigned int width);
 
 	void
-	tableHeightSet(int height);
+	tableHeightSet(unsigned int height);
 
 	void
 	characterNotSelected();
@@ -81,8 +81,8 @@ signals:
 private slots:
 
 	void
-	dragAndDrop(int row,
-		    int column);
+	dragAndDrop(unsigned int	row,
+		    unsigned int	column);
 
 	void
 	rowSelected();
@@ -122,12 +122,12 @@ private:
 	showModColumn(bool show);
 
 	void
-	setTableCheckBox(int	row,
-			 bool	checked);
+	setTableCheckBox(unsigned int	row,
+			 bool		checked);
 
 	void
-	resetNameInfoWidth(QString	strName,
-			   QString	strAdd);
+	resetNameInfoWidth(const QString&	strName,
+			   const QString&	strAdd);
 
 	void
 	contextMenuEvent(QContextMenuEvent *event) override;
@@ -145,15 +145,15 @@ private:
 
 	QString m_data;
 
-	int m_rowEntered = 0;
-	int m_roundCounter = 1;
+	unsigned int m_rowEntered = 0;
+	unsigned int m_roundCounter = 1;
 
 	CharacterHandlerRef m_char;
 	std::shared_ptr<RuleSettings> m_ruleSettings;
 	std::shared_ptr<TableSettings> m_tableSettings;
 
 	// The row identifier to determine the correct row after drag and drop
-	int m_rowIdentifier = 0;
+	unsigned int m_rowIdentifier = 0;
 
 	static constexpr int NMBR_COLUMNS = 7;
 

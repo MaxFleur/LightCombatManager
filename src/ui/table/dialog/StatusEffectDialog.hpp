@@ -30,7 +30,7 @@ private slots:
 private:
 
 	void
-	findEffect(const QString filter);
+	findEffect(const QString& filter);
 
 	QPointer<QListWidget> m_list;
 

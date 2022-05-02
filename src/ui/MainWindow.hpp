@@ -57,17 +57,17 @@ private:
 	setWelcomingWidget();
 
 	void
-	setTableWidget(bool	isDataStored,
-		       bool	newCombatStarted,
-		       QString	data = "");
+	setTableWidget(bool		isDataStored,
+		       bool		newCombatStarted,
+		       const QString&	data = "");
 
 	void
 	setCombatTitle(bool	isCombatActive,
 		       bool	newCombat = false);
 
 	[[nodiscard]] int
-	createSaveMessageBox(QString	tableMessage,
-			     bool	isClosing);
+	createSaveMessageBox(const QString&	tableMessage,
+			     bool		isClosing);
 
 	[[nodiscard]] QMessageBox *
 	createRuleChangeMessageBox();

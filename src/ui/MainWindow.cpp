@@ -292,7 +292,7 @@ MainWindow::setWelcomingWidget()
 
 
 void
-MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, QString data)
+MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
 	m_tableWidget = new TableWidget(isDataStored, m_ruleSettings, data, this);
 	setCentralWidget(m_tableWidget);
@@ -360,7 +360,7 @@ MainWindow::setCombatTitle(bool isCombatActive, bool newCombat)
 
 
 int
-MainWindow::createSaveMessageBox(QString tableMessage, bool isClosing)
+MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 {
 	auto *const msgBox = new QMessageBox(this);
 	msgBox->setIcon(QMessageBox::Question);

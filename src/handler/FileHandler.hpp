@@ -14,16 +14,16 @@ public:
 
 	// Save a table of characters
 	[[nodiscard]] bool
-	saveTable(QTableWidget *	tableWidget,
-		  QString		filename,
-		  int			rowEntered,
-		  int			roundCounter,
-		  RuleSettings::Ruleset ruleset,
-		  bool			rollAutomatically) const;
+	saveTable(QTableWidget *		tableWidget,
+		  const QString&		filename,
+		  unsigned int			rowEntered,
+		  unsigned int			roundCounter,
+		  const RuleSettings::Ruleset&	ruleset,
+		  bool				rollAutomatically) const;
 
 	// Reopen a saved table
 	[[nodiscard]] int
-	getCSVData(QString filename);
+	getCSVData(const QString& filename);
 
 	[[nodiscard]] QString
 	getData() const
@@ -37,6 +37,6 @@ private:
 
 	// Checks if a table is in the right format
 	bool
-	checkTableFormat(QString data) const;
+	checkTableFormat(const QString& data) const;
 };
 using FileHandlerRef = std::shared_ptr<FileHandler>;

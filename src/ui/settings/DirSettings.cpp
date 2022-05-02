@@ -20,7 +20,7 @@ DirSettings::read()
 
 
 void
-DirSettings::write(QString fileName, bool setSaveDir)
+DirSettings::write(const QString& fileName, bool setSaveDir)
 {
 	openDir = fileName;
 

@@ -17,8 +17,8 @@ public:
 	};
 
 	void
-	write(int	newRuleset,
-	      bool	newRollAutomatical);
+	write(unsigned int	newRuleset,
+	      bool		newRollAutomatical);
 
 public:
 	Ruleset ruleset;

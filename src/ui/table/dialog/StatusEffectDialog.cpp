@@ -66,7 +66,7 @@ StatusEffectDialog::okButtonClicked()
 
 
 void
-StatusEffectDialog::findEffect(const QString filter)
+StatusEffectDialog::findEffect(const QString& filter)
 {
 	// Hide effects not containing the filter
 	for (int i = 0; i < m_list->count(); ++i) {

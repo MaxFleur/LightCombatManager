@@ -43,8 +43,8 @@ public:
 
 	// Sort the stored characters, depending on the ruleset
 	void
-	sortCharacters(RuleSettings::Ruleset	ruleset,
-		       bool			rollAutomatically);
+	sortCharacters(const RuleSettings::Ruleset&	ruleset,
+		       bool				rollAutomatically);
 
 	void
 	clearCharacters();

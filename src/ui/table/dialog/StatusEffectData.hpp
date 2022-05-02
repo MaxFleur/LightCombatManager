@@ -164,7 +164,7 @@ const QStringList m_commonEffects = {
 };
 
 [[nodiscard]] QStringList
-getEffectList(int index)
+getEffectList(unsigned int index)
 {
 	auto list = m_commonEffects;
 	list << m_specificRulesets[index];

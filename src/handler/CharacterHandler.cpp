@@ -20,7 +20,7 @@ CharacterHandler::storeCharacter(
 
 // Sort all created characters
 void
-CharacterHandler::sortCharacters(RuleSettings::Ruleset ruleset, bool rollAutomatically)
+CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool rollAutomatically)
 {
 	std::sort(characters.begin(), characters.end(),
 		  [ruleset, rollAutomatically](const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {

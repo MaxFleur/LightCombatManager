@@ -224,7 +224,7 @@ TableWidget::sortTable()
 }
 
 
-int
+unsigned int
 TableWidget::getHeight() const
 {
 	auto height = 0;
@@ -238,7 +238,7 @@ TableWidget::getHeight() const
 // This function enables drag and drop of table rows
 // Which works by switching the values of a row with it's upper or lower "neighbor"
 void
-TableWidget::dragAndDrop(int row, int column)
+TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 {
 	// New row index
 	int newRow;
@@ -493,7 +493,7 @@ TableWidget::showModColumn(bool show)
 
 // Create checkboxes to show the enemy status
 void
-TableWidget::setTableCheckBox(int row, bool checked)
+TableWidget::setTableCheckBox(unsigned int row, bool checked)
 {
 	auto *const checkBox = new QCheckBox;
 	checkBox->setChecked(checked);
@@ -514,7 +514,7 @@ TableWidget::setTableCheckBox(int row, bool checked)
 
 // Set a new width for the name and/or additional info column if longer strings are used
 void
-TableWidget::resetNameInfoWidth(QString name, QString addInfo)
+TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 {
 	auto changeOccured = false;
 	// Use the bold font for longer columns

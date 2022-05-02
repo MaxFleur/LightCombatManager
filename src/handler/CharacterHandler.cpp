@@ -23,11 +23,9 @@ void
 CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool rollAutomatically)
 {
 	const auto sortUsingHashes = [&] (const std::shared_ptr<Character> c1, const std::shared_ptr<Character> c2) {
-					     if (rollAutomatically) {
-						     return QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
-							    QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex();
-					     }
-					     return false;
+					     return rollAutomatically ? QCryptographicHash::hash(c1->name.toUtf8(), QCryptographicHash::Sha256).toHex() >
+						    QCryptographicHash::hash(c2->name.toUtf8(), QCryptographicHash::Sha256).toHex() :
+						    false;
 				     };
 
 	std::sort(characters.begin(), characters.end(),

@@ -68,8 +68,8 @@ private:
 	[[nodiscard]] int
 	createSaveMessageBox(QString	tableMessage,
 			     bool	isClosing);
-	
-	[[nodiscard]] QMessageBox*
+
+	[[nodiscard]] QMessageBox *
 	createRuleChangeMessageBox();
 
 	void

@@ -3,12 +3,10 @@
 ### A small cross-platform, Qt-based combat manager for D&D-like games.
 
 Using LightCombatManager, you can easily create characters with initiative values, an HP counter and additional information. You can also add status effects to each character.\
-![LCM_Pic2](https://user-images.githubusercontent.com/15110943/164336549-e2a12841-0994-49c5-a53d-ee84ab6657f2.png)
-
+![LCM_Pic1](https://user-images.githubusercontent.com/15110943/166829787-ce5f520a-ed61-4598-90bd-e227f3902fab.png)
 
 After creation, the program can sort all characters and will create a full combat table. Using this table, you can easily manage the combat. \
-![LCM_Pic1](https://user-images.githubusercontent.com/15110943/164552474-e45d0e3e-c198-48bf-9ed8-2f2fb8c6e444.png)
-
+![LCM_Pic2](https://user-images.githubusercontent.com/15110943/166829813-eb3fc6d8-3374-48e7-b79f-cba8f17ce30c.png)
 
 If the game ends, but the current combat is not finished yet, you can save the table as a csv file and reopen it later.
 
@@ -17,8 +15,10 @@ If the game ends, but the current combat is not finished yet, you can save the t
 LightCombatManager currently supports the following rulesets:
 * D&D 3.5E
 * D&D 5E
+* D&D 3.0E
 * Pathfinder 1E
 * Pathfinder 2E
+* Starfinder
 
 # Tools & Installation
 LightCombatManager is written in C++17. The following tools are used for development:

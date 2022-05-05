@@ -88,7 +88,7 @@ MainWindow::newCombat()
 {
 	// Check if a table is active
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		if (createSaveMessageBox(m_changeOccured ?
+		if (createSaveMessageBox(isWindowModified() ?
 					 tr("Do you want to save the current Combat before starting a new one?") :
 					 tr("Do you want to start a new Combat?"), false) == 0) {
 			return;
@@ -106,7 +106,7 @@ MainWindow::newCombat()
 bool
 MainWindow::saveTable()
 {
-	if (!m_changeOccured) {
+	if (!isWindowModified()) {
 		return false;
 	}
 
@@ -167,15 +167,15 @@ void
 MainWindow::saveAs()
 {
 	// Save state
-	const auto saveChangeOccured = m_changeOccured;
+	const auto saveChangeOccured = isWindowModified();
 	const auto saveTableInFile = m_tableInFile;
 
 	// Change variables so saveTable calls the file dialog
-	m_changeOccured = true;
+	setWindowModified(true);
 	m_tableInFile = false;
 	// Restore old state if the save fails
 	if (!saveTable()) {
-		m_changeOccured = saveChangeOccured;
+		setWindowModified(saveChangeOccured);
 		m_tableInFile = saveTableInFile;
 	}
 }
@@ -186,7 +186,7 @@ MainWindow::openTable()
 {
 	// Check if a table is active right now
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		if (createSaveMessageBox(m_changeOccured ?
+		if (createSaveMessageBox(isWindowModified() ?
 					 tr("Do you want to save the current Combat before opening another existing Combat?") :
 					 tr("Do you want to open another existing Combat?"), false) == 0) {
 			return;
@@ -266,7 +266,7 @@ MainWindow::about()
 void
 MainWindow::exitCombat()
 {
-	if (createSaveMessageBox(m_changeOccured ?
+	if (createSaveMessageBox(isWindowModified() ?
 				 tr("Do you want to save the current Combat before exiting to the Main Window?") :
 				 tr("Are you sure you want to return to the Main Window? This will end the current Combat."), false) == 0) {
 		return;
@@ -344,17 +344,14 @@ void
 MainWindow::setCombatTitle(bool isCombatActive, bool newCombat)
 {
 	// Ensure a continuing for new combats
-	if (m_changeOccured == isCombatActive && !newCombat) {
+	if (isWindowModified() == isCombatActive && !newCombat) {
 		return;
 	}
-	m_changeOccured = isCombatActive;
 
 	QString title = "LCM";
-	m_fileName.isEmpty() ? title.append(" - " + (tr("Unnamed Combat"))) : title.append(" - " + m_fileName);
-	// Indicate a change in the title
-	if (m_changeOccured) {
-		title.append("*");
-	}
+	m_fileName.isEmpty() ? title.append(" - " + (tr("Unnamed Combat"))) : title.append(" - " + m_fileName + "[*]");
+	setWindowModified(isCombatActive);
+	
 	setWindowTitle(title);
 }
 
@@ -365,12 +362,12 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 	auto *const msgBox = new QMessageBox(this);
 	msgBox->setIcon(QMessageBox::Question);
 	msgBox->setStandardButtons(
-		m_changeOccured ?
+		isWindowModified() ?
 		QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
 		QMessageBox::Yes | QMessageBox::No);
 	msgBox->setText(tableMessage);
 	if (isClosing) {
-		m_changeOccured ? msgBox->setWindowTitle(tr("Save and exit?")) : msgBox->setWindowTitle(tr("Exit application?"));
+		isWindowModified() ? msgBox->setWindowTitle(tr("Save and exit?")) : msgBox->setWindowTitle(tr("Exit application?"));
 	} else {
 		msgBox->setWindowTitle(tr("Save Combat?"));
 	}
@@ -426,7 +423,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 {
 	// Check if a table is active and filled
 	if (m_isTableActive && !m_tableWidget->isEmpty()) {
-		const auto val = createSaveMessageBox(m_changeOccured ?
+		const auto val = createSaveMessageBox(isWindowModified() ?
 						      tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
 						      tr("Do you really want to exit the application?"), true);
 

@@ -82,7 +82,6 @@ private:
 	QPointer<TableWidget> m_tableWidget;
 
 	bool m_isTableActive{ false };
-	bool m_changeOccured{ false };
 	bool m_tableInFile{ false };
 
 	QString m_fileName{ "" };

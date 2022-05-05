@@ -77,7 +77,7 @@ QString
 getCSVName(const QString& filePath)
 {
 	QFileInfo fileInfo(filePath);
-	return fileInfo.fileName().toLatin1();
+	return fileInfo.fileName().toUtf8();
 }
 
 

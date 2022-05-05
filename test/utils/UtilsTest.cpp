@@ -64,11 +64,14 @@ TEST_CASE("Util Testing", "[Utils]"){
 	}
 
 	SECTION("CSV file path test") {
-		SECTION("Example 1") {
+		SECTION("Example Latin") {
 			REQUIRE(Utils::getCSVName("a/path/to/an/exampleTable.csv") == "exampleTable.csv");
 		}
-		SECTION("Example 2") {
-			REQUIRE(Utils::getCSVName("/another/r4nd&m/way/to_an/exampleTable.csv") == "exampleTable.csv");
+		SECTION("Example Umlaut") {
+			REQUIRE(Utils::getCSVName("/rändöm/päth/tö/exämpleTäble.csv") == "exämpleTäble.csv");
+		}
+		SECTION("Example Cyrillic") {
+			REQUIRE(Utils::getCSVName("путь/к/примеру.csv") == "примеру.csv");
 		}
 	}
 }

@@ -244,9 +244,9 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 	int newRow;
 
 	// Depending on the current index, set the new row value
-	if (m_tableWidget->currentIndex().row() < row) {
+	if (m_tableWidget->currentIndex().row() < (int) row) {
 		newRow = row - 1;
-	} else if (m_tableWidget->currentIndex().row() > row) {
+	} else if (m_tableWidget->currentIndex().row() > (int) row) {
 		newRow = row + 1;
 	} else {
 		return;
@@ -414,7 +414,7 @@ TableWidget::removeRow()
 	// If a row has been selected, remove this row
 	if (m_isRowSelected) {
 		// If the deleted row is before the current entered row, move one up
-		if (m_tableWidget->currentIndex().row() < m_rowEntered) {
+		if (m_tableWidget->currentIndex().row() < (int) m_rowEntered) {
 			m_rowEntered--;
 		}
 		// If the deleted row was the last one in the table and also the current player, select to the first row

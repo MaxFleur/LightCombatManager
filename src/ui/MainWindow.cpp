@@ -351,7 +351,7 @@ MainWindow::setCombatTitle(bool isCombatActive, bool newCombat)
 	QString title = "LCM";
 	m_fileName.isEmpty() ? title.append(" - " + (tr("Unnamed Combat"))) : title.append(" - " + m_fileName + "[*]");
 	setWindowModified(isCombatActive);
-	
+
 	setWindowTitle(title);
 }
 

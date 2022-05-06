@@ -13,9 +13,9 @@ If the game ends, but the current combat is not finished yet, you can save the t
 ### Supported rulesets
 
 LightCombatManager currently supports the following rulesets:
+* D&D 3.0E
 * D&D 3.5E
 * D&D 5E
-* D&D 3.0E
 * Pathfinder 1E
 * Pathfinder 2E
 * Starfinder
@@ -43,13 +43,13 @@ The following description is focused on building the application with `cmake` an
 1. Download or clone this repository.
 2. Open up `cmd` or `git bash` and navigate to this repository. 
 3. Create a build folder: `mkdir build`. Navigate into this folder via `cd build`.
-4. Set the CMake Prefix Path for `Qt` inside the `CMakeLists.txt`. Example: `set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\")` for `Qt 5.15` and `msvc compiler`
-5. Hit `cmake.exe -G “Visual Studio 17 2022” -A x64 ..`. This will create an `sln`-file. 
+4. Set the CMake Prefix Path for Qt inside the `CMakeLists.txt`. Example: `set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\")` for Qt 5.15 and msvc compiler.
+5. Hit `cmake.exe -G “Visual Studio 17 2022” -A x64 ..` This will create an sln-file. 
 6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
-7. Inside the `build`-file, a file named `Debug` or `Release` should have been created. Navigate to this folder.
-8. The `exe`-file for the application should be found here. To successfully run the exe, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
+7. Inside the build-file, a file named `Debug` or `Release` should have been created. Navigate to this folder.
+8. The exe-file for the application should be found here. To successfully run the exe, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
    have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug). You also have to create a directory named
-   `platforms` in the same dir as the `exe`-file and copy the `qwindows.dll` into it. 
+   `platforms` in the same dir as the exe-file and copy the `qwindows.dll` into it. 
    
 # Contribution
 

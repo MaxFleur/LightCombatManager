@@ -562,6 +562,8 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
 	openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
+	menu->addSeparator();
+
 	// Status Effect and remove options only if the cursor is above an item
 	// Map from MainWindow coordinates to Table Widget coordinates
 	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
@@ -574,16 +576,14 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
 		statusEffectAction->setShortcutVisibleInContextMenu(true);
 
-		menu->addSeparator();
-
 		auto *const removeRowAction = menu->addAction(tr("Remove Character"), this, [this] () {
 			removeRow();
 		});
 		removeRowAction->setShortcut(Qt::Key_Delete);
 		removeRowAction->setShortcutVisibleInContextMenu(true);
-	}
 
-	menu->addSeparator();
+		menu->addSeparator();
+	}
 
 	if (m_tableWidget->rowCount() > 1) {
 		auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {

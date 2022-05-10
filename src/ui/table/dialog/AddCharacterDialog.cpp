@@ -55,7 +55,8 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	auto *const iniLabel = new QLabel(tr("Initiative:"));
 	iniLabel->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
 
-	auto *const iniModifierLabel = new QLabel(tr("Modifier:"));
+	auto *const iniModifierLabel = new QLabel(m_ruleSettings->ruleset ==
+						  RuleSettings::Ruleset::DND_30E ? tr("DEX value:") : tr("INI Modifier:"));
 	iniModifierLabel->setToolTip(tr("Set the modifier of the initiative. Optional."));
 
 	auto *const hpLabel = new QLabel(tr("HP:"));

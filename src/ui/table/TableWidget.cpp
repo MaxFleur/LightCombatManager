@@ -371,6 +371,23 @@ TableWidget::addCharacter(
 
 
 void
+TableWidget::rerollIni(int row)
+{
+	const auto newRolledDice = Utils::rollDice();
+	const auto newInitiative = newRolledDice + m_tableWidget->item(row, COL_MODIFIER)->text().toInt();
+	m_tableWidget->setItem(row, COL_INI, new QTableWidgetItem(
+				       QString::number(newInitiative))
+			       );
+
+	const auto messageString = tr("New initiative value: ") + QString::number(newInitiative) + "<br>" +
+				   tr("Rolled dice value: ") + QString::number(newRolledDice) + "<br>" +
+				   tr("Modifier: ") + m_tableWidget->item(row, COL_MODIFIER)->text();
+
+	auto const reply = QMessageBox::information(this, tr("Rerolled initiative"), messageString);
+}
+
+
+void
 TableWidget::setRowAndPlayer()
 {
 	// Select row entered with Return key
@@ -575,6 +592,12 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		});
 		statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
 		statusEffectAction->setShortcutVisibleInContextMenu(true);
+
+		auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, [this, event] {
+			rerollIni(m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos()))->row());
+		});
+		rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
+		rerollIniAction->setShortcutVisibleInContextMenu(true);
 
 		auto *const removeRowAction = menu->addAction(tr("Remove Character"), this, [this] () {
 			removeRow();

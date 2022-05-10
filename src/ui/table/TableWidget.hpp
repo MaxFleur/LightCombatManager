@@ -94,6 +94,9 @@ private slots:
 		     bool	isEnemy,
 		     QString	addInfo);
 
+	void
+	rerollIni(int row);
+
 private:
 
 	void

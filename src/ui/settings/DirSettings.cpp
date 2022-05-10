@@ -26,7 +26,7 @@ DirSettings::write(const QString& fileName, bool setSaveDir)
 
 	QSettings settings;
 	settings.setValue("dir_open", fileName);
-	// Only set the standard save dir at the first program start, after that it's saved
+	// Only set the standard save dir at the first program start for a default path
 	if (setSaveDir) {
 		settings.setValue("dir_save", fileName);
 	}
@@ -41,7 +41,7 @@ DirSettings::handleSubDir()
 	// Write into settings so this subdir is used as standard path for saving tables
 	if (dir.mkdir("tables")) {
 		const auto tableSubDir = QDir::currentPath() + "/tables";
-		// Save and open get same directory, user might change it later
+		// Save and open get the same directory, user might change it later
 		saveDir = tableSubDir;
 		openDir = tableSubDir;
 

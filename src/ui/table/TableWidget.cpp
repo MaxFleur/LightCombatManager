@@ -431,7 +431,10 @@ TableWidget::removeRow()
 		return;
 	}
 
-	emit characterNotSelected();
+	auto const reply = QMessageBox::warning(
+		this,
+		tr("Could not remove Character!"),
+		tr("Please select a Character with the Mouse Key before deleting!"));
 }
 
 
@@ -477,7 +480,6 @@ void
 TableWidget::showIniColumn(bool show)
 {
 	m_tableWidget->setColumnHidden(COL_INI, !show);
-
 	m_tableSettings->writeIniShown(show);
 }
 
@@ -486,7 +488,6 @@ void
 TableWidget::showModColumn(bool show)
 {
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
-
 	m_tableSettings->writeModifierShown(show);
 }
 
@@ -588,7 +589,6 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
 			sortTable();
 		});
-
 		menu->addSeparator();
 	}
 

@@ -192,9 +192,9 @@ MainWindow::openTable()
 			return;
 		}
 	}
-	auto const fileName =
+	const auto fileName =
 		QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->openDir, ("csv File(*.csv)"));
-	auto const code = m_file->getCSVData(fileName);
+	const auto code = m_file->getCSVData(fileName);
 
 	auto rulesModified = false;
 
@@ -314,12 +314,6 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
 	});
 	connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {
 		setCombatTitle(true);
-	});
-	connect(m_tableWidget, &TableWidget::characterNotSelected, this, [this] () {
-		auto const reply = QMessageBox::warning(
-			this,
-			tr("Could not remove Character!"),
-			tr("Please select a Character with the Mouse Key before deleting!"));
 	});
 
 	setCombatTitle(false);

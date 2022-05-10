@@ -95,7 +95,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	setLayout(layout);
 	setFocus();
 
-	auto *const saveShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this);
+	auto *const saveShortcut = new QShortcut(QKeySequence::Save, this);
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 
 	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
@@ -114,7 +114,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 void
 AddCharacterDialog::setLabelRolled()
 {
-	auto rand = Utils::rollDice();
+	const auto rand = Utils::rollDice();
 	m_iniBox->setValue(rand + m_iniModifierBox->value());
 	m_labelRolled->setText(tr("Rolled number: ") + QString::number(rand));
 }

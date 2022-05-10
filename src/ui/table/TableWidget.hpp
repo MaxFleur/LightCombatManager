@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QPointer>
-#include <QString>
 #include <QWidget>
 
 #include "CharacterHandler.hpp"
@@ -65,9 +64,6 @@ signals:
 
 	void
 	tableHeightSet(unsigned int height);
-
-	void
-	characterNotSelected();
 
 	void
 	setCurrentPlayer();

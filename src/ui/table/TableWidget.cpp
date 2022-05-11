@@ -386,6 +386,10 @@ TableWidget::rerollIni()
 	m_tableWidget->setItem(row, COL_INI, new QTableWidgetItem(
 				       QString::number(newInitiative))
 			       );
+	// Restore the bold font if the current player gets an ini reroll
+	if (row == m_rowEntered) {
+		setRowAndPlayer();
+	}
 
 	const auto messageString = tr("New initiative value: ") + QString::number(newInitiative) + "<br>" +
 				   tr("Rolled dice value: ") + QString::number(newRolledDice) + "<br>" +

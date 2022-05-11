@@ -16,6 +16,7 @@ class TableWidget : public QWidget {
 public:
 	TableWidget(bool				isDataStored,
 		    std::shared_ptr<RuleSettings>	RuleSettings,
+		    int					mainWidgetWidth,
 		    QString				data = "",
 		    QWidget *				parent = 0);
 

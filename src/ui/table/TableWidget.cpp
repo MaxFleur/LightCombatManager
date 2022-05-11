@@ -23,7 +23,8 @@
 #include "TableSettings.hpp"
 #include "Utils.hpp"
 
-TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings, QString data, QWidget *parent)
+TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
+			 int mainWidgetWidth, QString data, QWidget *parent)
 	: m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_data(data)
 {
 	m_char = std::make_shared<CharacterHandler>();
@@ -40,11 +41,12 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	m_tableWidget->setShowGrid(true);
 	m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
-	m_tableWidget->setColumnWidth(COL_NAME, this->width() * WIDTH_NAME);
-	m_tableWidget->setColumnWidth(COL_INI, this->width() * WIDTH_INI);
-	m_tableWidget->setColumnWidth(COL_MODIFIER, this->width() * WIDTH_MODIFIER);
-	m_tableWidget->setColumnWidth(COL_HP, this->width() * WIDTH_HP);
-	m_tableWidget->setColumnWidth(COL_ENEMY, this->width() * WIDTH_ENEMY);
+	// Adjust row width to main widget size
+	m_tableWidget->setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
+	m_tableWidget->setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
+	m_tableWidget->setColumnWidth(COL_MODIFIER, mainWidgetWidth * WIDTH_MODIFIER);
+	m_tableWidget->setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
+	m_tableWidget->setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
 	// Last column just gets remaining space
 	m_tableWidget->horizontalHeader()->setStretchLastSection(true);
 	// The last row just contains the row ids, it does not need to be visible

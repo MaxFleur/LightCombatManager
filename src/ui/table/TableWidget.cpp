@@ -106,6 +106,7 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	auto *const goUpShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up), this);
 	auto *const goDownShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down), this);
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
+	auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), this);
 	auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
@@ -132,6 +133,7 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 		enteredRowChanged(true);
 	});
 	connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
+	connect(rerollIniShortcut, &QShortcut::activated, this, &TableWidget::rerollIni);
 	connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openAddCharacterDialog);
 }
 
@@ -376,8 +378,9 @@ TableWidget::addCharacter(
 
 
 void
-TableWidget::rerollIni(int row)
+TableWidget::rerollIni()
 {
+	const auto row = m_tableWidget->currentRow();
 	const auto newRolledDice = Utils::rollDice();
 	const auto newInitiative = newRolledDice + m_tableWidget->item(row, COL_MODIFIER)->text().toInt();
 	m_tableWidget->setItem(row, COL_INI, new QTableWidgetItem(
@@ -595,9 +598,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
 		statusEffectAction->setShortcutVisibleInContextMenu(true);
 
-		auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, [this, event] {
-			rerollIni(m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos()))->row());
-		});
+		auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &TableWidget::rerollIni);
 		rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
 		rerollIniAction->setShortcutVisibleInContextMenu(true);
 

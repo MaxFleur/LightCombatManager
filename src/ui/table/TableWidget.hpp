@@ -95,7 +95,7 @@ private slots:
 		     QString	addInfo);
 
 	void
-	rerollIni(int row);
+	rerollIni();
 
 private:
 

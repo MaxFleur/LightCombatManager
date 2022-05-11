@@ -294,7 +294,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
-	m_tableWidget = new TableWidget(isDataStored, m_ruleSettings, data, this);
+	m_tableWidget = new TableWidget(isDataStored, m_ruleSettings, this->width(), data, this);
 	setCentralWidget(m_tableWidget);
 	connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
 	connect(m_tableWidget, &TableWidget::tableHeightSet, this, [this] (int height) {

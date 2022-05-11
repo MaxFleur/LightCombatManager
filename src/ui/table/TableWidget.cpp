@@ -67,11 +67,16 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	auto *const roundCounterLabel = new QLabel;
 	auto *const currentPlayerLabel = new QLabel;
 
-	connect(this, &TableWidget::setCurrentPlayer, this, [this, currentPlayerLabel] {
+	connect(this, &TableWidget::setCurrentPlayer, this, [this, currentPlayerLabel, roundCounterLabel] {
+		if (m_tableWidget->rowCount() == 0) {
+			currentPlayerLabel->setText(tr("Current: None"));
+			roundCounterLabel->setText(tr("Round 0"));
+			return;
+		}
 		currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
 	});
 	connect(this, &TableWidget::roundCounterSet, this, [this, roundCounterLabel] {
-		roundCounterLabel->setText("Round " + QString::number(m_roundCounter));
+		roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
 	});
 
 	// Create a spacer widget to move the buttons to the right side
@@ -393,22 +398,26 @@ TableWidget::setRowAndPlayer()
 	// Select row entered with Return key
 	m_tableWidget->selectionModel()->clearSelection();
 
-	// Reset bold text rows to standard font
-	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		if (m_tableWidget->item(i, 0)->font().bold()) {
-			for (int j = 0; j < m_tableWidget->columnCount(); j++) {
-				if (j != COL_ENEMY) {
-					m_tableWidget->item(i, j)->setFont(m_defaultFont);
+	if (m_tableWidget->rowCount() != 0) {
+		// Reset bold text rows to standard font
+		for (int i = 0; i < m_tableWidget->rowCount(); i++) {
+			if (m_tableWidget->item(i, 0)->font().bold()) {
+				for (int j = 0; j < m_tableWidget->columnCount(); j++) {
+					if (j != COL_ENEMY) {
+						m_tableWidget->item(i, j)->setFont(m_defaultFont);
+					}
 				}
 			}
 		}
-	}
-	// Highlight selected row with bold fonts
-	for (int j = 0; j < m_tableWidget->columnCount(); j++) {
-		if (j != COL_ENEMY) {
-			m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
+
+		// Highlight selected row with bold fonts
+		for (int j = 0; j < m_tableWidget->columnCount(); j++) {
+			if (j != COL_ENEMY) {
+				m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
+			}
 		}
 	}
+
 	emit setCurrentPlayer();
 }
 
@@ -418,13 +427,6 @@ void
 TableWidget::removeRow()
 {
 	if (m_tableWidget->rowCount() == 0) {
-		return;
-	}
-
-	// if only one character remains, remove this character
-	// @note This part can change later, because the slot for selected rows is not called if only one row remains
-	if (m_tableWidget->rowCount() == 1) {
-		m_tableWidget->removeRow(0);
 		return;
 	}
 

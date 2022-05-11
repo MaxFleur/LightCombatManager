@@ -396,9 +396,9 @@ MainWindow::createRuleChangeMessageBox()
 	const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
 				"Your ruleset: <b>") + Utils::getRulesetName(m_ruleSettings->ruleset) + "</b>, " +
 			     "<b>" + Utils::getAutoRollEnabled(m_ruleSettings->rollAutomatical) + "</b> <br>" +
-			     "The stored table ruleset is: <b>" + Utils::getRulesetName(m_loadedTableRule) + "</b>, " +
+			     tr("The stored table ruleset is: <b>") + Utils::getRulesetName(m_loadedTableRule) + "</b>, " +
 			     "<b>" + Utils::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
-			     "Do you want to apply the stored Table ruleset to your settings or ignore it?";
+			     tr("Do you want to apply the stored Table ruleset to your settings or ignore it?");
 	auto *const msgBox = new QMessageBox(
 		QMessageBox::Warning,
 		tr("Different rulesets detected!"),

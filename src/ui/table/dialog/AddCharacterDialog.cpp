@@ -57,7 +57,9 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 
 	auto *const iniModifierLabel = new QLabel(m_ruleSettings->ruleset ==
 						  RuleSettings::Ruleset::DND_30E ? tr("DEX value:") : tr("INI Modifier:"));
-	iniModifierLabel->setToolTip(tr("Set the modifier of the initiative. Optional."));
+	iniModifierLabel->setToolTip(m_ruleSettings->ruleset ==
+				     RuleSettings::Ruleset::DND_30E ? tr("Set the dexterity value of this character. Optional.") :
+				     tr("Set the modifier of the initiative. Optional."));
 
 	auto *const hpLabel = new QLabel(tr("HP:"));
 	hpLabel->setToolTip(tr("Set the HP of this Character. Optional."));

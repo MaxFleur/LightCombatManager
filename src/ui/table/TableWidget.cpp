@@ -590,14 +590,6 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	auto *const menu = new QMenu(this);
 
-	auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
-		openAddCharacterDialog();
-	});
-	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
-	openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
-
-	menu->addSeparator();
-
 	// Status Effect and remove options only if the cursor is above an item
 	// Map from MainWindow coordinates to Table Widget coordinates
 	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
@@ -629,6 +621,14 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		});
 		menu->addSeparator();
 	}
+
+	auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
+		openAddCharacterDialog();
+	});
+	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
+	openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
+
+	menu->addSeparator();
 
 	auto *const optionMenu = menu->addMenu("Options");
 

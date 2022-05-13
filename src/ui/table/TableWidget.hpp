@@ -116,10 +116,8 @@ private:
 	enteredRowChanged(bool goDown);
 
 	void
-	showIniColumn(bool show);
-
-	void
-	showModColumn(bool show);
+	showTablePart(bool	show,
+		      int	valueType);
 
 	void
 	setTableCheckBox(unsigned int	row,

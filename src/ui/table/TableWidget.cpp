@@ -37,7 +37,7 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional information") << "";
 
 	m_tableWidget->setHorizontalHeaderLabels(tableHeader);
-	m_tableWidget->verticalHeader()->setVisible(false);
+	m_tableWidget->verticalHeader()->setVisible(m_tableSettings->verticalHeaderShown);
 	m_tableWidget->setShowGrid(true);
 	m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 	m_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -505,18 +505,24 @@ TableWidget::enteredRowChanged(bool goDown)
 
 
 void
-TableWidget::showIniColumn(bool show)
+TableWidget::showTablePart(bool show, int valueType)
 {
-	m_tableWidget->setColumnHidden(COL_INI, !show);
-	m_tableSettings->writeIniShown(show);
-}
-
-
-void
-TableWidget::showModColumn(bool show)
-{
-	m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
-	m_tableSettings->writeModifierShown(show);
+	switch (valueType) {
+	case 0:
+		m_tableWidget->setColumnHidden(COL_INI, !show);
+		m_tableSettings->write(show, TableSettings::ValueType::INI_SHOWN);
+		break;
+	case 1:
+		m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
+		m_tableSettings->write(show, TableSettings::ValueType::MOD_SHOWN);
+		break;
+	case 2:
+		m_tableWidget->verticalHeader()->setVisible(show);
+		m_tableSettings->write(show, TableSettings::ValueType::VERT_HEADER_SHOWN);
+		break;
+	default:
+		break;
+	}
 }
 
 
@@ -627,16 +633,22 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	auto *const optionMenu = menu->addMenu("Options");
 
 	auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
-		showIniColumn(show);
+		showTablePart(show, 0);
 	});
 	iniAction->setCheckable(true);
 	iniAction->setChecked(m_tableSettings->iniShown);
 
 	auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
-		showModColumn(show);
+		showTablePart(show, 1);
 	});
 	modifierAction->setCheckable(true);
 	modifierAction->setChecked(m_tableSettings->modifierShown);
+
+	auto *const verticalHeaderAction = optionMenu->addAction(tr("Show Vertical Header"), this, [this] (bool show) {
+		showTablePart(show, 2);
+	});
+	verticalHeaderAction->setCheckable(true);
+	verticalHeaderAction->setChecked(m_tableSettings->verticalHeaderShown);
 
 	menu->exec(event->globalPos());
 }

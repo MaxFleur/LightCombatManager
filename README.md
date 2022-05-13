@@ -6,7 +6,7 @@ Using LightCombatManager, you can easily create characters with initiative value
 ![LCM_Pic1](https://user-images.githubusercontent.com/15110943/166829787-ce5f520a-ed61-4598-90bd-e227f3902fab.png)
 
 After creation, the program can sort all characters and will create a full combat table. Using this table, you can easily manage the combat. \
-![LCM_Pic2](https://user-images.githubusercontent.com/15110943/166829813-eb3fc6d8-3374-48e7-b79f-cba8f17ce30c.png)
+![LCM_Pic2](https://user-images.githubusercontent.com/15110943/168394633-e2842166-cf10-4168-b35a-03f0fb4ee2a4.png)
 
 If the game ends, but the current combat is not finished yet, you can save the table as a csv file and reopen it later.
 

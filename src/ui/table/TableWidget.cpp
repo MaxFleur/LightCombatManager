@@ -112,7 +112,6 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
 	connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
-	connect(m_tableWidget, &QTableWidget::cellClicked, this, &TableWidget::rowSelected);
 	connect(m_tableWidget, &QTableWidget::cellChanged, this, [this] {
 		emit changeOccured();
 	});
@@ -303,16 +302,6 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 }
 
 
-// Check if a row is selected
-void
-TableWidget::rowSelected()
-{
-	if (!m_isRowSelected) {
-		m_isRowSelected = true;
-	}
-}
-
-
 void
 TableWidget::openStatusEffectDialog()
 {
@@ -440,7 +429,7 @@ TableWidget::removeRow()
 	}
 
 	// If a row has been selected, remove this row
-	if (m_isRowSelected) {
+	if (m_tableWidget->selectionModel()->hasSelection()) {
 		// If the deleted row is before the current entered row, move one up
 		if (m_tableWidget->currentIndex().row() < (int) m_rowEntered) {
 			m_rowEntered--;
@@ -452,7 +441,6 @@ TableWidget::removeRow()
 			}
 		}
 		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
-		m_isRowSelected = false;
 		// Update the current player and row
 		setRowAndPlayer();
 
@@ -593,9 +581,6 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	// Status Effect and remove options only if the cursor is above an item
 	// Map from MainWindow coordinates to Table Widget coordinates
 	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
-		// Enable row removal
-		rowSelected();
-
 		auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
 			openStatusEffectDialog();
 		});

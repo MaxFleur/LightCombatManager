@@ -82,9 +82,6 @@ private slots:
 		    unsigned int	column);
 
 	void
-	rowSelected();
-
-	void
 	openStatusEffectDialog();
 
 	void
@@ -136,8 +133,6 @@ private:
 	// Fonts for highlighting rows
 	QFont m_defaultFont;
 	QFont m_boldFont;
-
-	bool m_isRowSelected{ false };
 
 	bool m_isDataStored;
 

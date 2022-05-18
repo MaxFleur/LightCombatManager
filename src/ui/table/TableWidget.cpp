@@ -580,7 +580,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 
 	// Status Effect and remove options only if the cursor is above an item
 	// Map from MainWindow coordinates to Table Widget coordinates
-	if (m_tableWidget->itemAt(m_tableWidget->viewport()->mapFrom(this, event->pos())) != nullptr) {
+	if (m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row() >= 0) {
 		auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
 			openStatusEffectDialog();
 		});

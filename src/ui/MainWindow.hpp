@@ -62,8 +62,7 @@ private:
 		       const QString&	data = "");
 
 	void
-	setCombatTitle(bool	isCombatActive,
-		       bool	newCombat = false);
+	setCombatTitle(bool isCombatActive);
 
 	[[nodiscard]] int
 	createSaveMessageBox(const QString&	tableMessage,

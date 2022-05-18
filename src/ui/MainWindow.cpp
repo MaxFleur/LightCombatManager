@@ -97,7 +97,7 @@ MainWindow::newCombat()
 	m_tableInFile = false;
 
 	m_fileName = QString();
-	setCombatTitle(false, true);
+	setCombatTitle(false);
 
 	setTableWidget(false, true);
 }
@@ -335,18 +335,17 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
 
 
 void
-MainWindow::setCombatTitle(bool isCombatActive, bool newCombat)
+MainWindow::setCombatTitle(bool isCombatActive)
 {
-	// Ensure a continuing for new combats
-	if (isWindowModified() == isCombatActive && !newCombat) {
+	if (isWindowModified() == isCombatActive) {
 		return;
 	}
-
 	QString title = "LCM";
-	m_fileName.isEmpty() ? title.append(" - " + (tr("Unnamed Combat"))) : title.append(" - " + m_fileName + "[*]");
-	setWindowModified(isCombatActive);
+	m_fileName.isEmpty() ? title.append(" - " + (tr("Unnamed Combat"))) : title.append(" - " + m_fileName);
+	title.append("[*]");
 
 	setWindowTitle(title);
+	setWindowModified(isCombatActive);
 }
 
 

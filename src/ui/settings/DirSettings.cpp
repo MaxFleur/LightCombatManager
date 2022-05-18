@@ -26,9 +26,10 @@ DirSettings::write(const QString& fileName, bool setSaveDir)
 
 	QSettings settings;
 	settings.setValue("dir_open", fileName);
-	// Only set the standard save dir at the first program start for a default path
+
 	if (setSaveDir) {
 		settings.setValue("dir_save", fileName);
+		saveDir = fileName;
 	}
 }
 

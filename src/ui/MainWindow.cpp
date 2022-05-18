@@ -148,7 +148,7 @@ MainWindow::saveTable()
 		    m_ruleSettings->ruleset,
 		    m_ruleSettings->rollAutomatical)) {
 		m_tableInFile = true;
-		m_dirSettings->write(fileName, false);
+		m_dirSettings->write(fileName, true);
 		m_fileName = Utils::getCSVName(fileName);
 
 		setCombatTitle(false);
@@ -219,7 +219,7 @@ MainWindow::openTable()
 		m_isTableActive = false;
 		m_tableInFile = true;
 		// Save the opened file dir
-		m_dirSettings->write(fileName, false);
+		m_dirSettings->write(fileName);
 		m_fileName = Utils::getCSVName(fileName);
 		setTableWidget(true, false, m_file->getData());
 

@@ -12,7 +12,7 @@ public:
 
 	void
 	write(const QString&	fileName,
-	      bool		setSaveDir);
+	      bool		setSaveDir = false);
 
 public:
 	QString openDir;

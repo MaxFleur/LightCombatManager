@@ -226,6 +226,7 @@ TableWidget::setData()
 void
 TableWidget::sortTable()
 {
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 	m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
 	m_rowEntered = 0;
 	generateTable();

@@ -19,7 +19,6 @@ public:
 		       QWidget *			parent = 0);
 
 private slots:
-
 	bool
 	applyClicked();
 
@@ -27,7 +26,6 @@ private slots:
 	okClicked();
 
 private:
-
 	QPointer<QComboBox> m_rulesetBox;
 	QPointer<QCheckBox> m_rollTieBox;
 

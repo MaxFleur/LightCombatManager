@@ -10,7 +10,6 @@
 // This class handles the creation, sorting and deletion of the created characters
 class CharacterHandler {
 private:
-
 	// Main character instance used for the table generation
 	struct Character {
 		// Name of the character. Because this name must be set manually, it is the only variable without a standard value
@@ -31,7 +30,6 @@ private:
 	std::vector<std::shared_ptr<Character> > characters;
 
 public:
-
 	// Store a new character
 	void
 	storeCharacter(QString	name,

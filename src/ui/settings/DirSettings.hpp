@@ -7,7 +7,6 @@
 // Store data used for the opening and saving directories
 class DirSettings : public BaseSettings {
 public:
-
 	DirSettings();
 
 	void
@@ -19,7 +18,6 @@ public:
 	QString saveDir;
 
 private:
-
 	void
 	read() override;
 

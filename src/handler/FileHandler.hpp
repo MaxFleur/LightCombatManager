@@ -11,7 +11,6 @@ class QTableWidget;
 // This class handles the saving and reopening of tables as csv data
 class FileHandler {
 public:
-
 	// Save a table of characters
 	[[nodiscard]] bool
 	saveTable(QTableWidget *		tableWidget,
@@ -32,11 +31,12 @@ public:
 	}
 
 private:
-	// Data used to fill the table
-	QString m_data;
-
 	// Checks if a table is in the right format
 	bool
 	checkTableFormat(const QString& data) const;
+
+private:
+	// Data used to fill the table
+	QString m_data;
 };
 using FileHandlerRef = std::shared_ptr<FileHandler>;

@@ -23,15 +23,14 @@ public:
 	}
 
 private slots:
-
 	void
 	okButtonClicked();
 
 private:
-
 	void
 	findEffect(const QString& filter);
 
+private:
 	QPointer<QListWidget> m_list;
 
 	QString m_effect;

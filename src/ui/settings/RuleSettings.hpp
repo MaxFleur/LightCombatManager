@@ -5,7 +5,6 @@
 // Store the main settings affecting the entire application
 class RuleSettings : public BaseSettings {
 public:
-
 	RuleSettings();
 
 	enum Ruleset {
@@ -25,7 +24,6 @@ public:
 	bool rollAutomatical;
 
 private:
-
 	void
 	read() override;
 };

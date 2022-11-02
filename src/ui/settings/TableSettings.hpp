@@ -5,7 +5,6 @@
 // Store settings used for customizing the table
 class TableSettings : public BaseSettings {
 public:
-
 	TableSettings();
 
 	enum ValueType {
@@ -24,7 +23,6 @@ public:
 	bool verticalHeaderShown = false;
 
 private:
-
 	void
 	read() override;
 };

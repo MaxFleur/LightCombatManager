@@ -51,12 +51,10 @@ public:
 	getHeight() const;
 
 public slots:
-
 	void
 	openAddCharacterDialog();
 
 signals:
-
 	void
 	exit();
 
@@ -76,7 +74,6 @@ signals:
 	changeOccured();
 
 private slots:
-
 	void
 	dragAndDrop(unsigned int	row,
 		    unsigned int	column);
@@ -96,7 +93,6 @@ private slots:
 	rerollIni();
 
 private:
-
 	void
 	setData();
 
@@ -127,6 +123,7 @@ private:
 	void
 	contextMenuEvent(QContextMenuEvent *event) override;
 
+private:
 	// Main table widget
 	QPointer<DisabledArrowKeyTable> m_tableWidget;
 

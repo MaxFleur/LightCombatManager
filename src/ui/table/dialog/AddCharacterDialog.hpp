@@ -21,7 +21,6 @@ public:
 			   QWidget *				parent = 0);
 
 signals:
-
 	void
 	characterCreated(QString	name,
 			 int		ini,
@@ -31,7 +30,6 @@ signals:
 			 QString	addInfo);
 
 private slots:
-
 	void
 	setLabelRolled();
 
@@ -51,7 +49,6 @@ private slots:
 	openStatusEffectDialog();
 
 private:
-
 	void
 	setFocus();
 
@@ -61,6 +58,7 @@ private:
 	void
 	closeEvent(QCloseEvent *event);
 
+private:
 	QPointer<QLineEdit> m_nameEdit;
 	QPointer<QSpinBox> m_iniBox;
 	QPointer<QSpinBox> m_iniModifierBox;

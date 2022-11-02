@@ -9,19 +9,6 @@ TableSettings::TableSettings()
 
 
 void
-TableSettings::read()
-{
-	QSettings settings;
-
-	settings.beginGroup("TableSettings");
-	iniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
-	modifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
-	verticalHeaderShown = settings.value("Header").isValid() ? settings.value("Header").toBool() : false;
-	settings.endGroup();
-}
-
-
-void
 TableSettings::write(bool value, ValueType valueType)
 {
 	QSettings settings;
@@ -43,5 +30,18 @@ TableSettings::write(bool value, ValueType valueType)
 		break;
 	}
 
+	settings.endGroup();
+}
+
+
+void
+TableSettings::read()
+{
+	QSettings settings;
+
+	settings.beginGroup("TableSettings");
+	iniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
+	modifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
+	verticalHeaderShown = settings.value("Header").isValid() ? settings.value("Header").toBool() : false;
 	settings.endGroup();
 }

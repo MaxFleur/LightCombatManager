@@ -7,7 +7,6 @@ class DisabledArrowKeyTable : public QTableWidget {
 	Q_OBJECT
 
 protected:
-
 	void
 	keyPressEvent(QKeyEvent *event) override;
 };

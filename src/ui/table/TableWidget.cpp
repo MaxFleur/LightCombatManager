@@ -157,82 +157,6 @@ TableWidget::generateTable()
 }
 
 
-// Set the data inside the table
-void
-TableWidget::setData()
-{
-	if (m_isDataStored) {
-		const auto rowOfData = m_data.split("\n");
-		QStringList rowData;
-
-		// @note For some reason, the splitting of the data creates one empty, obsolete line
-		// To ignore this line, decrement the row count and iteration number
-		// The second line is the header and also ignored, so decrement again and be at -2
-		m_tableWidget->setRowCount(rowOfData.size() - 2);
-		// Ignore stored header
-		for (int x = 1; x < rowOfData.size() - 1; x++) {
-			rowData = rowOfData.at(x).split(";");
-			// Create the widget items for the table
-			for (int y = 0; y < NMBR_COLUMNS - 1; y++) {
-				if (y == COL_ENEMY) {
-					setTableCheckBox(x - 1, rowData[y] == "true" ? true : false);
-				} else {
-					m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
-				}
-			}
-			// If at the first row (which contains information about round counter and the
-			// player on the move), get this data
-			if (x == 1) {
-				m_rowEntered = rowData[ROW_ENTERED].toInt();
-				m_roundCounter = rowData[ROUND_CTR].toInt();
-			}
-			resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
-		}
-		// Readd the tables values to the characters
-		Utils::resynchronizeCharacters(m_tableWidget, m_char);
-		m_isDataStored = false;
-	} else {
-		// If no data is provided via csv, set the data according to the vector of chars
-		// generated in the character creation
-		m_tableWidget->setRowCount(static_cast<int>(m_char->getCharacters().size()));
-
-		for (int i = 0; i < m_char->getCharacters().size(); i++) {
-			// Store char stats
-			m_tableWidget->setItem(i, COL_NAME, new QTableWidgetItem(m_char->getCharacters().at(i)->name));
-			m_tableWidget->setItem(
-				i,
-				COL_INI,
-				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->initiative)));
-			m_tableWidget->setItem(
-				i,
-				COL_MODIFIER,
-				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->modifier)));
-			m_tableWidget->setItem(
-				i,
-				COL_HP,
-				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
-			setTableCheckBox(i, m_char->getCharacters().at(i)->isEnemy);
-			m_tableWidget->setItem(
-				i,
-				COL_ADDITIONAL,
-				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
-		}
-	}
-	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
-	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
-}
-
-
-void
-TableWidget::sortTable()
-{
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
-	m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
-	m_rowEntered = 0;
-	generateTable();
-}
-
-
 unsigned int
 TableWidget::getHeight() const
 {
@@ -241,6 +165,32 @@ TableWidget::getHeight() const
 		height += m_tableWidget->rowHeight(i);
 	}
 	return height + HEIGHT_BUFFER;
+}
+
+
+void
+TableWidget::openAddCharacterDialog()
+{
+	// Resynchronize because the table could have been modified
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	const auto sizeBeforeDialog = m_char->getCharacters().size();
+
+	auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
+	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
+	// Lock this widget, wait until Dialog is closed
+	if (dialog->exec() == QDialog::Accepted) {
+		// Only ask to sort if there are enough chars and additional chars have been added
+		if (m_char->getCharacters().size() > 1 && m_char->getCharacters().size() != sizeBeforeDialog) {
+			auto const reply = QMessageBox::question(
+				this,
+				tr("Sort characters?"),
+				tr("Do you want to sort the table?"),
+				QMessageBox::Yes | QMessageBox::No);
+			if (reply == QMessageBox::Yes) {
+				sortTable();
+			}
+		}
+	}
 }
 
 
@@ -329,32 +279,6 @@ TableWidget::openStatusEffectDialog()
 
 
 void
-TableWidget::openAddCharacterDialog()
-{
-	// Resynchronize because the table could have been modified
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
-	const auto sizeBeforeDialog = m_char->getCharacters().size();
-
-	auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
-	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
-	// Lock this widget, wait until Dialog is closed
-	if (dialog->exec() == QDialog::Accepted) {
-		// Only ask to sort if there are enough chars and additional chars have been added
-		if (m_char->getCharacters().size() > 1 && m_char->getCharacters().size() != sizeBeforeDialog) {
-			auto const reply = QMessageBox::question(
-				this,
-				tr("Sort characters?"),
-				tr("Do you want to sort the table?"),
-				QMessageBox::Yes | QMessageBox::No);
-			if (reply == QMessageBox::Yes) {
-				sortTable();
-			}
-		}
-	}
-}
-
-
-void
 TableWidget::addCharacter(
 	QString name,
 	int	ini,
@@ -388,6 +312,82 @@ TableWidget::rerollIni()
 				   tr("Modifier: ") + m_tableWidget->item(row, COL_MODIFIER)->text();
 
 	auto const reply = QMessageBox::information(this, tr("Rerolled initiative"), messageString);
+}
+
+
+// Set the data inside the table
+void
+TableWidget::setData()
+{
+	if (m_isDataStored) {
+		const auto rowOfData = m_data.split("\n");
+		QStringList rowData;
+
+		// @note For some reason, the splitting of the data creates one empty, obsolete line
+		// To ignore this line, decrement the row count and iteration number
+		// The second line is the header and also ignored, so decrement again and be at -2
+		m_tableWidget->setRowCount(rowOfData.size() - 2);
+		// Ignore stored header
+		for (int x = 1; x < rowOfData.size() - 1; x++) {
+			rowData = rowOfData.at(x).split(";");
+			// Create the widget items for the table
+			for (int y = 0; y < NMBR_COLUMNS - 1; y++) {
+				if (y == COL_ENEMY) {
+					setTableCheckBox(x - 1, rowData[y] == "true" ? true : false);
+				} else {
+					m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
+				}
+			}
+			// If at the first row (which contains information about round counter and the
+			// player on the move), get this data
+			if (x == 1) {
+				m_rowEntered = rowData[ROW_ENTERED].toInt();
+				m_roundCounter = rowData[ROUND_CTR].toInt();
+			}
+			resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
+		}
+		// Readd the tables values to the characters
+		Utils::resynchronizeCharacters(m_tableWidget, m_char);
+		m_isDataStored = false;
+	} else {
+		// If no data is provided via csv, set the data according to the vector of chars
+		// generated in the character creation
+		m_tableWidget->setRowCount(static_cast<int>(m_char->getCharacters().size()));
+
+		for (int i = 0; i < m_char->getCharacters().size(); i++) {
+			// Store char stats
+			m_tableWidget->setItem(i, COL_NAME, new QTableWidgetItem(m_char->getCharacters().at(i)->name));
+			m_tableWidget->setItem(
+				i,
+				COL_INI,
+				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->initiative)));
+			m_tableWidget->setItem(
+				i,
+				COL_MODIFIER,
+				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->modifier)));
+			m_tableWidget->setItem(
+				i,
+				COL_HP,
+				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
+			setTableCheckBox(i, m_char->getCharacters().at(i)->isEnemy);
+			m_tableWidget->setItem(
+				i,
+				COL_ADDITIONAL,
+				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
+		}
+	}
+	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
+	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
+}
+
+
+void
+TableWidget::sortTable()
+{
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
+	m_rowEntered = 0;
+	generateTable();
 }
 
 

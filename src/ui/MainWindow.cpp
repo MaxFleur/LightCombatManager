@@ -365,7 +365,7 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 		msgBox->setWindowTitle(tr("Save Combat?"));
 	}
 
-	/* openTable and newCombat use an identical message box, so do the handling directly */
+	// openTable and newCombat use an identical message box, so do the handling directly
 	if (!isClosing) {
 		switch (msgBox->exec()) {
 		case QMessageBox::Save:

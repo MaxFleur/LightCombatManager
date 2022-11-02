@@ -24,12 +24,10 @@ public:
 	MainWindow();
 
 signals:
-
 	void
 	setSaveAction(bool enable);
 
 private slots:
-
 	void
 	newCombat();
 
@@ -52,7 +50,6 @@ private slots:
 	exitCombat();
 
 private:
-
 	void
 	setWelcomingWidget();
 
@@ -77,6 +74,7 @@ private:
 	[[nodiscard]] bool
 	checkStoredTableRules(QString data);
 
+private:
 	QPointer<WelcomeWidget> m_welcomeWidget;
 	QPointer<TableWidget> m_tableWidget;
 

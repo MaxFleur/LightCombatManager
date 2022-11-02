@@ -11,15 +11,6 @@ DirSettings::DirSettings()
 
 
 void
-DirSettings::read()
-{
-	QSettings settings;
-	saveDir = settings.value("dir_save").isValid() ? settings.value("dir_save").toString() : QString();
-	openDir = settings.value("dir_open").isValid() ? settings.value("dir_open").toString() : QString();
-}
-
-
-void
 DirSettings::write(const QString& fileName, bool setSaveDir)
 {
 	openDir = fileName;
@@ -31,6 +22,15 @@ DirSettings::write(const QString& fileName, bool setSaveDir)
 		settings.setValue("dir_save", fileName);
 		saveDir = fileName;
 	}
+}
+
+
+void
+DirSettings::read()
+{
+	QSettings settings;
+	saveDir = settings.value("dir_save").isValid() ? settings.value("dir_save").toString() : QString();
+	openDir = settings.value("dir_open").isValid() ? settings.value("dir_open").toString() : QString();
 }
 
 

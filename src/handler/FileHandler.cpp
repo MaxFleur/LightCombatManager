@@ -39,8 +39,7 @@ FileHandler::saveTable(
 			// Clear the list at the beginning of every row iteration
 			strList.clear();
 
-			// Ignore the last row, identifiers are not needed
-			for (int j = 0; j < tableWidget->columnCount() - 1; ++j) {
+			for (int j = 0; j < tableWidget->columnCount(); ++j) {
 				// Get the checkbox value
 				if (j == 4) {
 					// Cell widget is a checkbox within another widget, so find the child

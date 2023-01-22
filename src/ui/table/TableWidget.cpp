@@ -49,8 +49,6 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	m_tableWidget->setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
 	// Last column just gets remaining space
 	m_tableWidget->horizontalHeader()->setStretchLastSection(true);
-	// The last row just contains the row ids, it does not need to be visible
-	m_tableWidget->setColumnHidden(COL_ROW_ID, true);
 
 	// Spinbox for the hp column
 	auto *const delegateSpinBox = new DelegateSpinBox(this);
@@ -146,9 +144,10 @@ TableWidget::generateTable()
 
 	// Create the identifiers for the rows
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		m_tableWidget->setItem(i, COL_ROW_ID, new QTableWidgetItem(QString::number(i)));
+		auto * const item = m_tableWidget->item(i, COL_NAME);
+		item->setData(Qt::UserRole, QString::number(i));
 	}
-	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_ROW_ID)->text().toInt();
+	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
 
 	// Set data for the lower label
 	emit roundCounterSet();
@@ -243,7 +242,7 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 	// After the drag and drop, the correct entered row has to be highlighted
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		// Set row containing the matching identifier
-		if (m_tableWidget->item(i, COL_ROW_ID)->text().toInt() == m_rowIdentifier) {
+		if (m_tableWidget->item(i, COL_NAME)->data(Qt::UserRole).toInt() == m_rowIdentifier) {
 			m_rowEntered = i;
 			break;
 		}
@@ -331,7 +330,7 @@ TableWidget::setData()
 		for (int x = 1; x < rowOfData.size() - 1; x++) {
 			rowData = rowOfData.at(x).split(";");
 			// Create the widget items for the table
-			for (int y = 0; y < NMBR_COLUMNS - 1; y++) {
+			for (int y = 0; y < NMBR_COLUMNS; y++) {
 				if (y == COL_ENEMY) {
 					setTableCheckBox(x - 1, rowData[y] == "true" ? true : false);
 				} else {
@@ -488,7 +487,7 @@ TableWidget::enteredRowChanged(bool goDown)
 	}
 
 	// Identifier for the entered row changes
-	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_ROW_ID)->text().toInt();
+	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
 	setRowAndPlayer();
 }
 

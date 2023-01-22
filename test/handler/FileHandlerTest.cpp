@@ -50,7 +50,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
 	}
 
 	SECTION("Check file saving") {
-		auto *const tableWidget = new QTableWidget(2, 7);
+		auto *const tableWidget = new QTableWidget(2, 6);
 		auto *const checkBoxFighter = new QCheckBox;
 		checkBoxFighter->setChecked(false);
 		auto *const checkBoxBoss = new QCheckBox;

@@ -21,7 +21,7 @@
 AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings, QWidget *parent) :
 	m_ruleSettings(RuleSettings)
 {
-	setWindowTitle(tr("Add new Characters"));
+	setWindowTitle(tr("Add new Character(s)"));
 
 	m_nameEdit = new QLineEdit;
 	m_iniBox = new QSpinBox;

@@ -16,7 +16,7 @@
 StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSettings, QWidget *parent) :
 	m_ruleSettings(RuleSettings)
 {
-	setWindowTitle(tr("Add Status Effect"));
+	setWindowTitle(tr("Add Status Effect(s)"));
 
 	auto *const textLineEdit = new QLineEdit;
 	auto *const shortcut = new QShortcut(QKeySequence::Find, this);

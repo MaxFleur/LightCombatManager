@@ -41,6 +41,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
 	auto *const resetButton = buttonBox->addButton(QDialogButtonBox::Reset);
 	auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
+	auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
@@ -106,6 +107,8 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
 	connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
 	connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);
+
+	connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
 	connect(saveShortcut, &QShortcut::activated, this, &AddCharacterDialog::saveButtonClicked);
 	connect(statusEffectShortcut, &QShortcut::activated, this, &AddCharacterDialog::openStatusEffectDialog);

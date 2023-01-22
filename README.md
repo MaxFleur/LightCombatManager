@@ -1,12 +1,23 @@
+<div align="center">
+
+   ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
+   ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
+   ![Test badge](https://img.shields.io/badge/tests-passing-green.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v1.8.1-blue.svg)
+
+</div>
+
+
+
 # LightCombatManager
 
 ### A small cross-platform, Qt-based combat manager for D&D-like games.
 
 Using LightCombatManager, you can easily create characters with initiative values, an HP counter and additional information. You can also add status effects to each character.\
-![image](https://user-images.githubusercontent.com/15110943/213934148-920cc8a1-7fcd-4083-b9f6-03af93bfa7cf.png)
+![LCM_Pic1](https://user-images.githubusercontent.com/15110943/166829787-ce5f520a-ed61-4598-90bd-e227f3902fab.png)
 
 After creation, the program can sort all characters and will create a full combat table. Using this table, you can easily manage the combat. \
-![image](https://user-images.githubusercontent.com/15110943/213934422-3c62e41b-09fa-457a-b35c-615374625a16.png)
+![LCM_Pic2](https://user-images.githubusercontent.com/15110943/168394633-e2842166-cf10-4168-b35a-03f0fb4ee2a4.png)
 
 If the game ends, but the current combat is not finished yet, you can save the table as a csv file and reopen it later.
 

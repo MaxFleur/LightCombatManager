@@ -1,15 +1,15 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
 #include <QString>
+#include <QVector>
 
 #include "RuleSettings.hpp"
 
 // This class handles the creation, sorting and deletion of the created characters
 class CharacterHandler {
-private:
+public:
 	// Main character instance used for the table generation
 	struct Character {
 		// Name of the character. Because this name must be set manually, it is the only variable without a standard value
@@ -25,9 +25,6 @@ private:
 		// Additional information (e.g. status effects). Optional.
 		QString additionalInf = QString();
 	};
-
-	// Vector storing all created characters
-	std::vector<std::shared_ptr<Character> > characters;
 
 public:
 	// Store a new character
@@ -47,10 +44,14 @@ public:
 	void
 	clearCharacters();
 
-	[[nodiscard]] std::vector<std::shared_ptr<Character> >
-	getCharacters() const
+	[[nodiscard]] QVector<Character>&
+	getCharacters()
 	{
 		return characters;
 	}
+
+private:
+	// Vector storing all created characters
+	QVector<Character> characters;
 };
 using CharacterHandlerRef = std::shared_ptr<CharacterHandler>;

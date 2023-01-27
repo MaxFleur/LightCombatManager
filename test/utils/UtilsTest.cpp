@@ -32,17 +32,17 @@ TEST_CASE("Util Testing", "[Utils]"){
 		Utils::resynchronizeCharacters(tableWidget, charHandler);
 
 		SECTION("Check stats") {
-			REQUIRE(charHandler->getCharacters().at(0)->name == "Fighter");
-			REQUIRE(charHandler->getCharacters().at(0)->initiative == 19);
-			REQUIRE(charHandler->getCharacters().at(0)->modifier == 2);
-			REQUIRE(charHandler->getCharacters().at(0)->hp == 36);
-			REQUIRE(charHandler->getCharacters().at(0)->isEnemy == false);
-			REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Haste");
+			REQUIRE(charHandler->getCharacters().at(0).name == "Fighter");
+			REQUIRE(charHandler->getCharacters().at(0).initiative == 19);
+			REQUIRE(charHandler->getCharacters().at(0).modifier == 2);
+			REQUIRE(charHandler->getCharacters().at(0).hp == 36);
+			REQUIRE(charHandler->getCharacters().at(0).isEnemy == false);
+			REQUIRE(charHandler->getCharacters().at(0).additionalInf == "Haste");
 		}
 		SECTION("Check filled enemy field") {
 			checkBox->setChecked(true);
 			Utils::resynchronizeCharacters(tableWidget, charHandler);
-			REQUIRE(charHandler->getCharacters().at(0)->isEnemy == true);
+			REQUIRE(charHandler->getCharacters().at(0).isEnemy == true);
 		}
 	}
 

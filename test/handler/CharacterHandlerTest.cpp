@@ -13,23 +13,23 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 
 		REQUIRE(charHandler->getCharacters().size() == 1);
 
-		REQUIRE(charHandler->getCharacters().at(0)->name == "Witch");
-		REQUIRE(charHandler->getCharacters().at(0)->initiative == 14);
-		REQUIRE(charHandler->getCharacters().at(0)->modifier == 5);
-		REQUIRE(charHandler->getCharacters().at(0)->hp == 23);
-		REQUIRE(charHandler->getCharacters().at(0)->isEnemy == true);
-		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "Fire Resistance");
+		REQUIRE(charHandler->getCharacters().at(0).name == "Witch");
+		REQUIRE(charHandler->getCharacters().at(0).initiative == 14);
+		REQUIRE(charHandler->getCharacters().at(0).modifier == 5);
+		REQUIRE(charHandler->getCharacters().at(0).hp == 23);
+		REQUIRE(charHandler->getCharacters().at(0).isEnemy == true);
+		REQUIRE(charHandler->getCharacters().at(0).additionalInf == "Fire Resistance");
 	}
 	SECTION("Minimal Character stored test") {
 		auto const charHandler = std::make_shared<CharacterHandler>();
 		charHandler->storeCharacter("Generic Character");
 
-		REQUIRE(charHandler->getCharacters().at(0)->name == "Generic Character");
-		REQUIRE(charHandler->getCharacters().at(0)->initiative == 0);
-		REQUIRE(charHandler->getCharacters().at(0)->modifier == 0);
-		REQUIRE(charHandler->getCharacters().at(0)->hp == 0);
-		REQUIRE(charHandler->getCharacters().at(0)->isEnemy == false);
-		REQUIRE(charHandler->getCharacters().at(0)->additionalInf == "");
+		REQUIRE(charHandler->getCharacters().at(0).name == "Generic Character");
+		REQUIRE(charHandler->getCharacters().at(0).initiative == 0);
+		REQUIRE(charHandler->getCharacters().at(0).modifier == 0);
+		REQUIRE(charHandler->getCharacters().at(0).hp == 0);
+		REQUIRE(charHandler->getCharacters().at(0).isEnemy == false);
+		REQUIRE(charHandler->getCharacters().at(0).additionalInf == "");
 	}
 	SECTION("Sorting test - PF1/D&D 3.5/D&D 3.0/Starfinder") {
 		auto const ruleSettings = std::make_shared<RuleSettings>();
@@ -45,12 +45,12 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
 		charHandler->sortCharacters(ruleSettings->ruleset, ruleSettings->rollAutomatical);
-		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
-		REQUIRE(charHandler->getCharacters().at(1)->name == "Undead Boss");
-		REQUIRE(charHandler->getCharacters().at(2)->name == "Fighter");
-		REQUIRE(charHandler->getCharacters().at(3)->name == "Bard");
-		REQUIRE(charHandler->getCharacters().at(4)->name == "Zombie");
-		REQUIRE(charHandler->getCharacters().at(5)->name == "Cleric");
+		REQUIRE(charHandler->getCharacters().at(0).name == "Ranger");
+		REQUIRE(charHandler->getCharacters().at(1).name == "Undead Boss");
+		REQUIRE(charHandler->getCharacters().at(2).name == "Fighter");
+		REQUIRE(charHandler->getCharacters().at(3).name == "Bard");
+		REQUIRE(charHandler->getCharacters().at(4).name == "Zombie");
+		REQUIRE(charHandler->getCharacters().at(5).name == "Cleric");
 	}
 	SECTION("Sorting test - PF2") {
 		auto const ruleSettings = std::make_shared<RuleSettings>();
@@ -66,12 +66,12 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
 		charHandler->sortCharacters(ruleSettings->ruleset, ruleSettings->rollAutomatical);
-		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
-		REQUIRE(charHandler->getCharacters().at(1)->name == "Zombie");
-		REQUIRE(charHandler->getCharacters().at(2)->name == "Undead Boss");
-		REQUIRE(charHandler->getCharacters().at(3)->name == "Bard");
-		REQUIRE(charHandler->getCharacters().at(4)->name == "Fighter");
-		REQUIRE(charHandler->getCharacters().at(5)->name == "Cleric");
+		REQUIRE(charHandler->getCharacters().at(0).name == "Ranger");
+		REQUIRE(charHandler->getCharacters().at(1).name == "Zombie");
+		REQUIRE(charHandler->getCharacters().at(2).name == "Undead Boss");
+		REQUIRE(charHandler->getCharacters().at(3).name == "Bard");
+		REQUIRE(charHandler->getCharacters().at(4).name == "Fighter");
+		REQUIRE(charHandler->getCharacters().at(5).name == "Cleric");
 	}
 	SECTION("Sorting test - D&D 5E") {
 		auto const ruleSettings = std::make_shared<RuleSettings>();
@@ -87,12 +87,12 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]"){
 		charHandler->storeCharacter("Ranger", 27, 8, 36, false);
 
 		charHandler->sortCharacters(ruleSettings->ruleset, ruleSettings->rollAutomatical);
-		REQUIRE(charHandler->getCharacters().at(0)->name == "Ranger");
-		REQUIRE(charHandler->getCharacters().at(1)->name == "Fighter");
-		REQUIRE(charHandler->getCharacters().at(2)->name == "Undead Boss");
-		REQUIRE(charHandler->getCharacters().at(3)->name == "Zombie");
-		REQUIRE(charHandler->getCharacters().at(4)->name == "Cleric");
-		REQUIRE(charHandler->getCharacters().at(5)->name == "Bard");
+		REQUIRE(charHandler->getCharacters().at(0).name == "Ranger");
+		REQUIRE(charHandler->getCharacters().at(1).name == "Fighter");
+		REQUIRE(charHandler->getCharacters().at(2).name == "Undead Boss");
+		REQUIRE(charHandler->getCharacters().at(3).name == "Zombie");
+		REQUIRE(charHandler->getCharacters().at(4).name == "Cleric");
+		REQUIRE(charHandler->getCharacters().at(5).name == "Bard");
 	}
 	SECTION("Clear Characters test") {
 		auto const ruleSettings = std::make_shared<RuleSettings>();

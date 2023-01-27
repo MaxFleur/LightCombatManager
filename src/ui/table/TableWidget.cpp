@@ -14,6 +14,7 @@
 #include <QShortcut>
 #include <QStringList>
 #include <QToolButton>
+#include <QUndoStack>
 #include <QVBoxLayout>
 
 #include "AddCharacterDialog.hpp"
@@ -21,17 +22,23 @@
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
 #include "TableSettings.hpp"
+#include "TableUtils.hpp"
+#include "Undo.hpp"
 #include "Utils.hpp"
+
+#include <iostream>
 
 TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
 			 int mainWidgetWidth, QString data, QWidget *parent)
-	: m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_data(data)
+	: m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_loadedFileData(data)
 {
 	m_char = std::make_shared<CharacterHandler>();
 	m_tableSettings = std::make_shared<TableSettings>();
 
-	m_tableWidget = new DisabledArrowKeyTable();
+	m_tableWidget = new DisabledNavigationKeyTable();
 	m_tableWidget->setColumnCount(NMBR_COLUMNS);
+
+	m_undoStack = new QUndoStack(this);
 
 	QStringList tableHeader;
 	tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional information") << "";
@@ -64,33 +71,38 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 
 	auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
-	auto *const roundCounterLabel = new QLabel;
-	auto *const currentPlayerLabel = new QLabel;
+	m_roundCounterLabel = new QLabel;
+	m_currentPlayerLabel = new QLabel;
 
-	connect(this, &TableWidget::setCurrentPlayer, this, [this, currentPlayerLabel, roundCounterLabel] {
-		if (m_tableWidget->rowCount() == 0) {
-			currentPlayerLabel->setText(tr("Current: None"));
-			roundCounterLabel->setText(tr("Round 0"));
-			return;
-		}
-		currentPlayerLabel->setText(tr("Current: ") + m_tableWidget->item(m_rowEntered, 0)->text());
+	connect(this, &TableWidget::roundCounterSet, this, [this] {
+		m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
 	});
-	connect(this, &TableWidget::roundCounterSet, this, [this, roundCounterLabel] {
-		roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
+
+	connect(m_tableWidget, &QTableWidget::itemPressed, this, [this] {
+		saveOldState();
+	});
+	connect(m_tableWidget, &QTableWidget::itemChanged, this, [this] {
+		const auto& tableData = TableUtils::tableDataFromWidget(m_tableWidget);
+		const auto& identifiers = TableUtils::identifiers(m_tableWidget);
+
+		if (tableData != m_tableDataOld || identifiers != m_identifiersOld ||
+		    m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
+			Utils::resynchronizeCharacters(m_tableWidget, m_char);
+			pushOnUndoStack();
+		}
 	});
 
 	// Create a spacer widget to move the buttons to the right side
 	auto *const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	m_defaultFont.setBold(false);
 	m_boldFont.setBold(true);
 
 	// Lower layout
 	auto *const lowerLayout = new QHBoxLayout();
-	lowerLayout->addWidget(roundCounterLabel);
+	lowerLayout->addWidget(m_roundCounterLabel);
 	lowerLayout->addSpacing(SPACING);
-	lowerLayout->addWidget(currentPlayerLabel);
+	lowerLayout->addWidget(m_currentPlayerLabel);
 	lowerLayout->addWidget(spacer);
 	lowerLayout->addWidget(upButton);
 	lowerLayout->addWidget(downButton);
@@ -100,6 +112,14 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	mainLayout->addWidget(m_tableWidget);
 	mainLayout->addLayout(lowerLayout);
 	setLayout(mainLayout);
+
+	m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
+	m_undoAction->setShortcuts(QKeySequence::Undo);
+	this->addAction(m_undoAction);
+
+	m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
+	m_redoAction->setShortcuts(QKeySequence::Redo);
+	this->addAction(m_redoAction);
 
 	// Shortcuts
 	auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
@@ -140,19 +160,18 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 void
 TableWidget::generateTable()
 {
-	setData();
+	m_tableWidget->blockSignals(true);
 
-	// Create the identifiers for the rows
-	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-		auto * const item = m_tableWidget->item(i, COL_NAME);
-		item->setData(Qt::UserRole, QString::number(i));
-	}
-	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
+	setTableDataWithFileData();
+	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
+	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
 
-	// Set data for the lower label
-	emit roundCounterSet();
-	setRowAndPlayer();
-	emit tableHeightSet(getHeight());
+	m_tableWidget->blockSignals(false);
+
+	pushOnUndoStack();
+	setRowIdentifiers();
+	// We do not need a save step directly after table creation, so setup the table and reset the stack
+	m_undoStack->clear();
 }
 
 
@@ -168,6 +187,18 @@ TableWidget::getHeight() const
 
 
 void
+TableWidget::pushOnUndoStack()
+{
+	m_tableDataNew = TableUtils::tableDataFromCharacterVector(m_char->getCharacters());
+	m_identifiersNew = TableUtils::identifiers(m_tableWidget);
+
+	m_undoStack->push(new Undo(m_tableDataOld, m_identifiersOld, m_rowEnteredOld, m_roundCounterOld,
+				   this, m_tableDataNew, m_identifiersNew, m_rowEntered, m_roundCounter,
+				   &m_rowIdentifier, m_roundCounterLabel, m_currentPlayerLabel));
+}
+
+
+void
 TableWidget::openAddCharacterDialog()
 {
 	// Resynchronize because the table could have been modified
@@ -175,7 +206,11 @@ TableWidget::openAddCharacterDialog()
 	const auto sizeBeforeDialog = m_char->getCharacters().size();
 
 	auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
-	connect(dialog, &AddCharacterDialog::characterCreated, this, &TableWidget::addCharacter);
+	connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (QString name, int ini, int mod, int hp, bool isEnemy, QString addInfo) {
+		saveOldState();
+		addCharacter(name, ini, mod, hp, isEnemy, addInfo);
+		pushOnUndoStack();
+	});
 	// Lock this widget, wait until Dialog is closed
 	if (dialog->exec() == QDialog::Accepted) {
 		// Only ask to sort if there are enough chars and additional chars have been added
@@ -209,37 +244,15 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 	} else {
 		return;
 	}
-	// The widget items containing the row data (source and destination)
-	QList<QTableWidgetItem *> rowItemSrc, rowItemDest;
-	// Checkbox values are not obtainable by using takeItem, so take the current
-	// value and reset the boxes with these
-	bool enemySrc, enemyDest;
 
-	// Take the data of the source and destination row
-	for (int col = 0; col < m_tableWidget->columnCount(); ++col) {
-		if (col == COL_ENEMY) {
-			auto * const checkBoxSrc = (QCheckBox *) m_tableWidget->cellWidget(row, col);
-			auto * const checkBoxDest = (QCheckBox *) m_tableWidget->cellWidget(newRow, col);
+	saveOldState();
 
-			enemySrc = checkBoxSrc->isChecked();
-			enemyDest = checkBoxDest->isChecked();
-		}
-		rowItemSrc << m_tableWidget->takeItem(row, col);
-		rowItemDest << m_tableWidget->takeItem(newRow, col);
-	}
-	// Set them in reversed order
-	for (int col = 0; col < m_tableWidget->columnCount(); ++col) {
-		m_tableWidget->setItem(newRow, col, rowItemSrc.at(col));
-		m_tableWidget->setItem(row, col, rowItemDest.at(col));
-	}
-	// Set the checkbox values, if they are not equal (otherwise we would perform
-	// unnecessary operations)
-	if (enemySrc != enemyDest) {
-		setTableCheckBox(newRow, enemySrc);
-		setTableCheckBox(row, enemyDest);
-	}
+	// Swap both characters
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	auto& characters = m_char->getCharacters();
+	characters.swapItemsAt(row, newRow);
 
-	// After the drag and drop, the correct entered row has to be highlighted
+	// The correct entered row has to be highlighted
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		// Set row containing the matching identifier
 		if (m_tableWidget->item(i, COL_NAME)->data(Qt::UserRole).toInt() == m_rowIdentifier) {
@@ -249,6 +262,7 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 	}
 
 	emit changeOccured();
+	pushOnUndoStack();
 }
 
 
@@ -286,9 +300,11 @@ TableWidget::addCharacter(
 	bool	isEnemy,
 	QString addInfo)
 {
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+
+	setRowIdentifiers();
 	resetNameInfoWidth(name, addInfo);
-	generateTable();
 }
 
 
@@ -316,107 +332,55 @@ TableWidget::rerollIni()
 
 // Set the data inside the table
 void
-TableWidget::setData()
+TableWidget::setTableDataWithFileData()
 {
 	if (m_isDataStored) {
-		const auto rowOfData = m_data.split("\n");
+		auto& characters = m_char->getCharacters();
+		const auto rowOfData = m_loadedFileData.split("\n");
 		QStringList rowData;
 
 		// @note For some reason, the splitting of the data creates one empty, obsolete line
 		// To ignore this line, decrement the row count and iteration number
 		// The second line is the header and also ignored, so decrement again and be at -2
-		m_tableWidget->setRowCount(rowOfData.size() - 2);
-		// Ignore stored header
 		for (int x = 1; x < rowOfData.size() - 1; x++) {
 			rowData = rowOfData.at(x).split(";");
-			// Create the widget items for the table
-			for (int y = 0; y < NMBR_COLUMNS; y++) {
-				if (y == COL_ENEMY) {
-					setTableCheckBox(x - 1, rowData[y] == "true" ? true : false);
-				} else {
-					m_tableWidget->setItem(x - 1, y, new QTableWidgetItem(rowData[y]));
-				}
-			}
+
+			characters.push_back(CharacterHandler::Character {
+				rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
+				rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", rowData.at(COL_ADDITIONAL) });
+
 			// If at the first row (which contains information about round counter and the
 			// player on the move), get this data
 			if (x == 1) {
 				m_rowEntered = rowData[ROW_ENTERED].toInt();
 				m_roundCounter = rowData[ROUND_CTR].toInt();
 			}
+
 			resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
 		}
-		// Readd the tables values to the characters
-		Utils::resynchronizeCharacters(m_tableWidget, m_char);
 		m_isDataStored = false;
-	} else {
-		// If no data is provided via csv, set the data according to the vector of chars
-		// generated in the character creation
-		m_tableWidget->setRowCount(static_cast<int>(m_char->getCharacters().size()));
-
-		for (int i = 0; i < m_char->getCharacters().size(); i++) {
-			// Store char stats
-			m_tableWidget->setItem(i, COL_NAME, new QTableWidgetItem(m_char->getCharacters().at(i)->name));
-			m_tableWidget->setItem(
-				i,
-				COL_INI,
-				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->initiative)));
-			m_tableWidget->setItem(
-				i,
-				COL_MODIFIER,
-				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->modifier)));
-			m_tableWidget->setItem(
-				i,
-				COL_HP,
-				new QTableWidgetItem(QString::number(m_char->getCharacters().at(i)->hp)));
-			setTableCheckBox(i, m_char->getCharacters().at(i)->isEnemy);
-			m_tableWidget->setItem(
-				i,
-				COL_ADDITIONAL,
-				new QTableWidgetItem(m_char->getCharacters().at(i)->additionalInf));
-		}
 	}
-	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
-	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
 }
 
 
 void
 TableWidget::sortTable()
 {
+	saveOldState();
+
 	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 	m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
 	m_rowEntered = 0;
-	generateTable();
+
+	setRowIdentifiers();
+	pushOnUndoStack();
 }
 
 
 void
 TableWidget::setRowAndPlayer()
 {
-	// Select row entered with Return key
-	m_tableWidget->selectionModel()->clearSelection();
-
-	if (m_tableWidget->rowCount() != 0) {
-		// Reset bold text rows to standard font
-		for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-			if (m_tableWidget->item(i, 0)->font().bold()) {
-				for (int j = 0; j < m_tableWidget->columnCount(); j++) {
-					if (j != COL_ENEMY) {
-						m_tableWidget->item(i, j)->setFont(m_defaultFont);
-					}
-				}
-			}
-		}
-
-		// Highlight selected row with bold fonts
-		for (int j = 0; j < m_tableWidget->columnCount(); j++) {
-			if (j != COL_ENEMY) {
-				m_tableWidget->item(m_rowEntered, j)->setFont(m_boldFont);
-			}
-		}
-	}
-
-	emit setCurrentPlayer();
+	TableUtils::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered, m_roundCounter);
 }
 
 
@@ -430,6 +394,8 @@ TableWidget::removeRow()
 
 	// If a row has been selected, remove this row
 	if (m_tableWidget->selectionModel()->hasSelection()) {
+		saveOldState();
+
 		// If the deleted row is before the current entered row, move one up
 		if (m_tableWidget->currentIndex().row() < (int) m_rowEntered) {
 			m_rowEntered--;
@@ -440,10 +406,14 @@ TableWidget::removeRow()
 				m_rowEntered = 0;
 			}
 		}
-		m_tableWidget->removeRow(m_tableWidget->currentIndex().row());
+
+		Utils::resynchronizeCharacters(m_tableWidget, m_char);
+		auto& characters = m_char->getCharacters();
+		characters.remove(m_tableWidget->currentIndex().row());
 		// Update the current player and row
 		setRowAndPlayer();
 
+		pushOnUndoStack();
 		return;
 	}
 
@@ -460,6 +430,8 @@ TableWidget::enteredRowChanged(bool goDown)
 	if (m_tableWidget->rowCount() == 0) {
 		return;
 	}
+
+	saveOldState();
 
 	// Are we going down or up?
 	if (goDown) {
@@ -488,7 +460,10 @@ TableWidget::enteredRowChanged(bool goDown)
 
 	// Identifier for the entered row changes
 	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
+
+	Utils::resynchronizeCharacters(m_tableWidget, m_char);
 	setRowAndPlayer();
+	pushOnUndoStack();
 }
 
 
@@ -511,27 +486,6 @@ TableWidget::showTablePart(bool show, int valueType)
 	default:
 		break;
 	}
-}
-
-
-// Create checkboxes to show the enemy status
-void
-TableWidget::setTableCheckBox(unsigned int row, bool checked)
-{
-	auto *const checkBox = new QCheckBox;
-	checkBox->setChecked(checked);
-	connect(checkBox, &QCheckBox::stateChanged, this, [this] {
-		emit changeOccured();
-	});
-
-	// Center the checkboxes
-	auto *const widget = new QWidget;
-	auto *layout = new QHBoxLayout(widget);
-	layout->addWidget(checkBox);
-	layout->setAlignment(Qt::AlignCenter);
-	widget->setLayout(layout);
-
-	m_tableWidget->setCellWidget(row, COL_ENEMY, widget);
 }
 
 
@@ -574,6 +528,27 @@ TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 
 
 void
+TableWidget::setRowIdentifiers()
+{
+	m_tableWidget->blockSignals(true);
+	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
+		m_tableWidget->item(i, COL_NAME)->setData(Qt::UserRole, QString::number(i));
+	}
+	m_tableWidget->blockSignals(false);
+}
+
+
+void
+TableWidget::saveOldState()
+{
+	m_tableDataOld = TableUtils::tableDataFromWidget(m_tableWidget);
+	m_identifiersOld = TableUtils::identifiers(m_tableWidget);
+	m_rowEnteredOld = m_rowEntered;
+	m_roundCounterOld = m_roundCounter;
+}
+
+
+void
 TableWidget::contextMenuEvent(QContextMenuEvent *event)
 {
 	auto *const menu = new QMenu(this);
@@ -612,6 +587,9 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 	});
 	openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
 	openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
+
+	menu->addAction(m_undoAction);
+	menu->addAction(m_redoAction);
 
 	menu->addSeparator();
 

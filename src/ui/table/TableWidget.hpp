@@ -4,7 +4,11 @@
 #include <QWidget>
 
 #include "CharacterHandler.hpp"
-#include "DisabledArrowKeyTable.hpp"
+#include "DisabledNavigationKeyTable.hpp"
+
+class QAction;
+class QLabel;
+class QUndoStack;
 
 class RuleSettings;
 class TableSettings;
@@ -50,6 +54,9 @@ public:
 	[[nodiscard]] unsigned int
 	getHeight() const;
 
+	void
+	pushOnUndoStack();
+
 public slots:
 	void
 	openAddCharacterDialog();
@@ -94,7 +101,7 @@ private slots:
 
 private:
 	void
-	setData();
+	setTableDataWithFileData();
 
 	void
 	sortTable();
@@ -113,37 +120,54 @@ private:
 		      int	valueType);
 
 	void
-	setTableCheckBox(unsigned int	row,
-			 bool		checked);
-
-	void
 	resetNameInfoWidth(const QString&	strName,
 			   const QString&	strAdd);
+
+	void
+	saveOldState();
+
+	void
+	setRowIdentifiers();
 
 	void
 	contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
 	// Main table widget
-	QPointer<DisabledArrowKeyTable> m_tableWidget;
+	QPointer<DisabledNavigationKeyTable> m_tableWidget;
+	QPointer<QUndoStack> m_undoStack;
 
-	// Fonts for highlighting rows
-	QFont m_defaultFont;
+	QPointer<QLabel> m_roundCounterLabel;
+	QPointer<QLabel> m_currentPlayerLabel;
+
+	QPointer<QAction> m_undoAction;
+	QPointer<QAction> m_redoAction;
+
+	// Font for highlighting rows
 	QFont m_boldFont;
 
 	bool m_isDataStored;
 
-	QString m_data;
-
-	unsigned int m_rowEntered = 0;
-	unsigned int m_roundCounter = 1;
+	QString m_loadedFileData;
 
 	CharacterHandlerRef m_char;
 	std::shared_ptr<RuleSettings> m_ruleSettings;
 	std::shared_ptr<TableSettings> m_tableSettings;
 
+	unsigned int m_rowEntered = 0;
+	unsigned int m_roundCounter = 1;
+
 	// The row identifier to determine the correct row after drag and drop
 	unsigned int m_rowIdentifier = 0;
+
+	// Data storing old values before pushing on undo stack
+	QVector<QVector<QVariant> > m_tableDataOld;
+	QVector<int> m_identifiersOld;
+	unsigned int m_rowEnteredOld;
+	unsigned int m_roundCounterOld;
+
+	QVector<QVector<QVariant> > m_tableDataNew;
+	QVector<int> m_identifiersNew;
 
 	static constexpr int NMBR_COLUMNS = 6;
 

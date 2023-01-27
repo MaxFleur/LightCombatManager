@@ -1,11 +1,11 @@
-#include "DisabledArrowKeyTable.hpp"
+#include "DisabledNavigationKeyTable.hpp"
 
 #include <QKeyEvent>
 
 void
-DisabledArrowKeyTable::keyPressEvent(QKeyEvent *event)
+DisabledNavigationKeyTable::keyPressEvent(QKeyEvent *event)
 {
-	// Ignore event if the arrow keys are pressed
+	// Ignore arrow and tab keys
 	if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up) {
 		event->ignore();
 		return;

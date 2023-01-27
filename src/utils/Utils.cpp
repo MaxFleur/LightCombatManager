@@ -28,7 +28,7 @@ resynchronizeCharacters(const QTableWidget *	tableWidget,
 			tableWidget->item(i, 1)->text().toInt(),
 			tableWidget->item(i, 2)->text().toInt(),
 			tableWidget->item(i, 3)->text().toInt(),
-			checkBox->isChecked() ? true : false,
+			checkBox->isChecked(),
 			tableWidget->item(i, 5)->text());
 	}
 }

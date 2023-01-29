@@ -6,7 +6,8 @@
 
 #include <catch2/catch.hpp>
 
-#include "Utils.hpp"
+#include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
 
 
 TEST_CASE("Util Testing", "[Utils]"){
@@ -29,7 +30,7 @@ TEST_CASE("Util Testing", "[Utils]"){
 
 	SECTION("Resynchronizing characters test") {
 		auto const charHandler = std::make_shared<CharacterHandler>();
-		Utils::resynchronizeCharacters(tableWidget, charHandler);
+		Utils::Table::resynchronizeCharacters(tableWidget, charHandler);
 
 		SECTION("Check stats") {
 			REQUIRE(charHandler->getCharacters().at(0).name == "Fighter");
@@ -41,7 +42,7 @@ TEST_CASE("Util Testing", "[Utils]"){
 		}
 		SECTION("Check filled enemy field") {
 			checkBox->setChecked(true);
-			Utils::resynchronizeCharacters(tableWidget, charHandler);
+			Utils::Table::resynchronizeCharacters(tableWidget, charHandler);
 			REQUIRE(charHandler->getCharacters().at(0).isEnemy == true);
 		}
 	}
@@ -49,29 +50,29 @@ TEST_CASE("Util Testing", "[Utils]"){
 	SECTION("Semicolon test") {
 		SECTION("Contains semicolon in first column") {
 			tableWidget->setItem(0, 0, new QTableWidgetItem("Figh;ter"));
-			REQUIRE(Utils::containsSemicolon(tableWidget));
+			REQUIRE(Utils::General::containsSemicolon(tableWidget));
 		}
 		SECTION("Contains semicolon in sixth column") {
 			tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
 			tableWidget->setItem(0, 5, new QTableWidgetItem("Has;te"));
-			REQUIRE(Utils::containsSemicolon(tableWidget));
+			REQUIRE(Utils::General::containsSemicolon(tableWidget));
 		}
 		SECTION("Contains no semicolon") {
 			tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
 			tableWidget->setItem(0, 5, new QTableWidgetItem("Haste"));
-			REQUIRE(!Utils::containsSemicolon(tableWidget));
+			REQUIRE(!Utils::General::containsSemicolon(tableWidget));
 		}
 	}
 
 	SECTION("CSV file path test") {
 		SECTION("Example Latin") {
-			REQUIRE(Utils::getCSVName("a/path/to/an/exampleTable.csv") == "exampleTable.csv");
+			REQUIRE(Utils::General::getCSVName("a/path/to/an/exampleTable.csv") == "exampleTable.csv");
 		}
 		SECTION("Example Umlaut") {
-			REQUIRE(Utils::getCSVName("/rändöm/päth/tö/exämpleTäble.csv") == "exämpleTäble.csv");
+			REQUIRE(Utils::General::getCSVName("/rändöm/päth/tö/exämpleTäble.csv") == "exämpleTäble.csv");
 		}
 		SECTION("Example Cyrillic") {
-			REQUIRE(Utils::getCSVName("путь/к/примеру.csv") == "примеру.csv");
+			REQUIRE(Utils::General::getCSVName("путь/к/примеру.csv") == "примеру.csv");
 		}
 	}
 }

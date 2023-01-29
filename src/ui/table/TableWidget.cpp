@@ -22,9 +22,9 @@
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
 #include "TableSettings.hpp"
-#include "TableUtils.hpp"
 #include "Undo.hpp"
-#include "Utils.hpp"
+#include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
 
 #include <iostream>
 
@@ -82,12 +82,12 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 		saveOldState();
 	});
 	connect(m_tableWidget, &QTableWidget::itemChanged, this, [this] {
-		const auto& tableData = TableUtils::tableDataFromWidget(m_tableWidget);
-		const auto& identifiers = TableUtils::identifiers(m_tableWidget);
+		const auto& tableData = Utils::Table::tableDataFromWidget(m_tableWidget);
+		const auto& identifiers = Utils::Table::identifiers(m_tableWidget);
 
 		if (tableData != m_tableDataOld || identifiers != m_identifiersOld ||
 		    m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
-			Utils::resynchronizeCharacters(m_tableWidget, m_char);
+			Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 			pushOnUndoStack();
 		}
 	});
@@ -189,11 +189,11 @@ TableWidget::getHeight() const
 void
 TableWidget::pushOnUndoStack()
 {
-	m_tableDataNew = TableUtils::tableDataFromCharacterVector(m_char->getCharacters());
-	m_identifiersNew = TableUtils::identifiers(m_tableWidget);
+	const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
+	const auto identifiersNew = Utils::Table::identifiers(m_tableWidget);
 
 	m_undoStack->push(new Undo(m_tableDataOld, m_identifiersOld, m_rowEnteredOld, m_roundCounterOld,
-				   this, m_tableDataNew, m_identifiersNew, m_rowEntered, m_roundCounter,
+				   this, tableDataNew, identifiersNew, m_rowEntered, m_roundCounter,
 				   &m_rowIdentifier, m_roundCounterLabel, m_currentPlayerLabel));
 }
 
@@ -202,7 +202,7 @@ void
 TableWidget::openAddCharacterDialog()
 {
 	// Resynchronize because the table could have been modified
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	const auto sizeBeforeDialog = m_char->getCharacters().size();
 
 	auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
@@ -248,7 +248,7 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 	saveOldState();
 
 	// Swap both characters
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	auto& characters = m_char->getCharacters();
 	characters.swapItemsAt(row, newRow);
 
@@ -300,7 +300,7 @@ TableWidget::addCharacter(
 	bool	isEnemy,
 	QString addInfo)
 {
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
 
 	setRowIdentifiers();
@@ -312,7 +312,7 @@ void
 TableWidget::rerollIni()
 {
 	const auto row = m_tableWidget->currentRow();
-	const auto newRolledDice = Utils::rollDice();
+	const auto newRolledDice = Utils::General::rollDice();
 	const auto newInitiative = newRolledDice + m_tableWidget->item(row, COL_MODIFIER)->text().toInt();
 	m_tableWidget->setItem(row, COL_INI, new QTableWidgetItem(
 				       QString::number(newInitiative))
@@ -368,7 +368,7 @@ TableWidget::sortTable()
 {
 	saveOldState();
 
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
 	m_rowEntered = 0;
 
@@ -380,7 +380,7 @@ TableWidget::sortTable()
 void
 TableWidget::setRowAndPlayer()
 {
-	TableUtils::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered, m_roundCounter);
+	Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered, m_roundCounter);
 }
 
 
@@ -407,7 +407,7 @@ TableWidget::removeRow()
 			}
 		}
 
-		Utils::resynchronizeCharacters(m_tableWidget, m_char);
+		Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 		auto& characters = m_char->getCharacters();
 		characters.remove(m_tableWidget->currentIndex().row());
 		// Update the current player and row
@@ -461,7 +461,7 @@ TableWidget::enteredRowChanged(bool goDown)
 	// Identifier for the entered row changes
 	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
 
-	Utils::resynchronizeCharacters(m_tableWidget, m_char);
+	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	setRowAndPlayer();
 	pushOnUndoStack();
 }
@@ -495,7 +495,7 @@ TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 {
 	auto changeOccured = false;
 	// Use the bold font for longer columns
-	const auto nameWidth = Utils::getStringWidth(name, m_boldFont);
+	const auto nameWidth = Utils::General::getStringWidth(name, m_boldFont);
 	// Due to the stretch property, the additional info column will be shortened if the name column
 	// is enhanced. To prevent this, we store the old value and reuse it if necessary
 	auto addInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
@@ -506,7 +506,7 @@ TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 	}
 	// additional info might be empty, so possible skip
 	if (!addInfo.isEmpty()) {
-		const auto addInfoNewWidth = Utils::getStringWidth(addInfo, m_boldFont);
+		const auto addInfoNewWidth = Utils::General::getStringWidth(addInfo, m_boldFont);
 		if (addInfoWidth < addInfoNewWidth) {
 			// Reuse the old value if the new string is too short
 			addInfoWidth = addInfoNewWidth + COL_LENGTH_ADD_BUFFER;
@@ -541,8 +541,8 @@ TableWidget::setRowIdentifiers()
 void
 TableWidget::saveOldState()
 {
-	m_tableDataOld = TableUtils::tableDataFromWidget(m_tableWidget);
-	m_identifiersOld = TableUtils::identifiers(m_tableWidget);
+	m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
+	m_identifiersOld = Utils::Table::identifiers(m_tableWidget);
 	m_rowEnteredOld = m_rowEntered;
 	m_roundCounterOld = m_roundCounter;
 }

@@ -8,10 +8,8 @@ class QTableWidget;
 // Utility functions, no ctor needed
 namespace Utils
 {
-void
-resynchronizeCharacters(const QTableWidget *	tableWidget,
-			CharacterHandlerRef	characterHandler);
-
+namespace General
+{
 [[nodiscard]] bool
 containsSemicolon(const QTableWidget *tableWidget);
 
@@ -30,4 +28,5 @@ getRulesetName(unsigned int ruleset);
 
 [[nodiscard]] QString
 getAutoRollEnabled(unsigned int autoRollEnabled);
+}
 }

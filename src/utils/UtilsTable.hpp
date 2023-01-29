@@ -10,9 +10,15 @@ class QTableWidget;
 
 class TableWidget;
 
-// Utility functions, no ctor needed
-namespace TableUtils
+// Utility functions for the Combat Table
+namespace Utils
 {
+namespace Table
+{
+void
+resynchronizeCharacters(const QTableWidget *	tableWidget,
+			CharacterHandlerRef	characterHandler);
+
 void
 setTableCheckBox(TableWidget *	tableWidget,
 		 unsigned int	row,
@@ -37,4 +43,5 @@ identifiers(QTableWidget *tableWidget);
 
 static constexpr int COL_NAME = 0;
 static constexpr int COL_ENEMY = 4;
+}
 }

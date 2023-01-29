@@ -42,10 +42,14 @@ resynchronizeCharacters(const QTableWidget *	tableWidget,
 void
 setTableCheckBox(TableWidget *tableWidget, unsigned int row, bool checked)
 {
+	auto *const mainTableWidget = tableWidget->getTableWidget();
+
 	auto *const checkBox = new QCheckBox;
 	checkBox->setChecked(checked);
-	QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [tableWidget] {
+	QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [tableWidget, mainTableWidget] {
+				mainTableWidget->blockSignals(true);
 				emit tableWidget->changeOccured();
+				mainTableWidget->blockSignals(false);
 			});
 
 	// Center the checkboxes
@@ -55,7 +59,6 @@ setTableCheckBox(TableWidget *tableWidget, unsigned int row, bool checked)
 	layout->setAlignment(Qt::AlignCenter);
 	widget->setLayout(layout);
 
-	auto * const mainTableWidget = tableWidget->getTableWidget();
 	mainTableWidget->setCellWidget(row, COL_ENEMY, widget);
 }
 

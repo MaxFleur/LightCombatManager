@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QObject>
 
-#include "TableUtils.hpp"
+#include "UtilsTable.hpp"
 #include "TableWidget.hpp"
 
 Undo::Undo(const QVector<QVector<QVariant> >& tableDataOld, const QVector<int>& identifiersOld, int rowEnteredOld, int roundCounterOld,
@@ -48,7 +48,7 @@ Undo::setCombatWidget(bool undo)
 	for (int i = 0; i < tableData.size(); ++i) {
 		for (int j = 0; j < tableData.at(i).size(); ++j) {
 			if (j == COL_ENEMY) {
-				TableUtils::setTableCheckBox(m_tableWidget, i, tableData.at(i).at(j).toBool());
+				Utils::Table::setTableCheckBox(m_tableWidget, i, tableData.at(i).at(j).toBool());
 			} else {
 				mainTableWidget->setItem(i, j, new QTableWidgetItem(tableData.at(i).at(j).toString()));
 			}
@@ -65,7 +65,7 @@ Undo::setCombatWidget(bool undo)
 
 	// Set the remaining label and font data
 	m_roundCounterLabel->setText(QObject::tr("Round ") + QString::number(roundCounter));
-	TableUtils::setRowAndPlayer(mainTableWidget, m_roundCounterLabel, m_currentPlayerLabel, rowEntered, roundCounter);
+	Utils::Table::setRowAndPlayer(mainTableWidget, m_roundCounterLabel, m_currentPlayerLabel, rowEntered, roundCounter);
 
 	emit m_tableWidget->tableHeightSet(m_tableWidget->getHeight());
 	mainTableWidget->blockSignals(false);

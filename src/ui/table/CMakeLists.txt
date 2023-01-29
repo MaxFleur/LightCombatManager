@@ -11,8 +11,6 @@ target_sources(table INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/DisabledNavigationKeyTable.cpp
     ${CMAKE_CURRENT_LIST_DIR}/DelegateSpinBox.hpp
     ${CMAKE_CURRENT_LIST_DIR}/DelegateSpinBox.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/TableUtils.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/TableUtils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TableWidget.hpp
     ${CMAKE_CURRENT_LIST_DIR}/TableWidget.cpp
     ${CMAKE_CURRENT_LIST_DIR}/Undo.hpp

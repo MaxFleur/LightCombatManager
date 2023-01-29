@@ -15,7 +15,7 @@
 #include "RuleSettings.hpp"
 #include "SettingsDialog.hpp"
 #include "TableWidget.hpp"
-#include "Utils.hpp"
+#include "UtilsGeneral.hpp"
 #include "WelcomeWidget.hpp"
 
 MainWindow::MainWindow()
@@ -117,7 +117,7 @@ MainWindow::saveTable()
 			tr("Can't save an empty table."));
 		return false;
 	}
-	if (Utils::containsSemicolon(m_tableWidget->getTableWidget())) {
+	if (Utils::General::containsSemicolon(m_tableWidget->getTableWidget())) {
 		auto const reply = QMessageBox::critical(
 			this,
 			tr("Semicolons detected!"),
@@ -149,7 +149,7 @@ MainWindow::saveTable()
 		    m_ruleSettings->rollAutomatical)) {
 		m_tableInFile = true;
 		m_dirSettings->write(fileName, true);
-		m_fileName = Utils::getCSVName(fileName);
+		m_fileName = Utils::General::getCSVName(fileName);
 
 		setCombatTitle(false);
 		// Success
@@ -220,7 +220,7 @@ MainWindow::openTable()
 		m_tableInFile = true;
 		// Save the opened file dir
 		m_dirSettings->write(fileName);
-		m_fileName = Utils::getCSVName(fileName);
+		m_fileName = Utils::General::getCSVName(fileName);
 		setTableWidget(true, false, m_file->getData());
 
 		// If the settings rules are applied to the table, it is modified
@@ -393,10 +393,10 @@ QMessageBox *
 MainWindow::createRuleChangeMessageBox()
 {
 	const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
-				"Your ruleset: <b>") + Utils::getRulesetName(m_ruleSettings->ruleset) + "</b>, " +
-			     "<b>" + Utils::getAutoRollEnabled(m_ruleSettings->rollAutomatical) + "</b> <br>" +
-			     tr("The stored table ruleset is: <b>") + Utils::getRulesetName(m_loadedTableRule) + "</b>, " +
-			     "<b>" + Utils::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
+				"Your ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings->ruleset) + "</b>, " +
+			     "<b>" + Utils::General::getAutoRollEnabled(m_ruleSettings->rollAutomatical) + "</b> <br>" +
+			     tr("The stored table ruleset is: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
+			     "<b>" + Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
 			     tr("Do you want to apply the stored Table ruleset to your settings or ignore it?");
 	auto *const msgBox = new QMessageBox(
 		QMessageBox::Warning,

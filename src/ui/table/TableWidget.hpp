@@ -166,9 +166,6 @@ private:
 	unsigned int m_rowEnteredOld;
 	unsigned int m_roundCounterOld;
 
-	QVector<QVector<QVariant> > m_tableDataNew;
-	QVector<int> m_identifiersNew;
-
 	static constexpr int NMBR_COLUMNS = 6;
 
 	static constexpr int COL_NAME = 0;

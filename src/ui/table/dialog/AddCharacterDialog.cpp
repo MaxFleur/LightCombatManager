@@ -16,7 +16,7 @@
 #include <QTimer>
 
 #include "StatusEffectDialog.hpp"
-#include "Utils.hpp"
+#include "UtilsGeneral.hpp"
 
 AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings, QWidget *parent) :
 	m_ruleSettings(RuleSettings)
@@ -120,7 +120,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 void
 AddCharacterDialog::setLabelRolled()
 {
-	const auto rand = Utils::rollDice();
+	const auto rand = Utils::General::rollDice();
 	m_iniBox->setValue(rand + m_iniModifierBox->value());
 	m_labelRolled->setText(tr("Rolled number: ") + QString::number(rand));
 }

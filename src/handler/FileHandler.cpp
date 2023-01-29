@@ -8,8 +8,6 @@
 #include <QTableWidgetItem>
 #include <QTextStream>
 
-#include "Utils.hpp"
-
 // Stores a table as a csv
 bool
 FileHandler::saveTable(

@@ -143,9 +143,6 @@ private:
 	QPointer<QAction> m_undoAction;
 	QPointer<QAction> m_redoAction;
 
-	// Font for highlighting rows
-	QFont m_boldFont;
-
 	bool m_isDataStored;
 
 	QString m_loadedFileData;

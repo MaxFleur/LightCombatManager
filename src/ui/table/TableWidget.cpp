@@ -193,8 +193,8 @@ TableWidget::pushOnUndoStack()
 	const auto identifiersNew = Utils::Table::identifiers(m_tableWidget);
 
 	m_undoStack->push(new Undo(m_tableDataOld, m_identifiersOld, m_rowEnteredOld, m_roundCounterOld,
-				   this, tableDataNew, identifiersNew, m_rowEntered, m_roundCounter,
-				   &m_rowIdentifier, m_roundCounterLabel, m_currentPlayerLabel));
+				   this, tableDataNew, identifiersNew, &m_rowIdentifier, &m_rowEntered, &m_roundCounter,
+				   m_roundCounterLabel, m_currentPlayerLabel));
 }
 
 

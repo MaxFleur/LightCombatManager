@@ -36,13 +36,15 @@ Undo::redo()
 void
 Undo::setCombatWidget(bool undo)
 {
-	// Set the table
+	// Set with old or new values, depending on if we are undoing or not
 	auto * const mainTableWidget = m_tableWidget->getTableWidget();
 	const auto& tableData = undo ? m_tableDataOld : m_tableDataNew;
 	const auto& identifiers = undo ? m_identifiersOld : m_identifiersNew;
 	const auto& rowEntered = undo ? m_rowEnteredOld : *m_rowEntered;
 	const auto& roundCounter = undo ? m_roundCounterOld : *m_roundCounter;
 
+	// Creating the table widget items will trigger the item changed signal, which would recall the undo stack
+	// So block the signals as long as we are creating the table
 	mainTableWidget->blockSignals(true);
 	mainTableWidget->setRowCount(tableData.size());
 
@@ -59,7 +61,7 @@ Undo::setCombatWidget(bool undo)
 		mainTableWidget->item(i, COL_NAME)->setData(Qt::UserRole, QString::number(identifiers.at(i)));
 	}
 
-	// Set row identifier
+	// Set values for the labels
 	if (mainTableWidget->rowCount() > 0 && undo) {
 		*m_rowIdentifier = mainTableWidget->item(rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
 		*m_rowEntered = rowEntered;
@@ -71,5 +73,6 @@ Undo::setCombatWidget(bool undo)
 	Utils::Table::setRowAndPlayer(mainTableWidget, m_roundCounterLabel, m_currentPlayerLabel, rowEntered, roundCounter);
 
 	emit m_tableWidget->tableHeightSet(m_tableWidget->getHeight());
+
 	mainTableWidget->blockSignals(false);
 }

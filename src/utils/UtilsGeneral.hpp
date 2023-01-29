@@ -5,7 +5,7 @@
 class QFont;
 class QTableWidget;
 
-// Utility functions, no ctor needed
+// General utility functions
 namespace Utils
 {
 namespace General

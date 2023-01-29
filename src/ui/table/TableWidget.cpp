@@ -161,13 +161,13 @@ void
 TableWidget::generateTable()
 {
 	m_tableWidget->blockSignals(true);
-
+	// Store the data from file
 	setTableDataWithFileData();
 	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
 
 	m_tableWidget->blockSignals(false);
-
+	// Then create the table
 	pushOnUndoStack();
 	setRowIdentifiers();
 	// We do not need a save step directly after table creation, so setup the table and reset the stack
@@ -189,6 +189,7 @@ TableWidget::getHeight() const
 void
 TableWidget::pushOnUndoStack()
 {
+	// Get newest table and identifier data
 	const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
 	const auto identifiersNew = Utils::Table::identifiers(m_tableWidget);
 
@@ -261,6 +262,7 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 		}
 	}
 
+	// Update table
 	emit changeOccured();
 	pushOnUndoStack();
 }
@@ -302,7 +304,7 @@ TableWidget::addCharacter(
 {
 	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
-
+	// If a new character has been added, the identifiers can be reset
 	setRowIdentifiers();
 	resetNameInfoWidth(name, addInfo);
 }
@@ -330,7 +332,7 @@ TableWidget::rerollIni()
 }
 
 
-// Set the data inside the table
+// Set the data vector, if the data has been stored in a table
 void
 TableWidget::setTableDataWithFileData()
 {
@@ -367,11 +369,11 @@ void
 TableWidget::sortTable()
 {
 	saveOldState();
-
+	// Main sorting
 	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
 	m_rowEntered = 0;
-
+	// Identifiers can be reset, then update the table
 	setRowIdentifiers();
 	pushOnUndoStack();
 }
@@ -407,12 +409,13 @@ TableWidget::removeRow()
 			}
 		}
 
+		// Remoce character from stored list
 		Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 		auto& characters = m_char->getCharacters();
 		characters.remove(m_tableWidget->currentIndex().row());
 		// Update the current player and row
 		setRowAndPlayer();
-
+		// Update table
 		pushOnUndoStack();
 		return;
 	}
@@ -460,7 +463,7 @@ TableWidget::enteredRowChanged(bool goDown)
 
 	// Identifier for the entered row changes
 	m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
-
+	// Recreate table for updated font
 	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 	setRowAndPlayer();
 	pushOnUndoStack();
@@ -530,6 +533,7 @@ TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 void
 TableWidget::setRowIdentifiers()
 {
+	// Prevent item changed signal firings
 	m_tableWidget->blockSignals(true);
 	for (int i = 0; i < m_tableWidget->rowCount(); i++) {
 		m_tableWidget->item(i, COL_NAME)->setData(Qt::UserRole, QString::number(i));

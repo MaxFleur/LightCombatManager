@@ -14,8 +14,7 @@ namespace Utils
 {
 namespace Table
 {
-// Resynchronize the char handler vector. This function is called
-// if a table is loaded and/or new characters are readded to a combat
+// Resynchronize the characters stored in the char handler vector
 void
 resynchronizeCharacters(const QTableWidget *	tableWidget,
 			CharacterHandlerRef	characterHandler)
@@ -38,7 +37,7 @@ resynchronizeCharacters(const QTableWidget *	tableWidget,
 }
 
 
-// Create checkboxes to show the enemy status
+// Create checkboxes to show the is enemy status
 void
 setTableCheckBox(TableWidget *tableWidget, unsigned int row, bool checked)
 {
@@ -63,12 +62,13 @@ setTableCheckBox(TableWidget *tableWidget, unsigned int row, bool checked)
 }
 
 
+// Set tje labels displaying the current player and round number
 void
 setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *currentPlayerLabel, int rowEntered, int roundCounter)
 {
 	// Select row entered with Return key
 	tableWidget->selectionModel()->clearSelection();
-
+	// Setting fonts may trigger unwished item setting events, so block the signals
 	tableWidget->blockSignals(true);
 	if (tableWidget->rowCount() != 0) {
 		// Reset bold text rows to standard font
@@ -105,6 +105,7 @@ setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *cu
 }
 
 
+// Store the table cell values in a vector
 QVector<QVector<QVariant> >
 tableDataFromWidget(QTableWidget *tableWidget)
 {
@@ -124,6 +125,7 @@ tableDataFromWidget(QTableWidget *tableWidget)
 }
 
 
+// Reformat the character vector in a QVariant vector
 QVector<QVector<QVariant> >
 tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& characters)
 {
@@ -141,6 +143,7 @@ tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& charact
 }
 
 
+// Get the stored identifiers
 QVector<int>
 identifiers(QTableWidget *tableWidget)
 {

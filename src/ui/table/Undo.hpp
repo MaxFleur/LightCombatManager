@@ -8,6 +8,7 @@ class QTableWidget;
 
 class TableWidget;
 
+// Manage the main combat table widget creation and recreation
 class Undo : public QUndoCommand
 {
 public:

@@ -9,11 +9,12 @@
 #include "TableWidget.hpp"
 
 Undo::Undo(const QVector<QVector<QVariant> >& tableDataOld, const QVector<int>& identifiersOld, int rowEnteredOld, int roundCounterOld,
-	   TableWidget *tableWidget, const QVector<QVector<QVariant> >& tableDataNew, const QVector<int>& identifiersNew, int rowEnteredNew, int roundCounterNew,
-	   unsigned int *rowIdentifier, QLabel *roundCounterLabel, QLabel *currentPlayerLabel) :
+	   TableWidget *tableWidget, const QVector<QVector<QVariant> >& tableDataNew, const QVector<int>& identifiersNew,
+	   unsigned int *rowIdentifier, unsigned int *rowEntered, unsigned int *roundCounter, QLabel *roundCounterLabel, QLabel *currentPlayerLabel) :
 	m_tableDataOld(tableDataOld), m_identifiersOld(identifiersOld), m_rowEnteredOld(rowEnteredOld), m_roundCounterOld(roundCounterOld),
-	m_tableWidget(tableWidget), m_tableDataNew(tableDataNew), m_identifiersNew(identifiersNew), m_rowEnteredNew(rowEnteredNew), m_roundCounterNew(roundCounterNew),
-	m_rowIdentifier(rowIdentifier), m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel)
+	m_tableWidget(tableWidget), m_tableDataNew(tableDataNew), m_identifiersNew(identifiersNew),
+	m_rowIdentifier(rowIdentifier), m_rowEntered(rowEntered), m_roundCounter(roundCounter),
+	m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel)
 {
 }
 
@@ -39,8 +40,8 @@ Undo::setCombatWidget(bool undo)
 	auto * const mainTableWidget = m_tableWidget->getTableWidget();
 	const auto& tableData = undo ? m_tableDataOld : m_tableDataNew;
 	const auto& identifiers = undo ? m_identifiersOld : m_identifiersNew;
-	const auto& rowEntered = undo ? m_rowEnteredOld : m_rowEnteredNew;
-	const auto& roundCounter = undo ? m_roundCounterOld : m_roundCounterNew;
+	const auto& rowEntered = undo ? m_rowEnteredOld : *m_rowEntered;
+	const auto& roundCounter = undo ? m_roundCounterOld : *m_roundCounter;
 
 	mainTableWidget->blockSignals(true);
 	mainTableWidget->setRowCount(tableData.size());
@@ -59,8 +60,10 @@ Undo::setCombatWidget(bool undo)
 	}
 
 	// Set row identifier
-	if (mainTableWidget->rowCount() > 0) {
+	if (mainTableWidget->rowCount() > 0 && undo) {
 		*m_rowIdentifier = mainTableWidget->item(rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
+		*m_rowEntered = rowEntered;
+		*m_roundCounter = roundCounter;
 	}
 
 	// Set the remaining label and font data

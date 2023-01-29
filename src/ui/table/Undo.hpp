@@ -18,9 +18,9 @@ public:
 	     TableWidget *			tableWidget,
 	     const QVector<QVector<QVariant> >& tableDataNew,
 	     const QVector<int>&		identifiersNew,
-	     int				rowEnteredNew,
-	     int				roundCounterNew,
 	     unsigned int *			rowIdentifier,
+	     unsigned int *			rowEntered,
+	     unsigned int *			roundCounter,
 	     QLabel *				roundCounterLabel,
 	     QLabel *				currentPlayerLabel);
 
@@ -45,10 +45,11 @@ private:
 
 	const QVector<QVector<QVariant> > m_tableDataNew;
 	const QVector<int> m_identifiersNew;
-	int m_rowEnteredNew;
-	int m_roundCounterNew;
 
 	unsigned int *m_rowIdentifier;
+	unsigned int *m_rowEntered;
+	unsigned int *m_roundCounter;
+
 	QPointer<QLabel> m_roundCounterLabel;
 	QPointer<QLabel> m_currentPlayerLabel;
 

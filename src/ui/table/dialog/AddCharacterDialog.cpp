@@ -45,6 +45,9 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
+	saveButton->setShortcut(QKeySequence::Save);
+	statusEffectButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+
 	m_animatedLabel = new QLabel;
 	m_timer = new QTimer(this);
 	m_timer->setSingleShot(true);
@@ -99,9 +102,6 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	setLayout(layout);
 	setFocus();
 
-	auto *const saveShortcut = new QShortcut(QKeySequence::Save, this);
-	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
-
 	connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
 	connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
 	connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
@@ -109,9 +109,6 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);
 
 	connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
-	connect(saveShortcut, &QShortcut::activated, this, &AddCharacterDialog::saveButtonClicked);
-	connect(statusEffectShortcut, &QShortcut::activated, this, &AddCharacterDialog::openStatusEffectDialog);
 
 	connect(m_timer, &QTimer::timeout, this, &AddCharacterDialog::animateLabel);
 }

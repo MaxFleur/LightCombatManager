@@ -1,6 +1,7 @@
 #include "TableWidget.hpp"
 
 #include <QAction>
+#include <QApplication>
 #include <QCheckBox>
 #include <QContextMenuEvent>
 #include <QDebug>
@@ -64,10 +65,12 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	auto *const downButton = new QToolButton;
 	downButton->setArrowType(Qt::DownArrow);
 	downButton->setToolTip(tr("Select next Character (Ctrl + Arrow Down)."));
+	downButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down));
 
 	auto *const upButton = new QToolButton;
 	upButton->setArrowType(Qt::UpArrow);
 	upButton->setToolTip(tr("Select previous Character (Ctrl + Arrow Up)."));
+	upButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up));
 
 	auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
@@ -96,8 +99,6 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	auto *const spacer = new QWidget();
 	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-	m_boldFont.setBold(true);
-
 	// Lower layout
 	auto *const lowerLayout = new QHBoxLayout();
 	lowerLayout->addWidget(m_roundCounterLabel);
@@ -122,9 +123,8 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	this->addAction(m_redoAction);
 
 	// Shortcuts
+	auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), this);
 	auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
-	auto *const goUpShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up), this);
-	auto *const goDownShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down), this);
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 	auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), this);
 	auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
@@ -144,13 +144,8 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 		emit exit();
 	});
 
+	connect(duplicateShortcut, &QShortcut::activated, this, &TableWidget::duplicateRow);
 	connect(deleteShortcut, &QShortcut::activated, this, &TableWidget::removeRow);
-	connect(goUpShortcut, &QShortcut::activated, this, [this] {
-		enteredRowChanged(false);
-	});
-	connect(goDownShortcut, &QShortcut::activated, this, [this]{
-		enteredRowChanged(true);
-	});
 	connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
 	connect(rerollIniShortcut, &QShortcut::activated, this, &TableWidget::rerollIni);
 	connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openAddCharacterDialog);
@@ -160,13 +155,11 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 void
 TableWidget::generateTable()
 {
-	m_tableWidget->blockSignals(true);
 	// Store the data from file
 	setTableDataWithFileData();
 	m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
 	m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
 
-	m_tableWidget->blockSignals(false);
 	// Then create the table
 	pushOnUndoStack();
 	setRowIdentifiers();
@@ -207,9 +200,9 @@ TableWidget::openAddCharacterDialog()
 	const auto sizeBeforeDialog = m_char->getCharacters().size();
 
 	auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
-	connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (QString name, int ini, int mod, int hp, bool isEnemy, QString addInfo) {
+	connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (QString name, int ini, int mod, int hp, bool isEnemy, QString addInfo, int instanceCount) {
 		saveOldState();
-		addCharacter(name, ini, mod, hp, isEnemy, addInfo);
+		addCharacter(name, ini, mod, hp, isEnemy, addInfo, instanceCount);
 		pushOnUndoStack();
 	});
 	// Lock this widget, wait until Dialog is closed
@@ -300,13 +293,20 @@ TableWidget::addCharacter(
 	int	mod,
 	int	hp,
 	bool	isEnemy,
-	QString addInfo)
+	QString addInfo,
+	int	instanceCount)
 {
+	saveOldState();
+
 	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+	for (int i = 0; i < instanceCount; i++) {
+		m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+	}
 	// If a new character has been added, the identifiers can be reset
 	setRowIdentifiers();
 	resetNameInfoWidth(name, addInfo);
+
+	pushOnUndoStack();
 }
 
 
@@ -386,6 +386,35 @@ TableWidget::setRowAndPlayer()
 }
 
 
+void
+TableWidget::duplicateRow()
+{
+	if (m_tableWidget->rowCount() == 0) {
+		return;
+	}
+
+	if (m_tableWidget->selectionModel()->hasSelection()) {
+		saveOldState();
+
+		Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+		auto& characters = m_char->getCharacters();
+		const auto currentIndex = m_tableWidget->currentIndex().row();
+		characters.insert(currentIndex + 1, characters.at(currentIndex));
+
+		// Character count increases, so reset identifiers
+		setRowIdentifiers();
+		pushOnUndoStack();
+
+		return;
+	}
+
+	auto const reply = QMessageBox::warning(
+		this,
+		tr("Cannot duplicate Character!"),
+		tr("Please select a Character with the Mouse Key before duplicating!"));
+}
+
+
 // Remove a row/character of the table
 void
 TableWidget::removeRow()
@@ -404,7 +433,7 @@ TableWidget::removeRow()
 		}
 		// If the deleted row was the last one in the table and also the current player, select to the first row
 		if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
-			if (m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font() == m_boldFont) {
+			if (m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font().bold()) {
 				m_rowEntered = 0;
 			}
 		}
@@ -422,7 +451,7 @@ TableWidget::removeRow()
 
 	auto const reply = QMessageBox::warning(
 		this,
-		tr("Could not remove Character!"),
+		tr("Cannot remove Character!"),
 		tr("Please select a Character with the Mouse Key before deleting!"));
 }
 
@@ -497,8 +526,11 @@ void
 TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 {
 	auto changeOccured = false;
-	// Use the bold font for longer columns
-	const auto nameWidth = Utils::General::getStringWidth(name, m_boldFont);
+	// Use a bold font for longer columns
+	auto font = QApplication::font();
+	font.setBold(true);
+
+	const auto nameWidth = Utils::General::getStringWidth(name, font);
 	// Due to the stretch property, the additional info column will be shortened if the name column
 	// is enhanced. To prevent this, we store the old value and reuse it if necessary
 	auto addInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
@@ -509,7 +541,7 @@ TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 	}
 	// additional info might be empty, so possible skip
 	if (!addInfo.isEmpty()) {
-		const auto addInfoNewWidth = Utils::General::getStringWidth(addInfo, m_boldFont);
+		const auto addInfoNewWidth = Utils::General::getStringWidth(addInfo, font);
 		if (addInfoWidth < addInfoNewWidth) {
 			// Reuse the old value if the new string is too short
 			addInfoWidth = addInfoNewWidth + COL_LENGTH_ADD_BUFFER;
@@ -569,6 +601,12 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &TableWidget::rerollIni);
 		rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
 		rerollIniAction->setShortcutVisibleInContextMenu(true);
+
+		auto *const duplicateRowAction = menu->addAction(tr("Duplicate Character"), this, [this] () {
+			duplicateRow();
+		});
+		duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
+		duplicateRowAction->setShortcutVisibleInContextMenu(true);
 
 		auto *const removeRowAction = menu->addAction(tr("Remove Character"), this, [this] () {
 			removeRow();

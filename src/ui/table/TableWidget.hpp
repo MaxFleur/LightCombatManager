@@ -94,7 +94,8 @@ private slots:
 		     int	mod,
 		     int	hp,
 		     bool	isEnemy,
-		     QString	addInfo);
+		     QString	addInfo,
+		     int	instanceCount);
 
 	void
 	rerollIni();
@@ -108,6 +109,9 @@ private:
 
 	void
 	setRowAndPlayer();
+
+	void
+	duplicateRow();
 
 	void
 	removeRow();
@@ -142,9 +146,6 @@ private:
 
 	QPointer<QAction> m_undoAction;
 	QPointer<QAction> m_redoAction;
-
-	// Font for highlighting rows
-	QFont m_boldFont;
 
 	bool m_isDataStored;
 

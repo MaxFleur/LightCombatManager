@@ -34,6 +34,17 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	m_enemyBox = new QCheckBox;
 	m_addInfoEdit = new QLineEdit;
 
+	m_multipleEnabledBox = new QCheckBox(tr("Add Character multiple times:"));
+	m_multipleEnabledBox->setTristate(false);
+	m_multipleEnabledBox->setCheckState(Qt::Unchecked);
+	QObject::connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {
+		m_instanceNumberBox->setEnabled(m_multipleEnabledBox->checkState() == Qt::Checked);
+	});
+
+	m_instanceNumberBox = new QSpinBox;
+	m_instanceNumberBox->setRange(2, 10);
+	m_instanceNumberBox->setEnabled(false);
+
 	auto *const rollButton = new QPushButton(tr("Roll random INI value"));
 	rollButton->setToolTip(tr("Roll the Initiative. The modifier is added to the rolled value."));
 
@@ -95,12 +106,16 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	layout->addWidget(m_addInfoEdit, 4, 1, 1, 2);
 	layout->addWidget(statusEffectButton, 4, 3);
 
-	layout->addWidget(m_animatedLabel, 5, 0, 1, 2);
-	layout->addWidget(resetButton, 5, 3, 1, 1);
-	// Keep a little space to the button box
-	layout->setRowMinimumHeight(6, 20);
+	layout->addWidget(m_multipleEnabledBox, 5, 0, 1, 3);
+	layout->addWidget(m_instanceNumberBox, 5, 3, 1, 1);
 
-	layout->addWidget(buttonBox, 7, 1, 1, 3);
+	layout->addWidget(m_animatedLabel, 6, 0, 1, 2);
+	layout->addWidget(resetButton, 6, 3, 1, 1);
+
+	// Keep a little space to the button box
+	layout->setRowMinimumHeight(7, 20);
+
+	layout->addWidget(buttonBox, 8, 1, 1, 3);
 
 	setLayout(layout);
 	setFocus();
@@ -152,8 +167,10 @@ AddCharacterDialog::saveButtonClicked()
 		return;
 	}
 	m_somethingStored = true;
+
+	const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
 	emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
-			      m_enemyBox->isChecked(), m_addInfoEdit->text());
+			      m_enemyBox->isChecked(), m_addInfoEdit->text(), numberOfInstances);
 	resetButtonClicked();
 	setFocus();
 
@@ -179,6 +196,9 @@ AddCharacterDialog::resetButtonClicked()
 	m_hpBox->setValue(0);
 	m_enemyBox->setChecked(false);
 	m_addInfoEdit->clear();
+
+	m_multipleEnabledBox->setCheckState(Qt::Unchecked);
+	m_instanceNumberBox->setValue(2);
 }
 
 

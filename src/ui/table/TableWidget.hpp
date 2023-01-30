@@ -94,7 +94,8 @@ private slots:
 		     int	mod,
 		     int	hp,
 		     bool	isEnemy,
-		     QString	addInfo);
+		     QString	addInfo,
+		     int	instanceCount);
 
 	void
 	rerollIni();

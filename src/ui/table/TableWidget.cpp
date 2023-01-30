@@ -289,12 +289,15 @@ TableWidget::addCharacter(
 	int	mod,
 	int	hp,
 	bool	isEnemy,
-	QString addInfo)
+	QString addInfo,
+	int	instanceCount)
 {
 	saveOldState();
 
 	Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-	m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+	for (int i = 0; i < instanceCount; i++) {
+		m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+	}
 	// If a new character has been added, the identifiers can be reset
 	setRowIdentifiers();
 	resetNameInfoWidth(name, addInfo);

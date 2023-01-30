@@ -27,7 +27,8 @@ signals:
 			 int		mod,
 			 int		hp,
 			 bool		isEnemy,
-			 QString	addInfo);
+			 QString	addInfo,
+			 int		instanceCount);
 
 private slots:
 	void
@@ -66,6 +67,9 @@ private:
 	QPointer<QSpinBox> m_hpBox;
 	QPointer<QCheckBox> m_enemyBox;
 	QPointer<QLineEdit> m_addInfoEdit;
+
+	QPointer<QCheckBox> m_multipleEnabledBox;
+	QPointer<QSpinBox> m_instanceNumberBox;
 
 	QPointer<QLabel> m_animatedLabel;
 	QPointer<QTimer> m_timer;

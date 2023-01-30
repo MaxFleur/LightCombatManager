@@ -17,8 +17,8 @@ containsSemicolon(const QTableWidget *tableWidget);
 rollDice();
 
 [[nodiscard]] int
-getStringWidth(const QString&	str,
-	       const QFont&	font);
+getStringWidth(const QString& str,
+               const QFont&   font);
 
 [[nodiscard]] QString
 getCSVName(const QString& filePath);

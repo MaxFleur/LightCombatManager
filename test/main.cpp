@@ -6,7 +6,7 @@
 int
 main(int argc, char **argv)
 {
-	QApplication app(argc, argv);
+    QApplication app(argc, argv);
 
-	return Catch::Session().run(argc, argv);
+    return Catch::Session().run(argc, argv);
 }

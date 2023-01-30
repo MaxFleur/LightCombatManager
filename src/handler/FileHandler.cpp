@@ -11,58 +11,58 @@
 // Stores a table as a csv
 bool
 FileHandler::saveTable(
-	QTableWidget *			tableWidget,
-	const QString&			filename,
-	unsigned int			rowEntered,
-	unsigned int			roundCounter,
-	const RuleSettings::Ruleset&	ruleset,
-	bool				rollAutomatically) const
+    QTableWidget*                tableWidget,
+    const QString&               filename,
+    unsigned int                 rowEntered,
+    unsigned int                 roundCounter,
+    const RuleSettings::Ruleset& ruleset,
+    bool                         rollAutomatically) const
 {
-	// Create a file
-	QFile file(filename);
+    // Create a file
+    QFile file(filename);
 
-	// Check if device is open for writing
-	if (file.open(QFile::WriteOnly | QFile::Truncate)) {
-		QTextStream data(&file);
-		data.setCodec("UTF-8");
-		data.setGenerateByteOrderMark(false);
+    // Check if device is open for writing
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream data(&file);
+        data.setCodec("UTF-8");
+        data.setGenerateByteOrderMark(false);
 
-		QStringList strList;
+        QStringList strList;
 
-		// Store the header of the table, used for checking the correct table format if the table is reloaded
-		strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is Enemy" << "Additional information";
-		data << strList.join(";") + "\n";
+        // Store the header of the table, used for checking the correct table format if the table is reloaded
+        strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is Enemy" << "Additional information";
+        data << strList.join(";") + "\n";
 
-		for (int i = 0; i < tableWidget->rowCount(); ++i) {
-			// Clear the list at the beginning of every row iteration
-			strList.clear();
+        for (int i = 0; i < tableWidget->rowCount(); ++i) {
+            // Clear the list at the beginning of every row iteration
+            strList.clear();
 
-			for (int j = 0; j < tableWidget->columnCount(); ++j) {
-				// Get the checkbox value
-				if (j == 4) {
-					// Cell widget is a checkbox within another widget, so find the child
-					auto * const checkBox = tableWidget->cellWidget(i, j)->findChild<QCheckBox *>();
-					strList << QVariant(checkBox->isChecked()).toString();
-				} else {
-					const auto *item = tableWidget->item(i, j);
-					if (!item || item->text().isEmpty()) {
-						tableWidget->setItem(i, j, new QTableWidgetItem(""));
-					}
-					strList << tableWidget->item(i, j)->text();
-				}
-			}
-			if (i == 0) {
-				strList << QString::number(rowEntered) << QString::number(roundCounter)
-					<< QString::number(ruleset) << QString::number(rollAutomatically);
-			}
+            for (int j = 0; j < tableWidget->columnCount(); ++j) {
+                // Get the checkbox value
+                if (j == 4) {
+                    // Cell widget is a checkbox within another widget, so find the child
+                    auto * const checkBox = tableWidget->cellWidget(i, j)->findChild<QCheckBox *>();
+                    strList << QVariant(checkBox->isChecked()).toString();
+                } else {
+                    const auto *item = tableWidget->item(i, j);
+                    if (!item || item->text().isEmpty()) {
+                        tableWidget->setItem(i, j, new QTableWidgetItem(""));
+                    }
+                    strList << tableWidget->item(i, j)->text();
+                }
+            }
+            if (i == 0) {
+                strList << QString::number(rowEntered) << QString::number(roundCounter)
+                        << QString::number(ruleset) << QString::number(rollAutomatically);
+            }
 
-			// The "\n" guarantees that the rows are set correctly in the csv table
-			data << strList.join(";") + "\n";
-		}
-		file.close();
-		return true;
-	}
-	return false;
+            // The "\n" guarantees that the rows are set correctly in the csv table
+            data << strList.join(";") + "\n";
+        }
+        file.close();
+        return true;
+    }
+    return false;
 }
 
 
@@ -70,30 +70,30 @@ FileHandler::saveTable(
 int
 FileHandler::getCSVData(const QString& filename)
 {
-	QFile importedCSV(filename);
+    QFile importedCSV(filename);
 
-	// If the data can be read, import
-	if (importedCSV.open(QFile::ReadOnly)) {
-		QTextStream in(&importedCSV);
-		in.setCodec("UTF-8");
-		in.setGenerateByteOrderMark(false);
-		m_data = QString();
+    // If the data can be read, import
+    if (importedCSV.open(QFile::ReadOnly)) {
+        QTextStream in(&importedCSV);
+        in.setCodec("UTF-8");
+        in.setGenerateByteOrderMark(false);
+        m_data = QString();
 
-		// Import file line by line
-		while (!in.atEnd()) {
-			m_data.append(in.readLine() + "\n");
-		}
-		importedCSV.close();
+        // Import file line by line
+        while (!in.atEnd()) {
+            m_data.append(in.readLine() + "\n");
+        }
+        importedCSV.close();
 
-		if (checkTableFormat(m_data)) {
-			// Successfully checked table
-			return 0;
-		}
-		// Table in false format
-		return 1;
-	}
-	// Unreadable data
-	return 2;
+        if (checkTableFormat(m_data)) {
+            // Successfully checked table
+            return 0;
+        }
+        // Table in false format
+        return 1;
+    }
+    // Unreadable data
+    return 2;
 }
 
 
@@ -101,24 +101,24 @@ FileHandler::getCSVData(const QString& filename)
 bool
 FileHandler::checkTableFormat(const QString& data) const
 {
-	// Get the stored table row data information
-	const auto rowDataHeader = data.split("\n").at(0).split(";");
-	const auto rowDataFirstRow = data.split("\n").at(1).split(";");
+    // Get the stored table row data information
+    const auto rowDataHeader = data.split("\n").at(0).split(";");
+    const auto rowDataFirstRow = data.split("\n").at(1).split(";");
 
-	// Test if the table has the correct header columns
-	if (rowDataHeader.size() == 6
-	    && rowDataHeader[0] == "Name"
-	    && rowDataHeader[1] == "Initiative"
-	    && rowDataHeader[2] == "INI modifier"
-	    && rowDataHeader[3] == "HP"
-	    && rowDataHeader[4] == "Is Enemy"
-	    && rowDataHeader[5] == "Additional information"
+    // Test if the table has the correct header columns
+    if (rowDataHeader.size() == 6
+        && rowDataHeader[0] == "Name"
+        && rowDataHeader[1] == "Initiative"
+        && rowDataHeader[2] == "INI modifier"
+        && rowDataHeader[3] == "HP"
+        && rowDataHeader[4] == "Is Enemy"
+        && rowDataHeader[5] == "Additional information"
 
-	    // The second row is checked
-	    // 7th entry should contain the player on the move, 8th the round counter,
-	    // 9th the ruleset and 10th the roll automatically option
-	    && rowDataFirstRow.size() == 10) {
-		return true;
-	}
-	return false;
+        // The second row is checked
+        // 7th entry should contain the player on the move, 8th the round counter,
+        // 9th the ruleset and 10th the roll automatically option
+        && rowDataFirstRow.size() == 10) {
+        return true;
+    }
+    return false;
 }

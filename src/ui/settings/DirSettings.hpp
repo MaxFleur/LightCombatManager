@@ -7,20 +7,20 @@
 // Store data used for the opening and saving directories
 class DirSettings : public BaseSettings {
 public:
-	DirSettings();
+    DirSettings();
 
-	void
-	write(const QString&	fileName,
-	      bool		setSaveDir = false);
+    void
+    write(const QString& fileName,
+          bool           setSaveDir = false);
 
 public:
-	QString openDir;
-	QString saveDir;
+    QString openDir;
+    QString saveDir;
 
 private:
-	void
-	read() override;
+    void
+    read() override;
 
-	void
-	handleSubDir();
+    void
+    handleSubDir();
 };

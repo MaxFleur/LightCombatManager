@@ -9,31 +9,31 @@ class RuleSettings;
 
 // Dialog used to add certain status effects to characters
 class StatusEffectDialog : public QDialog {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit
-	StatusEffectDialog(std::shared_ptr<RuleSettings>	RuleSettings,
-			   QWidget *				parent = 0);
+    explicit
+    StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSettings,
+                       QWidget *                     parent = 0);
 
-	[[nodiscard]] QString
-	getEffect() const
-	{
-		return m_effect;
-	}
+    [[nodiscard]] QString
+    getEffect() const
+    {
+        return m_effect;
+    }
 
 private slots:
-	void
-	okButtonClicked();
+    void
+    okButtonClicked();
 
 private:
-	void
-	findEffect(const QString& filter);
+    void
+    findEffect(const QString& filter);
 
 private:
-	QPointer<QListWidget> m_list;
+    QPointer<QListWidget> m_list;
 
-	QString m_effect;
+    QString m_effect;
 
-	std::shared_ptr<RuleSettings> m_ruleSettings;
+    std::shared_ptr<RuleSettings> m_ruleSettings;
 };

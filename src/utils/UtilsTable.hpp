@@ -16,20 +16,20 @@ namespace Utils
 namespace Table
 {
 void
-resynchronizeCharacters(const QTableWidget *	tableWidget,
-			CharacterHandlerRef	characterHandler);
+resynchronizeCharacters(const QTableWidget *tableWidget,
+                        CharacterHandlerRef characterHandler);
 
 void
-setTableCheckBox(TableWidget *	tableWidget,
-		 unsigned int	row,
-		 bool		checked);
+setTableCheckBox(TableWidget *tableWidget,
+                 unsigned int row,
+                 bool         checked);
 
 void
-setRowAndPlayer(QTableWidget *	tableWidget,
-		QLabel *	roundCounterLabel,
-		QLabel *	currentPlayerLabel,
-		int		rowEntered,
-		int		roundCounter);
+setRowAndPlayer(QTableWidget *tableWidget,
+                QLabel *      roundCounterLabel,
+                QLabel *      currentPlayerLabel,
+                int           rowEntered,
+                int           roundCounter);
 
 
 [[nodiscard]] QVector<QVector<QVariant> >

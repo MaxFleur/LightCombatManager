@@ -5,25 +5,25 @@
 // Store the main settings affecting the entire application
 class RuleSettings : public BaseSettings {
 public:
-	RuleSettings();
+    RuleSettings();
 
-	enum Ruleset {
-		PATHFINDER_1E_DND_35E	= 0,
-		PATHFINDER_2E		= 1,
-		DND_5E			= 2,
-		DND_30E			= 3,
-		STARFINDER		= 4
-	};
+    enum Ruleset {
+        PATHFINDER_1E_DND_35E = 0,
+        PATHFINDER_2E         = 1,
+        DND_5E                = 2,
+        DND_30E               = 3,
+        STARFINDER            = 4
+    };
 
-	void
-	write(unsigned int	newRuleset,
-	      bool		newRollAutomatical);
+    void
+    write(unsigned int newRuleset,
+          bool         newRollAutomatical);
 
 public:
-	Ruleset ruleset;
-	bool rollAutomatical;
+    Ruleset ruleset;
+    bool rollAutomatical;
 
 private:
-	void
-	read() override;
+    void
+    read() override;
 };

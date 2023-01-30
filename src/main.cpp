@@ -5,12 +5,12 @@
 int
 main(int argc, char *argv[])
 {
-	QApplication a(argc, argv);
-	a.setApplicationName("LCM");
-	a.setOrganizationName("LCM");
+    QApplication a(argc, argv);
+    a.setApplicationName("LCM");
+    a.setOrganizationName("LCM");
 
-	MainWindow w;
+    MainWindow w;
 
-	w.show();
-	return a.exec();
+    w.show();
+    return a.exec();
 }

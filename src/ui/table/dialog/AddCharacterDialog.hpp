@@ -13,72 +13,72 @@ class RuleSettings;
 
 // Dialog used to add new characters to an existing Combat
 class AddCharacterDialog : public QDialog {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit
-	AddCharacterDialog(std::shared_ptr<RuleSettings>	RuleSettings,
-			   QWidget *				parent = 0);
+    explicit
+    AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings,
+                       QWidget*                      parent = 0);
 
 signals:
-	void
-	characterCreated(QString	name,
-			 int		ini,
-			 int		mod,
-			 int		hp,
-			 bool		isEnemy,
-			 QString	addInfo,
-			 int		instanceCount);
+    void
+    characterCreated(QString name,
+                     int     ini,
+                     int     mod,
+                     int     hp,
+                     bool    isEnemy,
+                     QString addInfo,
+                     int     instanceCount);
 
 private slots:
-	void
-	setLabelRolled();
+    void
+    setLabelRolled();
 
-	void
-	animateLabel();
+    void
+    animateLabel();
 
-	void
-	saveButtonClicked();
+    void
+    saveButtonClicked();
 
-	void
-	resetButtonClicked();
+    void
+    resetButtonClicked();
 
-	void
-	okButtonClicked();
+    void
+    okButtonClicked();
 
-	void
-	openStatusEffectDialog();
-
-private:
-	void
-	setFocus();
-
-	void
-	keyPressEvent(QKeyEvent *event);
-
-	void
-	closeEvent(QCloseEvent *event);
+    void
+    openStatusEffectDialog();
 
 private:
-	QPointer<QLineEdit> m_nameEdit;
-	QPointer<QSpinBox> m_iniBox;
-	QPointer<QSpinBox> m_iniModifierBox;
-	QPointer<QLabel> m_labelRolled;
-	QPointer<QSpinBox> m_hpBox;
-	QPointer<QCheckBox> m_enemyBox;
-	QPointer<QLineEdit> m_addInfoEdit;
+    void
+    setFocus();
 
-	QPointer<QCheckBox> m_multipleEnabledBox;
-	QPointer<QSpinBox> m_instanceNumberBox;
+    void
+    keyPressEvent(QKeyEvent *event);
 
-	QPointer<QLabel> m_animatedLabel;
-	QPointer<QTimer> m_timer;
+    void
+    closeEvent(QCloseEvent *event);
 
-	bool m_somethingStored{ false };
-	bool m_isFirstCharStored{ false };
+private:
+    QPointer<QLineEdit> m_nameEdit;
+    QPointer<QSpinBox> m_iniBox;
+    QPointer<QSpinBox> m_iniModifierBox;
+    QPointer<QLabel> m_labelRolled;
+    QPointer<QSpinBox> m_hpBox;
+    QPointer<QCheckBox> m_enemyBox;
+    QPointer<QLineEdit> m_addInfoEdit;
 
-	std::shared_ptr<RuleSettings> m_ruleSettings;
+    QPointer<QCheckBox> m_multipleEnabledBox;
+    QPointer<QSpinBox> m_instanceNumberBox;
 
-	static constexpr int LABEL_SHOWN = 1000;
-	static constexpr int LABEL_FADEOUT = 2000;
+    QPointer<QLabel> m_animatedLabel;
+    QPointer<QTimer> m_timer;
+
+    bool m_somethingStored{ false };
+    bool m_isFirstCharStored{ false };
+
+    std::shared_ptr<RuleSettings> m_ruleSettings;
+
+    static constexpr int LABEL_SHOWN = 1000;
+    static constexpr int LABEL_FADEOUT = 2000;
 };

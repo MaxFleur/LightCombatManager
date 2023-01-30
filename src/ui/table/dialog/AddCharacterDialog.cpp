@@ -39,10 +39,10 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 
 	auto *const buttonBox = new QDialogButtonBox;
 	auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
-	auto *const resetButton = buttonBox->addButton(QDialogButtonBox::Reset);
 	auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
 	auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
+	auto *const resetButton = new QPushButton(tr("Reset"));
 	auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
 	saveButton->setShortcut(QKeySequence::Save);
@@ -96,8 +96,11 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 	layout->addWidget(statusEffectButton, 4, 3);
 
 	layout->addWidget(m_animatedLabel, 5, 0, 1, 2);
+	layout->addWidget(resetButton, 5, 3, 1, 1);
+	// Keep a little space to the button box
+	layout->setRowMinimumHeight(6, 20);
 
-	layout->addWidget(buttonBox, 6, 1, 1, 3);
+	layout->addWidget(buttonBox, 7, 1, 1, 3);
 
 	setLayout(layout);
 	setFocus();

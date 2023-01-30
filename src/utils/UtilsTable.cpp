@@ -62,7 +62,7 @@ setTableCheckBox(TableWidget *tableWidget, unsigned int row, bool checked)
 }
 
 
-// Set tje labels displaying the current player and round number
+// Set the labels displaying the current player and round number
 void
 setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *currentPlayerLabel, int rowEntered, int roundCounter)
 {

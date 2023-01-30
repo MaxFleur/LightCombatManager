@@ -7,7 +7,8 @@ add_executable(tests
     ${CMAKE_CURRENT_LIST_DIR}/main.cpp
     ${CMAKE_CURRENT_LIST_DIR}/handler/CharacterHandlerTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/handler/FileHandlerTest.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/utils/UtilsTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/utils/GeneralUtilsTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/utils/TableUtilsTest.cpp
 )
 
 target_link_libraries(tests PRIVATE 

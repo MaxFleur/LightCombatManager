@@ -123,6 +123,7 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 	this->addAction(m_redoAction);
 
 	// Shortcuts
+	auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), this);
 	auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
 	auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
 	auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), this);
@@ -143,6 +144,7 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
 		emit exit();
 	});
 
+	connect(duplicateShortcut, &QShortcut::activated, this, &TableWidget::duplicateRow);
 	connect(deleteShortcut, &QShortcut::activated, this, &TableWidget::removeRow);
 	connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
 	connect(rerollIniShortcut, &QShortcut::activated, this, &TableWidget::rerollIni);
@@ -377,6 +379,35 @@ TableWidget::setRowAndPlayer()
 }
 
 
+void
+TableWidget::duplicateRow()
+{
+	if (m_tableWidget->rowCount() == 0) {
+		return;
+	}
+
+	if (m_tableWidget->selectionModel()->hasSelection()) {
+		saveOldState();
+
+		Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+		auto& characters = m_char->getCharacters();
+		const auto currentIndex = m_tableWidget->currentIndex().row();
+		characters.insert(currentIndex + 1, characters.at(currentIndex));
+
+		// Character count increases, so reset identifiers
+		setRowIdentifiers();
+		pushOnUndoStack();
+
+		return;
+	}
+
+	auto const reply = QMessageBox::warning(
+		this,
+		tr("Cannot duplicate Character!"),
+		tr("Please select a Character with the Mouse Key before duplicating!"));
+}
+
+
 // Remove a row/character of the table
 void
 TableWidget::removeRow()
@@ -413,7 +444,7 @@ TableWidget::removeRow()
 
 	auto const reply = QMessageBox::warning(
 		this,
-		tr("Could not remove Character!"),
+		tr("Cannot remove Character!"),
 		tr("Please select a Character with the Mouse Key before deleting!"));
 }
 
@@ -561,8 +592,14 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
 		statusEffectAction->setShortcutVisibleInContextMenu(true);
 
 		auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &TableWidget::rerollIni);
-		rerollIniAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_I));
+		rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
 		rerollIniAction->setShortcutVisibleInContextMenu(true);
+
+		auto *const duplicateRowAction = menu->addAction(tr("Duplicate Character"), this, [this] () {
+			duplicateRow();
+		});
+		duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
+		duplicateRowAction->setShortcutVisibleInContextMenu(true);
 
 		auto *const removeRowAction = menu->addAction(tr("Remove Character"), this, [this] () {
 			removeRow();

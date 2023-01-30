@@ -110,6 +110,9 @@ private:
 	setRowAndPlayer();
 
 	void
+	duplicateRow();
+
+	void
 	removeRow();
 
 	void

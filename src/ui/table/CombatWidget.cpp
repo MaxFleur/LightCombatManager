@@ -48,7 +48,7 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_tableWidget->verticalHeader()->setVisible(m_tableSettings->verticalHeaderShown);
     m_tableWidget->setShowGrid(true);
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     // Adjust row width to main widget size
     m_tableWidget->setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
     m_tableWidget->setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
@@ -270,13 +270,20 @@ CombatWidget::openStatusEffectDialog()
     auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
     // Lock until dialog is closed
     if (dialog->exec() == QDialog::Accepted) {
-        // If accepted, add status effect text
-        auto itemText = m_tableWidget->item(m_tableWidget->currentIndex().row(), COL_ADDITIONAL)->text();
-        if (!itemText.isEmpty() && itemText.back() != " ") {
-            itemText += " ";
-        }
+        saveOldState();
+        Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+        auto& characters = m_char->getCharacters();
 
-        m_tableWidget->item(m_tableWidget->currentIndex().row(), COL_ADDITIONAL)->setText(itemText + dialog->getEffect());
+        // Add status effect text to characters
+        for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
+            auto itemText = characters.at(i.row()).additionalInf;
+            if (!itemText.isEmpty() && itemText.back() != " ") {
+                itemText += " ";
+            }
+            characters[i.row()].additionalInf = itemText + dialog->getEffect();
+        }
+        // Change table
+        pushOnUndoStack();
     }
 }
 
@@ -308,6 +315,10 @@ CombatWidget::addCharacter(
 void
 CombatWidget::rerollIni()
 {
+    if (m_tableWidget->rowCount() == 0 || m_tableWidget->selectionModel()->selectedRows().size() != 1) {
+        return;
+    }
+
     const auto row = m_tableWidget->currentRow();
     const auto newRolledDice = Utils::General::rollDice();
     const auto newInitiative = newRolledDice + m_tableWidget->item(row, COL_MODIFIER)->text().toInt();
@@ -385,7 +396,7 @@ CombatWidget::setRowAndPlayer()
 void
 CombatWidget::duplicateRow()
 {
-    if (m_tableWidget->rowCount() == 0 || !m_tableWidget->selectionModel()->hasSelection()) {
+    if (m_tableWidget->rowCount() == 0 || m_tableWidget->selectionModel()->selectedRows().size() != 1) {
         return;
     }
 
@@ -410,27 +421,33 @@ CombatWidget::removeRow()
         return;
     }
 
-    // If a row has been selected, remove this row
     saveOldState();
-
-    // If the deleted row is before the current entered row, move one up
-    if (m_tableWidget->currentIndex().row() < (int) m_rowEntered) {
-        m_rowEntered--;
-    }
-    // If the deleted row was the last one in the table and also the current player, select to the first row
-    if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
-        if (m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font().bold()) {
-            m_rowEntered = 0;
-        }
-    }
-
-    // Remove character from stored list
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-    auto& characters = m_char->getCharacters();
-    characters.remove(m_tableWidget->currentIndex().row());
-    // Update the current player and row
+
+    auto offset = 0;
+    for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
+        // For every deleted character, the actual row index is decremented, so apply a corrected offset
+        const auto adjustedRowNumber = i.row() + offset;
+
+        // If the deleted row is before the current entered row, move one up
+        if (adjustedRowNumber < (int) m_rowEntered) {
+            m_rowEntered--;
+        }
+        // If the deleted row was the last one in the table and also the current player, select to the first row
+        if (adjustedRowNumber == m_tableWidget->rowCount() - 1) {
+            if (m_tableWidget->item(adjustedRowNumber, 0)->font().bold()) {
+                m_rowEntered = 0;
+            }
+        }
+
+        // Remove and adjust offset
+        auto& characters = m_char->getCharacters();
+        characters.remove(adjustedRowNumber);
+        offset--;
+    }
+
+    // Update the current player row and table
     setRowAndPlayer();
-    // Update table
     pushOnUndoStack();
 }
 
@@ -568,8 +585,8 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
 
-    // Status Effect and remove options only if the cursor is above an item
     // Map from MainWindow coordinates to Table Widget coordinates
+    // Status Effect, reroll, duplication and removal only if the cursor is above an item
     if (m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row() >= 0) {
         auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
             openStatusEffectDialog();
@@ -577,17 +594,20 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
         statusEffectAction->setShortcutVisibleInContextMenu(true);
 
-        auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &CombatWidget::rerollIni);
-        rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
-        rerollIniAction->setShortcutVisibleInContextMenu(true);
+        // Enable only for a single selected character
+        if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
+            auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &CombatWidget::rerollIni);
+            rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
+            rerollIniAction->setShortcutVisibleInContextMenu(true);
 
-        auto *const duplicateRowAction = menu->addAction(tr("Duplicate Character"), this, [this] () {
-            duplicateRow();
-        });
-        duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
-        duplicateRowAction->setShortcutVisibleInContextMenu(true);
+            auto *const duplicateRowAction = menu->addAction(tr("Duplicate Character"), this, [this] () {
+                duplicateRow();
+            });
+            duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
+            duplicateRowAction->setShortcutVisibleInContextMenu(true);
+        }
 
-        auto *const removeRowAction = menu->addAction(tr("Remove Character"), this, [this] () {
+        auto *const removeRowAction = menu->addAction(tr("Remove Character(s)"), this, [this] () {
             removeRow();
         });
         removeRowAction->setShortcut(Qt::Key_Delete);

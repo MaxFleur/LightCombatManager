@@ -14,11 +14,11 @@ class RuleSettings;
 class TableSettings;
 
 // This class handles the creation of the table widget
-class TableWidget : public QWidget {
+class CombatWidget : public QWidget {
     Q_OBJECT
 
 public:
-    TableWidget(bool                          isDataStored,
+    CombatWidget(bool                          isDataStored,
                 std::shared_ptr<RuleSettings> RuleSettings,
                 int                           mainWidgetWidth,
                 QString                       data = "",
@@ -139,11 +139,11 @@ private:
 private:
     // Main table widget
     QPointer<DisabledNavigationKeyTable> m_tableWidget;
-    QPointer<QUndoStack> m_undoStack;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
 
+    QPointer<QUndoStack> m_undoStack;
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
 

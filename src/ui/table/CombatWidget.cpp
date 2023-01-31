@@ -1,4 +1,4 @@
-#include "TableWidget.hpp"
+#include "CombatWidget.hpp"
 
 #include <QAction>
 #include <QApplication>
@@ -29,7 +29,7 @@
 
 #include <iostream>
 
-TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
+CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
                          int mainWidgetWidth, QString data, QWidget *parent)
     : m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_loadedFileData(data)
 {
@@ -77,7 +77,7 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
     m_roundCounterLabel = new QLabel;
     m_currentPlayerLabel = new QLabel;
 
-    connect(this, &TableWidget::roundCounterSet, this, [this] {
+    connect(this, &CombatWidget::roundCounterSet, this, [this] {
         m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
     });
 
@@ -129,7 +129,7 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
     auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), this);
     auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
-    connect(m_tableWidget, &QTableWidget::cellEntered, this, &TableWidget::dragAndDrop);
+    connect(m_tableWidget, &QTableWidget::cellEntered, this, &CombatWidget::dragAndDrop);
     connect(m_tableWidget, &QTableWidget::cellChanged, this, [this] {
         emit changeOccured();
     });
@@ -144,16 +144,16 @@ TableWidget::TableWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSe
         emit exit();
     });
 
-    connect(duplicateShortcut, &QShortcut::activated, this, &TableWidget::duplicateRow);
-    connect(deleteShortcut, &QShortcut::activated, this, &TableWidget::removeRow);
-    connect(statusEffectShortcut, &QShortcut::activated, this, &TableWidget::openStatusEffectDialog);
-    connect(rerollIniShortcut, &QShortcut::activated, this, &TableWidget::rerollIni);
-    connect(editCombatShortcut, &QShortcut::activated, this, &TableWidget::openAddCharacterDialog);
+    connect(duplicateShortcut, &QShortcut::activated, this, &CombatWidget::duplicateRow);
+    connect(deleteShortcut, &QShortcut::activated, this, &CombatWidget::removeRow);
+    connect(statusEffectShortcut, &QShortcut::activated, this, &CombatWidget::openStatusEffectDialog);
+    connect(rerollIniShortcut, &QShortcut::activated, this, &CombatWidget::rerollIni);
+    connect(editCombatShortcut, &QShortcut::activated, this, &CombatWidget::openAddCharacterDialog);
 }
 
 
 void
-TableWidget::generateTable()
+CombatWidget::generateTable()
 {
     // Store the data from file
     setTableDataWithFileData();
@@ -169,7 +169,7 @@ TableWidget::generateTable()
 
 
 unsigned int
-TableWidget::getHeight() const
+CombatWidget::getHeight() const
 {
     auto height = 0;
     for (int i = 0; i < m_tableWidget->rowCount(); i++) {
@@ -180,7 +180,7 @@ TableWidget::getHeight() const
 
 
 void
-TableWidget::pushOnUndoStack()
+CombatWidget::pushOnUndoStack()
 {
     // Get newest table and identifier data
     const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
@@ -193,7 +193,7 @@ TableWidget::pushOnUndoStack()
 
 
 void
-TableWidget::openAddCharacterDialog()
+CombatWidget::openAddCharacterDialog()
 {
     // Resynchronize because the table could have been modified
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
@@ -224,7 +224,7 @@ TableWidget::openAddCharacterDialog()
 // This function enables drag and drop of table rows
 // Which works by switching the values of a row with it's upper or lower "neighbor"
 void
-TableWidget::dragAndDrop(unsigned int row, unsigned int column)
+CombatWidget::dragAndDrop(unsigned int row, unsigned int column)
 {
     // New row index
     int newRow;
@@ -261,7 +261,7 @@ TableWidget::dragAndDrop(unsigned int row, unsigned int column)
 
 
 void
-TableWidget::openStatusEffectDialog()
+CombatWidget::openStatusEffectDialog()
 {
     if (m_tableWidget->rowCount() == 0) {
         return;
@@ -282,7 +282,7 @@ TableWidget::openStatusEffectDialog()
 
 
 void
-TableWidget::addCharacter(
+CombatWidget::addCharacter(
     QString name,
     int     ini,
     int     mod,
@@ -306,7 +306,7 @@ TableWidget::addCharacter(
 
 
 void
-TableWidget::rerollIni()
+CombatWidget::rerollIni()
 {
     const auto row = m_tableWidget->currentRow();
     const auto newRolledDice = Utils::General::rollDice();
@@ -328,7 +328,7 @@ TableWidget::rerollIni()
 
 // Set the data vector, if the data has been stored in a table
 void
-TableWidget::setTableDataWithFileData()
+CombatWidget::setTableDataWithFileData()
 {
     if (m_isDataStored) {
         auto& characters = m_char->getCharacters();
@@ -360,7 +360,7 @@ TableWidget::setTableDataWithFileData()
 
 
 void
-TableWidget::sortTable()
+CombatWidget::sortTable()
 {
     saveOldState();
     // Main sorting
@@ -374,14 +374,14 @@ TableWidget::sortTable()
 
 
 void
-TableWidget::setRowAndPlayer()
+CombatWidget::setRowAndPlayer()
 {
     Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered, m_roundCounter);
 }
 
 
 void
-TableWidget::duplicateRow()
+CombatWidget::duplicateRow()
 {
     if (m_tableWidget->rowCount() == 0) {
         return;
@@ -409,7 +409,7 @@ TableWidget::duplicateRow()
 
 // Remove a row/character of the table
 void
-TableWidget::removeRow()
+CombatWidget::removeRow()
 {
     if (m_tableWidget->rowCount() == 0) {
         return;
@@ -447,7 +447,7 @@ TableWidget::removeRow()
 
 
 void
-TableWidget::enteredRowChanged(bool goDown)
+CombatWidget::enteredRowChanged(bool goDown)
 {
     if (m_tableWidget->rowCount() == 0) {
         return;
@@ -490,7 +490,7 @@ TableWidget::enteredRowChanged(bool goDown)
 
 
 void
-TableWidget::showTablePart(bool show, int valueType)
+CombatWidget::showTablePart(bool show, int valueType)
 {
     switch (valueType) {
     case 0:
@@ -513,7 +513,7 @@ TableWidget::showTablePart(bool show, int valueType)
 
 // Set a new width for the name and/or additional info column if longer strings are used
 void
-TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
+CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 {
     auto changeOccured = false;
     // Use a bold font for longer columns
@@ -553,7 +553,7 @@ TableWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 
 
 void
-TableWidget::setRowIdentifiers()
+CombatWidget::setRowIdentifiers()
 {
     // Prevent item changed signal firings
     m_tableWidget->blockSignals(true);
@@ -565,7 +565,7 @@ TableWidget::setRowIdentifiers()
 
 
 void
-TableWidget::saveOldState()
+CombatWidget::saveOldState()
 {
     m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
     m_identifiersOld = Utils::Table::identifiers(m_tableWidget);
@@ -575,7 +575,7 @@ TableWidget::saveOldState()
 
 
 void
-TableWidget::contextMenuEvent(QContextMenuEvent *event)
+CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
 
@@ -588,7 +588,7 @@ TableWidget::contextMenuEvent(QContextMenuEvent *event)
         statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
         statusEffectAction->setShortcutVisibleInContextMenu(true);
 
-        auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &TableWidget::rerollIni);
+        auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &CombatWidget::rerollIni);
         rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
         rerollIniAction->setShortcutVisibleInContextMenu(true);
 

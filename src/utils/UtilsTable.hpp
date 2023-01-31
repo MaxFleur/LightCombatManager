@@ -8,7 +8,7 @@
 class QLabel;
 class QTableWidget;
 
-class TableWidget;
+class CombatWidget;
 
 // Utility functions for the Combat Table
 namespace Utils
@@ -20,7 +20,7 @@ resynchronizeCharacters(const QTableWidget *tableWidget,
                         CharacterHandlerRef characterHandler);
 
 void
-setTableCheckBox(TableWidget *tableWidget,
+setTableCheckBox(CombatWidget *CombatWidget,
                  unsigned int row,
                  bool         checked);
 

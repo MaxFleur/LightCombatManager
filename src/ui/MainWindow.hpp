@@ -8,9 +8,9 @@
 
 class QMessageBox;
 
+class CombatWidget;
 class DirSettings;
 class RuleSettings;
-class TableWidget;
 class WelcomeWidget;
 
 // This class handles the creation and managing of the main GUI window. It also serves
@@ -76,7 +76,7 @@ private:
 
 private:
     QPointer<WelcomeWidget> m_welcomeWidget;
-    QPointer<TableWidget> m_tableWidget;
+    QPointer<CombatWidget> m_combatWidget;
 
     bool m_isTableActive{ false };
     bool m_tableInFile{ false };

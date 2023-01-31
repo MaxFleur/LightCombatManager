@@ -11,10 +11,10 @@
 #include <QString>
 #include <QTimer>
 
+#include "CombatWidget.hpp"
 #include "DirSettings.hpp"
 #include "RuleSettings.hpp"
 #include "SettingsDialog.hpp"
-#include "TableWidget.hpp"
 #include "UtilsGeneral.hpp"
 #include "WelcomeWidget.hpp"
 
@@ -87,7 +87,7 @@ void
 MainWindow::newCombat()
 {
     // Check if a table is active
-    if (m_isTableActive && !m_tableWidget->isEmpty()) {
+    if (m_isTableActive && !m_combatWidget->isEmpty()) {
         if (createSaveMessageBox(isWindowModified() ?
                                  tr("Do you want to save the current Combat before starting a new one?") :
                                  tr("Do you want to start a new Combat?"), false) == 0) {
@@ -110,12 +110,12 @@ MainWindow::saveTable()
         return false;
     }
 
-    if (m_tableWidget->isEmpty()) {
+    if (m_combatWidget->isEmpty()) {
         auto const reply = QMessageBox::critical(this, tr("Table empty!"),
                                                  tr("Can't save an empty table."));
         return false;
     }
-    if (Utils::General::containsSemicolon(m_tableWidget->getTableWidget())) {
+    if (Utils::General::containsSemicolon(m_combatWidget->getTableWidget())) {
         auto const reply = QMessageBox::critical(this, tr("Semicolons detected!"),
                                                  tr("Can't save because the table contains semicolons. Please remove them and continue."));
         return false;
@@ -136,8 +136,8 @@ MainWindow::saveTable()
         fileName = m_dirSettings->openDir;
     }
 
-    if (m_file->saveTable(m_tableWidget->getTableWidget(), fileName, m_tableWidget->getRowEntered(),
-                          m_tableWidget->getRoundCounter(), m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical)) {
+    if (m_file->saveTable(m_combatWidget->getTableWidget(), fileName, m_combatWidget->getRowEntered(),
+                          m_combatWidget->getRoundCounter(), m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical)) {
         m_tableInFile = true;
         m_dirSettings->write(fileName, true);
         m_fileName = Utils::General::getCSVName(fileName);
@@ -173,7 +173,7 @@ void
 MainWindow::openTable()
 {
     // Check if a table is active right now
-    if (m_isTableActive && !m_tableWidget->isEmpty()) {
+    if (m_isTableActive && !m_combatWidget->isEmpty()) {
         if (createSaveMessageBox(isWindowModified() ?
                                  tr("Do you want to save the current Combat before opening another existing Combat?") :
                                  tr("Do you want to open another existing Combat?"), false) == 0) {
@@ -278,15 +278,15 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
-    m_tableWidget = new TableWidget(isDataStored, m_ruleSettings, this->width(), data, this);
-    setCentralWidget(m_tableWidget);
-    connect(m_tableWidget, &TableWidget::exit, this, &MainWindow::exitCombat);
-    connect(m_tableWidget, &TableWidget::tableHeightSet, this, [this] (int height) {
+    m_combatWidget = new CombatWidget(isDataStored, m_ruleSettings, this->width(), data, this);
+    setCentralWidget(m_combatWidget);
+    connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
+    connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {
         if (height > START_HEIGHT) {
             setFixedHeight(height);
         }
     });
-    connect(m_tableWidget, &TableWidget::tableWidthSet, this, [this] (int width) {
+    connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int width) {
         if (width > this->width()) {
             // @note A single immediate call to resize() won't actually resize the window
             // So the function is called with a minimal delay of 1 ms, which will actually
@@ -296,21 +296,21 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
             });
         }
     });
-    connect(m_tableWidget, &TableWidget::changeOccured, this, [this] () {
+    connect(m_combatWidget, &CombatWidget::changeOccured, this, [this] () {
         setCombatTitle(true);
     });
 
     setCombatTitle(false);
 
     if (!newCombatStarted) {
-        m_tableWidget->generateTable();
+        m_combatWidget->generateTable();
         // Setting the table emits changeOccured because the cells are altered, so reset
         setCombatTitle(false);
-        const auto height = m_tableWidget->getHeight();
+        const auto height = m_combatWidget->getHeight();
         height > START_HEIGHT ? setFixedHeight(height) : setFixedHeight(START_HEIGHT);
     } else {
         setFixedHeight(START_HEIGHT);
-        m_tableWidget->openAddCharacterDialog();
+        m_combatWidget->openAddCharacterDialog();
     }
 
     m_isTableActive = true;
@@ -396,7 +396,7 @@ void
 MainWindow::closeEvent(QCloseEvent *event)
 {
     // Check if a table is active and filled
-    if (m_isTableActive && !m_tableWidget->isEmpty()) {
+    if (m_isTableActive && !m_combatWidget->isEmpty()) {
         const auto val = createSaveMessageBox(isWindowModified() ?
                                               tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
                                               tr("Do you really want to exit the application?"), true);

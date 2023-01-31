@@ -8,7 +8,7 @@
 #include <QTableWidget>
 #include <QWidget>
 
-#include "TableWidget.hpp"
+#include "CombatWidget.hpp"
 
 namespace Utils
 {
@@ -39,16 +39,16 @@ resynchronizeCharacters(const QTableWidget *tableWidget,
 
 // Create checkboxes to show the is enemy status
 void
-setTableCheckBox(TableWidget *tableWidget, unsigned int row, bool checked)
+setTableCheckBox(CombatWidget *CombatWidget, unsigned int row, bool checked)
 {
-    auto *const mainTableWidget = tableWidget->getTableWidget();
+    auto *const tableWidget = CombatWidget->getTableWidget();
 
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(checked);
-    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [tableWidget, mainTableWidget] {
-                mainTableWidget->blockSignals(true);
-                emit tableWidget->changeOccured();
-                mainTableWidget->blockSignals(false);
+    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [CombatWidget, tableWidget] {
+                tableWidget->blockSignals(true);
+                emit CombatWidget->changeOccured();
+                tableWidget->blockSignals(false);
             });
 
     // Center the checkboxes
@@ -58,7 +58,7 @@ setTableCheckBox(TableWidget *tableWidget, unsigned int row, bool checked)
     layout->setAlignment(Qt::AlignCenter);
     widget->setLayout(layout);
 
-    mainTableWidget->setCellWidget(row, COL_ENEMY, widget);
+    tableWidget->setCellWidget(row, COL_ENEMY, widget);
 }
 
 

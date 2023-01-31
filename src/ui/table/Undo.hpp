@@ -6,7 +6,7 @@
 class QLabel;
 class QTableWidget;
 
-class TableWidget;
+class CombatWidget;
 
 // Manage the main combat table widget creation and recreation
 class Undo : public QUndoCommand
@@ -16,7 +16,7 @@ public:
          const QVector<int>&                identifiersOld,
          int                                rowEnteredOld,
          int                                roundCounterOld,
-         TableWidget*                       tableWidget,
+         CombatWidget*              CombatWidget,
          const QVector<QVector<QVariant> >& tableDataNew,
          const QVector<int>&                identifiersNew,
          unsigned int*                      rowIdentifier,
@@ -37,7 +37,7 @@ private:
     setCombatWidget(bool undo);
 
 private:
-    QPointer<TableWidget> m_tableWidget;
+    QPointer<CombatWidget> m_combatWidget;
 
     const QVector<QVector<QVariant> > m_tableDataOld;
     const QVector<int> m_identifiersOld;

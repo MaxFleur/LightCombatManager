@@ -21,8 +21,8 @@ resynchronizeCharacters(const QTableWidget *tableWidget,
 
 void
 setTableCheckBox(CombatWidget *CombatWidget,
-                 unsigned int row,
-                 bool         checked);
+                 unsigned int  row,
+                 bool          checked);
 
 void
 setRowAndPlayer(QTableWidget *tableWidget,

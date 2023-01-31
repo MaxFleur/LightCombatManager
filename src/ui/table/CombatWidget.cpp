@@ -30,7 +30,7 @@
 #include <iostream>
 
 CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
-                         int mainWidgetWidth, QString data, QWidget *parent)
+                           int mainWidgetWidth, QString data, QWidget *parent)
     : m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_loadedFileData(data)
 {
     m_char = std::make_shared<CharacterHandler>();
@@ -330,32 +330,34 @@ CombatWidget::rerollIni()
 void
 CombatWidget::setTableDataWithFileData()
 {
-    if (m_isDataStored) {
-        auto& characters = m_char->getCharacters();
-        const auto rowOfData = m_loadedFileData.split("\n");
-        QStringList rowData;
-
-        // @note For some reason, the splitting of the data creates one empty, obsolete line
-        // To ignore this line, decrement the row count and iteration number
-        // The second line is the header and also ignored, so decrement again and be at -2
-        for (int x = 1; x < rowOfData.size() - 1; x++) {
-            rowData = rowOfData.at(x).split(";");
-
-            characters.push_back(CharacterHandler::Character {
-                rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
-                rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", rowData.at(COL_ADDITIONAL) });
-
-            // If at the first row (which contains information about round counter and the
-            // player on the move), get this data
-            if (x == 1) {
-                m_rowEntered = rowData[ROW_ENTERED].toInt();
-                m_roundCounter = rowData[ROUND_CTR].toInt();
-            }
-
-            resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
-        }
-        m_isDataStored = false;
+    if (!m_isDataStored) {
+        return;
     }
+
+    auto& characters = m_char->getCharacters();
+    const auto rowOfData = m_loadedFileData.split("\n");
+    QStringList rowData;
+
+    // @note For some reason, the splitting of the data creates one empty, obsolete line
+    // To ignore this line, decrement the row count and iteration number
+    // The second line is the header and also ignored, so decrement again and be at -2
+    for (int x = 1; x < rowOfData.size() - 1; x++) {
+        rowData = rowOfData.at(x).split(";");
+
+        characters.push_back(CharacterHandler::Character {
+            rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
+            rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", rowData.at(COL_ADDITIONAL) });
+
+        // If at the first row (which contains information about round counter and the
+        // player on the move), get this data
+        if (x == 1) {
+            m_rowEntered = rowData[ROW_ENTERED].toInt();
+            m_roundCounter = rowData[ROUND_CTR].toInt();
+        }
+
+        resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
+    }
+    m_isDataStored = false;
 }
 
 
@@ -383,27 +385,20 @@ CombatWidget::setRowAndPlayer()
 void
 CombatWidget::duplicateRow()
 {
-    if (m_tableWidget->rowCount() == 0) {
+    if (m_tableWidget->rowCount() == 0 || !m_tableWidget->selectionModel()->hasSelection()) {
         return;
     }
 
-    if (m_tableWidget->selectionModel()->hasSelection()) {
-        saveOldState();
+    saveOldState();
 
-        Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-        auto& characters = m_char->getCharacters();
-        const auto currentIndex = m_tableWidget->currentIndex().row();
-        characters.insert(currentIndex + 1, characters.at(currentIndex));
+    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    auto& characters = m_char->getCharacters();
+    const auto currentIndex = m_tableWidget->currentIndex().row();
+    characters.insert(currentIndex + 1, characters.at(currentIndex));
 
-        // Character count increases, so reset identifiers
-        setRowIdentifiers();
-        pushOnUndoStack();
-
-        return;
-    }
-
-    auto const reply = QMessageBox::warning(this, tr("Cannot duplicate Character!"),
-                                            tr("Please select a Character with the Mouse Key before duplicating!"));
+    // Character count increases, so reset identifiers
+    setRowIdentifiers();
+    pushOnUndoStack();
 }
 
 
@@ -411,38 +406,32 @@ CombatWidget::duplicateRow()
 void
 CombatWidget::removeRow()
 {
-    if (m_tableWidget->rowCount() == 0) {
+    if (m_tableWidget->rowCount() == 0 || !m_tableWidget->selectionModel()->hasSelection()) {
         return;
     }
 
     // If a row has been selected, remove this row
-    if (m_tableWidget->selectionModel()->hasSelection()) {
-        saveOldState();
+    saveOldState();
 
-        // If the deleted row is before the current entered row, move one up
-        if (m_tableWidget->currentIndex().row() < (int) m_rowEntered) {
-            m_rowEntered--;
+    // If the deleted row is before the current entered row, move one up
+    if (m_tableWidget->currentIndex().row() < (int) m_rowEntered) {
+        m_rowEntered--;
+    }
+    // If the deleted row was the last one in the table and also the current player, select to the first row
+    if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
+        if (m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font().bold()) {
+            m_rowEntered = 0;
         }
-        // If the deleted row was the last one in the table and also the current player, select to the first row
-        if (m_tableWidget->currentIndex().row() == m_tableWidget->rowCount() - 1) {
-            if (m_tableWidget->item(m_tableWidget->currentIndex().row(), 0)->font().bold()) {
-                m_rowEntered = 0;
-            }
-        }
-
-        // Remoce character from stored list
-        Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-        auto& characters = m_char->getCharacters();
-        characters.remove(m_tableWidget->currentIndex().row());
-        // Update the current player and row
-        setRowAndPlayer();
-        // Update table
-        pushOnUndoStack();
-        return;
     }
 
-    auto const reply = QMessageBox::warning(this, tr("Cannot remove Character!"),
-                                            tr("Please select a Character with the Mouse Key before deleting!"));
+    // Remove character from stored list
+    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    auto& characters = m_char->getCharacters();
+    characters.remove(m_tableWidget->currentIndex().row());
+    // Update the current player and row
+    setRowAndPlayer();
+    // Update table
+    pushOnUndoStack();
 }
 
 

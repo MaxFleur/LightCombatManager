@@ -19,10 +19,10 @@ class CombatWidget : public QWidget {
 
 public:
     CombatWidget(bool                          isDataStored,
-                std::shared_ptr<RuleSettings> RuleSettings,
-                int                           mainWidgetWidth,
-                QString                       data = "",
-                QWidget*                      parent = 0);
+                 std::shared_ptr<RuleSettings> RuleSettings,
+                 int                           mainWidgetWidth,
+                 QString                       data = "",
+                 QWidget*                      parent = 0);
 
     void
     generateTable();

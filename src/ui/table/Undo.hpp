@@ -16,7 +16,7 @@ public:
          const QVector<int>&                identifiersOld,
          int                                rowEnteredOld,
          int                                roundCounterOld,
-         CombatWidget*              CombatWidget,
+         CombatWidget*                      CombatWidget,
          const QVector<QVector<QVariant> >& tableDataNew,
          const QVector<int>&                identifiersNew,
          unsigned int*                      rowIdentifier,

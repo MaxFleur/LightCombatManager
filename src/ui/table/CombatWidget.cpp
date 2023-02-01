@@ -299,8 +299,8 @@ CombatWidget::addCharacter(
     int     instanceCount)
 {
     saveOldState();
-
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+
     for (int i = 0; i < instanceCount; i++) {
         m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
     }
@@ -315,23 +315,29 @@ CombatWidget::addCharacter(
 void
 CombatWidget::rerollIni()
 {
-    if (m_tableWidget->rowCount() == 0 || m_tableWidget->selectionModel()->selectedRows().size() != 1) {
+    if (m_tableWidget->selectionModel()->selectedRows().size() != 1) {
         return;
     }
 
+    saveOldState();
+    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+
     const auto row = m_tableWidget->currentRow();
+    auto& characters = m_char->getCharacters();
     const auto newRolledDice = Utils::General::rollDice();
-    const auto newInitiative = newRolledDice + m_tableWidget->item(row, COL_MODIFIER)->text().toInt();
-    m_tableWidget->setItem(row, COL_INI, new QTableWidgetItem(QString::number(newInitiative)));
+    const auto newInitiative = newRolledDice + characters.at(row).modifier;
+
+    characters[row].initiative = newInitiative;
 
     // Restore the bold font if the current player gets an ini reroll
     if (row == m_rowEntered) {
         setRowAndPlayer();
     }
+    pushOnUndoStack();
 
     const auto messageString = tr("New initiative value: ") + QString::number(newInitiative) + "<br>" +
                                tr("Rolled dice value: ") + QString::number(newRolledDice) + "<br>" +
-                               tr("Modifier: ") + m_tableWidget->item(row, COL_MODIFIER)->text();
+                               tr("Modifier: ") + QString::number(characters.at(row).modifier);
 
     auto const reply = QMessageBox::information(this, tr("Rerolled initiative"), messageString);
 }
@@ -396,7 +402,7 @@ CombatWidget::setRowAndPlayer()
 void
 CombatWidget::duplicateRow()
 {
-    if (m_tableWidget->rowCount() == 0 || m_tableWidget->selectionModel()->selectedRows().size() != 1) {
+    if (m_tableWidget->selectionModel()->selectedRows().size() != 1) {
         return;
     }
 
@@ -417,7 +423,7 @@ CombatWidget::duplicateRow()
 void
 CombatWidget::removeRow()
 {
-    if (m_tableWidget->rowCount() == 0 || !m_tableWidget->selectionModel()->hasSelection()) {
+    if (!m_tableWidget->selectionModel()->hasSelection()) {
         return;
     }
 

@@ -264,9 +264,10 @@ CombatWidget::dragAndDrop(unsigned int row, unsigned int column)
 void
 CombatWidget::openStatusEffectDialog()
 {
-    if (m_tableWidget->rowCount() == 0) {
+    if (!m_tableWidget->selectionModel()->hasSelection()) {
         return;
     }
+
     // Open dialog
     auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
     // Lock until dialog is closed

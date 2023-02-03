@@ -3,6 +3,7 @@
 #include <QDialog>
 #include <QPointer>
 
+class QLineEdit;
 class QListWidget;
 
 class RuleSettings;
@@ -32,6 +33,7 @@ private:
 
 private:
     QPointer<QListWidget> m_list;
+    QPointer<QLineEdit> m_lineEdit;
 
     QString m_effect;
 

@@ -189,6 +189,9 @@ CombatWidget::pushOnUndoStack()
     m_undoStack->push(new Undo(m_tableDataOld, m_identifiersOld, m_rowEnteredOld, m_roundCounterOld,
                                this, tableDataNew, identifiersNew, &m_rowIdentifier, &m_rowEntered, &m_roundCounter,
                                m_roundCounterLabel, m_currentPlayerLabel));
+
+    // Update table
+    emit changeOccured();
 }
 
 
@@ -254,8 +257,6 @@ CombatWidget::dragAndDrop(unsigned int row, unsigned int column)
         }
     }
 
-    // Update table
-    emit changeOccured();
     pushOnUndoStack();
 }
 

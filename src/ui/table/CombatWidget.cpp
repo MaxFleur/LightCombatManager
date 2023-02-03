@@ -371,6 +371,7 @@ CombatWidget::setTableDataWithFileData()
         if (x == 1) {
             m_rowEntered = rowData[ROW_ENTERED].toInt();
             m_roundCounter = rowData[ROUND_CTR].toInt();
+            m_rowIdentifier = m_rowEntered;
         }
 
         resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);

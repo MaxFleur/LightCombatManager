@@ -12,18 +12,20 @@ class CombatWidget;
 class Undo : public QUndoCommand
 {
 public:
-    Undo(const QVector<QVector<QVariant> >& tableDataOld,
-         const QVector<int>&                identifiersOld,
-         int                                rowEnteredOld,
-         int                                roundCounterOld,
-         CombatWidget*                      CombatWidget,
-         const QVector<QVector<QVariant> >& tableDataNew,
-         const QVector<int>&                identifiersNew,
-         unsigned int*                      rowIdentifier,
-         unsigned int*                      rowEntered,
-         unsigned int*                      roundCounter,
-         QLabel*                            roundCounterLabel,
-         QLabel*                            currentPlayerLabel);
+    struct UndoData {
+        const QVector<QVector<QVariant> > tableData;
+        const QVector<int>                identifiers;
+        const unsigned int                rowEntered;
+        const unsigned int                roundCounter;
+    };
+
+public:
+    Undo(const UndoData&  oldData,
+         const UndoData&  newData,
+         CombatWidget*    CombatWidget,
+         unsigned int*    rowIdentifier,
+         QPointer<QLabel> roundCounterLabel,
+         QPointer<QLabel> currentPlayerLabel);
 
     void
     undo() override;
@@ -39,17 +41,10 @@ private:
 private:
     QPointer<CombatWidget> m_combatWidget;
 
-    const QVector<QVector<QVariant> > m_tableDataOld;
-    const QVector<int> m_identifiersOld;
-    int m_rowEnteredOld;
-    int m_roundCounterOld;
-
-    const QVector<QVector<QVariant> > m_tableDataNew;
-    const QVector<int> m_identifiersNew;
+    const UndoData m_oldData;
+    const UndoData m_newData;
 
     unsigned int *m_rowIdentifier;
-    unsigned int *m_rowEntered;
-    unsigned int *m_roundCounter;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;

@@ -182,13 +182,14 @@ CombatWidget::getHeight() const
 void
 CombatWidget::pushOnUndoStack()
 {
-    // Get newest table and identifier data
+    // Assemble old data
+    const auto oldData = Undo::UndoData{ m_tableDataOld, m_identifiersOld, m_rowEnteredOld, m_roundCounterOld };
+    // Then assemble the new data
     const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
     const auto identifiersNew = Utils::Table::identifiers(m_tableWidget);
+    const auto newData = Undo::UndoData{ tableDataNew, identifiersNew, m_rowEntered, m_roundCounter };
 
-    m_undoStack->push(new Undo(m_tableDataOld, m_identifiersOld, m_rowEnteredOld, m_roundCounterOld,
-                               this, tableDataNew, identifiersNew, &m_rowIdentifier, &m_rowEntered, &m_roundCounter,
-                               m_roundCounterLabel, m_currentPlayerLabel));
+    m_undoStack->push(new Undo(oldData, newData, this, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));
 
     // Update table
     emit changeOccured();

@@ -25,6 +25,7 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSetting
     });
 
     m_lineEdit->setPlaceholderText(tr("Type in effect or search (%1)").arg(shortcut->key().toString(QKeySequence::NativeText)));
+    m_lineEdit->setToolTip(tr("Selected list items are returned as effect. If nothing is selected, the entered text will be returned."));
 
     m_listWidget = new QListWidget(this);
     m_listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -61,7 +62,7 @@ StatusEffectDialog::okButtonClicked()
     if (m_listWidget->selectedItems().empty() && !m_lineEdit->text().isEmpty()) {
         m_effect = m_lineEdit->text();
     } else {
-        foreach(QListWidgetItem * item, m_listWidget->selectedItems()) {
+        for (auto* const item : m_listWidget->selectedItems()) {
             m_effect += item->text();
             if (item != m_listWidget->selectedItems().back()) {
                 m_effect += ", ";

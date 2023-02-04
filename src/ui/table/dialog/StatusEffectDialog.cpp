@@ -26,11 +26,11 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSetting
 
     m_lineEdit->setPlaceholderText(tr("Type in effect or search (%1)").arg(shortcut->key().toString(QKeySequence::NativeText)));
 
-    m_list = new QListWidget(this);
-    m_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    m_listWidget = new QListWidget(this);
+    m_listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
     const auto effects = StatusEffectData::getEffectList(m_ruleSettings->ruleset);
     for (const auto& effect : effects) {
-        m_list->addItem(new QListWidgetItem(effect));
+        m_listWidget->addItem(new QListWidgetItem(effect));
     }
 
     auto *const buttonBox = new QDialogButtonBox;
@@ -39,12 +39,16 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSetting
 
     auto *const layout = new QGridLayout(this);
     layout->addWidget(m_lineEdit, 0, 0, 1, 3);
-    layout->addWidget(m_list, 1, 0, 1, 3);
+    layout->addWidget(m_listWidget, 1, 0, 1, 3);
     layout->addWidget(buttonBox, 2, 1, 1, 2);
     setLayout(layout);
 
     connect(m_lineEdit, &QLineEdit::textChanged, this, [this] () {
         findEffect(m_lineEdit->text());
+    });
+    connect(m_listWidget, &QListWidget::itemDoubleClicked, this, [this] (QListWidgetItem *item) {
+        m_effect = item->text();
+        QDialog::accept();
     });
     connect(okButton, &QPushButton::clicked, this, &StatusEffectDialog::okButtonClicked);
     connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
@@ -54,12 +58,12 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSetting
 void
 StatusEffectDialog::okButtonClicked()
 {
-    if (m_list->selectedItems().empty() && !m_lineEdit->text().isEmpty()) {
+    if (m_listWidget->selectedItems().empty() && !m_lineEdit->text().isEmpty()) {
         m_effect = m_lineEdit->text();
     } else {
-        foreach(QListWidgetItem * item, m_list->selectedItems()) {
+        foreach(QListWidgetItem * item, m_listWidget->selectedItems()) {
             m_effect += item->text();
-            if (item != m_list->selectedItems().back()) {
+            if (item != m_listWidget->selectedItems().back()) {
                 m_effect += ", ";
             }
         }
@@ -73,8 +77,8 @@ void
 StatusEffectDialog::findEffect(const QString& filter)
 {
     // Hide effects not containing the filter
-    for (int i = 0; i < m_list->count(); ++i) {
-        auto *item = m_list->item(i);
+    for (int i = 0; i < m_listWidget->count(); ++i) {
+        auto *item = m_listWidget->item(i);
         item->setHidden(!item->text().contains(filter, Qt::CaseInsensitive));
     }
 }

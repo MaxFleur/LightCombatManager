@@ -32,7 +32,7 @@ private:
     findEffect(const QString& filter);
 
 private:
-    QPointer<QListWidget> m_list;
+    QPointer<QListWidget> m_listWidget;
     QPointer<QLineEdit> m_lineEdit;
 
     QString m_effect;

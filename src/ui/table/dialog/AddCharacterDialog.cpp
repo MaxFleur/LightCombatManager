@@ -57,6 +57,8 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
     auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
     saveButton->setShortcut(QKeySequence::Save);
+    const auto saveShortcutText = "Save this Character (" + QKeySequence(QKeySequence::Save).toString() + ").";
+    saveButton->setToolTip(tr(saveShortcutText.toLocal8Bit().constData()));
     statusEffectButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
 
     m_animatedLabel = new QLabel;
@@ -235,12 +237,12 @@ AddCharacterDialog::setFocus()
 }
 
 
-// Normally, pressing the Enter or Escape key closes a QDialog, calling reject but we do not want that
-// The user has to press Return or the closing "X" button
+// Normally, pressing the Enter closes a QDialog, calling reject but we do not want that
+// The user has to press Escape or the Return or closing "X" button
 void
 AddCharacterDialog::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return || event->key() == Qt::Key_Escape) {
+    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
         return;
     }
     QDialog::keyPressEvent(event);

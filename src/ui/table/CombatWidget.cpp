@@ -45,8 +45,10 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional information") << "";
 
     m_tableWidget->setHorizontalHeaderLabels(tableHeader);
-    m_tableWidget->verticalHeader()->setVisible(m_tableSettings->verticalHeaderShown);
+    m_tableWidget->horizontalHeader()->setStretchLastSection(true);
+    m_tableWidget->verticalHeader()->setVisible(true);
     m_tableWidget->verticalHeader()->setSectionsMovable(true);
+
     m_tableWidget->setShowGrid(true);
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -56,8 +58,6 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_tableWidget->setColumnWidth(COL_MODIFIER, mainWidgetWidth * WIDTH_MODIFIER);
     m_tableWidget->setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
     m_tableWidget->setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
-    // Last column just gets remaining space
-    m_tableWidget->horizontalHeader()->setStretchLastSection(true);
 
     // Spinbox for the hp column
     auto *const delegateSpinBox = new DelegateSpinBox(this);
@@ -496,10 +496,6 @@ CombatWidget::showTablePart(bool show, int valueType)
         m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
         m_tableSettings->write(show, TableSettings::ValueType::MOD_SHOWN);
         break;
-    case 2:
-        m_tableWidget->verticalHeader()->setVisible(show);
-        m_tableSettings->write(show, TableSettings::ValueType::VERT_HEADER_SHOWN);
-        break;
     default:
         break;
     }
@@ -625,12 +621,6 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     });
     modifierAction->setCheckable(true);
     modifierAction->setChecked(m_tableSettings->modifierShown);
-
-    auto *const verticalHeaderAction = optionMenu->addAction(tr("Show Vertical Header"), this, [this] (bool show) {
-        showTablePart(show, 2);
-    });
-    verticalHeaderAction->setCheckable(true);
-    verticalHeaderAction->setChecked(m_tableSettings->verticalHeaderShown);
 
     menu->exec(event->globalPos());
 }

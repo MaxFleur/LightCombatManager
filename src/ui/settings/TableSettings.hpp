@@ -8,9 +8,8 @@ public:
     TableSettings();
 
     enum ValueType {
-        INI_SHOWN         = 0,
-        MOD_SHOWN         = 1,
-        VERT_HEADER_SHOWN = 2
+        INI_SHOWN = 0,
+        MOD_SHOWN = 1
     };
 
     void
@@ -20,7 +19,6 @@ public:
 public:
     bool iniShown = true;
     bool modifierShown = true;
-    bool verticalHeaderShown = false;
 
 private:
     void

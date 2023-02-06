@@ -302,15 +302,15 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
 
     setCombatTitle(false);
 
-    if (!newCombatStarted) {
+    if (newCombatStarted) {
+        setFixedHeight(START_HEIGHT);
+        m_combatWidget->openAddCharacterDialog();
+    } else {
         m_combatWidget->generateTable();
         // Setting the table emits changeOccured because the cells are altered, so reset
         setCombatTitle(false);
         const auto height = m_combatWidget->getHeight();
-        height > START_HEIGHT ? setFixedHeight(height) : setFixedHeight(START_HEIGHT);
-    } else {
-        setFixedHeight(START_HEIGHT);
-        m_combatWidget->openAddCharacterDialog();
+        setFixedHeight(height > START_HEIGHT ? height : START_HEIGHT);
     }
 
     m_isTableActive = true;

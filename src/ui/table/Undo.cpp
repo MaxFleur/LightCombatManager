@@ -8,9 +8,11 @@
 #include "CombatWidget.hpp"
 #include "UtilsTable.hpp"
 
-Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *CombatWidget, unsigned int *rowIdentifier,
+Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *CombatWidget,
+           unsigned int* rowEntered, unsigned int* roundCounter,
            QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel) :
-    m_oldData(oldData), m_newData(newData), m_combatWidget(CombatWidget), m_rowIdentifier(rowIdentifier),
+    m_oldData(oldData), m_newData(newData), m_combatWidget(CombatWidget),
+    m_rowEntered(rowEntered), m_roundCounter(roundCounter),
     m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel)
 {
 }
@@ -49,13 +51,11 @@ Undo::setCombatWidget(bool undo)
             tableWidget->setItem(i, j, new QTableWidgetItem(undoData.tableData.at(i).at(j).toString()));
         }
     }
-    for (int i = 0; i < tableWidget->rowCount(); i++) {
-        tableWidget->item(i, COL_NAME)->setData(Qt::UserRole, QString::number(undoData.identifiers.at(i)));
-    }
 
     // Set values for the labels
     if (tableWidget->rowCount() > 0 && undo) {
-        *m_rowIdentifier = tableWidget->item(undoData.rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
+        *m_rowEntered = undoData.rowEntered;
+        *m_roundCounter = undoData.roundCounter;
     }
 
     // Set the remaining label and font data

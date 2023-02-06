@@ -82,8 +82,9 @@ signals:
 
 private slots:
     void
-    dragAndDrop(unsigned int row,
-                unsigned int column);
+    dragAndDrop(int logicalIndex,
+                int oldVisualIndex,
+                int newVisualIndex);
 
     void
     openStatusEffectDialog();
@@ -158,14 +159,12 @@ private:
     unsigned int m_rowEntered = 0;
     unsigned int m_roundCounter = 1;
 
-    // The row identifier to determine the correct row after drag and drop
-    unsigned int m_rowIdentifier = 0;
-
     // Data storing old values before pushing on undo stack
     QVector<QVector<QVariant> > m_tableDataOld;
-    QVector<int> m_identifiersOld;
     unsigned int m_rowEnteredOld;
     unsigned int m_roundCounterOld;
+
+    QByteArray m_headerDataState;
 
     static constexpr int NMBR_COLUMNS = 6;
 

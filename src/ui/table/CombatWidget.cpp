@@ -46,6 +46,7 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
 
     m_tableWidget->setHorizontalHeaderLabels(tableHeader);
     m_tableWidget->verticalHeader()->setVisible(m_tableSettings->verticalHeaderShown);
+    m_tableWidget->verticalHeader()->setSectionsMovable(true);
     m_tableWidget->setShowGrid(true);
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -88,8 +89,7 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
         const auto& tableData = Utils::Table::tableDataFromWidget(m_tableWidget);
         const auto& identifiers = Utils::Table::identifiers(m_tableWidget);
 
-        if (tableData != m_tableDataOld || identifiers != m_identifiersOld ||
-            m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
+        if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
             Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
             pushOnUndoStack();
         }
@@ -129,7 +129,10 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), this);
     auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
-    connect(m_tableWidget, &QTableWidget::cellEntered, this, &CombatWidget::dragAndDrop);
+    connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
+        saveOldState();
+    });
+    connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionMoved, this, &CombatWidget::dragAndDrop);
     connect(m_tableWidget, &QTableWidget::cellChanged, this, [this] {
         emit changeOccured();
     });
@@ -162,7 +165,6 @@ CombatWidget::generateTable()
 
     // Then create the table
     pushOnUndoStack();
-    setRowIdentifiers();
     // We do not need a save step directly after table creation, so setup the table and reset the stack
     m_undoStack->clear();
 }
@@ -183,13 +185,12 @@ void
 CombatWidget::pushOnUndoStack()
 {
     // Assemble old data
-    const auto oldData = Undo::UndoData{ m_tableDataOld, m_identifiersOld, m_rowEnteredOld, m_roundCounterOld };
+    const auto oldData = Undo::UndoData{ m_tableDataOld, m_rowEnteredOld, m_roundCounterOld };
     // Then assemble the new data
     const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
-    const auto identifiersNew = Utils::Table::identifiers(m_tableWidget);
-    const auto newData = Undo::UndoData{ tableDataNew, identifiersNew, m_rowEntered, m_roundCounter };
+    const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
 
-    m_undoStack->push(new Undo(oldData, newData, this, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));
+    m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));
 
     // Update table
     emit changeOccured();
@@ -226,38 +227,25 @@ CombatWidget::openAddCharacterDialog()
 
 
 // This function enables drag and drop of table rows
-// Which works by switching the values of a row with it's upper or lower "neighbor"
 void
-CombatWidget::dragAndDrop(unsigned int row, unsigned int column)
+CombatWidget::dragAndDrop(int logicalIndex, int oldVisualIndex, int newVisualIndex)
 {
-    // New row index
-    int newRow;
-
-    // Depending on the current index, set the new row value
-    if (m_tableWidget->currentIndex().row() < (int) row) {
-        newRow = row - 1;
-    } else if (m_tableWidget->currentIndex().row() > (int) row) {
-        newRow = row + 1;
-    } else {
-        return;
-    }
-
-    saveOldState();
-
-    // Swap both characters
+    // @note
+    // A section moved signal only applies to the header's view, not the model.
+    // Also, for some reason, setting the table, which updates the model, seems to trigger the drag & drop an additional time.
+    // For this reason, the header is stored when an item is pressed (which is always done before a drag & drop),
+    // then reset after the section has been moved. Afterwards, a manual drag & drop is performed.
+    m_tableWidget->verticalHeader()->restoreState(m_headerDataState);
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+
+    // Switch the character order according to the indices
     auto& characters = m_char->getCharacters();
-    characters.swapItemsAt(row, newRow);
-
-    // The correct entered row has to be highlighted
-    for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-        // Set row containing the matching identifier
-        if (m_tableWidget->item(i, COL_NAME)->data(Qt::UserRole).toInt() == m_rowIdentifier) {
-            m_rowEntered = i;
-            break;
-        }
+    if (oldVisualIndex > newVisualIndex) {
+        std::rotate(characters.rend() - oldVisualIndex - 1, characters.rend() - oldVisualIndex, characters.rend() - newVisualIndex);
+    } else {
+        std::rotate(characters.begin() + oldVisualIndex, characters.begin() + oldVisualIndex + 1, characters.begin() + newVisualIndex + 1);
     }
-
+    // Then set the table
     pushOnUndoStack();
 }
 
@@ -307,8 +295,6 @@ CombatWidget::addCharacter(
     for (int i = 0; i < instanceCount; i++) {
         m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
     }
-    // If a new character has been added, the identifiers can be reset
-    setRowIdentifiers();
     resetNameInfoWidth(name, addInfo);
 
     pushOnUndoStack();
@@ -373,7 +359,6 @@ CombatWidget::setTableDataWithFileData()
         if (x == 1) {
             m_rowEntered = rowData[ROW_ENTERED].toInt();
             m_roundCounter = rowData[ROUND_CTR].toInt();
-            m_rowIdentifier = m_rowEntered;
         }
 
         resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
@@ -390,8 +375,6 @@ CombatWidget::sortTable()
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
     m_rowEntered = 0;
-    // Identifiers can be reset, then update the table
-    setRowIdentifiers();
     pushOnUndoStack();
 }
 
@@ -417,8 +400,6 @@ CombatWidget::duplicateRow()
     const auto currentIndex = m_tableWidget->currentIndex().row();
     characters.insert(currentIndex + 1, characters.at(currentIndex));
 
-    // Character count increases, so reset identifiers
-    setRowIdentifiers();
     pushOnUndoStack();
 }
 
@@ -496,8 +477,6 @@ CombatWidget::enteredRowChanged(bool goDown)
         }
     }
 
-    // Identifier for the entered row changes
-    m_rowIdentifier = m_tableWidget->item(m_rowEntered, COL_NAME)->data(Qt::UserRole).toInt();
     // Recreate table for updated font
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     setRowAndPlayer();
@@ -569,24 +548,13 @@ CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 
 
 void
-CombatWidget::setRowIdentifiers()
-{
-    // Prevent item changed signal firings
-    m_tableWidget->blockSignals(true);
-    for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-        m_tableWidget->item(i, COL_NAME)->setData(Qt::UserRole, QString::number(i));
-    }
-    m_tableWidget->blockSignals(false);
-}
-
-
-void
 CombatWidget::saveOldState()
 {
     m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
-    m_identifiersOld = Utils::Table::identifiers(m_tableWidget);
     m_rowEnteredOld = m_rowEntered;
     m_roundCounterOld = m_roundCounter;
+
+    m_headerDataState = m_tableWidget->verticalHeader()->saveState();
 }
 
 

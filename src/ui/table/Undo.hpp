@@ -14,7 +14,6 @@ class Undo : public QUndoCommand
 public:
     struct UndoData {
         const QVector<QVector<QVariant> > tableData;
-        const QVector<int>                identifiers;
         const unsigned int                rowEntered;
         const unsigned int                roundCounter;
     };
@@ -23,7 +22,8 @@ public:
     Undo(const UndoData&  oldData,
          const UndoData&  newData,
          CombatWidget*    CombatWidget,
-         unsigned int*    rowIdentifier,
+         unsigned int*    rowEntered,
+         unsigned int*    roundCounter,
          QPointer<QLabel> roundCounterLabel,
          QPointer<QLabel> currentPlayerLabel);
 
@@ -44,7 +44,8 @@ private:
     const UndoData m_oldData;
     const UndoData m_newData;
 
-    unsigned int *m_rowIdentifier;
+    unsigned int *m_rowEntered;
+    unsigned int *m_roundCounter;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;

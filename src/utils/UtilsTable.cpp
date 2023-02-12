@@ -39,15 +39,15 @@ resynchronizeCharacters(const QTableWidget *tableWidget,
 
 // Create checkboxes to show the is enemy status
 void
-setTableCheckBox(CombatWidget *CombatWidget, unsigned int row, bool checked)
+setTableCheckBox(CombatWidget *combatWidget, unsigned int row, bool checked)
 {
-    auto *const tableWidget = CombatWidget->getTableWidget();
+    auto *const tableWidget = combatWidget->getTableWidget();
 
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(checked);
-    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [CombatWidget, tableWidget] {
+    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [combatWidget, tableWidget] {
                 tableWidget->blockSignals(true);
-                emit CombatWidget->changeOccured();
+                emit combatWidget->changeOccured();
                 tableWidget->blockSignals(false);
             });
 

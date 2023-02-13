@@ -130,6 +130,8 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
 
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
+        m_tableWidget->clearSelection();
+        m_tableWidget->selectRow(logicalIndex);
         saveOldState();
     });
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionMoved, this, &CombatWidget::dragAndDrop);
@@ -247,6 +249,9 @@ CombatWidget::dragAndDrop(int logicalIndex, int oldVisualIndex, int newVisualInd
     }
     // Then set the table
     pushOnUndoStack();
+
+    m_tableWidget->clearSelection();
+    m_tableWidget->selectRow(newVisualIndex);
 }
 
 

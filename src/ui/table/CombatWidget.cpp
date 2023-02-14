@@ -209,9 +209,7 @@ CombatWidget::openAddCharacterDialog()
     auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (QString name, int ini, int mod, int hp,
                                                                          bool isEnemy, QString addInfo, int instanceCount) {
-        saveOldState();
         addCharacter(name, ini, mod, hp, isEnemy, addInfo, instanceCount);
-        pushOnUndoStack();
     });
     // Lock this widget, wait until Dialog is closed
     if (dialog->exec() == QDialog::Accepted) {

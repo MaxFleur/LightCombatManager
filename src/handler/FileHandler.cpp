@@ -45,10 +45,8 @@ FileHandler::saveTable(
                     strList << QVariant(checkBox->isChecked()).toString();
                 } else {
                     const auto *item = tableWidget->item(i, j);
-                    if (!item || item->text().isEmpty()) {
-                        tableWidget->setItem(i, j, new QTableWidgetItem(""));
-                    }
-                    strList << tableWidget->item(i, j)->text();
+                    const auto itemText = !item || item->text().isEmpty() ? "" : tableWidget->item(i, j)->text();
+                    strList << itemText;
                 }
             }
             if (i == 0) {
@@ -59,6 +57,7 @@ FileHandler::saveTable(
             // The "\n" guarantees that the rows are set correctly in the csv table
             data << strList.join(";") + "\n";
         }
+
         file.close();
         return true;
     }

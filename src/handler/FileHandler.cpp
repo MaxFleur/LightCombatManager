@@ -100,6 +100,10 @@ FileHandler::getCSVData(const QString& filename)
 bool
 FileHandler::checkTableFormat(const QString& data) const
 {
+    if (data.isEmpty()) {
+        return false;
+    }
+
     // Get the stored table row data information
     const auto rowDataHeader = data.split("\n").at(0).split(";");
     const auto rowDataFirstRow = data.split("\n").at(1).split(";");

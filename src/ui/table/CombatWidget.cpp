@@ -418,8 +418,15 @@ CombatWidget::removeRow()
     saveOldState();
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
+    // If rows are selected, indices are stored in the order a user clicked at the rows
+    // So we get the selection and resort it so the rows can be easily removed
+    auto selectedRows = m_tableWidget->selectionModel()->selectedRows();
+    std::sort(selectedRows.begin(), selectedRows.end(), [selectedRows](const auto& a, const auto& b) {
+        return a.row() < b.row();
+    });
+
     auto offset = 0;
-    for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
+    for (const auto& i : selectedRows) {
         // For every deleted character, the actual row index is decremented, so apply a corrected offset
         const auto adjustedRowNumber = i.row() + offset;
 

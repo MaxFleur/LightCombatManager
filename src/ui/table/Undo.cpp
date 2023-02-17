@@ -53,7 +53,7 @@ Undo::setCombatWidget(bool undo)
     }
 
     // Set values for the labels
-    if (tableWidget->rowCount() > 0 && undo) {
+    if (tableWidget->rowCount() > 0) {
         *m_rowEntered = undoData.rowEntered;
         *m_roundCounter = undoData.roundCounter;
     }

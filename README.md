@@ -7,8 +7,6 @@
 
 </div>
 
-
-
 # LightCombatManager
 
 ### A small, lightweight, cross-platform combat manager for d20 based role-playing games, based on Qt.

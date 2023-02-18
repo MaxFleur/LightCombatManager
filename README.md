@@ -3,7 +3,7 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![Test badge](https://img.shields.io/badge/tests-passing-green.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v1.8.2-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v1.9.0-blue.svg)
 
 </div>
 
@@ -52,7 +52,7 @@ For most Linux Distros, all these libraries should be contained using the offici
 The following description is focused on building the application with `cmake` and Visual Studio 2022.
 
 1. Download or clone this repository.
-2. Open up `cmd` or `git bash` and navigate to this repository. 
+2. Open up `cmd` or `git cmd` and navigate to this repository. 
 3. Create a build folder: `mkdir build`. Navigate into this folder via `cd build`.
 4. Set the CMake Prefix Path for Qt inside the `CMakeLists.txt`. Example: `set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\")` for Qt 5.15 and msvc compiler.
 5. Hit `cmake.exe -G “Visual Studio 17 2022” -A x64 ..` This will create an sln-file. 

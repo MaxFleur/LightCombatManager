@@ -21,7 +21,7 @@
 MainWindow::MainWindow()
 {
     // Actions
-    auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New Combat"), this);
+    auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
     newCombatAction->setShortcuts(QKeySequence::New);
     connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 

@@ -584,14 +584,14 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
             rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
             rerollIniAction->setShortcutVisibleInContextMenu(true);
 
-            auto *const duplicateRowAction = menu->addAction(tr("Duplicate Character"), this, [this] () {
+            auto *const duplicateRowAction = menu->addAction(tr("Duplicate"), this, [this] () {
                 duplicateRow();
             });
             duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
             duplicateRowAction->setShortcutVisibleInContextMenu(true);
         }
 
-        auto *const removeRowAction = menu->addAction(tr("Remove Character(s)"), this, [this] () {
+        auto *const removeRowAction = menu->addAction(tr("Remove"), this, [this] () {
             removeRow();
         });
         removeRowAction->setShortcut(Qt::Key_Delete);

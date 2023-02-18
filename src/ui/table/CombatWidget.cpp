@@ -600,12 +600,10 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         menu->addSeparator();
     }
 
-    if (m_tableWidget->rowCount() > 1) {
-        auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
-            sortTable();
-        });
-        menu->addSeparator();
-    }
+    menu->addAction(m_undoAction);
+    menu->addAction(m_redoAction);
+
+    menu->addSeparator();
 
     auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
         openAddCharacterDialog();
@@ -613,10 +611,12 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
     openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
-    menu->addAction(m_undoAction);
-    menu->addAction(m_redoAction);
-
-    menu->addSeparator();
+    if (m_tableWidget->rowCount() > 1) {
+        auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
+            sortTable();
+        });
+        menu->addSeparator();
+    }
 
     auto *const optionMenu = menu->addMenu("Options");
 

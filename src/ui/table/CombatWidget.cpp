@@ -2,7 +2,6 @@
 
 #include <QAction>
 #include <QApplication>
-#include <QCheckBox>
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QFont>
@@ -26,8 +25,6 @@
 #include "Undo.hpp"
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
-
-#include <iostream>
 
 CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
                            int mainWidgetWidth, QString data, QWidget *parent)
@@ -95,7 +92,6 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
         }
     });
 
-    // Create a spacer widget to move the buttons to the right side
     auto *const spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
@@ -215,8 +211,7 @@ CombatWidget::openAddCharacterDialog()
     if (dialog->exec() == QDialog::Accepted) {
         // Only ask to sort if there are enough chars and additional chars have been added
         if (m_char->getCharacters().size() > 1 && m_char->getCharacters().size() != sizeBeforeDialog) {
-            auto const reply = QMessageBox::question(this,
-                                                     tr("Sort characters?"), tr("Do you want to sort the table?"),
+            auto const reply = QMessageBox::question(this, tr("Sort characters?"), tr("Do you want to sort the table?"),
                                                      QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
                 sortTable();
@@ -420,31 +415,29 @@ CombatWidget::removeRow()
 
     // If rows are selected, indices are stored in the order a user clicked at the rows
     // So we get the selection and resort it so the rows can be easily removed
-    auto selectedRows = m_tableWidget->selectionModel()->selectedRows();
-    std::sort(selectedRows.begin(), selectedRows.end(), [selectedRows](const auto& a, const auto& b) {
-        return a.row() < b.row();
+    std::vector<int> indicesList;
+    for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
+        indicesList.push_back(index.row());
+    }
+    std::sort(indicesList.begin(), indicesList.end(), [indicesList](const auto& a, const auto& b) {
+        // Sort reversed so items in the vector can be removed without using offsets
+        return a > b;
     });
 
-    auto offset = 0;
-    for (const auto& i : selectedRows) {
-        // For every deleted character, the actual row index is decremented, so apply a corrected offset
-        const auto adjustedRowNumber = i.row() + offset;
-
+    auto& characters = m_char->getCharacters();
+    for (const auto& index : indicesList) {
         // If the deleted row is before the current entered row, move one up
-        if (adjustedRowNumber < (int) m_rowEntered) {
+        if (index < (int) m_rowEntered) {
             m_rowEntered--;
         }
         // If the deleted row was the last one in the table and also the current player, select to the first row
-        if (adjustedRowNumber == m_tableWidget->rowCount() - 1) {
-            if (m_tableWidget->item(adjustedRowNumber, 0)->font().bold()) {
+        if (index == m_tableWidget->rowCount() - 1) {
+            if (m_tableWidget->item(index, COL_NAME)->font().bold()) {
                 m_rowEntered = 0;
             }
         }
 
-        // Remove and adjust offset
-        auto& characters = m_char->getCharacters();
-        characters.remove(adjustedRowNumber);
-        offset--;
+        characters.remove(index);
     }
 
     // Update the current player row and table
@@ -530,7 +523,7 @@ CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
         m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_NAME_BUFFER);
         changeOccured = true;
     }
-    // additional info might be empty, so possible skip
+    // additional info might be empty, so possibly skip
     if (!addInfo.isEmpty()) {
         const auto addInfoNewWidth = Utils::General::getStringWidth(addInfo, font);
         if (addInfoWidth < addInfoNewWidth) {

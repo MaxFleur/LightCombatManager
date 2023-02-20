@@ -1,22 +1,18 @@
 #include "FileHandler.hpp"
 
-#include <QCheckBox>
 #include <QDebug>
 #include <QFile>
 #include <QStringList>
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QTextStream>
 
 // Stores a table as a csv
 bool
 FileHandler::saveTable(
-    QTableWidget*                tableWidget,
-    const QString&               filename,
-    unsigned int                 rowEntered,
-    unsigned int                 roundCounter,
-    const RuleSettings::Ruleset& ruleset,
-    bool                         rollAutomatically) const
+    const QVector<QVector<QVariant> >& tableData,
+    const QString&                     filename,
+    unsigned int                       rowEntered,
+    unsigned int                       roundCounter,
+    const RuleSettings::Ruleset&       ruleset,
+    bool                               rollAutomatically) const
 {
     // Create a file
     QFile file(filename);
@@ -33,23 +29,16 @@ FileHandler::saveTable(
         strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is Enemy" << "Additional information";
         data << strList.join(";") + "\n";
 
-        for (int i = 0; i < tableWidget->rowCount(); ++i) {
+        auto firstRow = true;
+        for (const auto& row : tableData) {
             // Clear the list at the beginning of every row iteration
             strList.clear();
 
-            for (int j = 0; j < tableWidget->columnCount(); ++j) {
-                // Get the checkbox value
-                if (j == 4) {
-                    // Cell widget is a checkbox within another widget, so find the child
-                    auto * const checkBox = tableWidget->cellWidget(i, j)->findChild<QCheckBox *>();
-                    strList << QVariant(checkBox->isChecked()).toString();
-                } else {
-                    const auto *item = tableWidget->item(i, j);
-                    const auto itemText = !item || item->text().isEmpty() ? "" : tableWidget->item(i, j)->text();
-                    strList << itemText;
-                }
+            for (const auto& item : row) {
+                strList << item.toString();;
             }
-            if (i == 0) {
+            if (firstRow) {
+                firstRow = false;
                 strList << QString::number(rowEntered) << QString::number(roundCounter)
                         << QString::number(ruleset) << QString::number(rollAutomatically);
             }

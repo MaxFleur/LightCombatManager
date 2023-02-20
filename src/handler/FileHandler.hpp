@@ -3,22 +3,21 @@
 #include <memory>
 
 #include <QString>
+#include <QVariant>
 
 #include "RuleSettings.hpp"
-
-class QTableWidget;
 
 // This class handles the saving and reopening of tables as csv data
 class FileHandler {
 public:
     // Save a table of characters
     [[nodiscard]] bool
-    saveTable(QTableWidget*                tableWidget,
-              const QString&               filename,
-              unsigned int                 rowEntered,
-              unsigned int                 roundCounter,
-              const RuleSettings::Ruleset& ruleset,
-              bool                         rollAutomatically) const;
+    saveTable(const QVector<QVector<QVariant> >& tableData,
+              const QString&                     filename,
+              unsigned int                       rowEntered,
+              unsigned int                       roundCounter,
+              const RuleSettings::Ruleset&       ruleset,
+              bool                               rollAutomatically) const;
 
     // Reopen a saved table
     [[nodiscard]] int

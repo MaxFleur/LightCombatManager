@@ -16,6 +16,7 @@
 #include "RuleSettings.hpp"
 #include "SettingsDialog.hpp"
 #include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
 #include "WelcomeWidget.hpp"
 
 MainWindow::MainWindow()
@@ -132,7 +133,8 @@ MainWindow::saveTable()
         fileName = m_dirSettings->openDir;
     }
 
-    if (m_file->saveTable(m_combatWidget->getTableWidget(), fileName, m_combatWidget->getRowEntered(),
+    const auto tableDataWidget = Utils::Table::tableDataFromWidget(m_combatWidget->getTableWidget());
+    if (m_file->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
                           m_combatWidget->getRoundCounter(), m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical)) {
         m_tableInFile = true;
         m_dirSettings->write(fileName, true);

@@ -49,6 +49,8 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_tableWidget->setShowGrid(true);
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    m_tableWidget->setFocusPolicy(Qt::ClickFocus);
     // Adjust row width to main widget size
     m_tableWidget->setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
     m_tableWidget->setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
@@ -80,6 +82,9 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     });
 
     connect(m_tableWidget, &QTableWidget::itemPressed, this, [this] {
+        saveOldState();
+    });
+    connect(m_tableWidget, &QTableWidget::currentCellChanged, this, [this] {
         saveOldState();
     });
     connect(m_tableWidget, &QTableWidget::itemChanged, this, [this] {

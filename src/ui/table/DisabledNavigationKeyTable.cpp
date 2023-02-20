@@ -5,7 +5,7 @@
 void
 DisabledNavigationKeyTable::keyPressEvent(QKeyEvent *event)
 {
-    // Ignore arrow and tab keys
+    // Ignore arrow keys
     if (event->key() == Qt::Key_Down || event->key() == Qt::Key_Up) {
         event->ignore();
         return;

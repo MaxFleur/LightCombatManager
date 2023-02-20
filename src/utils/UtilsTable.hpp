@@ -26,8 +26,8 @@ setTableCheckBox(CombatWidget *CombatWidget,
 
 void
 setRowAndPlayer(QTableWidget *tableWidget,
-                QLabel *      roundCounterLabel,
-                QLabel *      currentPlayerLabel,
+                QLabel*       roundCounterLabel,
+                QLabel*       currentPlayerLabel,
                 int           rowEntered,
                 int           roundCounter);
 
@@ -37,9 +37,6 @@ tableDataFromWidget(QTableWidget *tableWidget);
 
 [[nodiscard]] QVector<QVector<QVariant> >
 tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& characters);
-
-[[nodiscard]] QVector<int>
-identifiers(QTableWidget *tableWidget);
 
 static constexpr int COL_NAME = 0;
 static constexpr int COL_ENEMY = 4;

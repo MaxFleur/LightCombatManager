@@ -8,7 +8,7 @@ DelegateSpinBox::DelegateSpinBox(QObject *parent)
 }
 
 
-QWidget *
+QWidget*
 DelegateSpinBox::createEditor(QWidget *parent,
                               const QStyleOptionViewItem &,
                               const QModelIndex &) const

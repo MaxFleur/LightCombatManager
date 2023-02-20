@@ -32,11 +32,7 @@ MainWindow::MainWindow()
     auto *const closeTableAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarCloseButton), tr("&Close"), this);
     closeTableAction->setShortcuts(QKeySequence::Close);
     connect(closeTableAction, &QAction::triggered, this, [this] () {
-        if (m_isTableActive) {
-            exitCombat();
-        } else {
-            QApplication::quit();
-        }
+        m_isTableActive ? exitCombat() : QApplication::quit();
     });
 
     auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);

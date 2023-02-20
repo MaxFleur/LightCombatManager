@@ -8,7 +8,7 @@
 #include "UtilsTable.hpp"
 
 
-TEST_CASE("Table Util Testing", "[TableUtils]"){
+TEST_CASE("Table Util Testing", "[TableUtils]") {
     auto *const tableWidget = new QTableWidget(1, 6);
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(false);

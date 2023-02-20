@@ -19,10 +19,8 @@ containsSemicolon(const QTableWidget *tableWidget)
 {
     for (int i = 0; i < tableWidget->rowCount(); i++) {
         for (int j = 0; j < tableWidget->columnCount(); j++) {
-            if (j == 0 || j == 5) {
-                if (tableWidget->item(i, j)->text().contains(';')) {
-                    return true;
-                }
+            if ((j == 0 || j == 5) && tableWidget->item(i, j)->text().contains(';')) {
+                return true;
             }
         }
     }

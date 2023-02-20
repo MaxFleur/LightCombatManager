@@ -89,7 +89,6 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     });
     connect(m_tableWidget, &QTableWidget::itemChanged, this, [this] {
         const auto& tableData = Utils::Table::tableDataFromWidget(m_tableWidget);
-        const auto& identifiers = Utils::Table::identifiers(m_tableWidget);
 
         if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
             Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);

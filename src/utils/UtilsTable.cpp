@@ -141,21 +141,5 @@ tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& charact
 
     return tableData;
 }
-
-
-// Get the stored identifiers
-QVector<int>
-identifiers(QTableWidget *tableWidget)
-{
-    QVector<int> identifiers;
-    for (int i = 0; i < tableWidget->rowCount(); i++) {
-        if (!tableWidget->item(i, COL_NAME)) {
-            break;
-        }
-        identifiers.push_back(tableWidget->item(i, COL_NAME)->data(Qt::UserRole).toInt());
-    }
-
-    return identifiers;
-}
 }
 }

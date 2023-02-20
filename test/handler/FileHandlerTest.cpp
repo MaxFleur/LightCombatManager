@@ -3,7 +3,6 @@
 
 #include <QCheckBox>
 #include <QHBoxLayout>
-#include <QString>
 #include <QTableWidget>
 #include <QWidget>
 
@@ -34,7 +33,7 @@ public:
 };
 
 
-TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
+TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
     auto const fileHandler = std::make_shared<FileHandler>();
 
     SECTION("Check format test") {

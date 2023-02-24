@@ -184,11 +184,27 @@ CombatWidget::getHeight() const
 
 
 void
-CombatWidget::pushOnUndoStack()
+CombatWidget::saveOldState()
+{
+    m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
+    m_rowEnteredOld = m_rowEntered;
+    m_roundCounterOld = m_roundCounter;
+
+    m_headerDataState = m_tableWidget->verticalHeader()->saveState();
+}
+
+
+void
+CombatWidget::pushOnUndoStack(bool resynchronize)
 {
     // Assemble old data
     const auto oldData = Undo::UndoData{ m_tableDataOld, m_rowEnteredOld, m_roundCounterOld };
-    // Then assemble the new data
+    // In one specific case (when clicking the isEnemy checkboxes), the character vector still contains
+    // the old, now outdated state. So in this case, we need to resynchronize the character vector.
+    if (resynchronize) {
+        Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    }
+    // Assemble the new data
     const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
 
@@ -549,17 +565,6 @@ CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
         // The main window will adjust and the additional info column will be lenghtened
         emit tableWidthSet(mainWidth + addInfoWidth + COL_LENGTH_ADD_BUFFER);
     }
-}
-
-
-void
-CombatWidget::saveOldState()
-{
-    m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
-    m_rowEnteredOld = m_rowEntered;
-    m_roundCounterOld = m_roundCounter;
-
-    m_headerDataState = m_tableWidget->verticalHeader()->saveState();
 }
 
 

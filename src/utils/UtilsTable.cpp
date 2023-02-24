@@ -45,8 +45,17 @@ setTableCheckBox(CombatWidget *combatWidget, unsigned int row, bool checked)
 
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(checked);
-    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [combatWidget, tableWidget] {
+    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [combatWidget, tableWidget, checkBox] {
                 tableWidget->blockSignals(true);
+                // We need to store the old checkbox state, so we will reset the state for a short time
+                // Then, after saving, reset to the new value and set the correct undo command
+                checkBox->blockSignals(true);
+                checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+                combatWidget->saveOldState();
+                checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+                combatWidget->pushOnUndoStack(true);
+                checkBox->blockSignals(false);
+
                 emit combatWidget->changeOccured();
                 tableWidget->blockSignals(false);
             });

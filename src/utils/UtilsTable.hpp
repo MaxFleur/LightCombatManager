@@ -36,7 +36,7 @@ setRowAndPlayer(QTableWidget *tableWidget,
 tableDataFromWidget(QTableWidget *tableWidget);
 
 [[nodiscard]] QVector<QVector<QVariant> >
-tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& characters);
+tableDataFromCharacterVector(CharacterHandlerRef characterHandler);
 
 static constexpr int COL_NAME = 0;
 static constexpr int COL_ENEMY = 4;

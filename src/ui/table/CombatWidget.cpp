@@ -205,7 +205,7 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
         Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     }
     // Assemble the new data
-    const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
+    const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char);
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
 
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));

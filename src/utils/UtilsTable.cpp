@@ -136,8 +136,10 @@ tableDataFromWidget(QTableWidget *tableWidget)
 
 // Reformat the character vector in a QVariant vector
 QVector<QVector<QVariant> >
-tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& characters)
+tableDataFromCharacterVector(CharacterHandlerRef characterHandler)
 {
+    const auto& characters = characterHandler->getCharacters();
+
     QVector<QVector<QVariant> > tableData;
     for (int i = 0; i < characters.size(); i++) {
         QVector<QVariant> charValues;

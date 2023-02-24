@@ -240,7 +240,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small and simple Combat Manager for D&D-like games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 1.9.0.<br>"
+                          "<p>Version 1.9.1.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 

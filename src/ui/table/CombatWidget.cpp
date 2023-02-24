@@ -270,8 +270,10 @@ CombatWidget::openStatusEffectDialog()
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
             auto itemText = characters.at(i.row()).additionalInf;
-            if (!itemText.isEmpty() && itemText.back() != " ") {
-                itemText += " ";
+            itemText = itemText.trimmed();
+            // Append a comma, if something is already there and does not end with a comma
+            if (!itemText.isEmpty()) {
+                itemText += itemText.back() == "," ? " " : ", ";
             }
             characters[i.row()].additionalInf = itemText + dialog->getEffect();
         }

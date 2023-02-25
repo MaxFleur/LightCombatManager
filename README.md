@@ -38,7 +38,8 @@ LCM is written in C++17. The following tools are used for development:
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 
-For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt5, CMake and Catch2 are available.
+For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt5, CMake and Catch2 are available.\
+Alternatively, if you just want to run the application without any installing, just download the binaries provided with the latest release.
 
 ## Linux
 

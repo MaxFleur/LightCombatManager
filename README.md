@@ -3,21 +3,21 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![Test badge](https://img.shields.io/badge/tests-passing-green.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v1.9.0-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v1.9.1-blue.svg)
 
 </div>
 
 # LightCombatManager
 
-### A small, lightweight, cross-platform combat manager for d20 based role-playing games, based on Qt.
+### A small  cross-platform combat manager for d20-based role-playing games, based on Qt.
 
 Using LightCombatManager (or  just **LCM**), you can easily create characters with initiative values, a HP counter and additional information. You can also add status effects to each character.\
-![image](https://user-images.githubusercontent.com/15110943/219160410-3287af7b-9518-4cef-80e2-bab211262d9e.png)
+![image](https://user-images.githubusercontent.com/15110943/221289829-77cfe413-9cf5-4e2c-90f3-2c5af763a4dc.png)
 
-After creation, the program creates a full combat table. Using this table, you can easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the addition and deletion of characters. \
-![image](https://user-images.githubusercontent.com/15110943/219162574-db3497e4-a802-44f3-a1fa-ddbdc765854e.png)
+After creation, the program creates a full combat table, which you can use to easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the deletion and subsequent addition of characters.\
+![image](https://user-images.githubusercontent.com/15110943/221291366-8e871881-9487-421d-844c-9012130fb71e.png)
 
-If the game ends, but the current combat is not finished yet, you can save the table as a csv file, then reopen it later and continue as if you were never interrupted.
+If the game ends, but the current combat is not finished yet, you can save the table as a csv file, then reopen it later and continue the combat.
 
 ### Supported rulesets
 
@@ -29,7 +29,7 @@ LCM currently supports the following rulesets:
 * Pathfinder 2E
 * Starfinder
 
-More d20-based rulesets might be supported in the future.
+Support for more d20-based rulesets might be added in the future.
 
 # Tools & Installation
 LCM is written in C++17. The following tools are used for development:
@@ -38,7 +38,8 @@ LCM is written in C++17. The following tools are used for development:
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 
-For most Linux Distros, all these libraries should be contained using the official package managers. For Windows, installers for Qt5, CMake and Catch2 are available.
+For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt5, CMake and Catch2 are available.\
+Alternatively, if you just want to run the application without any installing, just download the binaries provided with the latest release.
 
 ## Linux
 
@@ -65,4 +66,6 @@ The following description is focused on building the application with `cmake` an
 # Contribution
 
 If there is a ruleset you wish to be supported or another feature you might want to be included, feel free to open a new issue.\
-If you want to contribute code, please format it using the provided `uncrustify.cfg`.
+If you want to contribute code, please format it using the provided `uncrustify.cfg` before opening a pull request. On Linux for example, you can format the entire repository's code with one single line:
+```
+find . \( -name "*.cpp" -o -name "*.hpp" \) -exec uncrustify -c uncrustify.cfg --replace --no-backup {} + ?

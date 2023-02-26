@@ -163,7 +163,7 @@ const QStringList m_commonEffects = {
     QObject::tr("Unconscious")
 };
 
-[[nodiscard]] QStringList
+[[nodiscard]] const QStringList
 getEffectList(unsigned int index)
 {
     auto list = m_commonEffects;

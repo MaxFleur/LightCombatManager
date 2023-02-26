@@ -2,7 +2,6 @@
 
 #include <QAction>
 #include <QApplication>
-#include <QCheckBox>
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QFont>
@@ -27,8 +26,6 @@
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
 
-#include <iostream>
-
 CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
                            int mainWidgetWidth, QString data, QWidget *parent)
     : m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_loadedFileData(data)
@@ -52,6 +49,8 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_tableWidget->setShowGrid(true);
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    m_tableWidget->setFocusPolicy(Qt::ClickFocus);
     // Adjust row width to main widget size
     m_tableWidget->setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
     m_tableWidget->setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
@@ -85,9 +84,11 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     connect(m_tableWidget, &QTableWidget::itemPressed, this, [this] {
         saveOldState();
     });
+    connect(m_tableWidget, &QTableWidget::currentCellChanged, this, [this] {
+        saveOldState();
+    });
     connect(m_tableWidget, &QTableWidget::itemChanged, this, [this] {
         const auto& tableData = Utils::Table::tableDataFromWidget(m_tableWidget);
-        const auto& identifiers = Utils::Table::identifiers(m_tableWidget);
 
         if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
             Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
@@ -95,7 +96,6 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
         }
     });
 
-    // Create a spacer widget to move the buttons to the right side
     auto *const spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
@@ -184,12 +184,28 @@ CombatWidget::getHeight() const
 
 
 void
-CombatWidget::pushOnUndoStack()
+CombatWidget::saveOldState()
+{
+    m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
+    m_rowEnteredOld = m_rowEntered;
+    m_roundCounterOld = m_roundCounter;
+
+    m_headerDataState = m_tableWidget->verticalHeader()->saveState();
+}
+
+
+void
+CombatWidget::pushOnUndoStack(bool resynchronize)
 {
     // Assemble old data
     const auto oldData = Undo::UndoData{ m_tableDataOld, m_rowEnteredOld, m_roundCounterOld };
-    // Then assemble the new data
-    const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char->getCharacters());
+    // In one specific case (when clicking the isEnemy checkboxes), the character vector still contains
+    // the old, now outdated state. So in this case, we need to resynchronize the character vector.
+    if (resynchronize) {
+        Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    }
+    // Assemble the new data
+    const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char);
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
 
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));
@@ -215,8 +231,7 @@ CombatWidget::openAddCharacterDialog()
     if (dialog->exec() == QDialog::Accepted) {
         // Only ask to sort if there are enough chars and additional chars have been added
         if (m_char->getCharacters().size() > 1 && m_char->getCharacters().size() != sizeBeforeDialog) {
-            auto const reply = QMessageBox::question(this,
-                                                     tr("Sort characters?"), tr("Do you want to sort the table?"),
+            auto const reply = QMessageBox::question(this, tr("Sort characters?"), tr("Do you want to sort the table?"),
                                                      QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
                 sortTable();
@@ -271,8 +286,10 @@ CombatWidget::openStatusEffectDialog()
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
             auto itemText = characters.at(i.row()).additionalInf;
-            if (!itemText.isEmpty() && itemText.back() != " ") {
-                itemText += " ";
+            itemText = itemText.trimmed();
+            // Append a comma, if something is already there and does not end with a comma
+            if (!itemText.isEmpty()) {
+                itemText += itemText.back() == "," ? " " : ", ";
             }
             characters[i.row()].additionalInf = itemText + dialog->getEffect();
         }
@@ -420,31 +437,29 @@ CombatWidget::removeRow()
 
     // If rows are selected, indices are stored in the order a user clicked at the rows
     // So we get the selection and resort it so the rows can be easily removed
-    auto selectedRows = m_tableWidget->selectionModel()->selectedRows();
-    std::sort(selectedRows.begin(), selectedRows.end(), [selectedRows](const auto& a, const auto& b) {
-        return a.row() < b.row();
+    std::vector<int> indicesList;
+    for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
+        indicesList.push_back(index.row());
+    }
+    std::sort(indicesList.begin(), indicesList.end(), [indicesList](const auto& a, const auto& b) {
+        // Sort reversed so items in the vector can be removed without using offsets
+        return a > b;
     });
 
-    auto offset = 0;
-    for (const auto& i : selectedRows) {
-        // For every deleted character, the actual row index is decremented, so apply a corrected offset
-        const auto adjustedRowNumber = i.row() + offset;
-
+    auto& characters = m_char->getCharacters();
+    for (const auto& index : indicesList) {
         // If the deleted row is before the current entered row, move one up
-        if (adjustedRowNumber < (int) m_rowEntered) {
+        if (index < (int) m_rowEntered) {
             m_rowEntered--;
         }
         // If the deleted row was the last one in the table and also the current player, select to the first row
-        if (adjustedRowNumber == m_tableWidget->rowCount() - 1) {
-            if (m_tableWidget->item(adjustedRowNumber, 0)->font().bold()) {
+        if (index == m_tableWidget->rowCount() - 1) {
+            if (m_tableWidget->item(index, COL_NAME)->font().bold()) {
                 m_rowEntered = 0;
             }
         }
 
-        // Remove and adjust offset
-        auto& characters = m_char->getCharacters();
-        characters.remove(adjustedRowNumber);
-        offset--;
+        characters.remove(index);
     }
 
     // Update the current player row and table
@@ -530,7 +545,7 @@ CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
         m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_NAME_BUFFER);
         changeOccured = true;
     }
-    // additional info might be empty, so possible skip
+    // additional info might be empty, so possibly skip
     if (!addInfo.isEmpty()) {
         const auto addInfoNewWidth = Utils::General::getStringWidth(addInfo, font);
         if (addInfoWidth < addInfoNewWidth) {
@@ -554,17 +569,6 @@ CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
 
 
 void
-CombatWidget::saveOldState()
-{
-    m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
-    m_rowEnteredOld = m_rowEntered;
-    m_roundCounterOld = m_roundCounter;
-
-    m_headerDataState = m_tableWidget->verticalHeader()->saveState();
-}
-
-
-void
 CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
@@ -584,14 +588,14 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
             rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
             rerollIniAction->setShortcutVisibleInContextMenu(true);
 
-            auto *const duplicateRowAction = menu->addAction(tr("Duplicate Character"), this, [this] () {
+            auto *const duplicateRowAction = menu->addAction(tr("Duplicate"), this, [this] () {
                 duplicateRow();
             });
             duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
             duplicateRowAction->setShortcutVisibleInContextMenu(true);
         }
 
-        auto *const removeRowAction = menu->addAction(tr("Remove Character(s)"), this, [this] () {
+        auto *const removeRowAction = menu->addAction(tr("Remove"), this, [this] () {
             removeRow();
         });
         removeRowAction->setShortcut(Qt::Key_Delete);
@@ -600,12 +604,10 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         menu->addSeparator();
     }
 
-    if (m_tableWidget->rowCount() > 1) {
-        auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
-            sortTable();
-        });
-        menu->addSeparator();
-    }
+    menu->addAction(m_undoAction);
+    menu->addAction(m_redoAction);
+
+    menu->addSeparator();
 
     auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
         openAddCharacterDialog();
@@ -613,10 +615,12 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
     openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
-    menu->addAction(m_undoAction);
-    menu->addAction(m_redoAction);
-
-    menu->addSeparator();
+    if (m_tableWidget->rowCount() > 1) {
+        auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
+            sortTable();
+        });
+        menu->addSeparator();
+    }
 
     auto *const optionMenu = menu->addMenu("Options");
 

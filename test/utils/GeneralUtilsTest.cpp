@@ -1,4 +1,3 @@
-#include <QString>
 #include <QTableWidget>
 
 #include <catch2/catch.hpp>
@@ -6,7 +5,7 @@
 #include "UtilsGeneral.hpp"
 
 
-TEST_CASE("General Util Testing", "[GeneralUtils]"){
+TEST_CASE("General Util Testing", "[GeneralUtils]") {
     auto *const tableWidget = new QTableWidget(1, 6);
 
     tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));

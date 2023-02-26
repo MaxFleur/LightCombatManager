@@ -8,7 +8,7 @@
 #include "UtilsTable.hpp"
 
 
-TEST_CASE("Table Util Testing", "[TableUtils]"){
+TEST_CASE("Table Util Testing", "[TableUtils]") {
     auto *const tableWidget = new QTableWidget(1, 6);
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(false);
@@ -73,7 +73,7 @@ TEST_CASE("Table Util Testing", "[TableUtils]"){
     SECTION("Table data from character vector") {
         Utils::Table::resynchronizeCharacters(tableWidget, charHandler);
         auto characters = charHandler->getCharacters();
-        auto tableData = Utils::Table::tableDataFromCharacterVector(characters);
+        auto tableData = Utils::Table::tableDataFromCharacterVector(charHandler);
 
         SECTION("Check stats") {
             REQUIRE(tableData.at(0).at(0) == "Fighter");
@@ -88,7 +88,7 @@ TEST_CASE("Table Util Testing", "[TableUtils]"){
             checkBox->setChecked(true);
             Utils::Table::resynchronizeCharacters(tableWidget, charHandler);
             characters = charHandler->getCharacters();
-            tableData = Utils::Table::tableDataFromCharacterVector(characters);
+            tableData = Utils::Table::tableDataFromCharacterVector(charHandler);
 
             REQUIRE(tableData.at(0).at(3) == "24");
             REQUIRE(tableData.at(0).at(4) == true);

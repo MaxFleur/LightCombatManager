@@ -45,8 +45,17 @@ setTableCheckBox(CombatWidget *combatWidget, unsigned int row, bool checked)
 
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(checked);
-    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [combatWidget, tableWidget] {
+    QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [combatWidget, tableWidget, checkBox] {
                 tableWidget->blockSignals(true);
+                // We need to store the old checkbox state, so we will reset the state for a short time
+                // Then, after saving, reset to the new value and set the correct undo command
+                checkBox->blockSignals(true);
+                checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+                combatWidget->saveOldState();
+                checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+                combatWidget->pushOnUndoStack(true);
+                checkBox->blockSignals(false);
+
                 emit combatWidget->changeOccured();
                 tableWidget->blockSignals(false);
             });
@@ -127,8 +136,10 @@ tableDataFromWidget(QTableWidget *tableWidget)
 
 // Reformat the character vector in a QVariant vector
 QVector<QVector<QVariant> >
-tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& characters)
+tableDataFromCharacterVector(CharacterHandlerRef characterHandler)
 {
+    const auto& characters = characterHandler->getCharacters();
+
     QVector<QVector<QVariant> > tableData;
     for (int i = 0; i < characters.size(); i++) {
         QVector<QVariant> charValues;
@@ -140,22 +151,6 @@ tableDataFromCharacterVector(const QVector<CharacterHandler::Character>& charact
     }
 
     return tableData;
-}
-
-
-// Get the stored identifiers
-QVector<int>
-identifiers(QTableWidget *tableWidget)
-{
-    QVector<int> identifiers;
-    for (int i = 0; i < tableWidget->rowCount(); i++) {
-        if (!tableWidget->item(i, COL_NAME)) {
-            break;
-        }
-        identifiers.push_back(tableWidget->item(i, COL_NAME)->data(Qt::UserRole).toInt());
-    }
-
-    return identifiers;
 }
 }
 }

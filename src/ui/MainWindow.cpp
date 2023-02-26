@@ -16,12 +16,13 @@
 #include "RuleSettings.hpp"
 #include "SettingsDialog.hpp"
 #include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
 #include "WelcomeWidget.hpp"
 
 MainWindow::MainWindow()
 {
     // Actions
-    auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New Combat"), this);
+    auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
     newCombatAction->setShortcuts(QKeySequence::New);
     connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
@@ -32,11 +33,7 @@ MainWindow::MainWindow()
     auto *const closeTableAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarCloseButton), tr("&Close"), this);
     closeTableAction->setShortcuts(QKeySequence::Close);
     connect(closeTableAction, &QAction::triggered, this, [this] () {
-        if (m_isTableActive) {
-            exitCombat();
-        } else {
-            QApplication::quit();
-        }
+        m_isTableActive ? exitCombat() : QApplication::quit();
     });
 
     auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
@@ -136,7 +133,8 @@ MainWindow::saveTable()
         fileName = m_dirSettings->openDir;
     }
 
-    if (m_file->saveTable(m_combatWidget->getTableWidget(), fileName, m_combatWidget->getRowEntered(),
+    const auto tableDataWidget = Utils::Table::tableDataFromWidget(m_combatWidget->getTableWidget());
+    if (m_file->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
                           m_combatWidget->getRoundCounter(), m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical)) {
         m_tableInFile = true;
         m_dirSettings->write(fileName, true);
@@ -242,7 +240,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small and simple Combat Manager for D&D-like games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 1.9.0.<br>"
+                          "<p>Version 1.9.1.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 

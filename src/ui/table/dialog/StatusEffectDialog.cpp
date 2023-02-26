@@ -2,13 +2,12 @@
 
 #include <QDebug>
 #include <QDialogButtonBox>
-#include <QGridLayout>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPushButton>
 #include <QShortcut>
-#include <QString>
 #include <QStringList>
+#include <QVBoxLayout>
 
 #include "RuleSettings.hpp"
 #include "StatusEffectData.hpp"
@@ -38,10 +37,10 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSetting
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
     auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
-    auto *const layout = new QGridLayout(this);
-    layout->addWidget(m_lineEdit, 0, 0, 1, 3);
-    layout->addWidget(m_listWidget, 1, 0, 1, 3);
-    layout->addWidget(buttonBox, 2, 1, 1, 2);
+    auto *const layout = new QVBoxLayout(this);
+    layout->addWidget(m_lineEdit);
+    layout->addWidget(m_listWidget);
+    layout->addWidget(buttonBox);
     setLayout(layout);
 
     connect(m_lineEdit, &QLineEdit::textChanged, this, [this] () {

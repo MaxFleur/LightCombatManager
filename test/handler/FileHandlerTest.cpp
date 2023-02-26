@@ -3,7 +3,6 @@
 
 #include <QCheckBox>
 #include <QHBoxLayout>
-#include <QString>
 #include <QTableWidget>
 #include <QWidget>
 
@@ -11,6 +10,7 @@
 
 #include "RuleSettings.hpp"
 #include "FileHandler.hpp"
+#include "UtilsTable.hpp"
 
 class FileHandlerTestUtils
 {
@@ -34,7 +34,7 @@ public:
 };
 
 
-TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
+TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
     auto const fileHandler = std::make_shared<FileHandler>();
 
     SECTION("Check format test") {
@@ -88,7 +88,8 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]"){
         ruleSettings->ruleset = RuleSettings::Ruleset::PATHFINDER_2E;
         ruleSettings->rollAutomatical = true;
 
-        const auto tableSaved = fileHandler->saveTable(tableWidget, "./test.csv", 0, 1,
+        const auto tableDataWidget = Utils::Table::tableDataFromWidget(tableWidget);
+        const auto tableSaved = fileHandler->saveTable(tableDataWidget, "./test.csv", 0, 1,
                                                        ruleSettings->ruleset, ruleSettings->rollAutomatical);
         SECTION("File format correct") {
             REQUIRE(fileHandler->getCSVData("./test.csv") == 0);

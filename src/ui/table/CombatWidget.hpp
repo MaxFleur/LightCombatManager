@@ -55,7 +55,10 @@ public:
     getHeight() const;
 
     void
-    pushOnUndoStack();
+    saveOldState();
+
+    void
+    pushOnUndoStack(bool resynchronize = false);
 
 public slots:
     void
@@ -127,9 +130,6 @@ private:
     void
     resetNameInfoWidth(const QString& strName,
                        const QString& strAdd);
-
-    void
-    saveOldState();
 
     void
     setRowIdentifiers();

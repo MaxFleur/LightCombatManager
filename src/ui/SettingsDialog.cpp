@@ -38,8 +38,8 @@ SettingsDialog::SettingsDialog(std::shared_ptr<RuleSettings> RuleSettings,
     m_rollTieBox = new QCheckBox;
     m_rollTieBox->setChecked(m_ruleSettings->rollAutomatical);
     auto *const rollTieLabel = new QLabel(tr("Roll automatically for tie"));
-    rollTieLabel->setToolTip(tr("If a tie occurs while Characters are generated for a Combat, the app will "
-                                "automatically decide the turn order."));
+    rollTieLabel->setToolTip(tr("If a tie occurs while Characters are generated for a Combat,\n"
+                                "the app will automatically decide the turn order."));
 
     auto *const rollTieLayout = new QHBoxLayout;
     rollTieLayout->setAlignment(Qt::AlignLeft);

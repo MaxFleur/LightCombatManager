@@ -64,12 +64,12 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
 
     auto *const downButton = new QToolButton;
     downButton->setArrowType(Qt::DownArrow);
-    downButton->setToolTip(tr("Select next Character (Ctrl + Arrow Down)."));
+    downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
     downButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down));
 
     auto *const upButton = new QToolButton;
     upButton->setArrowType(Qt::UpArrow);
-    upButton->setToolTip(tr("Select previous Character (Ctrl + Arrow Up)."));
+    upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
     upButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));

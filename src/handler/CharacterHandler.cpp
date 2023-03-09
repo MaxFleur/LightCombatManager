@@ -2,7 +2,7 @@
 
 #include <QCryptographicHash>
 
-// Stores a new character in the vector
+// Stores a new character
 void
 CharacterHandler::storeCharacter(
     QString name,
@@ -16,7 +16,7 @@ CharacterHandler::storeCharacter(
 }
 
 
-// Sort all created characters
+// Sort all created characters, depending on the used rulset
 void
 CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool rollAutomatically)
 {

@@ -8,7 +8,7 @@ class RuleSettings;
 class QCheckBox;
 class QComboBox;
 
-// Dialog for the main program settings
+// Dialog for the main application settings
 class SettingsDialog : public QDialog {
     Q_OBJECT
 

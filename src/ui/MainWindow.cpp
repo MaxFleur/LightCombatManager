@@ -58,6 +58,7 @@ MainWindow::MainWindow()
     auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
     connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
+    // Add actions
     auto *const fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newCombatAction);
     fileMenu->addAction(openTableAction);
@@ -132,7 +133,7 @@ MainWindow::saveTable()
     } else {
         fileName = m_dirSettings->openDir;
     }
-
+    // Save the table
     const auto tableDataWidget = Utils::Table::tableDataFromWidget(m_combatWidget->getTableWidget());
     if (m_file->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
                           m_combatWidget->getRoundCounter(), m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical)) {
@@ -149,6 +150,7 @@ MainWindow::saveTable()
 }
 
 
+// Reopen the file dialog, even if the table has been saved already
 void
 MainWindow::saveAs()
 {
@@ -156,7 +158,7 @@ MainWindow::saveAs()
     const auto saveChangeOccured = isWindowModified();
     const auto saveTableInFile = m_tableInFile;
 
-    // Change variables so saveTable calls the file dialog
+    // Change variables to call the file dialog
     setWindowModified(true);
     m_tableInFile = false;
     // Restore old state if the save fails
@@ -178,10 +180,8 @@ MainWindow::openTable()
             return;
         }
     }
-    const auto fileName =
-        QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->openDir, ("csv File(*.csv)"));
+    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->openDir, ("csv File(*.csv)"));
     const auto code = m_file->getCSVData(fileName);
-
     auto rulesModified = false;
 
     switch (code) {
@@ -305,8 +305,6 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
         m_combatWidget->openAddCharacterDialog();
     } else {
         m_combatWidget->generateTable();
-        // Setting the table emits changeOccured because the cells are altered, so reset
-        setCombatTitle(false);
         const auto height = m_combatWidget->getHeight();
         setFixedHeight(height > START_HEIGHT ? height : START_HEIGHT);
     }
@@ -336,10 +334,9 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 {
     auto *const msgBox = new QMessageBox(this);
     msgBox->setIcon(QMessageBox::Question);
-    msgBox->setStandardButtons(
-        isWindowModified() ?
-        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
-        QMessageBox::Yes | QMessageBox::No);
+    msgBox->setStandardButtons(isWindowModified() ?
+                               QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
+                               QMessageBox::Yes | QMessageBox::No);
     msgBox->setText(tableMessage);
     if (isClosing) {
         isWindowModified() ? msgBox->setWindowTitle(tr("Save and exit?")) : msgBox->setWindowTitle(tr("Exit application?"));
@@ -371,7 +368,7 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 }
 
 
-QMessageBox *
+QMessageBox*
 MainWindow::createRuleChangeMessageBox()
 {
     const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
@@ -406,10 +403,9 @@ MainWindow::closeEvent(QCloseEvent *event)
             break;
         }
         case QMessageBox::Discard:
+        case QMessageBox::Yes:
             event->accept();
             break;
-        case QMessageBox::Yes:
-            return;
         case QMessageBox::Cancel:
         case QMessageBox::No:
             event->ignore();

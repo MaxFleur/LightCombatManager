@@ -59,8 +59,10 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSetting
 void
 StatusEffectDialog::okButtonClicked()
 {
+    // If nothing is selected, add the line edit text as status effect
     if (m_listWidget->selectedItems().empty() && !m_lineEdit->text().isEmpty()) {
         m_effect = m_lineEdit->text();
+        // Otherwise, add the effect in the list
     } else {
         for (auto* const item : m_listWidget->selectedItems()) {
             m_effect += item->text();

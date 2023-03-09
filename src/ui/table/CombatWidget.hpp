@@ -13,7 +13,7 @@ class QUndoStack;
 class RuleSettings;
 class TableSettings;
 
-// This class handles the creation of the table widget
+// This class handles the main combat widget
 class CombatWidget : public QWidget {
     Q_OBJECT
 
@@ -138,7 +138,6 @@ private:
     contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-    // Main table widget
     QPointer<DisabledNavigationKeyTable> m_tableWidget;
 
     QPointer<QLabel> m_roundCounterLabel;
@@ -183,7 +182,6 @@ private:
     static constexpr float COL_LENGTH_NAME_BUFFER = 20;
     static constexpr float COL_LENGTH_ADD_BUFFER = 20;
 
-    // Width rations of the first five columns
     static constexpr float WIDTH_NAME = 0.25f;
     static constexpr float WIDTH_INI = 0.05f;
     static constexpr float WIDTH_MODIFIER = 0.05f;

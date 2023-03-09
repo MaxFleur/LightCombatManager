@@ -23,7 +23,6 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 {
     setWindowTitle(tr("Add new Character(s)"));
 
-    // Labels for character stats
     auto *const nameLabel = new QLabel(tr("Name:"));
     m_nameEdit = new QLineEdit;
     m_nameEdit->setToolTip(tr("Set the name of the Character.\n"
@@ -151,6 +150,7 @@ AddCharacterDialog::setLabelRolled()
 void
 AddCharacterDialog::animateLabel()
 {
+    // Create a small fading text if a character has been stored
     auto *const effect = new QGraphicsOpacityEffect;
     m_animatedLabel->setGraphicsEffect(effect);
 
@@ -179,12 +179,13 @@ AddCharacterDialog::saveButtonClicked()
     resetButtonClicked();
     setFocus();
 
-    // Only set the label text after first stored character
+    // Only set the label text after the first stored character,
+    // otherwise it will be displayed constantly until something is stored
     if (!m_isFirstCharStored) {
         m_isFirstCharStored = true;
         m_animatedLabel->setText(tr("Character saved!"));
     }
-    // Rest graphics effect and kickoff animation
+    // Reset the graphics effect and kickoff the animation
     m_animatedLabel->setGraphicsEffect(0);
     m_timer->start(LABEL_SHOWN);
 }
@@ -222,7 +223,6 @@ AddCharacterDialog::openStatusEffectDialog()
 {
     // Open dialog
     auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
-    // Lock until dialog is closed
     if (dialog->exec() == QDialog::Accepted) {
         // If accepted, add status effect
         auto itemText = m_addInfoEdit->text();
@@ -241,8 +241,8 @@ AddCharacterDialog::setFocus()
 }
 
 
-// Normally, pressing the Enter closes a QDialog, calling reject but we do not want that
-// The user has to press Escape or the Return or closing "X" button
+// Normally, pressing the Enter key closes a QDialog, calling reject but we do not want that
+// The user has to press Escape, the Return key or the closing "X" button
 void
 AddCharacterDialog::keyPressEvent(QKeyEvent *event)
 {

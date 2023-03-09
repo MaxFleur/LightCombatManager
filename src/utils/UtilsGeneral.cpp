@@ -11,9 +11,6 @@ namespace Utils
 {
 namespace General
 {
-// If a user manages a Combat, it is likely that value are separated using a semicolon
-// But the file storing uses semicolons to separate the values for the csv,
-// so the name and additional info columns are checked for these
 bool
 containsSemicolon(const QTableWidget *tableWidget)
 {
@@ -28,7 +25,6 @@ containsSemicolon(const QTableWidget *tableWidget)
 }
 
 
-// Roll a 20 sided dice
 int
 rollDice()
 {

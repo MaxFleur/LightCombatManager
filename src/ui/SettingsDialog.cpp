@@ -73,7 +73,7 @@ bool
 SettingsDialog::applyClicked()
 {
     if (m_rulesetBox->currentIndex() != m_ruleSettings->ruleset || m_rollTieBox->isChecked() != m_ruleSettings->rollAutomatical) {
-        // It could be dangerous to change the combat rules while a combat is active, so abort instead
+        // It could be dangerous to change the combat rules while a combat is active, so abort
         if (m_isTableActive) {
             auto const reply = QMessageBox::critical(this, tr("Combat active!"),
                                                      tr("You changed the ruleset while a Combat is active. Please save and exit "

@@ -44,6 +44,7 @@ Undo::setCombatWidget(bool undo)
     tableWidget->blockSignals(true);
     tableWidget->setRowCount(undoData.tableData.size());
 
+    // Main table creation
     for (int i = 0; i < undoData.tableData.size(); ++i) {
         for (int j = 0; j < undoData.tableData.at(i).size(); ++j) {
             j == COL_ENEMY ?

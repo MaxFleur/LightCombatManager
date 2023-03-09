@@ -33,7 +33,7 @@ setRowAndPlayer(QTableWidget *tableWidget,
 
 
 [[nodiscard]] QVector<QVector<QVariant> >
-tableDataFromWidget(QTableWidget *tableWidget);
+tableDataFromWidget(const QTableWidget *tableWidget);
 
 [[nodiscard]] QVector<QVector<QVariant> >
 tableDataFromCharacterVector(CharacterHandlerRef characterHandler);

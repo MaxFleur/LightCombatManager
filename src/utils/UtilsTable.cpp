@@ -116,7 +116,7 @@ setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *cu
 
 // Store the table cell values in a vector
 QVector<QVector<QVariant> >
-tableDataFromWidget(QTableWidget *tableWidget)
+tableDataFromWidget(const QTableWidget *tableWidget)
 {
     QVector<QVector<QVariant> > tableData;
     for (int i = 0; i < tableWidget->rowCount(); i++) {

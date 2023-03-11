@@ -37,5 +37,5 @@ private:
 
     QString m_effect;
 
-    std::shared_ptr<RuleSettings> m_ruleSettings;
+    const std::shared_ptr<RuleSettings> m_ruleSettings;
 };

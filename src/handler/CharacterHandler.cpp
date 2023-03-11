@@ -2,7 +2,7 @@
 
 #include <QCryptographicHash>
 
-// Stores a new character in the vector
+// Stores a new character
 void
 CharacterHandler::storeCharacter(
     QString name,
@@ -16,7 +16,7 @@ CharacterHandler::storeCharacter(
 }
 
 
-// Sort all created characters
+// Sort all created characters, depending on the used rulset
 void
 CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool rollAutomatically)
 {
@@ -38,29 +38,29 @@ CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool roll
             return c1.initiative > c2.initiative;
         }
         switch (ruleset) {
-            // PF 1E/D&D 3.5/Starfinder rules: Sort for higher INI mod
-            // If that's equal, sort automatically or let the party decide
-            case RuleSettings::Ruleset::PATHFINDER_1E_DND_35E:
-            case RuleSettings::Ruleset::STARFINDER:
-            // D&D 3.0 uses the dex value for ties, but this is essentially another variant
-            // of the mod value, so no additional changes are necessary
-            case RuleSettings::Ruleset::DND_30E:
-                if (c1.modifier != c2.modifier) {
-                    return c1.modifier > c2.modifier;
-                }
-                return sortUsingHashes(c1, c2);
-            // PF 2E rules: If there is a tie between player and foe, foe goes first
-            // Otherwise sort automatically or let the party decide
-            case RuleSettings::Ruleset::PATHFINDER_2E:
-                if (c1.isEnemy != c2.isEnemy) {
-                    return c1.isEnemy > c2.isEnemy;
-                }
-                return sortUsingHashes(c1, c2);
-            // D&D 5E rules: Just sort automatically or let the party decide
-            case RuleSettings::Ruleset::DND_5E:
-                return sortUsingHashes(c1, c2);
-            default:
-                return false;
+        // PF 1E/D&D 3.5/Starfinder rules: Sort for higher INI mod
+        // If that's equal, sort automatically or let the party decide
+        case RuleSettings::Ruleset::PATHFINDER_1E_DND_35E:
+        case RuleSettings::Ruleset::STARFINDER:
+        // D&D 3.0 uses the dex value for ties, but this is essentially another variant
+        // of the mod value, so no additional changes are necessary
+        case RuleSettings::Ruleset::DND_30E:
+            if (c1.modifier != c2.modifier) {
+                return c1.modifier > c2.modifier;
+            }
+            return sortUsingHashes(c1, c2);
+        // PF 2E rules: If there is a tie between player and foe, foe goes first
+        // Otherwise sort automatically or let the party decide
+        case RuleSettings::Ruleset::PATHFINDER_2E:
+            if (c1.isEnemy != c2.isEnemy) {
+                return c1.isEnemy > c2.isEnemy;
+            }
+            return sortUsingHashes(c1, c2);
+        // D&D 5E rules: Just sort automatically or let the party decide
+        case RuleSettings::Ruleset::DND_5E:
+            return sortUsingHashes(c1, c2);
+        default:
+            return false;
         }
     });
 }

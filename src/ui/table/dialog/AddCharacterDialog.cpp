@@ -23,30 +23,53 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
 {
     setWindowTitle(tr("Add new Character(s)"));
 
+    auto *const nameLabel = new QLabel(tr("Name:"));
     m_nameEdit = new QLineEdit;
+    m_nameEdit->setToolTip(tr("Set the name of the Character.\n"
+                              "A Character can't be stored without a name."));
+
+    auto *const iniLabel = new QLabel(tr("Initiative:"));
     m_iniBox = new QSpinBox;
     m_iniBox->setMinimum(-20);
+    m_iniBox->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
+
+    auto *const iniModifierLabel = new QLabel(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
+                                              tr("DEX value:") :
+                                              tr("INI Modifier:"));
     m_iniModifierBox = new QSpinBox;
     m_iniModifierBox->setMinimum(-10);
+    m_iniModifierBox->setToolTip(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
+                                 tr("Set the dexterity value of this Character. Optional.") :
+                                 tr("Set the modifier of the initiative. Optional."));
+
     m_labelRolled = new QLabel;
+    auto *const rollButton = new QPushButton(tr("Roll random INI value"));
+    rollButton->setToolTip(tr("Roll the Initiative.\n"
+                              "The modifier is added to the rolled value."));
+
+    auto *const hpLabel = new QLabel(tr("HP:"));
     m_hpBox = new QSpinBox;
     m_hpBox->setRange(-10000, 10000);
-    m_enemyBox = new QCheckBox;
-    m_addInfoEdit = new QLineEdit;
+    m_hpBox->setToolTip(tr("Set the HP of this Character. Optional."));
 
-    m_multipleEnabledBox = new QCheckBox(tr("Add Character multiple times:"));
-    m_multipleEnabledBox->setTristate(false);
-    m_multipleEnabledBox->setCheckState(Qt::Unchecked);
-    QObject::connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {
-        m_instanceNumberBox->setEnabled(m_multipleEnabledBox->checkState() == Qt::Checked);
-    });
+    auto *const enemyLabel = new QLabel(tr("Is Enemy:"));
+    m_enemyBox = new QCheckBox;
+    m_enemyBox->setToolTip(tr("Set if the Character is an enemy. Optional."));
+
+    auto *const addInfoLabel = new QLabel(tr("Add. Info:"));
+    m_addInfoEdit = new QLineEdit;
+    m_addInfoEdit->setToolTip(tr("Set additional information,\n"
+                                 "for example status effects. Optional."));
 
     m_instanceNumberBox = new QSpinBox;
     m_instanceNumberBox->setRange(2, 10);
     m_instanceNumberBox->setEnabled(false);
 
-    auto *const rollButton = new QPushButton(tr("Roll random INI value"));
-    rollButton->setToolTip(tr("Roll the Initiative. The modifier is added to the rolled value."));
+    m_multipleEnabledBox = new QCheckBox(tr("Add Character multiple times:"));
+    m_multipleEnabledBox->setTristate(false);
+    m_multipleEnabledBox->setCheckState(Qt::Unchecked);
+    m_multipleEnabledBox->setToolTip(tr("If this is selected and 'Save' is pressed,\n"
+                                        "the Character is added multiple times to the Table."));
 
     auto *const buttonBox = new QDialogButtonBox;
     auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
@@ -64,29 +87,6 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
     m_animatedLabel = new QLabel;
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
-
-    // Labels for character stats
-    auto *const nameLabel = new QLabel(tr("Name:"));
-    nameLabel->setToolTip(tr("Set the name of the Character. A Character can't be stored without a name."));
-
-    auto *const iniLabel = new QLabel(tr("Initiative:"));
-    iniLabel->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
-
-    auto *const iniModifierLabel = new QLabel(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
-                                              tr("DEX value:") :
-                                              tr("INI Modifier:"));
-    iniModifierLabel->setToolTip(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
-                                 tr("Set the dexterity value of this character. Optional.") :
-                                 tr("Set the modifier of the initiative. Optional."));
-
-    auto *const hpLabel = new QLabel(tr("HP:"));
-    hpLabel->setToolTip(tr("Set the HP of this Character. Optional."));
-
-    auto *const enemyLabel = new QLabel(tr("Is Enemy:"));
-    enemyLabel->setToolTip(tr("Set if the Character is an enemy. Optional."));
-
-    auto *const addInfoLabel = new QLabel(tr("Add. Info:"));
-    addInfoLabel->setToolTip(tr("Set additional information, for example status effects. Optional."));
 
     auto *const layout = new QGridLayout(this);
     layout->addWidget(nameLabel, 0, 0);
@@ -132,6 +132,9 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     connect(m_timer, &QTimer::timeout, this, &AddCharacterDialog::animateLabel);
+    connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {
+        m_instanceNumberBox->setEnabled(m_multipleEnabledBox->checkState() == Qt::Checked);
+    });
 }
 
 
@@ -147,6 +150,7 @@ AddCharacterDialog::setLabelRolled()
 void
 AddCharacterDialog::animateLabel()
 {
+    // Create a small fading text if a character has been stored
     auto *const effect = new QGraphicsOpacityEffect;
     m_animatedLabel->setGraphicsEffect(effect);
 
@@ -175,12 +179,13 @@ AddCharacterDialog::saveButtonClicked()
     resetButtonClicked();
     setFocus();
 
-    // Only set the label text after first stored character
+    // Only set the label text after the first stored character,
+    // otherwise it will be displayed constantly until something is stored
     if (!m_isFirstCharStored) {
         m_isFirstCharStored = true;
         m_animatedLabel->setText(tr("Character saved!"));
     }
-    // Rest graphics effect and kickoff animation
+    // Reset the graphics effect and kickoff the animation
     m_animatedLabel->setGraphicsEffect(0);
     m_timer->start(LABEL_SHOWN);
 }
@@ -218,7 +223,6 @@ AddCharacterDialog::openStatusEffectDialog()
 {
     // Open dialog
     auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
-    // Lock until dialog is closed
     if (dialog->exec() == QDialog::Accepted) {
         // If accepted, add status effect
         auto itemText = m_addInfoEdit->text();
@@ -237,8 +241,8 @@ AddCharacterDialog::setFocus()
 }
 
 
-// Normally, pressing the Enter closes a QDialog, calling reject but we do not want that
-// The user has to press Escape or the Return or closing "X" button
+// Normally, pressing the Enter key closes a QDialog, calling reject but we do not want that
+// The user has to press Escape, the Return key or the closing "X" button
 void
 AddCharacterDialog::keyPressEvent(QKeyEvent *event)
 {

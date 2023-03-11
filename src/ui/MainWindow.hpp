@@ -14,8 +14,7 @@ class RuleSettings;
 class WelcomeWidget;
 
 // This class handles the creation and managing of the main GUI window. It also serves
-// as "main anchor point", switching between the different widgets the Combat Manager can have.
-// The widgets are created in other classes and given to this class.
+// as "main anchor point", switching between LCM's widgets, which are created in other classes.
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

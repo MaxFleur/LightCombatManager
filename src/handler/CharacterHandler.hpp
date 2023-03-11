@@ -18,16 +18,16 @@ public:
         int     initiative = 0;
         // Modifiers only
         int     modifier = 0;
-        // The hp for this character. Optional.
+        // The hp for this character
         int     hp = 0;
         // Is the character an enemy or not
         bool    isEnemy = false;
-        // Additional information (e.g. status effects). Optional.
+        // Additional information (e.g. status effects)
         QString additionalInf = QString();
     };
 
 public:
-    // Store a new character
+
     void
     storeCharacter(QString name,
                    int     initiative = 0,
@@ -36,7 +36,6 @@ public:
                    bool    isEnemy = false,
                    QString additionalInf = QString());
 
-    // Sort the stored characters, depending on the ruleset
     void
     sortCharacters(const RuleSettings::Ruleset& ruleset,
                    bool                         rollAutomatically);

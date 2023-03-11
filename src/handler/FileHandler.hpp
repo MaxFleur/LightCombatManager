@@ -7,10 +7,10 @@
 
 #include "RuleSettings.hpp"
 
-// This class handles the saving and reopening of tables as csv data
+// This class handles the saving and opening of csv table data
 class FileHandler {
 public:
-    // Save a table of characters
+    // Save the characters
     [[nodiscard]] bool
     saveTable(const QVector<QVector<QVariant> >& tableData,
               const QString&                     filename,
@@ -19,7 +19,7 @@ public:
               const RuleSettings::Ruleset&       ruleset,
               bool                               rollAutomatically) const;
 
-    // Reopen a saved table
+    // Open a saved table
     [[nodiscard]] int
     getCSVData(const QString& filename);
 
@@ -30,7 +30,7 @@ public:
     }
 
 private:
-    // Checks if a table is in the right format
+    // Checks if data is in the right format
     bool
     checkTableFormat(const QString& data) const;
 

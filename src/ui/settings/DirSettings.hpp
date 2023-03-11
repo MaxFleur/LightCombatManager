@@ -4,7 +4,7 @@
 
 #include "BaseSettings.hpp"
 
-// Store data used for the opening and saving directories
+// Store data used for handling the opening and saving directories
 class DirSettings : public BaseSettings {
 public:
     DirSettings();

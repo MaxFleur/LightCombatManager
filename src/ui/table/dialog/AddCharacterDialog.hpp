@@ -77,7 +77,7 @@ private:
     bool m_somethingStored{ false };
     bool m_isFirstCharStored{ false };
 
-    std::shared_ptr<RuleSettings> m_ruleSettings;
+    const std::shared_ptr<RuleSettings> m_ruleSettings;
 
     static constexpr int LABEL_SHOWN = 1000;
     static constexpr int LABEL_FADEOUT = 2000;

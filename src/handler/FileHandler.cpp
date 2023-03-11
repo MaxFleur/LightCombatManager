@@ -4,7 +4,7 @@
 #include <QFile>
 #include <QStringList>
 
-// Stores a table as a csv
+// Stores table data as csv
 bool
 FileHandler::saveTable(
     const QVector<QVector<QVariant> >& tableData,
@@ -14,10 +14,10 @@ FileHandler::saveTable(
     const RuleSettings::Ruleset&       ruleset,
     bool                               rollAutomatically) const
 {
-    // Create a file
+    // Create file
     QFile file(filename);
 
-    // Check if device is open for writing
+    // Check if the device is open for writing
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream data(&file);
         data.setCodec("UTF-8");
@@ -25,10 +25,11 @@ FileHandler::saveTable(
 
         QStringList strList;
 
-        // Store the header of the table, used for checking the correct table format if the table is reloaded
+        // Store the table data header
         strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is Enemy" << "Additional information";
         data << strList.join(";") + "\n";
 
+        // Store main table data
         auto firstRow = true;
         for (const auto& row : tableData) {
             // Clear the list at the beginning of every row iteration
@@ -43,7 +44,7 @@ FileHandler::saveTable(
                         << QString::number(ruleset) << QString::number(rollAutomatically);
             }
 
-            // The "\n" guarantees that the rows are set correctly in the csv table
+            // Line break
             data << strList.join(";") + "\n";
         }
 
@@ -54,7 +55,7 @@ FileHandler::saveTable(
 }
 
 
-// Open an existing csv table and stream it's data
+// Open an existing csv table and stream its data
 int
 FileHandler::getCSVData(const QString& filename)
 {
@@ -67,14 +68,14 @@ FileHandler::getCSVData(const QString& filename)
         in.setGenerateByteOrderMark(false);
         m_data = QString();
 
-        // Import file line by line
+        // Import file
         while (!in.atEnd()) {
             m_data.append(in.readLine() + "\n");
         }
         importedCSV.close();
 
         if (checkTableFormat(m_data)) {
-            // Successfully checked table
+            // Success
             return 0;
         }
         // Table in false format
@@ -85,7 +86,7 @@ FileHandler::getCSVData(const QString& filename)
 }
 
 
-// Checks if a table is in the correct format before using
+// Checks if a table is in the correct format
 bool
 FileHandler::checkTableFormat(const QString& data) const
 {
@@ -93,11 +94,10 @@ FileHandler::checkTableFormat(const QString& data) const
         return false;
     }
 
-    // Get the stored table row data information
     const auto rowDataHeader = data.split("\n").at(0).split(";");
     const auto rowDataFirstRow = data.split("\n").at(1).split(";");
 
-    // Test if the table has the correct header columns
+    // Test if the stored data has the correct header columns
     if (rowDataHeader.size() == 6
         && rowDataHeader[0] == "Name"
         && rowDataHeader[1] == "Initiative"
@@ -106,7 +106,6 @@ FileHandler::checkTableFormat(const QString& data) const
         && rowDataHeader[4] == "Is Enemy"
         && rowDataHeader[5] == "Additional information"
 
-        // The second row is checked
         // 7th entry should contain the player on the move, 8th the round counter,
         // 9th the ruleset and 10th the roll automatically option
         && rowDataFirstRow.size() == 10) {

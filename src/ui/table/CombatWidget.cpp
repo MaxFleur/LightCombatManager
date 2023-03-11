@@ -51,7 +51,7 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     m_tableWidget->setFocusPolicy(Qt::ClickFocus);
-    // Adjust row width to main widget size
+
     m_tableWidget->setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
     m_tableWidget->setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
     m_tableWidget->setColumnWidth(COL_MODIFIER, mainWidgetWidth * WIDTH_MODIFIER);
@@ -64,12 +64,12 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
 
     auto *const downButton = new QToolButton;
     downButton->setArrowType(Qt::DownArrow);
-    downButton->setToolTip(tr("Select next Character (Ctrl + Arrow Down)."));
+    downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
     downButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down));
 
     auto *const upButton = new QToolButton;
     upButton->setArrowType(Qt::UpArrow);
-    upButton->setToolTip(tr("Select previous Character (Ctrl + Arrow Up)."));
+    upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
     upButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
@@ -122,7 +122,6 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_redoAction->setShortcuts(QKeySequence::Redo);
     this->addAction(m_redoAction);
 
-    // Shortcuts
     auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), this);
     auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
     auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
@@ -167,7 +166,7 @@ CombatWidget::generateTable()
 
     // Then create the table
     pushOnUndoStack();
-    // We do not need a save step directly after table creation, so setup the table and reset the stack
+    // We do not need a save step directly after table creation, so reset the stack
     m_undoStack->clear();
 }
 
@@ -183,6 +182,7 @@ CombatWidget::getHeight() const
 }
 
 
+// Save the old table state before a change occurs, which is important for the undo command
 void
 CombatWidget::saveOldState()
 {
@@ -207,7 +207,7 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     // Assemble the new data
     const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char);
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
-
+    // We got everything, so push
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));
 
     // Update table
@@ -227,7 +227,7 @@ CombatWidget::openAddCharacterDialog()
                                                                          bool isEnemy, QString addInfo, int instanceCount) {
         addCharacter(name, ini, mod, hp, isEnemy, addInfo, instanceCount);
     });
-    // Lock this widget, wait until Dialog is closed
+
     if (dialog->exec() == QDialog::Accepted) {
         // Only ask to sort if there are enough chars and additional chars have been added
         if (m_char->getCharacters().size() > 1 && m_char->getCharacters().size() != sizeBeforeDialog) {
@@ -263,6 +263,7 @@ CombatWidget::dragAndDrop(int logicalIndex, int oldVisualIndex, int newVisualInd
     // Then set the table
     pushOnUndoStack();
 
+    // Highlight the row which has been dragged
     m_tableWidget->clearSelection();
     m_tableWidget->selectRow(newVisualIndex);
 }
@@ -277,7 +278,7 @@ CombatWidget::openStatusEffectDialog()
 
     // Open dialog
     auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
-    // Lock until dialog is closed
+
     if (dialog->exec() == QDialog::Accepted) {
         saveOldState();
         Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
@@ -287,7 +288,7 @@ CombatWidget::openStatusEffectDialog()
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
             auto itemText = characters.at(i.row()).additionalInf;
             itemText = itemText.trimmed();
-            // Append a comma, if something is already there and does not end with a comma
+            // Append a comma, if the content does not end with one already
             if (!itemText.isEmpty()) {
                 itemText += itemText.back() == "," ? " " : ", ";
             }
@@ -352,7 +353,7 @@ CombatWidget::rerollIni()
 }
 
 
-// Set the data vector, if the data has been stored in a table
+// Set the characters vector, if the table data has been stored in a csv file
 void
 CombatWidget::setTableDataWithFileData()
 {
@@ -374,8 +375,8 @@ CombatWidget::setTableDataWithFileData()
             rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
             rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", rowData.at(COL_ADDITIONAL) });
 
-        // If at the first row (which contains information about round counter and the
-        // player on the move), get this data
+        // If at the first row (which contains information about the round counter
+        // and the player on the move), get this data
         if (x == 1) {
             m_rowEntered = rowData[ROW_ENTERED].toInt();
             m_roundCounter = rowData[ROUND_CTR].toInt();
@@ -489,7 +490,7 @@ CombatWidget::enteredRowChanged(bool goDown)
             m_rowEntered++;
         }
     } else {
-        // Stop if first round and first char selected
+        // Stop for the first round and first char selected
         if (m_rowEntered == 0 && m_roundCounter == 1) {
             return;
         }
@@ -502,7 +503,7 @@ CombatWidget::enteredRowChanged(bool goDown)
         }
     }
 
-    // Recreate table for updated font
+    // Recreate the table for the updated font
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     setRowAndPlayer();
     pushOnUndoStack();
@@ -574,8 +575,8 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     auto *const menu = new QMenu(this);
 
     // Map from MainWindow coordinates to Table Widget coordinates
-    // Status Effect, reroll, duplication and removal only if the cursor is above an item
     if (m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row() >= 0) {
+        // Status Effect, reroll, duplication and removal only if the cursor is above an item
         auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
             openStatusEffectDialog();
         });

@@ -18,6 +18,7 @@
 #include <QVBoxLayout>
 
 #include "AddCharacterDialog.hpp"
+#include "AdditionalSettings.hpp"
 #include "DelegateSpinBox.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
@@ -26,9 +27,16 @@
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
 
-CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
-                           int mainWidgetWidth, QString data, QWidget *parent)
-    : m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_loadedFileData(data)
+CombatWidget::CombatWidget(bool                                isDataStored,
+                           std::shared_ptr<AdditionalSettings> AdditionalSettings,
+                           std::shared_ptr<RuleSettings>       RuleSettings,
+                           int                                 mainWidgetWidth,
+                           QString                             data,
+                           QWidget *                           parent)
+    : m_isDataStored(isDataStored),
+    m_additionalSettings(AdditionalSettings),
+    m_ruleSettings(RuleSettings),
+    m_loadedFileData(data)
 {
     m_char = std::make_shared<CharacterHandler>();
     m_tableSettings = std::make_shared<TableSettings>();
@@ -309,7 +317,11 @@ CombatWidget::addCharacter(
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+        auto modifiedName = name;
+        if (instanceCount > 1 && m_additionalSettings->indicatorForMultipleChars) {
+            modifiedName += "#" + QString::number(i + 1);
+        }
+        m_char->storeCharacter(modifiedName, ini, mod, hp, isEnemy, addInfo);
     }
     resetNameInfoWidth(name, addInfo);
 

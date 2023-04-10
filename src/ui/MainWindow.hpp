@@ -8,6 +8,7 @@
 
 class QMessageBox;
 
+class AdditionalSettings;
 class CombatWidget;
 class DirSettings;
 class RuleSettings;
@@ -83,6 +84,7 @@ private:
     QString m_fileName{ "" };
 
     FileHandlerRef m_file;
+    std::shared_ptr<AdditionalSettings> m_additionalSettings;
     std::shared_ptr<RuleSettings> m_ruleSettings;
     std::shared_ptr<DirSettings> m_dirSettings;
 

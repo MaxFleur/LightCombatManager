@@ -12,6 +12,7 @@
 #include <QString>
 #include <QTimer>
 
+#include "AdditionalSettings.hpp"
 #include "CombatWidget.hpp"
 #include "DirSettings.hpp"
 #include "RuleSettings.hpp"
@@ -74,8 +75,9 @@ MainWindow::MainWindow()
     helpMenu->addAction(aboutQtAction);
 
     m_file = std::make_shared<FileHandler>();
-    m_ruleSettings = std::make_shared<RuleSettings>();
+    m_additionalSettings = std::make_shared<AdditionalSettings>();
     m_dirSettings = std::make_shared<DirSettings>();
+    m_ruleSettings = std::make_shared<RuleSettings>();
 
     resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
@@ -230,7 +232,7 @@ MainWindow::openTable()
 void
 MainWindow::openSettings()
 {
-    auto *const dialog = new SettingsDialog(m_ruleSettings, m_isTableActive, this);
+    auto *const dialog = new SettingsDialog(m_additionalSettings, m_ruleSettings, m_isTableActive, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();
 }
@@ -278,7 +280,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
-    m_combatWidget = new CombatWidget(isDataStored, m_ruleSettings, this->width(), data, this);
+    m_combatWidget = new CombatWidget(isDataStored, m_additionalSettings, m_ruleSettings, this->width(), data, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {

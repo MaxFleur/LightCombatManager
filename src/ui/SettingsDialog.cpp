@@ -11,13 +11,16 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+#include "AdditionalSettings.hpp"
 #include "RuleSettings.hpp"
 
-SettingsDialog::SettingsDialog(std::shared_ptr<RuleSettings> RuleSettings,
-                               bool                          isTableActive,
-                               QWidget*                      parent) :
+SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSettings,
+                               std::shared_ptr<RuleSettings>       RuleSettings,
+                               bool                                isTableActive,
+                               QWidget*                            parent) :
     m_isTableActive(isTableActive),
-    m_ruleSettings(RuleSettings)
+    m_ruleSettings(RuleSettings),
+    m_additionalSettings(AdditionalSettings)
 {
     setWindowTitle(tr("Settings"));
 
@@ -53,6 +56,13 @@ SettingsDialog::SettingsDialog(std::shared_ptr<RuleSettings> RuleSettings,
     auto *const rulesetGroupBox = new QGroupBox(tr("Rules"));
     rulesetGroupBox->setLayout(rulesLayout);
 
+    m_indicatorMultipleEnemiesBox = new QCheckBox(tr("Set indicator for multiple Characters"));
+    m_indicatorMultipleEnemiesBox->setChecked(m_additionalSettings->indicatorForMultipleChars);
+    m_indicatorMultipleEnemiesBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
+                                                 "an additional indicator is appended to each Character."));
+
+    auto* const additionalLabel = new QLabel(tr("<b>Additional:</b>"));
+
     auto *const buttonBox = new QDialogButtonBox;
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
     auto *const applyButton = buttonBox->addButton(QDialogButtonBox::Apply);
@@ -60,6 +70,8 @@ SettingsDialog::SettingsDialog(std::shared_ptr<RuleSettings> RuleSettings,
 
     auto *const mainLayout = new QVBoxLayout;
     mainLayout->addWidget(rulesetGroupBox);
+    mainLayout->addWidget(additionalLabel);
+    mainLayout->addWidget(m_indicatorMultipleEnemiesBox);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
 
@@ -72,7 +84,8 @@ SettingsDialog::SettingsDialog(std::shared_ptr<RuleSettings> RuleSettings,
 bool
 SettingsDialog::applyClicked()
 {
-    if (m_rulesetBox->currentIndex() != m_ruleSettings->ruleset || m_rollTieBox->isChecked() != m_ruleSettings->rollAutomatical) {
+    if (m_rulesetBox->currentIndex() != m_ruleSettings->ruleset ||
+        m_rollTieBox->isChecked() != m_ruleSettings->rollAutomatical) {
         // It could be dangerous to change the combat rules while a combat is active, so abort
         if (m_isTableActive) {
             auto const reply = QMessageBox::critical(this, tr("Combat active!"),
@@ -82,6 +95,9 @@ SettingsDialog::applyClicked()
         }
         m_ruleSettings->write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
         return true;
+    }
+    if (m_indicatorMultipleEnemiesBox->isChecked() != m_additionalSettings->indicatorForMultipleChars) {
+        m_additionalSettings->write(m_indicatorMultipleEnemiesBox->isChecked());
     }
     return true;
 }

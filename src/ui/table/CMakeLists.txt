@@ -17,7 +17,6 @@ target_sources(table INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/Undo.cpp
 )
 
-
 target_link_libraries(table 
-    INTERFACE Qt5::Widgets dialog settings
+    INTERFACE Qt::Widgets dialog settings
 )

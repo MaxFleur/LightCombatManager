@@ -8,6 +8,7 @@
 #include <QKeySequence>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QString>
 #include <QTimer>
 
@@ -188,16 +189,17 @@ MainWindow::openTable()
     case 0:
     {
         if (!checkStoredTableRules(m_file->getData())) {
-            auto *const msgBox = createRuleChangeMessageBox();
+            const auto messageString = createRuleChangeMessageBoxText();
+            auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different rulesets detected!"), messageString, QMessageBox::Cancel);
+            auto* const applyButton = msgBox->addButton(tr("Apply Table ruleset to Settings"), QMessageBox::ApplyRole);
+            auto* const ignoreButton = msgBox->addButton(tr("Ignore Stored Table ruleset"), QMessageBox::AcceptRole);
 
-            switch (msgBox->exec()) {
-            case QMessageBox::Apply:
+            msgBox->exec();
+            if (msgBox->clickedButton() == applyButton) {
                 m_ruleSettings->write(m_loadedTableRule, m_loadedTableRollAutomatically);
-                break;
-            case QMessageBox::Ignore:
+            } else if (msgBox->clickedButton() == ignoreButton) {
                 rulesModified = true;
-                break;
-            case QMessageBox::Cancel:
+            } else {
                 return;
             }
         }
@@ -368,8 +370,8 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 }
 
 
-QMessageBox*
-MainWindow::createRuleChangeMessageBox()
+QString
+MainWindow::createRuleChangeMessageBoxText() const
 {
     const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
                             "Your ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings->ruleset) + "</b>, " +
@@ -377,13 +379,8 @@ MainWindow::createRuleChangeMessageBox()
                          tr("The stored table ruleset is: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
                          "<b>" + Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
                          tr("Do you want to apply the stored Table ruleset to your settings or ignore it?");
-    auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different rulesets detected!"), message,
-                                         QMessageBox::Apply | QMessageBox::Ignore | QMessageBox::Cancel);
 
-    msgBox->setButtonText(QMessageBox::Apply, tr("Apply Table ruleset to Settings"));
-    msgBox->setButtonText(QMessageBox::Ignore, tr("Ignore Table ruleset"));
-
-    return msgBox;
+    return message;
 }
 
 

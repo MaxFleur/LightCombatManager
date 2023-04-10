@@ -12,7 +12,7 @@ add_executable(tests
 )
 
 target_link_libraries(tests PRIVATE 
-    Qt5::Widgets 
+    Qt::Widgets
     Catch2::Catch2 
     utils 
     handler

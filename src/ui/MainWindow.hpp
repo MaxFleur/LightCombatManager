@@ -64,8 +64,8 @@ private:
     createSaveMessageBox(const QString& tableMessage,
                          bool           isClosing);
 
-    [[nodiscard]] QMessageBox *
-    createRuleChangeMessageBox();
+    [[nodiscard]] QString
+    createRuleChangeMessageBoxText() const;
 
     void
     closeEvent(QCloseEvent *event);

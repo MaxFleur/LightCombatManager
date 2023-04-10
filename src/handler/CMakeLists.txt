@@ -12,7 +12,6 @@ target_sources(handler INTERFACE
     
 )
 
-
 target_link_libraries(handler 
-    INTERFACE Qt5::Widgets
+    INTERFACE Qt::Widgets
 )

@@ -65,12 +65,12 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     auto *const downButton = new QToolButton;
     downButton->setArrowType(Qt::DownArrow);
     downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
-    downButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down));
+    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
 
     auto *const upButton = new QToolButton;
     upButton->setArrowType(Qt::UpArrow);
     upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
-    upButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up));
+    upButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Up));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
@@ -122,11 +122,11 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_redoAction->setShortcuts(QKeySequence::Redo);
     this->addAction(m_redoAction);
 
-    auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), this);
+    auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_D), this);
     auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
-    auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
-    auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), this);
-    auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
+    auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), this);
+    auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this);
+    auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
 
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
         m_tableWidget->clearSelection();
@@ -290,7 +290,7 @@ CombatWidget::openStatusEffectDialog()
             itemText = itemText.trimmed();
             // Append a comma, if the content does not end with one already
             if (!itemText.isEmpty()) {
-                itemText += itemText.back() == "," ? " " : ", ";
+                itemText += itemText.back() == ',' ? " " : ", ";
             }
             characters[i.row()].additionalInf = itemText + dialog->getEffect();
         }
@@ -580,19 +580,19 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
             openStatusEffectDialog();
         });
-        statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
+        statusEffectAction->setShortcut(Qt::CTRL | Qt::Key_E);
         statusEffectAction->setShortcutVisibleInContextMenu(true);
 
         // Enable only for a single selected character
         if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
             auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &CombatWidget::rerollIni);
-            rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
+            rerollIniAction->setShortcut(Qt::CTRL | Qt::Key_I);
             rerollIniAction->setShortcutVisibleInContextMenu(true);
 
             auto *const duplicateRowAction = menu->addAction(tr("Duplicate"), this, [this] () {
                 duplicateRow();
             });
-            duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
+            duplicateRowAction->setShortcut(Qt::CTRL | Qt::Key_D);
             duplicateRowAction->setShortcutVisibleInContextMenu(true);
         }
 
@@ -613,7 +613,7 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
         openAddCharacterDialog();
     });
-    openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
+    openAddCharacterDialogAction->setShortcut(Qt::CTRL | Qt::Key_R);
     openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
     if (m_tableWidget->rowCount() > 1) {

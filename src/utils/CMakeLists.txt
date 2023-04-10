@@ -12,5 +12,5 @@ target_sources(utils INTERFACE
 )
 
 target_link_libraries(utils 
-    INTERFACE Qt5::Widgets table
+    INTERFACE Qt::Widgets table
 )

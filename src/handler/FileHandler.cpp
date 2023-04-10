@@ -4,6 +4,8 @@
 #include <QFile>
 #include <QStringList>
 
+#include <QtGlobal>
+
 // Stores table data as csv
 bool
 FileHandler::saveTable(
@@ -20,7 +22,12 @@ FileHandler::saveTable(
     // Check if the device is open for writing
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream data(&file);
+
+#if QT_VERSION_MAJOR > 5
+        data.setEncoding(QStringConverter::Utf8);
+#else
         data.setCodec("UTF-8");
+#endif
         data.setGenerateByteOrderMark(false);
 
         QStringList strList;
@@ -64,7 +71,11 @@ FileHandler::getCSVData(const QString& filename)
     // If the data can be read, import
     if (importedCSV.open(QFile::ReadOnly)) {
         QTextStream in(&importedCSV);
+#if QT_VERSION_MAJOR > 5
+        in.setEncoding(QStringConverter::Utf8);
+#else
         in.setCodec("UTF-8");
+#endif
         in.setGenerateByteOrderMark(false);
         m_data = QString();
 

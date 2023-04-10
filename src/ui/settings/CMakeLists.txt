@@ -14,7 +14,6 @@ target_sources(settings INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/TableSettings.cpp
 )
 
-
 target_link_libraries(settings 
-    INTERFACE Qt5::Widgets
+    INTERFACE Qt::Widgets
 )

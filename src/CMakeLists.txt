@@ -17,5 +17,5 @@ target_include_directories (LightCombatManager
 )
 
 target_link_libraries(LightCombatManager
-    PRIVATE Qt5::Widgets ui handler utils
+    PRIVATE Qt::Widgets ui handler utils
 )

@@ -224,11 +224,7 @@ AddCharacterDialog::openStatusEffectDialog()
     // Open dialog
     auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
     if (dialog->exec() == QDialog::Accepted) {
-        // If accepted, add status effect
-        auto itemText = m_addInfoEdit->text();
-        if (!itemText.isEmpty() && itemText.back() != ' ') {
-            itemText += " ";
-        }
+        const auto itemText = Utils::General::appendCommaToString(m_addInfoEdit->text());
         m_addInfoEdit->setText(itemText + dialog->getEffect());
     }
 }

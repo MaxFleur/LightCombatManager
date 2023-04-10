@@ -11,6 +11,17 @@ namespace Utils
 {
 namespace General
 {
+QString
+appendCommaToString(const QString& inputText)
+{
+    auto finalText = inputText.trimmed();
+    if (!finalText.isEmpty()) {
+        finalText += finalText.back() == ',' ? " " : ", ";
+    }
+    return finalText;
+}
+
+
 bool
 containsSemicolon(const QTableWidget *tableWidget)
 {

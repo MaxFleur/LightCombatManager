@@ -56,12 +56,17 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
     auto *const rulesetGroupBox = new QGroupBox(tr("Rules"));
     rulesetGroupBox->setLayout(rulesLayout);
 
+    auto* const additionalLabel = new QLabel(tr("<b>Additional:</b>"));
+
     m_indicatorMultipleEnemiesBox = new QCheckBox(tr("Set indicator for multiple Characters"));
     m_indicatorMultipleEnemiesBox->setChecked(m_additionalSettings->indicatorForMultipleChars);
     m_indicatorMultipleEnemiesBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
                                                  "an additional indicator is appended to each Character."));
 
-    auto* const additionalLabel = new QLabel(tr("<b>Additional:</b>"));
+    m_rollIniForMultipleCharsBox = new QCheckBox(tr("Roll Initiative for multiple Characters"));
+    m_rollIniForMultipleCharsBox->setChecked(m_additionalSettings->rollIniForMultipleChars);
+    m_rollIniForMultipleCharsBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
+                                                "the Initiative is rerolled for each duplicate."));
 
     auto *const buttonBox = new QDialogButtonBox;
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
@@ -72,6 +77,7 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
     mainLayout->addWidget(rulesetGroupBox);
     mainLayout->addWidget(additionalLabel);
     mainLayout->addWidget(m_indicatorMultipleEnemiesBox);
+    mainLayout->addWidget(m_rollIniForMultipleCharsBox);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
 
@@ -96,8 +102,9 @@ SettingsDialog::applyClicked()
         m_ruleSettings->write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
         return true;
     }
-    if (m_indicatorMultipleEnemiesBox->isChecked() != m_additionalSettings->indicatorForMultipleChars) {
-        m_additionalSettings->write(m_indicatorMultipleEnemiesBox->isChecked());
+    if (m_indicatorMultipleEnemiesBox->isChecked() != m_additionalSettings->indicatorForMultipleChars ||
+        m_rollIniForMultipleCharsBox->isChecked() != m_additionalSettings->rollIniForMultipleChars) {
+        m_additionalSettings->write(m_indicatorMultipleEnemiesBox->isChecked(), m_rollIniForMultipleCharsBox->isChecked());
     }
     return true;
 }

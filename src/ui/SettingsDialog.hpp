@@ -31,6 +31,7 @@ private:
     QPointer<QComboBox> m_rulesetBox;
     QPointer<QCheckBox> m_rollTieBox;
     QPointer<QCheckBox> m_indicatorMultipleEnemiesBox;
+    QPointer<QCheckBox> m_rollIniForMultipleCharsBox;
 
     std::shared_ptr<RuleSettings> m_ruleSettings;
     std::shared_ptr<AdditionalSettings> m_additionalSettings;

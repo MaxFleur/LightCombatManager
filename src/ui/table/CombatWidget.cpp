@@ -317,11 +317,9 @@ CombatWidget::addCharacter(
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
     for (int i = 0; i < instanceCount; i++) {
-        auto modifiedName = name;
-        if (instanceCount > 1 && m_additionalSettings->indicatorForMultipleChars) {
-            modifiedName += "#" + QString::number(i + 1);
-        }
-        m_char->storeCharacter(modifiedName, ini, mod, hp, isEnemy, addInfo);
+        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorForMultipleChars ? name + "#" + QString::number(i + 1) : name,
+                               instanceCount > 1 && m_additionalSettings->rollIniForMultipleChars ? Utils::General::rollDice() + mod : ini,
+                               mod, hp, isEnemy, addInfo);
     }
     resetNameInfoWidth(name, addInfo);
 

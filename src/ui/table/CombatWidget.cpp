@@ -317,8 +317,8 @@ CombatWidget::addCharacter(
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorForMultipleChars ? name + "#" + QString::number(i + 1) : name,
-                               instanceCount > 1 && m_additionalSettings->rollIniForMultipleChars ? Utils::General::rollDice() + mod : ini,
+        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorMultipleChars ? name + "#" + QString::number(i + 1) : name,
+                               instanceCount > 1 && m_additionalSettings->rollIniMultipleChars ? Utils::General::rollDice() + mod : ini,
                                mod, hp, isEnemy, addInfo);
     }
     resetNameInfoWidth(name, addInfo);

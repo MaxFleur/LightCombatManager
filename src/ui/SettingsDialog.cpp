@@ -4,7 +4,6 @@
 #include <QComboBox>
 #include <QDebug>
 #include <QDialogButtonBox>
-#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QLabel>
@@ -24,6 +23,8 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
 {
     setWindowTitle(tr("Settings"));
 
+    auto* const rulesLabel = new QLabel(tr("<b>Rules</b>"));
+
     m_rulesetBox = new QComboBox;
     m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", RuleSettings::Ruleset::PATHFINDER_1E_DND_35E);
     m_rulesetBox->addItem("Pathfinder 2E", RuleSettings::Ruleset::PATHFINDER_2E);
@@ -40,33 +41,21 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
 
     m_rollTieBox = new QCheckBox;
     m_rollTieBox->setChecked(m_ruleSettings->rollAutomatical);
-    auto *const rollTieLabel = new QLabel(tr("Roll automatically for tie"));
-    rollTieLabel->setToolTip(tr("If a tie occurs while Characters are generated for a Combat,\n"
+    m_rollTieBox->setText(tr("Roll automatically for tie"));
+    m_rollTieBox->setToolTip(tr("If a tie occurs while Characters are generated for a Combat,\n"
                                 "the app will automatically decide the turn order."));
-
-    auto *const rollTieLayout = new QHBoxLayout;
-    rollTieLayout->setAlignment(Qt::AlignLeft);
-    rollTieLayout->addWidget(m_rollTieBox);
-    rollTieLayout->addWidget(rollTieLabel);
-
-    auto *const rulesLayout = new QVBoxLayout;
-    rulesLayout->addLayout(rulesetLayout);
-    rulesLayout->addLayout(rollTieLayout);
-
-    auto *const rulesetGroupBox = new QGroupBox(tr("Rules"));
-    rulesetGroupBox->setLayout(rulesLayout);
 
     auto* const additionalLabel = new QLabel(tr("<b>Additional:</b>"));
 
-    m_indicatorMultipleEnemiesBox = new QCheckBox(tr("Set indicator for multiple Characters"));
-    m_indicatorMultipleEnemiesBox->setChecked(m_additionalSettings->indicatorForMultipleChars);
-    m_indicatorMultipleEnemiesBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
-                                                 "an additional indicator is appended to each Character."));
+    m_indicatorMultipleCharsBox = new QCheckBox(tr("Set Indicator for multiple Characters"));
+    m_indicatorMultipleCharsBox->setChecked(m_additionalSettings->indicatorMultipleChars);
+    m_indicatorMultipleCharsBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
+                                               "an additional indicator is appended to each Character."));
 
-    m_rollIniForMultipleCharsBox = new QCheckBox(tr("Roll Initiative for multiple Characters"));
-    m_rollIniForMultipleCharsBox->setChecked(m_additionalSettings->rollIniForMultipleChars);
-    m_rollIniForMultipleCharsBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
-                                                "the Initiative is rerolled for each duplicate."));
+    m_rollIniMultipleCharsBox = new QCheckBox(tr("Roll Initiative for multiple Characters"));
+    m_rollIniMultipleCharsBox->setChecked(m_additionalSettings->rollIniMultipleChars);
+    m_rollIniMultipleCharsBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
+                                             "the Initiative is rerolled for each duplicate."));
 
     auto *const buttonBox = new QDialogButtonBox;
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
@@ -74,10 +63,13 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
     auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
     auto *const mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(rulesetGroupBox);
+    mainLayout->addWidget(rulesLabel);
+    mainLayout->addLayout(rulesetLayout);
+    mainLayout->addWidget(m_rollTieBox);
+    mainLayout->addSpacing(20);
     mainLayout->addWidget(additionalLabel);
-    mainLayout->addWidget(m_indicatorMultipleEnemiesBox);
-    mainLayout->addWidget(m_rollIniForMultipleCharsBox);
+    mainLayout->addWidget(m_indicatorMultipleCharsBox);
+    mainLayout->addWidget(m_rollIniMultipleCharsBox);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
 
@@ -102,9 +94,9 @@ SettingsDialog::applyClicked()
         m_ruleSettings->write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
         return true;
     }
-    if (m_indicatorMultipleEnemiesBox->isChecked() != m_additionalSettings->indicatorForMultipleChars ||
-        m_rollIniForMultipleCharsBox->isChecked() != m_additionalSettings->rollIniForMultipleChars) {
-        m_additionalSettings->write(m_indicatorMultipleEnemiesBox->isChecked(), m_rollIniForMultipleCharsBox->isChecked());
+    if (m_indicatorMultipleCharsBox->isChecked() != m_additionalSettings->indicatorMultipleChars ||
+        m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings->rollIniMultipleChars) {
+        m_additionalSettings->write(m_indicatorMultipleCharsBox->isChecked(), m_rollIniMultipleCharsBox->isChecked());
     }
     return true;
 }

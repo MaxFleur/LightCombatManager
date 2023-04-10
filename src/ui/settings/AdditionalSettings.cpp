@@ -9,19 +9,19 @@ AdditionalSettings::AdditionalSettings()
 
 
 void
-AdditionalSettings::write(bool newIndicatorForMultipleChars,
-                          bool newRollIniForMultipleChars)
+AdditionalSettings::write(bool newIndicatorMultipleChars,
+                          bool newRollIniMultipleChars)
 {
     QSettings settings;
 
     settings.beginGroup("AdditionalSettings");
-    if (indicatorForMultipleChars != newIndicatorForMultipleChars) {
-        indicatorForMultipleChars = newIndicatorForMultipleChars;
-        settings.setValue("indicatorForMultipleChars", indicatorForMultipleChars);
+    if (indicatorMultipleChars != newIndicatorMultipleChars) {
+        indicatorMultipleChars = newIndicatorMultipleChars;
+        settings.setValue("indicatorMultipleChars", indicatorMultipleChars);
     }
-    if (rollIniForMultipleChars != newRollIniForMultipleChars) {
-        rollIniForMultipleChars = newRollIniForMultipleChars;
-        settings.setValue("rollIniForMultipleChars", newRollIniForMultipleChars);
+    if (rollIniMultipleChars != newRollIniMultipleChars) {
+        rollIniMultipleChars = newRollIniMultipleChars;
+        settings.setValue("rollIniMultipleChars", rollIniMultipleChars);
     }
     settings.endGroup();
 }
@@ -33,11 +33,11 @@ AdditionalSettings::read()
     QSettings settings;
 
     settings.beginGroup("AdditionalSettings");
-    indicatorForMultipleChars = settings.value("indicatorForMultipleChars").isValid() ?
-                                settings.value("indicatorForMultipleChars").toBool() :
-                                true;
-    rollIniForMultipleChars = settings.value("rollIniForMultipleChars").isValid() ?
-                              settings.value("rollIniForMultipleChars").toBool() :
-                              false;
+    indicatorMultipleChars = settings.value("indicatorMultipleChars").isValid() ?
+                             settings.value("indicatorMultipleChars").toBool() :
+                             true;
+    rollIniMultipleChars = settings.value("rollIniMultipleChars").isValid() ?
+                           settings.value("rollIniMultipleChars").toBool() :
+                           false;
     settings.endGroup();
 }

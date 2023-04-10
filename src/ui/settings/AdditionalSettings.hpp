@@ -8,12 +8,12 @@ public:
     AdditionalSettings();
 
     void
-    write(bool newIndicatorForMultipleChars,
-          bool newRollIniForMultipleChars);
+    write(bool newIndicatorMultipleChars,
+          bool newRollIniMultipleChars);
 
 public:
-    bool indicatorForMultipleChars = true;
-    bool rollIniForMultipleChars = false;
+    bool indicatorMultipleChars = true;
+    bool rollIniMultipleChars = false;
 
 private:
     void

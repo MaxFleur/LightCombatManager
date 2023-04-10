@@ -30,8 +30,8 @@ private slots:
 private:
     QPointer<QComboBox> m_rulesetBox;
     QPointer<QCheckBox> m_rollTieBox;
-    QPointer<QCheckBox> m_indicatorMultipleEnemiesBox;
-    QPointer<QCheckBox> m_rollIniForMultipleCharsBox;
+    QPointer<QCheckBox> m_indicatorMultipleCharsBox;
+    QPointer<QCheckBox> m_rollIniMultipleCharsBox;
 
     std::shared_ptr<RuleSettings> m_ruleSettings;
     std::shared_ptr<AdditionalSettings> m_additionalSettings;

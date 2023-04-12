@@ -33,12 +33,12 @@ Support for more d20-based rulesets might be added in the future.
 
 # Tools & Installation
 LCM is written in C++17. The following tools are used for development:
-* [Qt5](https://www.qt.io/) for the user interface
+* [Qt6 or Qt5](https://www.qt.io/) for the user interface
 * [Catch2](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 
-For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt5, CMake and Catch2 are available.\
+For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt, CMake and Catch2 are available. If no Qt6 installation is found on your system, the application searches for a Qt5 installation instead.\
 Alternatively, if you just want to run the application without any installing, just download the binaries provided with the latest release.
 
 ## Linux
@@ -59,8 +59,8 @@ The following description is focused on building the application with `cmake` an
 5. Hit `cmake.exe -G “Visual Studio 17 2022” -A x64 ..` This will create an sln-file. 
 6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
 7. Inside the build-file, a file named `Debug` or `Release` should have been created. Navigate to this folder and then to the `src` subdirectory.
-8. The exe-file for the application should be found here. To successfully run the exe, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
-   have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug). You also have to create a directory named
+8. The exe-file for the application should be found here. To successfully run the exe, `QT6Core.dll`, `QT6Widgets.dll` and `QT6Gui.dll` 
+   have to be in the same file path as the exe (`QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` for Qt5). You also have to create a directory named
    `platforms` in the same dir as the exe-file and copy the `qwindows.dll` into it. 
    
 # Contribution
@@ -68,4 +68,4 @@ The following description is focused on building the application with `cmake` an
 If there is a ruleset you wish to be supported or another feature you might want to be included, feel free to open a new issue.\
 If you want to contribute code, please format it using the provided `uncrustify.cfg` before opening a pull request. On Linux for example, you can format the entire repository's code with one single line:
 ```
-find . \( -name "*.cpp" -o -name "*.hpp" \) -exec uncrustify -c uncrustify.cfg --replace --no-backup {} + ?
+find . \( -name "*.cpp" -o -name "*.hpp" \) -exec uncrustify -c uncrustify.cfg --replace --no-backup {} +

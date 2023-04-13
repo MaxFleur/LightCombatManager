@@ -135,6 +135,8 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), this);
     auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this);
     auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
+    auto *const moveCharacterDownwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), this);
+    auto *const moveCharacterUpwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), this);
 
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
         m_tableWidget->clearSelection();
@@ -161,6 +163,12 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     connect(statusEffectShortcut, &QShortcut::activated, this, &CombatWidget::openStatusEffectDialog);
     connect(rerollIniShortcut, &QShortcut::activated, this, &CombatWidget::rerollIni);
     connect(editCombatShortcut, &QShortcut::activated, this, &CombatWidget::openAddCharacterDialog);
+    connect(moveCharacterDownwardShortcut, &QShortcut::activated, this, [this] {
+        switchCharacterPosition(true);
+    });
+    connect(moveCharacterUpwardShortcut, &QShortcut::activated, this, [this] {
+        switchCharacterPosition(false);
+    });
 }
 
 
@@ -475,6 +483,27 @@ CombatWidget::removeRow()
 
 
 void
+CombatWidget::switchCharacterPosition(bool goDown)
+{
+    // Do not fall out of table bounds
+    const auto originalIndex = m_tableWidget->currentRow();
+    if ((originalIndex == 0 && !goDown) || (originalIndex == m_tableWidget->rowCount() - 1 && goDown)) {
+        return;
+    }
+
+    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    saveOldState();
+
+    auto& characters = m_char->getCharacters();
+    const auto indexToSwap = goDown ? 1 : -1;
+    std::iter_swap(characters.begin() + originalIndex, characters.begin() + originalIndex + indexToSwap);
+
+    setRowAndPlayer();
+    pushOnUndoStack();
+}
+
+
+void
 CombatWidget::enteredRowChanged(bool goDown)
 {
     if (m_tableWidget->rowCount() == 0) {
@@ -578,9 +607,10 @@ void
 CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
+    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
 
     // Map from MainWindow coordinates to Table Widget coordinates
-    if (m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row() >= 0) {
+    if (currentRow >= 0) {
         // Status Effect, reroll, duplication and removal only if the cursor is above an item
         auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
             openStatusEffectDialog();
@@ -606,6 +636,23 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         });
         removeRowAction->setShortcut(Qt::Key_Delete);
         removeRowAction->setShortcutVisibleInContextMenu(true);
+
+        if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
+            auto *const moveCharacterUpwardAction = menu->addAction(tr("Move Upward"), this, [this] {
+                switchCharacterPosition(false);
+            });
+            moveCharacterUpwardAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up));
+            moveCharacterUpwardAction->setShortcutVisibleInContextMenu(true);
+
+            auto *const moveCharacterDownwardAction = menu->addAction(tr("Move Downward"), this, [this] {
+                switchCharacterPosition(true);
+            });
+            moveCharacterDownwardAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down));
+            moveCharacterDownwardAction->setShortcutVisibleInContextMenu(true);
+
+            moveCharacterUpwardAction->setEnabled(currentRow > 0);
+            moveCharacterDownwardAction->setEnabled(currentRow < m_tableWidget->rowCount() - 1);
+        }
 
         menu->addSeparator();
     }

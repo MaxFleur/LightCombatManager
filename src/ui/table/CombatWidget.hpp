@@ -123,6 +123,9 @@ private:
     removeRow();
 
     void
+    switchCharacterPosition(bool goDown);
+
+    void
     enteredRowChanged(bool goDown);
 
     void

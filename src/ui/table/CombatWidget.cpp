@@ -135,6 +135,7 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), this);
     auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this);
     auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), this);
+    auto *const resortTableShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
     auto *const moveCharacterDownwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), this);
     auto *const moveCharacterUpwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), this);
 
@@ -163,6 +164,7 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     connect(statusEffectShortcut, &QShortcut::activated, this, &CombatWidget::openStatusEffectDialog);
     connect(rerollIniShortcut, &QShortcut::activated, this, &CombatWidget::rerollIni);
     connect(editCombatShortcut, &QShortcut::activated, this, &CombatWidget::openAddCharacterDialog);
+    connect(resortTableShortcut, &QShortcut::activated, this, &CombatWidget::sortTable);
     connect(moveCharacterDownwardShortcut, &QShortcut::activated, this, [this] {
         switchCharacterPosition(true);
     });
@@ -672,6 +674,8 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
             sortTable();
         });
+        resortAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
+        resortAction->setShortcutVisibleInContextMenu(true);
         menu->addSeparator();
     }
 

@@ -134,7 +134,7 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
     auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), this);
     auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this);
-    auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
+    auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), this);
     auto *const moveCharacterDownwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), this);
     auto *const moveCharacterUpwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), this);
 
@@ -665,7 +665,7 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
         openAddCharacterDialog();
     });
-    openAddCharacterDialogAction->setShortcut(Qt::CTRL | Qt::Key_R);
+    openAddCharacterDialogAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N));
     openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
     if (m_tableWidget->rowCount() > 1) {

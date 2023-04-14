@@ -5,10 +5,12 @@ add_subdirectory(utils)
 IF (WIN32)
     add_executable(LightCombatManager WIN32
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+        ../resources/resources.qrc
     )
 ELSE()
     add_executable(LightCombatManager
         ${CMAKE_CURRENT_LIST_DIR}/main.cpp
+        ../resources/resources.qrc
     )
 ENDIF()
 

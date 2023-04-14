@@ -51,7 +51,9 @@ MainWindow::MainWindow()
         saveAsAction->setEnabled(enable);
     });
 
-    auto *const openSettingsAction = new QAction(tr("Settings..."), this);
+    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+    auto *const openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/gear_white.svg") : QIcon(":/icons/gear_black.svg"),
+                                                 tr("Settings..."), this);
     connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 
     auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);

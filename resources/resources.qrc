@@ -1,0 +1,6 @@
+<RCC>
+    <qresource>
+        <file>icons/gear_black.svg</file>
+        <file>icons/gear_white.svg</file>
+    </qresource>
+</RCC>

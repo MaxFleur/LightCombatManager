@@ -2,6 +2,7 @@
 
 #include "CharacterHandler.hpp"
 
+class QColor;
 class QFont;
 class QTableWidget;
 
@@ -37,5 +38,9 @@ getRulesetName(unsigned int ruleset);
 
 [[nodiscard]] QString
 getAutoRollEnabled(unsigned int autoRollEnabled);
+
+// Calculate the luminance value of a certain color, determine if the color is in dark mode
+[[nodiscard]] bool
+isColorDark(const QColor& color);
 }
 }

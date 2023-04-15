@@ -2,5 +2,10 @@
     <qresource>
         <file>icons/gear_black.svg</file>
         <file>icons/gear_white.svg</file>
+
+        <file>icons/redo_black.svg</file>
+        <file>icons/redo_white.svg</file>
+        <file>icons/undo_black.svg</file>
+        <file>icons/undo_white.svg</file>
     </qresource>
 </RCC>

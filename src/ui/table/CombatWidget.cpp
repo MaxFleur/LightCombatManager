@@ -66,9 +66,31 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     m_tableWidget->setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
     m_tableWidget->setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
 
+    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+
+    m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
+    m_undoAction->setShortcuts(QKeySequence::Undo);
+    m_undoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/undo_white.svg") : QIcon(":/icons/undo_black.svg"));
+    this->addAction(m_undoAction);
+
+    m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
+    m_redoAction->setShortcuts(QKeySequence::Redo);
+    m_redoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/redo_white.svg") : QIcon(":/icons/redo_black.svg"));
+    this->addAction(m_redoAction);
+
     // Spinbox for the hp column
     auto *const delegateSpinBox = new DelegateSpinBox(this);
     m_tableWidget->setItemDelegateForColumn(COL_HP, delegateSpinBox);
+
+    auto* const undoButton = new QToolButton;
+    undoButton->setToolTip(tr("Undo last action."));
+    undoButton->setShortcut(QKeySequence::Undo);
+    undoButton->setDefaultAction(m_undoAction);
+
+    auto* const redoButton = new QToolButton;
+    redoButton->setToolTip(tr("Redo last action."));
+    redoButton->setShortcut(QKeySequence::Redo);
+    redoButton->setDefaultAction(m_redoAction);
 
     auto *const downButton = new QToolButton;
     downButton->setArrowType(Qt::DownArrow);
@@ -125,14 +147,6 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     mainLayout->addWidget(m_tableWidget);
     mainLayout->addLayout(lowerLayout);
     setLayout(mainLayout);
-
-    m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
-    m_undoAction->setShortcuts(QKeySequence::Undo);
-    this->addAction(m_undoAction);
-
-    m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
-    m_redoAction->setShortcuts(QKeySequence::Redo);
-    this->addAction(m_redoAction);
 
     auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_D), this);
     auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);

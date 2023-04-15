@@ -112,9 +112,13 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     lowerLayout->addWidget(m_roundCounterLabel);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(m_currentPlayerLabel);
-    lowerLayout->addWidget(spacer);
+    lowerLayout->addSpacing(SPACING);
+    lowerLayout->addWidget(undoButton);
+    lowerLayout->addWidget(redoButton);
+    lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(upButton);
     lowerLayout->addWidget(downButton);
+    lowerLayout->addWidget(spacer);
     lowerLayout->addWidget(exitButton);
 
     auto *const mainLayout = new QVBoxLayout(this);

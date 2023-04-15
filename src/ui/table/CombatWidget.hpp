@@ -129,8 +129,8 @@ private:
     enteredRowChanged(bool goDown);
 
     void
-    showTablePart(bool show,
-                  int  valueType);
+    setTableOption(bool option,
+                   int  valueType);
 
     void
     resetNameInfoWidth(const QString& strName,

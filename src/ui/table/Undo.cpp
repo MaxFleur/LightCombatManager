@@ -1,6 +1,5 @@
 #include "Undo.hpp"
 
-#include <QCheckBox>
 #include <QDebug>
 #include <QLabel>
 #include <QObject>
@@ -10,10 +9,12 @@
 
 Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *CombatWidget,
            unsigned int* rowEntered, unsigned int* roundCounter,
-           QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel) :
+           QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
+           bool colorTableRows) :
     m_oldData(oldData), m_newData(newData), m_combatWidget(CombatWidget),
     m_rowEntered(rowEntered), m_roundCounter(roundCounter),
-    m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel)
+    m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
+    m_colorTableRows(colorTableRows)
 {
 }
 
@@ -62,6 +63,7 @@ Undo::setCombatWidget(bool undo)
     // Set the remaining label and font data
     m_roundCounterLabel->setText(QObject::tr("Round ") + QString::number(undoData.roundCounter));
     Utils::Table::setRowAndPlayer(tableWidget, m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered, undoData.roundCounter);
+    Utils::Table::setTableRowColor(tableWidget, !m_colorTableRows);
 
     emit m_combatWidget->tableHeightSet(m_combatWidget->getHeight());
 

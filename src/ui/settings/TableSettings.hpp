@@ -8,17 +8,19 @@ public:
     TableSettings();
 
     enum ValueType {
-        INI_SHOWN = 0,
-        MOD_SHOWN = 1
+        INI_SHOWN   = 0,
+        MOD_SHOWN   = 1,
+        COLOR_TABLE = 2
     };
 
     void
-    write(bool      value,
+    write(bool      valueToWrite,
           ValueType valueType);
 
 public:
     bool iniShown = true;
     bool modifierShown = true;
+    bool colorTableRows = false;
 
 private:
     void

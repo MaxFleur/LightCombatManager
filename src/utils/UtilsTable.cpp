@@ -1,5 +1,6 @@
 #include "UtilsTable.hpp"
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QDebug>
 #include <QHBoxLayout>
@@ -106,6 +107,37 @@ setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *cu
         return;
     }
     currentPlayerLabel->setText(QObject::tr("Current: ") + tableWidget->item(rowEntered, 0)->text());
+}
+
+
+void
+setTableRowColor(QTableWidget *tableWidget, bool resetColor)
+{
+    tableWidget->blockSignals(true);
+
+    const auto color = [](bool resetColor, bool isEnemy) {
+                           if (resetColor) {
+                               return QApplication::palette().color(QPalette::Base);
+                           } else {
+                               return isEnemy ? QColor(255, 194, 10, 75) : QColor(12, 123, 220, 75);
+                           }
+                       };
+
+    for (int i = 0; i < tableWidget->rowCount(); i++) {
+        const auto isEnemy = tableWidget->cellWidget(i, COL_ENEMY)->findChild<QCheckBox *>()->isChecked();
+        for (int j = 0; j < tableWidget->columnCount(); j++) {
+            if (j != COL_ENEMY) {
+                tableWidget->item(i, j)->setBackground(color(resetColor, isEnemy));
+            } else {
+                QPalette palette;
+                palette.setColor(QPalette::Base, color(resetColor, isEnemy));
+                tableWidget->cellWidget(i, COL_ENEMY)->setAutoFillBackground(!resetColor);
+                tableWidget->cellWidget(i, COL_ENEMY)->setPalette(palette);
+            }
+        }
+    }
+
+    tableWidget->blockSignals(false);
 }
 
 

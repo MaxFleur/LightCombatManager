@@ -226,7 +226,8 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char);
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
     // We got everything, so push
-    m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));
+    m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
+                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings->colorTableRows));
 
     // Update table
     emit changeOccured();
@@ -547,20 +548,23 @@ CombatWidget::enteredRowChanged(bool goDown)
 
 
 void
-CombatWidget::showTablePart(bool show, int valueType)
+CombatWidget::setTableOption(bool option, int valueType)
 {
     switch (valueType) {
     case 0:
-        m_tableWidget->setColumnHidden(COL_INI, !show);
-        m_tableSettings->write(show, TableSettings::ValueType::INI_SHOWN);
+        m_tableWidget->setColumnHidden(COL_INI, !option);
         break;
     case 1:
-        m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
-        m_tableSettings->write(show, TableSettings::ValueType::MOD_SHOWN);
+        m_tableWidget->setColumnHidden(COL_MODIFIER, !option);
+        break;
+    case 2:
+        Utils::Table::setTableRowColor(m_tableWidget, !option);
         break;
     default:
         break;
     }
+
+    m_tableSettings->write(option, static_cast<TableSettings::ValueType>(valueType));
 }
 
 
@@ -682,16 +686,22 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     auto *const optionMenu = menu->addMenu("Options");
 
     auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
-        showTablePart(show, 0);
+        setTableOption(show, 0);
     });
     iniAction->setCheckable(true);
     iniAction->setChecked(m_tableSettings->iniShown);
 
     auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
-        showTablePart(show, 1);
+        setTableOption(show, 1);
     });
     modifierAction->setCheckable(true);
     modifierAction->setChecked(m_tableSettings->modifierShown);
+
+    auto *const colorTableAction = optionMenu->addAction(tr("Color Table Rows for Friends and Enemies"), this, [this] (bool show) {
+        setTableOption(show, 2);
+    });
+    colorTableAction->setCheckable(true);
+    colorTableAction->setChecked(m_tableSettings->colorTableRows);
 
     menu->exec(event->globalPos());
 }

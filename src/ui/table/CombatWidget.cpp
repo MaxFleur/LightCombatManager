@@ -683,7 +683,7 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         menu->addSeparator();
     }
 
-    auto *const optionMenu = menu->addMenu("Options");
+    auto *const optionMenu = menu->addMenu("Table Options");
 
     auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
         setTableOption(show, 0);
@@ -697,7 +697,7 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     modifierAction->setCheckable(true);
     modifierAction->setChecked(m_tableSettings->modifierShown);
 
-    auto *const colorTableAction = optionMenu->addAction(tr("Color Table Rows for Friends and Enemies"), this, [this] (bool show) {
+    auto *const colorTableAction = optionMenu->addAction(tr("Color Rows for Friends and Enemies"), this, [this] (bool show) {
         setTableOption(show, 2);
     });
     colorTableAction->setCheckable(true);

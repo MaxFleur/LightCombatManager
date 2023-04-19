@@ -52,7 +52,7 @@ MainWindow::MainWindow()
     });
 
     const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
-    auto *const openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/gear_white.svg") : QIcon(":/icons/gear_black.svg"),
+    auto *const openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"),
                                                  tr("Settings..."), this);
     connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 

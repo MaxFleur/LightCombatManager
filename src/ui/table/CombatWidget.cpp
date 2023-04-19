@@ -70,12 +70,12 @@ CombatWidget::CombatWidget(bool                                isDataStored,
 
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);
-    m_undoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/undo_white.svg") : QIcon(":/icons/undo_black.svg"));
+    m_undoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/undo_white.png") : QIcon(":/icons/undo_black.png"));
     this->addAction(m_undoAction);
 
     m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
     m_redoAction->setShortcuts(QKeySequence::Redo);
-    m_redoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/redo_white.svg") : QIcon(":/icons/redo_black.svg"));
+    m_redoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/redo_white.png") : QIcon(":/icons/redo_black.png"));
     this->addAction(m_redoAction);
 
     // Spinbox for the hp column

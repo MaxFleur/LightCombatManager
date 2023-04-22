@@ -126,21 +126,18 @@ CombatWidget::CombatWidget(bool                                isDataStored,
         }
     });
 
-    auto *const spacer = new QWidget();
-    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
     // Lower layout
     auto *const lowerLayout = new QHBoxLayout();
     lowerLayout->addWidget(m_roundCounterLabel);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(m_currentPlayerLabel);
-    lowerLayout->addSpacing(SPACING);
+    lowerLayout->addStretch();
     lowerLayout->addWidget(undoButton);
     lowerLayout->addWidget(redoButton);
     lowerLayout->addSpacing(SPACING);
-    lowerLayout->addWidget(upButton);
     lowerLayout->addWidget(downButton);
-    lowerLayout->addWidget(spacer);
+    lowerLayout->addWidget(upButton);
+    lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(exitButton);
 
     auto *const mainLayout = new QVBoxLayout(this);

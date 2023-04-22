@@ -345,12 +345,13 @@ CombatWidget::addCharacter(
     saveOldState();
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
+    auto trimmedName = name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorMultipleChars ? name + "#" + QString::number(i + 1) : name,
+        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
                                instanceCount > 1 && m_additionalSettings->rollIniMultipleChars ? Utils::General::rollDice() + mod : ini,
                                mod, hp, isEnemy, addInfo);
     }
-    resetNameInfoWidth(name, addInfo);
+    resetNameInfoWidth(trimmedName, addInfo);
 
     pushOnUndoStack();
 }

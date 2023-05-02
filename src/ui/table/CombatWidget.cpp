@@ -47,7 +47,7 @@ CombatWidget::CombatWidget(bool                                isDataStored,
     m_undoStack = new QUndoStack(this);
 
     QStringList tableHeader;
-    tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional information") << "";
+    tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional Information") << "";
 
     m_tableWidget->setHorizontalHeaderLabels(tableHeader);
     m_tableWidget->horizontalHeader()->setStretchLastSection(true);

@@ -8,7 +8,7 @@ project(LightCombatManager LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 COMPONENTS Widgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if(${Qt6_FOUND})
     find_package(QT NAMES Qt6 COMPONENTS Widgets REQUIRED)

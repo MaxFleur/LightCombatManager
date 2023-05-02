@@ -9,15 +9,15 @@
 
 # LightCombatManager
 
-### A small  cross-platform combat manager for d20-based role-playing games, based on Qt.
+### A small cross-platform combat manager for d20-based role-playing games, based on Qt.
 
-Using LightCombatManager (or  just **LCM**), you can easily create characters with initiative values, a HP counter and additional information. You can also add status effects to each character.\
+With LightCombatManager (or just **LCM**), characters with initiative values, a HP counter and additional information can be easily created. It is also possible to add status effects to each character.\
 ![image](https://user-images.githubusercontent.com/15110943/221289829-77cfe413-9cf5-4e2c-90f3-2c5af763a4dc.png)
 
-After creation, the program creates a full combat table, which you can use to easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the deletion and subsequent addition of characters.\
+After creation, the program creates a full combat table, which can be used to easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the deletion and subsequent addition of characters.\
 ![image](https://user-images.githubusercontent.com/15110943/221291366-8e871881-9487-421d-844c-9012130fb71e.png)
 
-If the game ends, but the current combat is not finished yet, you can save the table as a csv file, then reopen it later and continue the combat.
+If the game ends, but the current combat is not finished yet, the combat table can be saved as a csv file and reopened later to continue the combat.
 
 ### Supported rulesets
 
@@ -38,8 +38,8 @@ LCM is written in C++17. The following tools are used for development:
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 
-For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt, CMake and Catch2 are available. If no Qt6 installation is found on your system, the application searches for a Qt5 installation instead.\
-Alternatively, if you just want to run the application without any installing, just download the binaries provided with the latest release.
+For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt, CMake and Catch2 are available. If no Qt6 installation is found on the system, the application searches for a Qt5 installation instead.\
+Alternatively, if you want to run the application without any additional installing, just download the binaries provided with the latest release.
 
 ## Linux
 

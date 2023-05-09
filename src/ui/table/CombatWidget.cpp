@@ -27,16 +27,16 @@
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
 
-CombatWidget::CombatWidget(bool                                isDataStored,
-                           std::shared_ptr<AdditionalSettings> AdditionalSettings,
+CombatWidget::CombatWidget(std::shared_ptr<AdditionalSettings> AdditionalSettings,
                            std::shared_ptr<RuleSettings>       RuleSettings,
-                           int                                 mainWidgetWidth,
                            QString                             data,
+                           int                                 mainWidgetWidth,
+                           bool                                isDataStored,
                            QWidget *                           parent)
-    : m_isDataStored(isDataStored),
-    m_additionalSettings(AdditionalSettings),
+    : m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
-    m_loadedFileData(data)
+    m_loadedFileData(data),
+    m_isDataStored(isDataStored)
 {
     m_char = std::make_shared<CharacterHandler>();
     m_tableSettings = std::make_shared<TableSettings>();

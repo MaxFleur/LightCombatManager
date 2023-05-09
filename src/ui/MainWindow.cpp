@@ -282,7 +282,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
-    m_combatWidget = new CombatWidget(isDataStored, m_additionalSettings, m_ruleSettings, this->width(), data, this);
+    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, data, this->width(), isDataStored, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {

@@ -7,7 +7,6 @@ main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.setApplicationName("LCM");
-    a.setOrganizationName("LCM");
 
     MainWindow w;
 

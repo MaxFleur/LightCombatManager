@@ -82,7 +82,7 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
     saveButton->setShortcut(QKeySequence::Save);
     const auto saveShortcutText = "Save this Character (" + QKeySequence(QKeySequence::Save).toString() + ").";
     saveButton->setToolTip(tr(saveShortcutText.toLocal8Bit().constData()));
-    statusEffectButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+    statusEffectButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
 
     m_animatedLabel = new QLabel;
     m_timer = new QTimer(this);
@@ -224,11 +224,7 @@ AddCharacterDialog::openStatusEffectDialog()
     // Open dialog
     auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
     if (dialog->exec() == QDialog::Accepted) {
-        // If accepted, add status effect
-        auto itemText = m_addInfoEdit->text();
-        if (!itemText.isEmpty() && itemText.back() != " ") {
-            itemText += " ";
-        }
+        const auto itemText = Utils::General::appendCommaToString(m_addInfoEdit->text());
         m_addInfoEdit->setText(itemText + dialog->getEffect());
     }
 }

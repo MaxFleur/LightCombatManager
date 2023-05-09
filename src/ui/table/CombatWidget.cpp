@@ -18,6 +18,7 @@
 #include <QVBoxLayout>
 
 #include "AddCharacterDialog.hpp"
+#include "AdditionalSettings.hpp"
 #include "DelegateSpinBox.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
@@ -26,9 +27,16 @@
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
 
-CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> RuleSettings,
-                           int mainWidgetWidth, QString data, QWidget *parent)
-    : m_isDataStored(isDataStored), m_ruleSettings(RuleSettings), m_loadedFileData(data)
+CombatWidget::CombatWidget(bool                                isDataStored,
+                           std::shared_ptr<AdditionalSettings> AdditionalSettings,
+                           std::shared_ptr<RuleSettings>       RuleSettings,
+                           int                                 mainWidgetWidth,
+                           QString                             data,
+                           QWidget *                           parent)
+    : m_isDataStored(isDataStored),
+    m_additionalSettings(AdditionalSettings),
+    m_ruleSettings(RuleSettings),
+    m_loadedFileData(data)
 {
     m_char = std::make_shared<CharacterHandler>();
     m_tableSettings = std::make_shared<TableSettings>();
@@ -39,7 +47,7 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_undoStack = new QUndoStack(this);
 
     QStringList tableHeader;
-    tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional information") << "";
+    tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional Information") << "";
 
     m_tableWidget->setHorizontalHeaderLabels(tableHeader);
     m_tableWidget->horizontalHeader()->setStretchLastSection(true);
@@ -58,19 +66,41 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     m_tableWidget->setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
     m_tableWidget->setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
 
+    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+
+    m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
+    m_undoAction->setShortcuts(QKeySequence::Undo);
+    m_undoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/undo_white.png") : QIcon(":/icons/undo_black.png"));
+    this->addAction(m_undoAction);
+
+    m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
+    m_redoAction->setShortcuts(QKeySequence::Redo);
+    m_redoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/redo_white.png") : QIcon(":/icons/redo_black.png"));
+    this->addAction(m_redoAction);
+
     // Spinbox for the hp column
     auto *const delegateSpinBox = new DelegateSpinBox(this);
     m_tableWidget->setItemDelegateForColumn(COL_HP, delegateSpinBox);
 
+    auto* const undoButton = new QToolButton;
+    undoButton->setToolTip(tr("Undo last action."));
+    undoButton->setShortcut(QKeySequence::Undo);
+    undoButton->setDefaultAction(m_undoAction);
+
+    auto* const redoButton = new QToolButton;
+    redoButton->setToolTip(tr("Redo last action."));
+    redoButton->setShortcut(QKeySequence::Redo);
+    redoButton->setDefaultAction(m_redoAction);
+
     auto *const downButton = new QToolButton;
     downButton->setArrowType(Qt::DownArrow);
     downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
-    downButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Down));
+    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
 
     auto *const upButton = new QToolButton;
     upButton->setArrowType(Qt::UpArrow);
     upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
-    upButton->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Up));
+    upButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Up));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
@@ -96,17 +126,18 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
         }
     });
 
-    auto *const spacer = new QWidget();
-    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
     // Lower layout
     auto *const lowerLayout = new QHBoxLayout();
     lowerLayout->addWidget(m_roundCounterLabel);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(m_currentPlayerLabel);
-    lowerLayout->addWidget(spacer);
-    lowerLayout->addWidget(upButton);
+    lowerLayout->addStretch();
+    lowerLayout->addWidget(undoButton);
+    lowerLayout->addWidget(redoButton);
+    lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(downButton);
+    lowerLayout->addWidget(upButton);
+    lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(exitButton);
 
     auto *const mainLayout = new QVBoxLayout(this);
@@ -114,19 +145,14 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     mainLayout->addLayout(lowerLayout);
     setLayout(mainLayout);
 
-    m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
-    m_undoAction->setShortcuts(QKeySequence::Undo);
-    this->addAction(m_undoAction);
-
-    m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
-    m_redoAction->setShortcuts(QKeySequence::Redo);
-    this->addAction(m_redoAction);
-
-    auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), this);
+    auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_D), this);
     auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
-    auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_E), this);
-    auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_I), this);
-    auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_R), this);
+    auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), this);
+    auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this);
+    auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), this);
+    auto *const resortTableShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
+    auto *const moveCharacterDownwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), this);
+    auto *const moveCharacterUpwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), this);
 
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
         m_tableWidget->clearSelection();
@@ -153,6 +179,13 @@ CombatWidget::CombatWidget(bool isDataStored, std::shared_ptr<RuleSettings> Rule
     connect(statusEffectShortcut, &QShortcut::activated, this, &CombatWidget::openStatusEffectDialog);
     connect(rerollIniShortcut, &QShortcut::activated, this, &CombatWidget::rerollIni);
     connect(editCombatShortcut, &QShortcut::activated, this, &CombatWidget::openAddCharacterDialog);
+    connect(resortTableShortcut, &QShortcut::activated, this, &CombatWidget::sortTable);
+    connect(moveCharacterDownwardShortcut, &QShortcut::activated, this, [this] {
+        switchCharacterPosition(true);
+    });
+    connect(moveCharacterUpwardShortcut, &QShortcut::activated, this, [this] {
+        switchCharacterPosition(false);
+    });
 }
 
 
@@ -208,7 +241,8 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char);
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
     // We got everything, so push
-    m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter, m_roundCounterLabel, m_currentPlayerLabel));
+    m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
+                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings->colorTableRows));
 
     // Update table
     emit changeOccured();
@@ -286,12 +320,7 @@ CombatWidget::openStatusEffectDialog()
 
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
-            auto itemText = characters.at(i.row()).additionalInf;
-            itemText = itemText.trimmed();
-            // Append a comma, if the content does not end with one already
-            if (!itemText.isEmpty()) {
-                itemText += itemText.back() == "," ? " " : ", ";
-            }
+            const auto itemText = Utils::General::appendCommaToString(characters.at(i.row()).additionalInf);
             characters[i.row()].additionalInf = itemText + dialog->getEffect();
         }
         // Change table
@@ -313,10 +342,13 @@ CombatWidget::addCharacter(
     saveOldState();
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
+    auto trimmedName = name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(name, ini, mod, hp, isEnemy, addInfo);
+        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
+                               instanceCount > 1 && m_additionalSettings->rollIniMultipleChars ? Utils::General::rollDice() + mod : ini,
+                               mod, hp, isEnemy, addInfo);
     }
-    resetNameInfoWidth(name, addInfo);
+    resetNameInfoWidth(trimmedName, addInfo);
 
     pushOnUndoStack();
 }
@@ -470,6 +502,27 @@ CombatWidget::removeRow()
 
 
 void
+CombatWidget::switchCharacterPosition(bool goDown)
+{
+    // Do not fall out of table bounds
+    const auto originalIndex = m_tableWidget->currentRow();
+    if ((originalIndex == 0 && !goDown) || (originalIndex == m_tableWidget->rowCount() - 1 && goDown)) {
+        return;
+    }
+
+    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    saveOldState();
+
+    auto& characters = m_char->getCharacters();
+    const auto indexToSwap = goDown ? 1 : -1;
+    std::iter_swap(characters.begin() + originalIndex, characters.begin() + originalIndex + indexToSwap);
+
+    setRowAndPlayer();
+    pushOnUndoStack();
+}
+
+
+void
 CombatWidget::enteredRowChanged(bool goDown)
 {
     if (m_tableWidget->rowCount() == 0) {
@@ -511,20 +564,23 @@ CombatWidget::enteredRowChanged(bool goDown)
 
 
 void
-CombatWidget::showTablePart(bool show, int valueType)
+CombatWidget::setTableOption(bool option, int valueType)
 {
     switch (valueType) {
     case 0:
-        m_tableWidget->setColumnHidden(COL_INI, !show);
-        m_tableSettings->write(show, TableSettings::ValueType::INI_SHOWN);
+        m_tableWidget->setColumnHidden(COL_INI, !option);
         break;
     case 1:
-        m_tableWidget->setColumnHidden(COL_MODIFIER, !show);
-        m_tableSettings->write(show, TableSettings::ValueType::MOD_SHOWN);
+        m_tableWidget->setColumnHidden(COL_MODIFIER, !option);
+        break;
+    case 2:
+        Utils::Table::setTableRowColor(m_tableWidget, !option);
         break;
     default:
         break;
     }
+
+    m_tableSettings->write(option, static_cast<TableSettings::ValueType>(valueType));
 }
 
 
@@ -573,26 +629,27 @@ void
 CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
+    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
 
     // Map from MainWindow coordinates to Table Widget coordinates
-    if (m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row() >= 0) {
+    if (currentRow >= 0) {
         // Status Effect, reroll, duplication and removal only if the cursor is above an item
         auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
             openStatusEffectDialog();
         });
-        statusEffectAction->setShortcut(Qt::CTRL + Qt::Key_E);
+        statusEffectAction->setShortcut(Qt::CTRL | Qt::Key_E);
         statusEffectAction->setShortcutVisibleInContextMenu(true);
 
         // Enable only for a single selected character
         if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
             auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &CombatWidget::rerollIni);
-            rerollIniAction->setShortcut(Qt::CTRL + Qt::Key_I);
+            rerollIniAction->setShortcut(Qt::CTRL | Qt::Key_I);
             rerollIniAction->setShortcutVisibleInContextMenu(true);
 
             auto *const duplicateRowAction = menu->addAction(tr("Duplicate"), this, [this] () {
                 duplicateRow();
             });
-            duplicateRowAction->setShortcut(Qt::CTRL + Qt::Key_D);
+            duplicateRowAction->setShortcut(Qt::CTRL | Qt::Key_D);
             duplicateRowAction->setShortcutVisibleInContextMenu(true);
         }
 
@@ -601,6 +658,23 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         });
         removeRowAction->setShortcut(Qt::Key_Delete);
         removeRowAction->setShortcutVisibleInContextMenu(true);
+
+        if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
+            auto *const moveCharacterUpwardAction = menu->addAction(tr("Move Upward"), this, [this] {
+                switchCharacterPosition(false);
+            });
+            moveCharacterUpwardAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up));
+            moveCharacterUpwardAction->setShortcutVisibleInContextMenu(true);
+
+            auto *const moveCharacterDownwardAction = menu->addAction(tr("Move Downward"), this, [this] {
+                switchCharacterPosition(true);
+            });
+            moveCharacterDownwardAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down));
+            moveCharacterDownwardAction->setShortcutVisibleInContextMenu(true);
+
+            moveCharacterUpwardAction->setEnabled(currentRow > 0);
+            moveCharacterDownwardAction->setEnabled(currentRow < m_tableWidget->rowCount() - 1);
+        }
 
         menu->addSeparator();
     }
@@ -613,29 +687,37 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
         openAddCharacterDialog();
     });
-    openAddCharacterDialogAction->setShortcut(Qt::CTRL + Qt::Key_R);
+    openAddCharacterDialogAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N));
     openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
 
     if (m_tableWidget->rowCount() > 1) {
         auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
             sortTable();
         });
+        resortAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
+        resortAction->setShortcutVisibleInContextMenu(true);
         menu->addSeparator();
     }
 
-    auto *const optionMenu = menu->addMenu("Options");
+    auto *const optionMenu = menu->addMenu("Table Options");
 
     auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
-        showTablePart(show, 0);
+        setTableOption(show, 0);
     });
     iniAction->setCheckable(true);
     iniAction->setChecked(m_tableSettings->iniShown);
 
     auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
-        showTablePart(show, 1);
+        setTableOption(show, 1);
     });
     modifierAction->setCheckable(true);
     modifierAction->setChecked(m_tableSettings->modifierShown);
+
+    auto *const colorTableAction = optionMenu->addAction(tr("Color Rows for Friends and Enemies"), this, [this] (bool show) {
+        setTableOption(show, 2);
+    });
+    colorTableAction->setCheckable(true);
+    colorTableAction->setChecked(m_tableSettings->colorTableRows);
 
     menu->exec(event->globalPos());
 }

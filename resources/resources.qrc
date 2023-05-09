@@ -1,0 +1,11 @@
+<RCC>
+    <qresource>
+        <file>icons/gear_black.png</file>
+        <file>icons/gear_white.png</file>
+
+        <file>icons/redo_black.png</file>
+        <file>icons/redo_white.png</file>
+        <file>icons/undo_black.png</file>
+        <file>icons/undo_white.png</file>
+    </qresource>
+</RCC>

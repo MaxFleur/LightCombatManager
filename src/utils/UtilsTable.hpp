@@ -35,6 +35,10 @@ setRowAndPlayer(QTableWidget *tableWidget,
                 int           rowEntered,
                 int           roundCounter);
 
+void
+setTableRowColor(QTableWidget *tableWidget,
+                 bool          resetColor);
+
 // Store the table cell values in a vector
 [[nodiscard]] QVector<QVector<QVariant> >
 tableDataFromWidget(const QTableWidget *tableWidget);

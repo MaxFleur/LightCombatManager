@@ -10,6 +10,7 @@ class QAction;
 class QLabel;
 class QUndoStack;
 
+class AdditionalSettings;
 class RuleSettings;
 class TableSettings;
 
@@ -18,11 +19,12 @@ class CombatWidget : public QWidget {
     Q_OBJECT
 
 public:
-    CombatWidget(bool                          isDataStored,
-                 std::shared_ptr<RuleSettings> RuleSettings,
-                 int                           mainWidgetWidth,
-                 QString                       data = "",
-                 QWidget*                      parent = 0);
+    CombatWidget(bool                                isDataStored,
+                 std::shared_ptr<AdditionalSettings> AdditionalSettings,
+                 std::shared_ptr<RuleSettings>       RuleSettings,
+                 int                                 mainWidgetWidth,
+                 QString                             data = "",
+                 QWidget*                            parent = 0);
 
     void
     generateTable();
@@ -121,11 +123,14 @@ private:
     removeRow();
 
     void
+    switchCharacterPosition(bool goDown);
+
+    void
     enteredRowChanged(bool goDown);
 
     void
-    showTablePart(bool show,
-                  int  valueType);
+    setTableOption(bool option,
+                   int  valueType);
 
     void
     resetNameInfoWidth(const QString& strName,
@@ -152,6 +157,7 @@ private:
     QString m_loadedFileData;
 
     CharacterHandlerRef m_char;
+    std::shared_ptr<AdditionalSettings> m_additionalSettings;
     std::shared_ptr<RuleSettings> m_ruleSettings;
     std::shared_ptr<TableSettings> m_tableSettings;
 

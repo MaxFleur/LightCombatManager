@@ -2,6 +2,7 @@
 
 #include <random>
 
+#include <QColor>
 #include <QFileInfo>
 #include <QFont>
 #include <QFontMetrics>
@@ -11,6 +12,17 @@ namespace Utils
 {
 namespace General
 {
+QString
+appendCommaToString(const QString& inputText)
+{
+    auto finalText = inputText.trimmed();
+    if (!finalText.isEmpty()) {
+        finalText += finalText.back() == ',' ? " " : ", ";
+    }
+    return finalText;
+}
+
+
 bool
 containsSemicolon(const QTableWidget *tableWidget)
 {
@@ -82,6 +94,16 @@ QString
 getAutoRollEnabled(unsigned int autoRollEnabled)
 {
     return (autoRollEnabled == 1) ? "automatic rolling enabled" : "automatic rolling disabled";
+}
+
+
+bool
+isColorDark(const QColor& color)
+{
+    const auto luminance = sqrt(0.299 * std::pow(color.redF(), 2) +
+                                0.587 * std::pow(color.greenF(), 2) +
+                                0.114 * std::pow(color.blueF(), 2));
+    return luminance < 0.2;
 }
 }
 }

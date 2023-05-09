@@ -12,7 +12,6 @@ target_sources(dialog INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/StatusEffectDialog.cpp
 )
 
-
 target_link_libraries(dialog 
-    INTERFACE Qt5::Widgets
+    INTERFACE Qt::Widgets
 )

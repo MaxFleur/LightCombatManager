@@ -17,5 +17,5 @@ target_sources(ui INTERFACE
 )
 
 target_link_libraries(ui 
-    INTERFACE Qt5::Widgets settings table
+    INTERFACE Qt::Widgets settings table
 )

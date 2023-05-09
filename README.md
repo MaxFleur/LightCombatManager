@@ -3,21 +3,21 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![Test badge](https://img.shields.io/badge/tests-passing-green.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v1.9.2-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v1.10.0-blue.svg)
 
 </div>
 
 # LightCombatManager
 
-### A small  cross-platform combat manager for d20-based role-playing games, based on Qt.
+### A small cross-platform combat manager for d20-based role-playing games, based on Qt.
 
-Using LightCombatManager (or  just **LCM**), you can easily create characters with initiative values, a HP counter and additional information. You can also add status effects to each character.\
-![image](https://user-images.githubusercontent.com/15110943/221289829-77cfe413-9cf5-4e2c-90f3-2c5af763a4dc.png)
+With LightCombatManager (or just **LCM**), characters with initiative values, a HP counter and additional information can be easily created. It is also possible to add status effects to each character.\
+![image1](https://github.com/MaxFleur/LightCombatManager/assets/15110943/2df600be-f2de-415c-b2eb-0b114da94d7c)
 
-After creation, the program creates a full combat table, which you can use to easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the deletion and subsequent addition of characters.\
-![image](https://user-images.githubusercontent.com/15110943/221291366-8e871881-9487-421d-844c-9012130fb71e.png)
+After creation, the program creates a full combat table, which can be used to easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the deletion and subsequent addition of characters.\
+![image2](https://github.com/MaxFleur/LightCombatManager/assets/15110943/22ed129f-703f-4886-b037-b44766ea9cf0)
 
-If the game ends, but the current combat is not finished yet, you can save the table as a csv file, then reopen it later and continue the combat.
+If the game ends, but the current combat is not finished yet, the combat table can be saved as a csv file and reopened later to continue the combat.
 
 ### Supported rulesets
 
@@ -33,13 +33,13 @@ Support for more d20-based rulesets might be added in the future.
 
 # Tools & Installation
 LCM is written in C++17. The following tools are used for development:
-* [Qt5](https://www.qt.io/) for the user interface
+* [Qt6 or Qt5](https://www.qt.io/) for the user interface
 * [Catch2](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 
-For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt5, CMake and Catch2 are available.\
-Alternatively, if you just want to run the application without any installing, just download the binaries provided with the latest release.
+For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt, CMake and Catch2 are available. If no Qt6 installation is found on the system, the application searches for a Qt5 installation instead.\
+Alternatively, if you want to run the application without any additional installing, just download the binaries provided with the latest release.
 
 ## Linux
 
@@ -59,8 +59,8 @@ The following description is focused on building the application with `cmake` an
 5. Hit `cmake.exe -G “Visual Studio 17 2022” -A x64 ..` This will create an sln-file. 
 6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
 7. Inside the build-file, a file named `Debug` or `Release` should have been created. Navigate to this folder and then to the `src` subdirectory.
-8. The exe-file for the application should be found here. To successfully run the exe, `QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` 
-   have to be in the same file path as the exe (`QT5Cored.dll`, `QT5Widgetsd.dll` and `QT5Guid.dll` for Debug). You also have to create a directory named
+8. The exe-file for the application should be found here. To successfully run the exe, `QT6Core.dll`, `QT6Widgets.dll` and `QT6Gui.dll` 
+   have to be in the same file path as the exe (`QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` for Qt5). You also have to create a directory named
    `platforms` in the same dir as the exe-file and copy the `qwindows.dll` into it. 
    
 # Contribution
@@ -68,4 +68,4 @@ The following description is focused on building the application with `cmake` an
 If there is a ruleset you wish to be supported or another feature you might want to be included, feel free to open a new issue.\
 If you want to contribute code, please format it using the provided `uncrustify.cfg` before opening a pull request. On Linux for example, you can format the entire repository's code with one single line:
 ```
-find . \( -name "*.cpp" -o -name "*.hpp" \) -exec uncrustify -c uncrustify.cfg --replace --no-backup {} + ?
+find . \( -name "*.cpp" -o -name "*.hpp" \) -exec uncrustify -c uncrustify.cfg --replace --no-backup {} +

@@ -5,6 +5,8 @@ target_include_directories (settings
 ) 
 
 target_sources(settings INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/AdditionalSettings.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/AdditionalSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/BaseSettings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/DirSettings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/DirSettings.cpp
@@ -14,7 +16,6 @@ target_sources(settings INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/TableSettings.cpp
 )
 
-
 target_link_libraries(settings 
-    INTERFACE Qt5::Widgets
+    INTERFACE Qt::Widgets
 )

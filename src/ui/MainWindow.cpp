@@ -8,9 +8,11 @@
 #include <QKeySequence>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QString>
 #include <QTimer>
 
+#include "AdditionalSettings.hpp"
 #include "CombatWidget.hpp"
 #include "DirSettings.hpp"
 #include "RuleSettings.hpp"
@@ -49,7 +51,9 @@ MainWindow::MainWindow()
         saveAsAction->setEnabled(enable);
     });
 
-    auto *const openSettingsAction = new QAction(tr("Settings..."), this);
+    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+    auto *const openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"),
+                                                 tr("Settings..."), this);
     connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 
     auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);
@@ -73,8 +77,9 @@ MainWindow::MainWindow()
     helpMenu->addAction(aboutQtAction);
 
     m_file = std::make_shared<FileHandler>();
-    m_ruleSettings = std::make_shared<RuleSettings>();
+    m_additionalSettings = std::make_shared<AdditionalSettings>();
     m_dirSettings = std::make_shared<DirSettings>();
+    m_ruleSettings = std::make_shared<RuleSettings>();
 
     resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
@@ -188,16 +193,17 @@ MainWindow::openTable()
     case 0:
     {
         if (!checkStoredTableRules(m_file->getData())) {
-            auto *const msgBox = createRuleChangeMessageBox();
+            const auto messageString = createRuleChangeMessageBoxText();
+            auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different rulesets detected!"), messageString, QMessageBox::Cancel);
+            auto* const applyButton = msgBox->addButton(tr("Apply Table ruleset to Settings"), QMessageBox::ApplyRole);
+            auto* const ignoreButton = msgBox->addButton(tr("Ignore Stored Table ruleset"), QMessageBox::AcceptRole);
 
-            switch (msgBox->exec()) {
-            case QMessageBox::Apply:
+            msgBox->exec();
+            if (msgBox->clickedButton() == applyButton) {
                 m_ruleSettings->write(m_loadedTableRule, m_loadedTableRollAutomatically);
-                break;
-            case QMessageBox::Ignore:
+            } else if (msgBox->clickedButton() == ignoreButton) {
                 rulesModified = true;
-                break;
-            case QMessageBox::Cancel:
+            } else {
                 return;
             }
         }
@@ -228,7 +234,7 @@ MainWindow::openTable()
 void
 MainWindow::openSettings()
 {
-    auto *const dialog = new SettingsDialog(m_ruleSettings, m_isTableActive, this);
+    auto *const dialog = new SettingsDialog(m_additionalSettings, m_ruleSettings, m_isTableActive, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->show();
 }
@@ -240,7 +246,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small, lightweight Combat Manager for d20-based role playing games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 1.9.2.<br>"
+                          "<p>Version 1.10.0.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 
@@ -276,7 +282,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
-    m_combatWidget = new CombatWidget(isDataStored, m_ruleSettings, this->width(), data, this);
+    m_combatWidget = new CombatWidget(isDataStored, m_additionalSettings, m_ruleSettings, this->width(), data, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {
@@ -368,8 +374,8 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 }
 
 
-QMessageBox*
-MainWindow::createRuleChangeMessageBox()
+QString
+MainWindow::createRuleChangeMessageBoxText() const
 {
     const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
                             "Your ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings->ruleset) + "</b>, " +
@@ -377,13 +383,8 @@ MainWindow::createRuleChangeMessageBox()
                          tr("The stored table ruleset is: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
                          "<b>" + Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
                          tr("Do you want to apply the stored Table ruleset to your settings or ignore it?");
-    auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different rulesets detected!"), message,
-                                         QMessageBox::Apply | QMessageBox::Ignore | QMessageBox::Cancel);
 
-    msgBox->setButtonText(QMessageBox::Apply, tr("Apply Table ruleset to Settings"));
-    msgBox->setButtonText(QMessageBox::Ignore, tr("Ignore Table ruleset"));
-
-    return msgBox;
+    return message;
 }
 
 

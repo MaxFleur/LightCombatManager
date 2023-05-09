@@ -104,8 +104,8 @@ CombatWidget::CombatWidget(std::shared_ptr<AdditionalSettings> AdditionalSetting
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
-    m_roundCounterLabel = new QLabel;
-    m_currentPlayerLabel = new QLabel;
+    m_roundCounterLabel = new QLabel(tr("Current: None"));
+    m_currentPlayerLabel = new QLabel(tr("Round 0"));
 
     connect(this, &CombatWidget::roundCounterSet, this, [this] {
         m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));

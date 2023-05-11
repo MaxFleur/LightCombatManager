@@ -519,6 +519,11 @@ CombatWidget::switchCharacterPosition(bool goDown)
 
     setRowAndPlayer();
     pushOnUndoStack();
+
+    m_tableWidget->clearSelection();
+    // selectRow seems to enable a continued shifting, but the table is not visually highlighted.
+    // Not sure why this does not work, but setCurrentIndex seems to do the trick
+    m_tableWidget->setCurrentIndex(m_tableWidget->model()->index(originalIndex + indexToSwap, 0));
 }
 
 

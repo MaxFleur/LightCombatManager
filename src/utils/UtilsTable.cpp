@@ -170,7 +170,7 @@ tableDataFromCharacterVector(CharacterHandlerRef characterHandler)
         QVector<QVariant> charValues;
 
         charValues << characters.at(i).name << characters.at(i).initiative << characters.at(i).modifier
-                   << characters.at(i).hp << characters.at(i).isEnemy << characters.at(i).additionalInf;
+                   << characters.at(i).hp << characters.at(i).isEnemy << characters.at(i).additionalInformation;
 
         tableData.push_back(charValues);
     }

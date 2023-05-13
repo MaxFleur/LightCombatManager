@@ -95,13 +95,8 @@ private slots:
     openStatusEffectDialog();
 
     void
-    addCharacter(QString name,
-                 int     ini,
-                 int     mod,
-                 int     hp,
-                 bool    isEnemy,
-                 QString addInfo,
-                 int     instanceCount);
+    addCharacter(CharacterHandler::Character character,
+                 int                         instanceCount);
 
     void
     rerollIni();

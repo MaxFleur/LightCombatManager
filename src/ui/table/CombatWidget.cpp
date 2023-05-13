@@ -255,9 +255,8 @@ CombatWidget::openAddCharacterDialog()
     const auto sizeBeforeDialog = m_char->getCharacters().size();
 
     auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
-    connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (QString name, int ini, int mod, int hp,
-                                                                         bool isEnemy, QString addInfo, int instanceCount) {
-        addCharacter(name, ini, mod, hp, isEnemy, addInfo, instanceCount);
+    connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
+        addCharacter(character, instanceCount);
     });
 
     if (dialog->exec() == QDialog::Accepted) {
@@ -318,8 +317,8 @@ CombatWidget::openStatusEffectDialog()
 
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
-            const auto itemText = Utils::General::appendCommaToString(characters.at(i.row()).additionalInf);
-            characters[i.row()].additionalInf = itemText + dialog->getEffect();
+            const auto itemText = Utils::General::appendCommaToString(characters.at(i.row()).additionalInformation);
+            characters[i.row()].additionalInformation = itemText + dialog->getEffect();
         }
         // Change table
         pushOnUndoStack();
@@ -328,25 +327,19 @@ CombatWidget::openStatusEffectDialog()
 
 
 void
-CombatWidget::addCharacter(
-    QString name,
-    int     ini,
-    int     mod,
-    int     hp,
-    bool    isEnemy,
-    QString addInfo,
-    int     instanceCount)
+CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCount)
 {
     saveOldState();
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
-    auto trimmedName = name.trimmed();
+    auto trimmedName = character.name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
         m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
-                               instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + mod : ini,
-                               mod, hp, isEnemy, addInfo);
+                               instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier :
+                               character.initiative,
+                               character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
-    resetNameInfoWidth(trimmedName, addInfo);
+    resetNameInfoWidth(trimmedName, character.additionalInformation);
 
     pushOnUndoStack();
 }

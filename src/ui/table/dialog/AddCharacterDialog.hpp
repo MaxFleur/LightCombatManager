@@ -3,6 +3,8 @@
 #include <QDialog>
 #include <QPointer>
 
+#include "CharacterHandler.hpp"
+
 class QCheckBox;
 class QLabel;
 class QLineEdit;
@@ -22,13 +24,8 @@ public:
 
 signals:
     void
-    characterCreated(QString name,
-                     int     ini,
-                     int     mod,
-                     int     hp,
-                     bool    isEnemy,
-                     QString addInfo,
-                     int     instanceCount);
+    characterCreated(CharacterHandler::Character character,
+                     int                         instanceCount);
 
 private slots:
     void

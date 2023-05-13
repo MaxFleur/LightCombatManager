@@ -37,7 +37,7 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
             REQUIRE(charHandler->getCharacters().at(0).modifier == 2);
             REQUIRE(charHandler->getCharacters().at(0).hp == 36);
             REQUIRE(charHandler->getCharacters().at(0).isEnemy == false);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInf == "Haste");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation == "Haste");
         }
         SECTION("Check for changed data") {
             tableWidget->setItem(0, 3, new QTableWidgetItem("24"));

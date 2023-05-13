@@ -174,8 +174,9 @@ AddCharacterDialog::saveButtonClicked()
     m_somethingStored = true;
 
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
-    emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
-                          m_enemyBox->isChecked(), m_addInfoEdit->text(), numberOfInstances);
+    CharacterHandler::Character character { m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
+                                            m_enemyBox->isChecked(), m_addInfoEdit->text() };
+    emit characterCreated(character, numberOfInstances);
     resetButtonClicked();
     setFocus();
 

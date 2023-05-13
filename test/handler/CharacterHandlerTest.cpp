@@ -17,7 +17,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             REQUIRE(charHandler->getCharacters().at(0).modifier == 5);
             REQUIRE(charHandler->getCharacters().at(0).hp == 23);
             REQUIRE(charHandler->getCharacters().at(0).isEnemy == true);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInf == "Fire Resistance");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation == "Fire Resistance");
         }
         SECTION("Minimal Character stored test") {
             auto const charHandler = std::make_shared<CharacterHandler>();
@@ -28,7 +28,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             REQUIRE(charHandler->getCharacters().at(0).modifier == 0);
             REQUIRE(charHandler->getCharacters().at(0).hp == 0);
             REQUIRE(charHandler->getCharacters().at(0).isEnemy == false);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInf == "");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation == "");
         }
     }
     SECTION("Sorting tests") {

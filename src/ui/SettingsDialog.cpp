@@ -13,10 +13,10 @@
 #include "AdditionalSettings.hpp"
 #include "RuleSettings.hpp"
 
-SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSettings,
-                               std::shared_ptr<RuleSettings>       RuleSettings,
-                               bool                                isTableActive,
-                               QWidget*                            parent) :
+SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
+                               RuleSettings&       RuleSettings,
+                               bool                isTableActive,
+                               QWidget*            parent) :
     m_isTableActive(isTableActive),
     m_ruleSettings(RuleSettings),
     m_additionalSettings(AdditionalSettings)
@@ -32,7 +32,7 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
     m_rulesetBox->addItem("D&D 3.0E", RuleSettings::Ruleset::DND_30E);
     m_rulesetBox->addItem("Starfinder", RuleSettings::Ruleset::STARFINDER);
     m_rulesetBox->setToolTip(tr("The ruleset determines the Table sorting rules and the available status effects."));
-    m_rulesetBox->setCurrentIndex(m_ruleSettings->ruleset);
+    m_rulesetBox->setCurrentIndex(m_ruleSettings.ruleset);
 
     auto *const rulesetLayout = new QHBoxLayout;
     rulesetLayout->setAlignment(Qt::AlignLeft);
@@ -40,7 +40,7 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
     rulesetLayout->addWidget(m_rulesetBox);
 
     m_rollTieBox = new QCheckBox;
-    m_rollTieBox->setChecked(m_ruleSettings->rollAutomatical);
+    m_rollTieBox->setChecked(m_ruleSettings.rollAutomatical);
     m_rollTieBox->setText(tr("Roll automatically for tie"));
     m_rollTieBox->setToolTip(tr("If a tie occurs while Characters are generated for a Combat,\n"
                                 "the app will automatically decide the turn order."));
@@ -48,12 +48,12 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
     auto* const additionalLabel = new QLabel(tr("<b>Additional:</b>"));
 
     m_indicatorMultipleCharsBox = new QCheckBox(tr("Set Indicator for multiple Characters"));
-    m_indicatorMultipleCharsBox->setChecked(m_additionalSettings->indicatorMultipleChars);
+    m_indicatorMultipleCharsBox->setChecked(m_additionalSettings.indicatorMultipleChars);
     m_indicatorMultipleCharsBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
                                                "an additional indicator is appended to each Character."));
 
     m_rollIniMultipleCharsBox = new QCheckBox(tr("Roll Initiative for multiple Characters"));
-    m_rollIniMultipleCharsBox->setChecked(m_additionalSettings->rollIniMultipleChars);
+    m_rollIniMultipleCharsBox->setChecked(m_additionalSettings.rollIniMultipleChars);
     m_rollIniMultipleCharsBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
                                              "the Initiative is rerolled for each duplicate."));
 
@@ -82,8 +82,8 @@ SettingsDialog::SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSet
 bool
 SettingsDialog::applyClicked()
 {
-    if (m_rulesetBox->currentIndex() != m_ruleSettings->ruleset ||
-        m_rollTieBox->isChecked() != m_ruleSettings->rollAutomatical) {
+    if (m_rulesetBox->currentIndex() != m_ruleSettings.ruleset ||
+        m_rollTieBox->isChecked() != m_ruleSettings.rollAutomatical) {
         // It could be dangerous to change the combat rules while a combat is active, so abort
         if (m_isTableActive) {
             auto const reply = QMessageBox::critical(this, tr("Combat active!"),
@@ -91,12 +91,12 @@ SettingsDialog::applyClicked()
                                                         "the current Combat before changing the ruleset."));
             return false;
         }
-        m_ruleSettings->write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
+        m_ruleSettings.write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
         return true;
     }
-    if (m_indicatorMultipleCharsBox->isChecked() != m_additionalSettings->indicatorMultipleChars ||
-        m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings->rollIniMultipleChars) {
-        m_additionalSettings->write(m_indicatorMultipleCharsBox->isChecked(), m_rollIniMultipleCharsBox->isChecked());
+    if (m_indicatorMultipleCharsBox->isChecked() != m_additionalSettings.indicatorMultipleChars ||
+        m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings.rollIniMultipleChars) {
+        m_additionalSettings.write(m_indicatorMultipleCharsBox->isChecked(), m_rollIniMultipleCharsBox->isChecked());
     }
     return true;
 }

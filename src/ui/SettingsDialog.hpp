@@ -15,10 +15,10 @@ class SettingsDialog : public QDialog {
 
 public:
     explicit
-    SettingsDialog(std::shared_ptr<AdditionalSettings> AdditionalSettings,
-                   std::shared_ptr<RuleSettings>       RuleSettings,
-                   bool                                isTableActive,
-                   QWidget*                            parent = 0);
+    SettingsDialog(AdditionalSettings& AdditionalSettings,
+                   RuleSettings&       RuleSettings,
+                   bool                isTableActive,
+                   QWidget*            parent = 0);
 
 private slots:
     bool
@@ -33,7 +33,7 @@ private:
     QPointer<QCheckBox> m_indicatorMultipleCharsBox;
     QPointer<QCheckBox> m_rollIniMultipleCharsBox;
 
-    std::shared_ptr<RuleSettings> m_ruleSettings;
-    std::shared_ptr<AdditionalSettings> m_additionalSettings;
+    RuleSettings& m_ruleSettings;
+    AdditionalSettings& m_additionalSettings;
     const bool m_isTableActive;
 };

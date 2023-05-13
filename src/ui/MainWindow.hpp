@@ -4,14 +4,12 @@
 #include <QMainWindow>
 #include <QPointer>
 
+#include "AdditionalSettings.hpp"
+#include "DirSettings.hpp"
 #include "FileHandler.hpp"
+#include "RuleSettings.hpp"
 
-class QMessageBox;
-
-class AdditionalSettings;
 class CombatWidget;
-class DirSettings;
-class RuleSettings;
 class WelcomeWidget;
 
 // This class handles the creation and managing of the main GUI window. It also serves
@@ -84,9 +82,10 @@ private:
     QString m_fileName{ "" };
 
     FileHandlerRef m_file;
-    std::shared_ptr<AdditionalSettings> m_additionalSettings;
-    std::shared_ptr<RuleSettings> m_ruleSettings;
-    std::shared_ptr<DirSettings> m_dirSettings;
+
+    AdditionalSettings m_additionalSettings;
+    RuleSettings m_ruleSettings;
+    DirSettings m_dirSettings;
 
     RuleSettings::Ruleset m_loadedTableRule;
     bool m_loadedTableRollAutomatically;

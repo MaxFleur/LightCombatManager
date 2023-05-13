@@ -17,8 +17,8 @@ class AddCharacterDialog : public QDialog {
 
 public:
     explicit
-    AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings,
-                       QWidget*                      parent = 0);
+    AddCharacterDialog(const RuleSettings& RuleSettings,
+                       QWidget*            parent = 0);
 
 signals:
     void
@@ -77,7 +77,7 @@ private:
     bool m_somethingStored{ false };
     bool m_isFirstCharStored{ false };
 
-    const std::shared_ptr<RuleSettings> m_ruleSettings;
+    const RuleSettings& m_ruleSettings;
 
     static constexpr int LABEL_SHOWN = 1000;
     static constexpr int LABEL_FADEOUT = 2000;

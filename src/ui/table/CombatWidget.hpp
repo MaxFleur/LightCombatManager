@@ -5,6 +5,7 @@
 
 #include "CharacterHandler.hpp"
 #include "DisabledNavigationKeyTable.hpp"
+#include "TableSettings.hpp"
 
 class QAction;
 class QLabel;
@@ -12,19 +13,18 @@ class QUndoStack;
 
 class AdditionalSettings;
 class RuleSettings;
-class TableSettings;
 
 // This class handles the main combat widget
 class CombatWidget : public QWidget {
     Q_OBJECT
 
 public:
-    CombatWidget(std::shared_ptr<AdditionalSettings> AdditionalSettings,
-                 std::shared_ptr<RuleSettings>       RuleSettings,
-                 QString                             data,
-                 int                                 mainWidgetWidth,
-                 bool                                isDataStored,
-                 QWidget *                           parent);
+    CombatWidget(const AdditionalSettings& AdditionalSettings,
+                 const RuleSettings&       RuleSettings,
+                 QString                   data,
+                 int                       mainWidgetWidth,
+                 bool                      isDataStored,
+                 QWidget *                 parent);
 
     void
     generateTable();
@@ -157,9 +157,10 @@ private:
     QString m_loadedFileData;
 
     CharacterHandlerRef m_char;
-    std::shared_ptr<AdditionalSettings> m_additionalSettings;
-    std::shared_ptr<RuleSettings> m_ruleSettings;
-    std::shared_ptr<TableSettings> m_tableSettings;
+
+    const AdditionalSettings& m_additionalSettings;
+    const RuleSettings& m_ruleSettings;
+    TableSettings m_tableSettings;
 
     unsigned int m_rowEntered = 0;
     unsigned int m_roundCounter = 1;

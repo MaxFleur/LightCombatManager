@@ -22,24 +22,22 @@
 #include "DelegateSpinBox.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
-#include "TableSettings.hpp"
 #include "Undo.hpp"
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
 
-CombatWidget::CombatWidget(std::shared_ptr<AdditionalSettings> AdditionalSettings,
-                           std::shared_ptr<RuleSettings>       RuleSettings,
-                           QString                             data,
-                           int                                 mainWidgetWidth,
-                           bool                                isDataStored,
-                           QWidget *                           parent)
+CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
+                           const RuleSettings&       RuleSettings,
+                           QString                   data,
+                           int                       mainWidgetWidth,
+                           bool                      isDataStored,
+                           QWidget *                 parent)
     : m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
     m_loadedFileData(data),
     m_isDataStored(isDataStored)
 {
     m_char = std::make_shared<CharacterHandler>();
-    m_tableSettings = std::make_shared<TableSettings>();
 
     m_tableWidget = new DisabledNavigationKeyTable();
     m_tableWidget->setColumnCount(NMBR_COLUMNS);
@@ -194,8 +192,8 @@ CombatWidget::generateTable()
 {
     // Store the data from file
     setTableDataWithFileData();
-    m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
-    m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
+    m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings.iniShown);
+    m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings.modifierShown);
 
     // Then create the table
     pushOnUndoStack();
@@ -242,7 +240,7 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
     // We got everything, so push
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
-                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings->colorTableRows));
+                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings.colorTableRows));
 
     // Update table
     emit changeOccured();
@@ -344,8 +342,8 @@ CombatWidget::addCharacter(
 
     auto trimmedName = name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
-                               instanceCount > 1 && m_additionalSettings->rollIniMultipleChars ? Utils::General::rollDice() + mod : ini,
+        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
+                               instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + mod : ini,
                                mod, hp, isEnemy, addInfo);
     }
     resetNameInfoWidth(trimmedName, addInfo);
@@ -426,7 +424,7 @@ CombatWidget::sortTable()
     saveOldState();
     // Main sorting
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-    m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
+    m_char->sortCharacters(m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
     m_rowEntered = 0;
     pushOnUndoStack();
 }
@@ -585,7 +583,7 @@ CombatWidget::setTableOption(bool option, int valueType)
         break;
     }
 
-    m_tableSettings->write(option, static_cast<TableSettings::ValueType>(valueType));
+    m_tableSettings.write(option, static_cast<TableSettings::ValueType>(valueType));
 }
 
 
@@ -710,19 +708,19 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         setTableOption(show, 0);
     });
     iniAction->setCheckable(true);
-    iniAction->setChecked(m_tableSettings->iniShown);
+    iniAction->setChecked(m_tableSettings.iniShown);
 
     auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
         setTableOption(show, 1);
     });
     modifierAction->setCheckable(true);
-    modifierAction->setChecked(m_tableSettings->modifierShown);
+    modifierAction->setChecked(m_tableSettings.modifierShown);
 
     auto *const colorTableAction = optionMenu->addAction(tr("Color Rows for Friends and Enemies"), this, [this] (bool show) {
         setTableOption(show, 2);
     });
     colorTableAction->setCheckable(true);
-    colorTableAction->setChecked(m_tableSettings->colorTableRows);
+    colorTableAction->setChecked(m_tableSettings.colorTableRows);
 
     menu->exec(event->globalPos());
 }

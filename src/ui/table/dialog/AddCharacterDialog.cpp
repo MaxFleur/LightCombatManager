@@ -18,7 +18,7 @@
 #include "StatusEffectDialog.hpp"
 #include "UtilsGeneral.hpp"
 
-AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings, QWidget *parent) :
+AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget *parent) :
     m_ruleSettings(RuleSettings)
 {
     setWindowTitle(tr("Add new Character(s)"));
@@ -33,12 +33,12 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
     m_iniBox->setMinimum(-20);
     m_iniBox->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
 
-    auto *const iniModifierLabel = new QLabel(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
+    auto *const iniModifierLabel = new QLabel(m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_30E ?
                                               tr("DEX value:") :
                                               tr("INI Modifier:"));
     m_iniModifierBox = new QSpinBox;
     m_iniModifierBox->setMinimum(-10);
-    m_iniModifierBox->setToolTip(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
+    m_iniModifierBox->setToolTip(m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_30E ?
                                  tr("Set the dexterity value of this Character. Optional.") :
                                  tr("Set the modifier of the initiative. Optional."));
 

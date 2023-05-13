@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QPointer>
@@ -96,4 +95,3 @@ private:
     static constexpr int COL_RULESET = 8;
     static constexpr int COL_ROLL_AUTOMATICALLY = 9;
 };
-#endif

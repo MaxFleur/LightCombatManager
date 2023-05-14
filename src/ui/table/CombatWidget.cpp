@@ -28,9 +28,9 @@
 
 CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
                            const RuleSettings&       RuleSettings,
-                           QString                   data,
                            int                       mainWidgetWidth,
                            bool                      isDataStored,
+                           QString                   data,
                            QWidget *                 parent)
     : m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),

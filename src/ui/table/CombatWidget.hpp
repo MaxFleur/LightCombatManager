@@ -21,10 +21,10 @@ class CombatWidget : public QWidget {
 public:
     CombatWidget(const AdditionalSettings& AdditionalSettings,
                  const RuleSettings&       RuleSettings,
-                 QString                   data,
                  int                       mainWidgetWidth,
                  bool                      isDataStored,
-                 QWidget *                 parent);
+                 QString                   data = "",
+                 QWidget *                 parent = 0);
 
     void
     generateTable();

@@ -3,7 +3,7 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![Test badge](https://img.shields.io/badge/tests-passing-green.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v1.10.0-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v1.10.1-blue.svg)
 
 </div>
 

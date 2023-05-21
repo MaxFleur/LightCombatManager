@@ -14,8 +14,8 @@ class StatusEffectDialog : public QDialog {
 
 public:
     explicit
-    StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSettings,
-                       QWidget *                     parent = 0);
+    StatusEffectDialog(const RuleSettings& RuleSettings,
+                       QWidget *           parent = 0);
 
     [[nodiscard]] QString
     getEffect() const
@@ -37,5 +37,5 @@ private:
 
     QString m_effect;
 
-    const std::shared_ptr<RuleSettings> m_ruleSettings;
+    const RuleSettings& m_ruleSettings;
 };

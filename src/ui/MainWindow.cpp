@@ -12,10 +12,7 @@
 #include <QString>
 #include <QTimer>
 
-#include "AdditionalSettings.hpp"
 #include "CombatWidget.hpp"
-#include "DirSettings.hpp"
-#include "RuleSettings.hpp"
 #include "SettingsDialog.hpp"
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
@@ -77,9 +74,6 @@ MainWindow::MainWindow()
     helpMenu->addAction(aboutQtAction);
 
     m_file = std::make_shared<FileHandler>();
-    m_additionalSettings = std::make_shared<AdditionalSettings>();
-    m_dirSettings = std::make_shared<DirSettings>();
-    m_ruleSettings = std::make_shared<RuleSettings>();
 
     resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
@@ -127,7 +121,7 @@ MainWindow::saveTable()
     QString fileName;
     // Save to standard save dir if a new combat has been started
     if (!m_tableInFile) {
-        fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings->saveDir,
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings.saveDir,
                                                 tr("Table (*.csv);;All Files (*)"));
 
         if (fileName.isEmpty()) {
@@ -136,14 +130,14 @@ MainWindow::saveTable()
         }
         // Otherwise, just overwrite the loaded file
     } else {
-        fileName = m_dirSettings->openDir;
+        fileName = m_dirSettings.openDir;
     }
     // Save the table
     const auto tableDataWidget = Utils::Table::tableDataFromWidget(m_combatWidget->getTableWidget());
     if (m_file->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
-                          m_combatWidget->getRoundCounter(), m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical)) {
+                          m_combatWidget->getRoundCounter(), m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
         m_tableInFile = true;
-        m_dirSettings->write(fileName, true);
+        m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getCSVName(fileName);
 
         setCombatTitle(false);
@@ -185,7 +179,7 @@ MainWindow::openTable()
             return;
         }
     }
-    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings->openDir, ("csv File(*.csv)"));
+    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("csv File(*.csv)"));
     const auto code = m_file->getCSVData(fileName);
     auto rulesModified = false;
 
@@ -200,7 +194,7 @@ MainWindow::openTable()
 
             msgBox->exec();
             if (msgBox->clickedButton() == applyButton) {
-                m_ruleSettings->write(m_loadedTableRule, m_loadedTableRollAutomatically);
+                m_ruleSettings.write(m_loadedTableRule, m_loadedTableRollAutomatically);
             } else if (msgBox->clickedButton() == ignoreButton) {
                 rulesModified = true;
             } else {
@@ -211,7 +205,7 @@ MainWindow::openTable()
         m_isTableActive = false;
         m_tableInFile = true;
         // Save the opened file dir
-        m_dirSettings->write(fileName);
+        m_dirSettings.write(fileName);
         m_fileName = Utils::General::getCSVName(fileName);
         setTableWidget(true, false, m_file->getData());
 
@@ -246,7 +240,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small, lightweight Combat Manager for d20-based role playing games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 1.10.0.<br>"
+                          "<p>Version 1.10.1.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 
@@ -282,7 +276,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
-    m_combatWidget = new CombatWidget(isDataStored, m_additionalSettings, m_ruleSettings, this->width(), data, this);
+    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, this->width(), isDataStored, data, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {
@@ -378,8 +372,8 @@ QString
 MainWindow::createRuleChangeMessageBoxText() const
 {
     const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
-                            "Your ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings->ruleset) + "</b>, " +
-                         "<b>" + Utils::General::getAutoRollEnabled(m_ruleSettings->rollAutomatical) + "</b> <br>" +
+                            "Your ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings.ruleset) + "</b>, " +
+                         "<b>" + Utils::General::getAutoRollEnabled(m_ruleSettings.rollAutomatical) + "</b> <br>" +
                          tr("The stored table ruleset is: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
                          "<b>" + Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
                          tr("Do you want to apply the stored Table ruleset to your settings or ignore it?");
@@ -425,6 +419,6 @@ MainWindow::checkStoredTableRules(QString data)
     m_loadedTableRule = static_cast<RuleSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
     m_loadedTableRollAutomatically = static_cast<bool>(firstRowData[COL_ROLL_AUTOMATICALLY].toInt());
 
-    return m_ruleSettings->ruleset == m_loadedTableRule &&
-           m_ruleSettings->rollAutomatical == m_loadedTableRollAutomatically;
+    return m_ruleSettings.ruleset == m_loadedTableRule &&
+           m_ruleSettings.rollAutomatical == m_loadedTableRollAutomatically;
 }

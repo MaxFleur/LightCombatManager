@@ -23,11 +23,10 @@ public:
         // Is the character an enemy or not
         bool    isEnemy = false;
         // Additional information (e.g. status effects)
-        QString additionalInf = QString();
+        QString additionalInformation = QString();
     };
 
 public:
-
     void
     storeCharacter(QString name,
                    int     initiative = 0,

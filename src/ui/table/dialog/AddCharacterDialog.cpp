@@ -18,7 +18,7 @@
 #include "StatusEffectDialog.hpp"
 #include "UtilsGeneral.hpp"
 
-AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings, QWidget *parent) :
+AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget *parent) :
     m_ruleSettings(RuleSettings)
 {
     setWindowTitle(tr("Add new Character(s)"));
@@ -33,12 +33,12 @@ AddCharacterDialog::AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSetting
     m_iniBox->setMinimum(-20);
     m_iniBox->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
 
-    auto *const iniModifierLabel = new QLabel(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
+    auto *const iniModifierLabel = new QLabel(m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_30E ?
                                               tr("DEX value:") :
                                               tr("INI Modifier:"));
     m_iniModifierBox = new QSpinBox;
     m_iniModifierBox->setMinimum(-10);
-    m_iniModifierBox->setToolTip(m_ruleSettings->ruleset == RuleSettings::Ruleset::DND_30E ?
+    m_iniModifierBox->setToolTip(m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_30E ?
                                  tr("Set the dexterity value of this Character. Optional.") :
                                  tr("Set the modifier of the initiative. Optional."));
 
@@ -174,8 +174,9 @@ AddCharacterDialog::saveButtonClicked()
     m_somethingStored = true;
 
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
-    emit characterCreated(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
-                          m_enemyBox->isChecked(), m_addInfoEdit->text(), numberOfInstances);
+    CharacterHandler::Character character { m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
+                                            m_enemyBox->isChecked(), m_addInfoEdit->text() };
+    emit characterCreated(character, numberOfInstances);
     resetButtonClicked();
     setFocus();
 

@@ -12,7 +12,7 @@
 #include "RuleSettings.hpp"
 #include "StatusEffectData.hpp"
 
-StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSettings, QWidget *parent) :
+StatusEffectDialog::StatusEffectDialog(const RuleSettings& RuleSettings, QWidget *parent) :
     m_ruleSettings(RuleSettings)
 {
     setWindowTitle(tr("Add Status Effect(s)"));
@@ -29,7 +29,7 @@ StatusEffectDialog::StatusEffectDialog(std::shared_ptr<RuleSettings> RuleSetting
 
     m_listWidget = new QListWidget(this);
     m_listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    const auto effects = StatusEffectData::getEffectList(m_ruleSettings->ruleset);
+    const auto effects = StatusEffectData::getEffectList(m_ruleSettings.ruleset);
     for (const auto& effect : effects) {
         m_listWidget->addItem(new QListWidgetItem(effect));
     }

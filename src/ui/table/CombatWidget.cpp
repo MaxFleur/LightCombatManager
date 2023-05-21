@@ -22,24 +22,22 @@
 #include "DelegateSpinBox.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
-#include "TableSettings.hpp"
 #include "Undo.hpp"
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
 
-CombatWidget::CombatWidget(bool                                isDataStored,
-                           std::shared_ptr<AdditionalSettings> AdditionalSettings,
-                           std::shared_ptr<RuleSettings>       RuleSettings,
-                           int                                 mainWidgetWidth,
-                           QString                             data,
-                           QWidget *                           parent)
-    : m_isDataStored(isDataStored),
-    m_additionalSettings(AdditionalSettings),
+CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
+                           const RuleSettings&       RuleSettings,
+                           int                       mainWidgetWidth,
+                           bool                      isDataStored,
+                           QString                   data,
+                           QWidget *                 parent)
+    : m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
-    m_loadedFileData(data)
+    m_loadedFileData(data),
+    m_isDataStored(isDataStored)
 {
     m_char = std::make_shared<CharacterHandler>();
-    m_tableSettings = std::make_shared<TableSettings>();
 
     m_tableWidget = new DisabledNavigationKeyTable();
     m_tableWidget->setColumnCount(NMBR_COLUMNS);
@@ -104,8 +102,8 @@ CombatWidget::CombatWidget(bool                                isDataStored,
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
-    m_roundCounterLabel = new QLabel;
-    m_currentPlayerLabel = new QLabel;
+    m_roundCounterLabel = new QLabel(tr("Current: None"));
+    m_currentPlayerLabel = new QLabel(tr("Round 0"));
 
     connect(this, &CombatWidget::roundCounterSet, this, [this] {
         m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
@@ -194,8 +192,8 @@ CombatWidget::generateTable()
 {
     // Store the data from file
     setTableDataWithFileData();
-    m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings->iniShown);
-    m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings->modifierShown);
+    m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings.iniShown);
+    m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings.modifierShown);
 
     // Then create the table
     pushOnUndoStack();
@@ -242,7 +240,7 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
     // We got everything, so push
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
-                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings->colorTableRows));
+                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings.colorTableRows));
 
     // Update table
     emit changeOccured();
@@ -257,9 +255,8 @@ CombatWidget::openAddCharacterDialog()
     const auto sizeBeforeDialog = m_char->getCharacters().size();
 
     auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
-    connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (QString name, int ini, int mod, int hp,
-                                                                         bool isEnemy, QString addInfo, int instanceCount) {
-        addCharacter(name, ini, mod, hp, isEnemy, addInfo, instanceCount);
+    connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
+        addCharacter(character, instanceCount);
     });
 
     if (dialog->exec() == QDialog::Accepted) {
@@ -320,8 +317,8 @@ CombatWidget::openStatusEffectDialog()
 
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
-            const auto itemText = Utils::General::appendCommaToString(characters.at(i.row()).additionalInf);
-            characters[i.row()].additionalInf = itemText + dialog->getEffect();
+            const auto itemText = Utils::General::appendCommaToString(characters.at(i.row()).additionalInformation);
+            characters[i.row()].additionalInformation = itemText + dialog->getEffect();
         }
         // Change table
         pushOnUndoStack();
@@ -330,25 +327,19 @@ CombatWidget::openStatusEffectDialog()
 
 
 void
-CombatWidget::addCharacter(
-    QString name,
-    int     ini,
-    int     mod,
-    int     hp,
-    bool    isEnemy,
-    QString addInfo,
-    int     instanceCount)
+CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCount)
 {
     saveOldState();
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
-    auto trimmedName = name.trimmed();
+    auto trimmedName = character.name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings->indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
-                               instanceCount > 1 && m_additionalSettings->rollIniMultipleChars ? Utils::General::rollDice() + mod : ini,
-                               mod, hp, isEnemy, addInfo);
+        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
+                               instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier :
+                               character.initiative,
+                               character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
-    resetNameInfoWidth(trimmedName, addInfo);
+    resetNameInfoWidth(trimmedName, character.additionalInformation);
 
     pushOnUndoStack();
 }
@@ -426,7 +417,7 @@ CombatWidget::sortTable()
     saveOldState();
     // Main sorting
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-    m_char->sortCharacters(m_ruleSettings->ruleset, m_ruleSettings->rollAutomatical);
+    m_char->sortCharacters(m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
     m_rowEntered = 0;
     pushOnUndoStack();
 }
@@ -519,6 +510,11 @@ CombatWidget::switchCharacterPosition(bool goDown)
 
     setRowAndPlayer();
     pushOnUndoStack();
+
+    m_tableWidget->clearSelection();
+    // selectRow seems to enable a continued shifting, but the table is not visually highlighted.
+    // Not sure why this does not work, but setCurrentIndex seems to do the trick
+    m_tableWidget->setCurrentIndex(m_tableWidget->model()->index(originalIndex + indexToSwap, 0));
 }
 
 
@@ -580,7 +576,7 @@ CombatWidget::setTableOption(bool option, int valueType)
         break;
     }
 
-    m_tableSettings->write(option, static_cast<TableSettings::ValueType>(valueType));
+    m_tableSettings.write(option, static_cast<TableSettings::ValueType>(valueType));
 }
 
 
@@ -705,19 +701,19 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         setTableOption(show, 0);
     });
     iniAction->setCheckable(true);
-    iniAction->setChecked(m_tableSettings->iniShown);
+    iniAction->setChecked(m_tableSettings.iniShown);
 
     auto *const modifierAction = optionMenu->addAction(tr("Show Modifier"), this, [this] (bool show) {
         setTableOption(show, 1);
     });
     modifierAction->setCheckable(true);
-    modifierAction->setChecked(m_tableSettings->modifierShown);
+    modifierAction->setChecked(m_tableSettings.modifierShown);
 
     auto *const colorTableAction = optionMenu->addAction(tr("Color Rows for Friends and Enemies"), this, [this] (bool show) {
         setTableOption(show, 2);
     });
     colorTableAction->setCheckable(true);
-    colorTableAction->setChecked(m_tableSettings->colorTableRows);
+    colorTableAction->setChecked(m_tableSettings.colorTableRows);
 
     menu->exec(event->globalPos());
 }

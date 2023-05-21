@@ -3,6 +3,8 @@
 #include <QDialog>
 #include <QPointer>
 
+#include "CharacterHandler.hpp"
+
 class QCheckBox;
 class QLabel;
 class QLineEdit;
@@ -17,18 +19,13 @@ class AddCharacterDialog : public QDialog {
 
 public:
     explicit
-    AddCharacterDialog(std::shared_ptr<RuleSettings> RuleSettings,
-                       QWidget*                      parent = 0);
+    AddCharacterDialog(const RuleSettings& RuleSettings,
+                       QWidget*            parent = 0);
 
 signals:
     void
-    characterCreated(QString name,
-                     int     ini,
-                     int     mod,
-                     int     hp,
-                     bool    isEnemy,
-                     QString addInfo,
-                     int     instanceCount);
+    characterCreated(CharacterHandler::Character character,
+                     int                         instanceCount);
 
 private slots:
     void
@@ -77,7 +74,7 @@ private:
     bool m_somethingStored{ false };
     bool m_isFirstCharStored{ false };
 
-    const std::shared_ptr<RuleSettings> m_ruleSettings;
+    const RuleSettings& m_ruleSettings;
 
     static constexpr int LABEL_SHOWN = 1000;
     static constexpr int LABEL_FADEOUT = 2000;

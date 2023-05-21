@@ -49,9 +49,9 @@ MainWindow::MainWindow()
     });
 
     const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
-    auto *const openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"),
-                                                 tr("Settings..."), this);
-    connect(openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
+    m_openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"),
+                                       tr("Settings..."), this);
+    connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 
     auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
@@ -66,7 +66,7 @@ MainWindow::MainWindow()
     fileMenu->addAction(closeTableAction);
     fileMenu->addAction(saveTableAction);
     fileMenu->addAction(saveAsAction);
-    fileMenu->addAction(openSettingsAction);
+    fileMenu->addAction(m_openSettingsAction);
     fileMenu->addSeparator();
 
     auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -421,4 +421,19 @@ MainWindow::checkStoredTableRules(QString data)
 
     return m_ruleSettings.ruleset == m_loadedTableRule &&
            m_ruleSettings.rollAutomatical == m_loadedTableRollAutomatically;
+}
+
+
+bool
+MainWindow::event(QEvent *event)
+{
+    if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
+        const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+        m_openSettingsAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"));
+
+        if (m_combatWidget) {
+            m_combatWidget->setUndoRedoIcon(isSystemInDarkMode);
+        }
+    }
+    return QWidget::event(event);
 }

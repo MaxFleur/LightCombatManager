@@ -64,17 +64,16 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_tableWidget->setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
     m_tableWidget->setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
 
-    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
-
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);
-    m_undoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/undo_white.png") : QIcon(":/icons/undo_black.png"));
     this->addAction(m_undoAction);
 
     m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
     m_redoAction->setShortcuts(QKeySequence::Redo);
-    m_redoAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/redo_white.png") : QIcon(":/icons/redo_black.png"));
     this->addAction(m_redoAction);
+
+    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+    setUndoRedoIcon(isSystemInDarkMode);
 
     // Spinbox for the hp column
     auto *const delegateSpinBox = new DelegateSpinBox(this);
@@ -244,6 +243,14 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
 
     // Update table
     emit changeOccured();
+}
+
+
+void
+CombatWidget::setUndoRedoIcon(bool isDarkMode)
+{
+    m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/undo_white.png") : QIcon(":/icons/undo_black.png"));
+    m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/redo_white.png") : QIcon(":/icons/redo_black.png"));
 }
 
 

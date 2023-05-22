@@ -62,6 +62,9 @@ public:
     void
     pushOnUndoStack(bool resynchronize = false);
 
+    void
+    setUndoRedoIcon(bool isDarkMode);
+
 public slots:
     void
     openAddCharacterDialog();

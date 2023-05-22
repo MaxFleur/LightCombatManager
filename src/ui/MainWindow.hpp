@@ -8,6 +8,8 @@
 #include "FileHandler.hpp"
 #include "RuleSettings.hpp"
 
+class QAction;
+
 class CombatWidget;
 class WelcomeWidget;
 
@@ -71,9 +73,13 @@ private:
     [[nodiscard]] bool
     checkStoredTableRules(QString data);
 
+    bool
+    event(QEvent *event) override;
+
 private:
     QPointer<WelcomeWidget> m_welcomeWidget;
     QPointer<CombatWidget> m_combatWidget;
+    QPointer<QAction> m_openSettingsAction;
 
     bool m_isTableActive{ false };
     bool m_tableInFile{ false };

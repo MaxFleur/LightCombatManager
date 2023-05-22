@@ -122,7 +122,6 @@ const QList<QStringList> m_specificRulesets = {
     // Starfinder
     {
         QObject::tr("Asleep"),
-        QObject::tr("Blinded"),
         QObject::tr("Broken"),
         QObject::tr("Burning"),
         QObject::tr("Confused"),

@@ -1,6 +1,3 @@
-include(CTest)
-enable_testing()
-
 find_package(Catch2 REQUIRED)
 
 add_executable(tests
@@ -11,10 +8,9 @@ add_executable(tests
     ${CMAKE_CURRENT_LIST_DIR}/utils/TableUtilsTest.cpp
 )
 
-target_link_libraries(tests PRIVATE 
-    Qt::Widgets
-    Catch2::Catch2 
-    utils 
-    handler
-    settings
+target_link_libraries(tests
+    PRIVATE Qt::Widgets Catch2::Catch2 utils handler settings
 )
+
+include(Catch)
+catch_discover_tests(tests)

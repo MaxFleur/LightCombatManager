@@ -18,5 +18,10 @@ else()
     find_package(Qt5 COMPONENTS Widgets REQUIRED)
 endif()
 
+include(CTest)
+enable_testing()
+add_custom_target(checks COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure)
+add_dependencies(checks tests)
+
 add_subdirectory(src)
 add_subdirectory(test)

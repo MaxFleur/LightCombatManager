@@ -5,6 +5,7 @@
 
 #include <catch2/catch.hpp>
 
+#include "AdditionalInfoWidget.hpp"
 #include "UtilsTable.hpp"
 
 
@@ -12,19 +13,24 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
     auto *const tableWidget = new QTableWidget(1, 6);
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(false);
+    auto* const additionalInformationWidget = new AdditionalInfoWidget;
+    additionalInformationWidget->setMainInfoText("Haste");
 
-    // Center checkbox
-    auto *const widget = new QWidget;
-    auto *layout = new QHBoxLayout(widget);
-    layout->addWidget(checkBox);
-    widget->setLayout(layout);
+    const auto createCellWidget = [&] (QWidget* widget) {
+                                      auto *const cellWidget = new QWidget;
+                                      auto *const cellLayout = new QHBoxLayout(cellWidget);
+                                      cellLayout->addWidget(widget);
+                                      cellWidget->setLayout(cellLayout);
+
+                                      return cellWidget;
+                                  };
 
     tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
     tableWidget->setItem(0, 1, new QTableWidgetItem("19"));
     tableWidget->setItem(0, 2, new QTableWidgetItem("2"));
     tableWidget->setItem(0, 3, new QTableWidgetItem("36"));
-    tableWidget->setCellWidget(0, 4, widget);
-    tableWidget->setItem(0, 5, new QTableWidgetItem("Haste"));
+    tableWidget->setCellWidget(0, 4, createCellWidget(checkBox));
+    tableWidget->setCellWidget(0, 5, createCellWidget(additionalInformationWidget));
 
     auto const charHandler = std::make_shared<CharacterHandler>();
 

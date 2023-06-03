@@ -27,6 +27,11 @@ setTableCheckBox(CombatWidget *CombatWidget,
                  unsigned int  row,
                  bool          checked);
 
+void
+setTableAdditionalInfoWidget(CombatWidget*  combatWidget,
+                             unsigned int   row,
+                             const QString& additionalInfoText);
+
 // Set the labels displaying the current player and round number
 void
 setRowAndPlayer(QTableWidget *tableWidget,
@@ -49,5 +54,7 @@ tableDataFromCharacterVector(CharacterHandlerRef characterHandler);
 
 static constexpr int COL_NAME = 0;
 static constexpr int COL_ENEMY = 4;
+static constexpr int COL_ADDITIONAL = 5;
+static constexpr int FIRST_FOUR_COLUMNS = 4;
 }
 }

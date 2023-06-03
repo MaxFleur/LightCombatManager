@@ -55,4 +55,5 @@ private:
 
     static constexpr int COL_NAME = 0;
     static constexpr int COL_ENEMY = 4;
+    static constexpr int COL_ADDITIONAL = 5;
 };

@@ -51,6 +51,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_tableWidget->horizontalHeader()->setStretchLastSection(true);
     m_tableWidget->verticalHeader()->setVisible(true);
     m_tableWidget->verticalHeader()->setSectionsMovable(true);
+    m_tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     m_tableWidget->setShowGrid(true);
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -229,8 +230,6 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
 {
     // Assemble old data
     const auto oldData = Undo::UndoData{ m_tableDataOld, m_rowEnteredOld, m_roundCounterOld };
-    // In one specific case (when clicking the isEnemy checkboxes), the character vector still contains
-    // the old, now outdated state. So in this case, we need to resynchronize the character vector.
     if (resynchronize) {
         Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     }

@@ -48,9 +48,17 @@ Undo::setCombatWidget(bool undo)
     // Main table creation
     for (int i = 0; i < undoData.tableData.size(); ++i) {
         for (int j = 0; j < undoData.tableData.at(i).size(); ++j) {
-            j == COL_ENEMY ?
-            Utils::Table::setTableCheckBox(m_combatWidget, i, undoData.tableData.at(i).at(j).toBool()):
-            tableWidget->setItem(i, j, new QTableWidgetItem(undoData.tableData.at(i).at(j).toString()));
+            switch (j) {
+            case COL_ENEMY:
+                Utils::Table::setTableCheckBox(m_combatWidget, i, undoData.tableData.at(i).at(j).toBool());
+                break;
+            case COL_ADDITIONAL:
+                Utils::Table::setTableAdditionalInfoWidget(m_combatWidget, i, undoData.tableData.at(i).at(j).toString());
+                break;
+            default:
+                tableWidget->setItem(i, j, new QTableWidgetItem(undoData.tableData.at(i).at(j).toString()));
+                break;
+            }
         }
     }
 

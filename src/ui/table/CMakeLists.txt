@@ -1,5 +1,6 @@
 add_library (table INTERFACE)
 
+add_subdirectory(additional)
 add_subdirectory(dialog)
 
 target_include_directories (table 
@@ -18,5 +19,5 @@ target_sources(table INTERFACE
 )
 
 target_link_libraries(table 
-    INTERFACE Qt::Widgets dialog settings
+    INTERFACE Qt::Widgets additional dialog settings
 )

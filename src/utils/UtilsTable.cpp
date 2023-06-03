@@ -9,6 +9,7 @@
 #include <QTableWidget>
 #include <QWidget>
 
+#include "AdditionalInfoWidget.hpp"
 #include "CombatWidget.hpp"
 
 namespace Utils
@@ -24,6 +25,7 @@ resynchronizeCharacters(const QTableWidget *tableWidget,
     for (int i = 0; i < tableWidget->rowCount(); i++) {
         // Cell widget is a checkbox within another widget, so find the child
         auto *const checkBox = tableWidget->cellWidget(i, 4)->findChild<QCheckBox *>();
+        auto *const additionalInfoWidget = tableWidget->cellWidget(i, 5)->findChild<AdditionalInfoWidget *>();
 
         characterHandler->storeCharacter(
             tableWidget->item(i, 0)->text(),
@@ -31,7 +33,7 @@ resynchronizeCharacters(const QTableWidget *tableWidget,
             tableWidget->item(i, 2)->text().toInt(),
             tableWidget->item(i, 3)->text().toInt(),
             checkBox->isChecked(),
-            tableWidget->item(i, 5)->text());
+            additionalInfoWidget->getMainInfoText());
     }
 }
 
@@ -70,6 +72,30 @@ setTableCheckBox(CombatWidget *combatWidget, unsigned int row, bool checked)
 
 
 void
+setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const QString& additionalInfoText)
+{
+    auto *const tableWidget = combatWidget->getTableWidget();
+
+    auto* const additionalInfoWidget = new AdditionalInfoWidget;
+    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::lineEditFocused, combatWidget, [combatWidget] {
+                combatWidget->saveOldState();
+            });
+    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::mainInfoEdited, combatWidget, [combatWidget, tableWidget] {
+                combatWidget->pushOnUndoStack(true);
+            });
+
+    auto *const widget = new QWidget;
+    auto *layout = new QHBoxLayout(widget);
+    layout->addWidget(additionalInfoWidget);
+    layout->setAlignment(Qt::AlignCenter);
+    widget->setLayout(layout);
+
+    additionalInfoWidget->setMainInfoText(additionalInfoText);
+    tableWidget->setCellWidget(row, COL_ADDITIONAL, widget);
+}
+
+
+void
 setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *currentPlayerLabel, int rowEntered, int roundCounter)
 {
     tableWidget->selectionModel()->clearSelection();
@@ -82,21 +108,18 @@ setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *cu
                 const auto font = tableWidget->item(i, 0)->font();
 
                 for (int j = 0; j < tableWidget->columnCount(); j++) {
-                    if (j != COL_ENEMY) {
+                    if (j < FIRST_FOUR_COLUMNS) {
                         tableWidget->item(i, j)->setFont(font.defaultFamily());
                     }
                 }
             }
         }
 
-        // Highlight selected row with bold fonts
-        for (int j = 0; j < tableWidget->columnCount(); j++) {
+        // Highlight selected row with bold fonts, but ignore the last columns (widgets)
+        for (int j = 0; j < FIRST_FOUR_COLUMNS; j++) {
             auto font = tableWidget->item(rowEntered, 0)->font();
             font.setBold(true);
-
-            if (j != COL_ENEMY) {
-                tableWidget->item(rowEntered, j)->setFont(font);
-            }
+            tableWidget->item(rowEntered, j)->setFont(font);
         }
     }
     tableWidget->blockSignals(false);
@@ -126,13 +149,13 @@ setTableRowColor(QTableWidget *tableWidget, bool resetColor)
     for (int i = 0; i < tableWidget->rowCount(); i++) {
         const auto isEnemy = tableWidget->cellWidget(i, COL_ENEMY)->findChild<QCheckBox *>()->isChecked();
         for (int j = 0; j < tableWidget->columnCount(); j++) {
-            if (j != COL_ENEMY) {
+            if (j < FIRST_FOUR_COLUMNS) {
                 tableWidget->item(i, j)->setBackground(color(resetColor, isEnemy));
             } else {
                 QPalette palette;
                 palette.setColor(QPalette::Base, color(resetColor, isEnemy));
-                tableWidget->cellWidget(i, COL_ENEMY)->setAutoFillBackground(!resetColor);
-                tableWidget->cellWidget(i, COL_ENEMY)->setPalette(palette);
+                tableWidget->cellWidget(i, j)->setAutoFillBackground(!resetColor);
+                tableWidget->cellWidget(i, j)->setPalette(palette);
             }
         }
     }
@@ -149,9 +172,17 @@ tableDataFromWidget(const QTableWidget *tableWidget)
         QVector<QVariant> rowValues;
 
         for (int j = 0; j < tableWidget->columnCount(); j++) {
-            j == COL_ENEMY ?
-            rowValues.push_back(tableWidget->cellWidget(i, j)->findChild<QCheckBox *>()->isChecked()) :
-            rowValues.push_back(tableWidget->item(i, j)->text());
+            switch (j) {
+            case COL_ENEMY:
+                rowValues.push_back(tableWidget->cellWidget(i, j)->findChild<QCheckBox *>()->isChecked());
+                break;
+            case COL_ADDITIONAL:
+                rowValues.push_back(tableWidget->cellWidget(i, j)->findChild<AdditionalInfoWidget *>()->getMainInfoText());
+                break;
+            default:
+                rowValues.push_back(tableWidget->item(i, j)->text());
+                break;
+            }
         }
         tableData.push_back(rowValues);
     }

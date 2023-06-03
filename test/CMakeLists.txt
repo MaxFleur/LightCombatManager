@@ -9,7 +9,7 @@ add_executable(tests
 )
 
 target_link_libraries(tests
-    PRIVATE Qt::Widgets Catch2::Catch2 utils handler settings
+    PRIVATE Qt::Widgets Catch2::Catch2 additional handler settings utils
 )
 
 include(Catch)

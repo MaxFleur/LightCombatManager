@@ -16,13 +16,10 @@ public:
     AdditionalInfoWidget();
 
     void
-    clear();
-
-    void
     adjustRoundNumber(bool decrease);
 
     void
-    setStatusEffects(const QVector<AdditionalInfoData::StatusEffect>& effects);
+    setStatusEffects(QVector<AdditionalInfoData::StatusEffect>& effects);
 
     void
     setMainInfoText(const QString& text)
@@ -44,10 +41,10 @@ public:
 
 signals:
     void
-    lineEditFocused();
+    widgetCalled();
 
     void
-    mainInfoEdited();
+    additionalInfoEdited();
 
 private:
     bool
@@ -59,6 +56,5 @@ private:
     QPointer<QLabel> m_statusEffectLabel;
     QPointer<QHBoxLayout> m_statusEffectsLayout;
 
-    QVector<QPointer<QWidget> > m_statusEffectWidgets;
     QVector<AdditionalInfoData::StatusEffect> m_statusEffects;
 };

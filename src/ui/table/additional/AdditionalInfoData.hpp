@@ -17,8 +17,8 @@ struct AdditionalInformation {
     QVector<StatusEffect> statusEffects;
 };
 
-[[nodiscard]] QVariant
-getAdditionalInformationVariant(AdditionalInformation additionalInformation);
+[[nodiscard]] const QVariant
+getAdditionalInformationVariant(const AdditionalInformation additionalInformation);
 }
 
 Q_DECLARE_METATYPE(AdditionalInfoData::AdditionalInformation);

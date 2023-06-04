@@ -78,10 +78,10 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
     auto *const tableWidget = combatWidget->getTableWidget();
 
     auto* const additionalInfoWidget = new AdditionalInfoWidget;
-    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::lineEditFocused, combatWidget, [combatWidget] {
+    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widgetCalled, combatWidget, [combatWidget] {
                 combatWidget->saveOldState();
             });
-    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::mainInfoEdited, combatWidget, [combatWidget, tableWidget] {
+    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::additionalInfoEdited, combatWidget, [combatWidget] {
                 combatWidget->pushOnUndoStack(true);
             });
 
@@ -91,7 +91,7 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
     layout->setAlignment(Qt::AlignLeft);
     widget->setLayout(layout);
 
-    const auto converted = additionalInfo.value<AdditionalInfoData::AdditionalInformation>();
+    auto converted = additionalInfo.value<AdditionalInfoData::AdditionalInformation>();
     additionalInfoWidget->setMainInfoText(converted.mainInfo);
     additionalInfoWidget->setStatusEffects(converted.statusEffects);
     tableWidget->setCellWidget(row, COL_ADDITIONAL, widget);

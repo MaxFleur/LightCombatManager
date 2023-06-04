@@ -6,6 +6,8 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
+#include "StatusEffectButton.hpp"
+
 AdditionalInfoWidget::AdditionalInfoWidget()
 {
     m_additionalInfoLineEdit = new QLineEdit;
@@ -25,16 +27,8 @@ AdditionalInfoWidget::AdditionalInfoWidget()
 
     connect(m_additionalInfoLineEdit, &QLineEdit::returnPressed, this, [this] {
         m_additionalInfoLineEdit->clearFocus();
-        emit mainInfoEdited();
+        emit additionalInfoEdited();
     });
-}
-
-
-void
-AdditionalInfoWidget::clear()
-{
-    m_additionalInfoLineEdit->setText("");
-    m_statusEffectWidgets.clear();
 }
 
 
@@ -58,20 +52,26 @@ AdditionalInfoWidget::adjustRoundNumber(bool decrease)
 
 
 void
-AdditionalInfoWidget::setStatusEffects(const QVector<AdditionalInfoData::StatusEffect>& effects)
+AdditionalInfoWidget::setStatusEffects(QVector<AdditionalInfoData::StatusEffect>& effects)
 {
     m_statusEffects = effects;
     m_statusEffectLabel->setVisible(!effects.empty());
 
-    for (const auto& effect : effects) {
-        auto labelText = effect.name;
-        if (!effect.isPermanent) {
-            labelText.append(" (" + QString::number(effect.duration) + ")");
-        }
+    for (int i = 0; i < m_statusEffects.size(); i++) {
+        auto* const statusEffectButton = new StatusEffectButton(m_statusEffects[i]);
+        connect(statusEffectButton, &StatusEffectButton::menuCalled, this, [this] {
+            emit widgetCalled();
+        });
+        connect(statusEffectButton, &StatusEffectButton::effectChanged, this, [this, i] (auto statusEffect) {
+            m_statusEffects[i] = statusEffect;
+            emit additionalInfoEdited();
+        });
+        connect(statusEffectButton, &StatusEffectButton::removeCalled, this, [this, i] {
+            m_statusEffects.erase(m_statusEffects.begin() + i);
+            emit additionalInfoEdited();
+        });
 
-        auto* const label = new QLabel(labelText);
-        m_statusEffectsLayout->addWidget(label);
-        m_statusEffectWidgets.push_back(label);
+        m_statusEffectsLayout->addWidget(statusEffectButton);
     }
 
     m_statusEffectsLayout->addStretch();
@@ -82,7 +82,7 @@ bool
 AdditionalInfoWidget::eventFilter(QObject* object, QEvent* event)
 {
     if (object == m_additionalInfoLineEdit && event->type() == QEvent::FocusIn) {
-        emit lineEditFocused();
+        emit widgetCalled();
         return false;
     }
     return false;

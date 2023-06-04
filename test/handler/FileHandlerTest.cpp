@@ -64,9 +64,10 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
 
         AdditionalInfoData::StatusEffect effect1{ "Shaken", false, 2 };
         AdditionalInfoData::StatusEffect effect2{ "Exhausted", true, 0 };
+        QVector<AdditionalInfoData::StatusEffect> statusEffects { effect1, effect2 };
 
         additionalInfoWidgetFighter->setMainInfoText("Haste");
-        additionalInfoWidgetFighter->setStatusEffects({ effect1, effect2 });
+        additionalInfoWidgetFighter->setStatusEffects(statusEffects);
 
         auto *const additionalInfoWidgetBoss = new AdditionalInfoWidget;
 

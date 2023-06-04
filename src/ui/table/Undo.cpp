@@ -53,7 +53,7 @@ Undo::setCombatWidget(bool undo)
                 Utils::Table::setTableCheckBox(m_combatWidget, i, undoData.tableData.at(i).at(j).toBool());
                 break;
             case COL_ADDITIONAL:
-                Utils::Table::setTableAdditionalInfoWidget(m_combatWidget, i, undoData.tableData.at(i).at(j).toString());
+                Utils::Table::setTableAdditionalInfoWidget(m_combatWidget, i, undoData.tableData.at(i).at(j));
                 break;
             default:
                 tableWidget->setItem(i, j, new QTableWidgetItem(undoData.tableData.at(i).at(j).toString()));

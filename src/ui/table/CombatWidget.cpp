@@ -323,8 +323,11 @@ CombatWidget::openStatusEffectDialog()
 
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
-            const auto itemText = Utils::General::appendCommaToString(characters.at(i.row()).additionalInformation);
-            characters[i.row()].additionalInformation = itemText + dialog->getEffect();
+            auto& statusEffects = characters[i.row()].additionalInformation.statusEffects;
+            for (const auto& effect : dialog->getEffects()) {
+                statusEffects.insert(statusEffects.end(), effect);
+            }
+            Utils::Table::setStatusEffectInWidget(m_tableWidget, dialog->getEffects(), i.row());
         }
         // Change table
         pushOnUndoStack();
@@ -345,7 +348,7 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
                                character.initiative,
                                character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
-    resetNameInfoWidth(trimmedName, character.additionalInformation);
+    resetNameInfoWidth(trimmedName, character.additionalInformation.mainInfo);
 
     pushOnUndoStack();
 }
@@ -400,9 +403,10 @@ CombatWidget::setTableDataWithFileData()
     for (int x = 1; x < rowOfData.size() - 1; x++) {
         rowData = rowOfData.at(x).split(";");
 
+        const auto additionalInfoData = Utils::General::convertStringToAdditionalInfoData(rowData.at(COL_ADDITIONAL));
         characters.push_back(CharacterHandler::Character {
             rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
-            rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", rowData.at(COL_ADDITIONAL) });
+            rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", additionalInfoData });
 
         // If at the first row (which contains information about the round counter
         // and the player on the move), get this data
@@ -539,6 +543,8 @@ CombatWidget::enteredRowChanged(bool goDown)
         if (m_rowEntered == m_tableWidget->rowCount() - 1) {
             m_rowEntered = 0;
             m_roundCounter++;
+            Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, true);
+
             emit roundCounterSet();
             // Otherwise just select the next row
         } else {
@@ -552,6 +558,8 @@ CombatWidget::enteredRowChanged(bool goDown)
         if (m_rowEntered == 0) {
             m_rowEntered = m_tableWidget->rowCount() - 1;
             m_roundCounter--;
+            Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, false);
+
             emit roundCounterSet();
         } else {
             m_rowEntered--;

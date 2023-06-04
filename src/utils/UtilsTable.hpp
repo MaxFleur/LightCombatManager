@@ -28,9 +28,9 @@ setTableCheckBox(CombatWidget *CombatWidget,
                  bool          checked);
 
 void
-setTableAdditionalInfoWidget(CombatWidget*  combatWidget,
-                             unsigned int   row,
-                             const QString& additionalInfoText);
+setTableAdditionalInfoWidget(CombatWidget*   combatWidget,
+                             unsigned int    row,
+                             const QVariant& additionalInfo);
 
 // Set the labels displaying the current player and round number
 void
@@ -43,6 +43,15 @@ setRowAndPlayer(QTableWidget *tableWidget,
 void
 setTableRowColor(QTableWidget *tableWidget,
                  bool          resetColor);
+
+void
+setStatusEffectInWidget(const QTableWidget *                      tableWidget,
+                        QVector<AdditionalInfoData::StatusEffect> statusEffects,
+                        int                                       row);
+
+void
+adjustStatusEffectRoundCounter(const QTableWidget *tableWidget,
+                               bool                decrease);
 
 // Store the table cell values in a vector
 [[nodiscard]] QVector<QVector<QVariant> >

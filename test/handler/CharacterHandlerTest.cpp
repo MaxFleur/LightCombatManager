@@ -1,14 +1,18 @@
 #include <catch2/catch.hpp>
 
+#include "AdditionalInfoData.hpp"
 #include "CharacterHandler.hpp"
 #include "RuleSettings.hpp"
-
 
 TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
     SECTION("Storage test") {
         SECTION("Full Character stored test") {
             auto const charHandler = std::make_shared<CharacterHandler>();
-            charHandler->storeCharacter("Witch", 14, 5, 23, true, "Fire Resistance");
+
+            AdditionalInfoData::StatusEffect statusEffect{ "Dazed", false, 2 };
+            AdditionalInfoData::AdditionalInformation additionalInformation { "Fire Resistance", { statusEffect } };
+
+            charHandler->storeCharacter("Witch", 14, 5, 23, true, additionalInformation);
 
             REQUIRE(charHandler->getCharacters().size() == 1);
 
@@ -17,7 +21,10 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             REQUIRE(charHandler->getCharacters().at(0).modifier == 5);
             REQUIRE(charHandler->getCharacters().at(0).hp == 23);
             REQUIRE(charHandler->getCharacters().at(0).isEnemy == true);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation == "Fire Resistance");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).name == "Dazed");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).isPermanent == false);
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).duration == 2);
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.mainInfo == "Fire Resistance");
         }
         SECTION("Minimal Character stored test") {
             auto const charHandler = std::make_shared<CharacterHandler>();
@@ -28,7 +35,8 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             REQUIRE(charHandler->getCharacters().at(0).modifier == 0);
             REQUIRE(charHandler->getCharacters().at(0).hp == 0);
             REQUIRE(charHandler->getCharacters().at(0).isEnemy == false);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation == "");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.mainInfo.isEmpty());
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.isEmpty());
         }
     }
     SECTION("Sorting tests") {

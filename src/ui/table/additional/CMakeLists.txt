@@ -5,6 +5,8 @@ target_include_directories (additional
 ) 
 
 target_sources(additional INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/AdditionalInfoData.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/AdditionalInfoData.cpp
     ${CMAKE_CURRENT_LIST_DIR}/AdditionalInfoWidget.hpp
     ${CMAKE_CURRENT_LIST_DIR}/AdditionalInfoWidget.cpp
 )

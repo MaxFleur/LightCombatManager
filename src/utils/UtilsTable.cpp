@@ -9,6 +9,7 @@
 #include <QTableWidget>
 #include <QWidget>
 
+#include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
 #include "CombatWidget.hpp"
 
@@ -33,7 +34,7 @@ resynchronizeCharacters(const QTableWidget *tableWidget,
             tableWidget->item(i, 2)->text().toInt(),
             tableWidget->item(i, 3)->text().toInt(),
             checkBox->isChecked(),
-            additionalInfoWidget->getMainInfoText());
+            additionalInfoWidget->getAdditionalInformation());
     }
 }
 
@@ -72,7 +73,7 @@ setTableCheckBox(CombatWidget *combatWidget, unsigned int row, bool checked)
 
 
 void
-setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const QString& additionalInfoText)
+setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const QVariant& additionalInfo)
 {
     auto *const tableWidget = combatWidget->getTableWidget();
 
@@ -87,10 +88,12 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
     auto *const widget = new QWidget;
     auto *layout = new QHBoxLayout(widget);
     layout->addWidget(additionalInfoWidget);
-    layout->setAlignment(Qt::AlignCenter);
+    layout->setAlignment(Qt::AlignLeft);
     widget->setLayout(layout);
 
-    additionalInfoWidget->setMainInfoText(additionalInfoText);
+    const auto converted = additionalInfo.value<AdditionalInfoData::AdditionalInformation>();
+    additionalInfoWidget->setMainInfoText(converted.mainInfo);
+    additionalInfoWidget->setStatusEffects(converted.statusEffects);
     tableWidget->setCellWidget(row, COL_ADDITIONAL, widget);
 }
 
@@ -164,6 +167,24 @@ setTableRowColor(QTableWidget *tableWidget, bool resetColor)
 }
 
 
+void
+setStatusEffectInWidget(const QTableWidget *tableWidget, QVector<AdditionalInfoData::StatusEffect> statusEffects, int row)
+{
+    auto* const additionalInfoWidget = tableWidget->cellWidget(row, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();
+    additionalInfoWidget->setStatusEffects(statusEffects);
+}
+
+
+void
+adjustStatusEffectRoundCounter(const QTableWidget *tableWidget, bool decrease)
+{
+    for (auto i = 0; i < tableWidget->rowCount(); i++) {
+        auto* const additionalInfoWidget = tableWidget->cellWidget(i, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();
+        additionalInfoWidget->adjustRoundNumber(decrease);
+    }
+}
+
+
 QVector<QVector<QVariant> >
 tableDataFromWidget(const QTableWidget *tableWidget)
 {
@@ -177,8 +198,13 @@ tableDataFromWidget(const QTableWidget *tableWidget)
                 rowValues.push_back(tableWidget->cellWidget(i, j)->findChild<QCheckBox *>()->isChecked());
                 break;
             case COL_ADDITIONAL:
-                rowValues.push_back(tableWidget->cellWidget(i, j)->findChild<AdditionalInfoWidget *>()->getMainInfoText());
+            {
+                const auto variant = AdditionalInfoData::getAdditionalInformationVariant(
+                    tableWidget->cellWidget(i, j)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation()
+                    );
+                rowValues.push_back(variant);
                 break;
+            }
             default:
                 rowValues.push_back(tableWidget->item(i, j)->text());
                 break;
@@ -200,8 +226,9 @@ tableDataFromCharacterVector(CharacterHandlerRef characterHandler)
     for (int i = 0; i < characters.size(); i++) {
         QVector<QVariant> charValues;
 
+        const auto additionalInformationVariant = AdditionalInfoData::getAdditionalInformationVariant(characters.at(i).additionalInformation);
         charValues << characters.at(i).name << characters.at(i).initiative << characters.at(i).modifier
-                   << characters.at(i).hp << characters.at(i).isEnemy << characters.at(i).additionalInformation;
+                   << characters.at(i).hp << characters.at(i).isEnemy << additionalInformationVariant;
 
         tableData.push_back(charValues);
     }

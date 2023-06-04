@@ -3,8 +3,12 @@
 #include <QDialog>
 #include <QPointer>
 
+#include "AdditionalInfoData.hpp"
+
+class QCheckBox;
 class QLineEdit;
 class QListWidget;
+class QSpinBox;
 
 class RuleSettings;
 
@@ -17,10 +21,10 @@ public:
     StatusEffectDialog(const RuleSettings& RuleSettings,
                        QWidget *           parent = 0);
 
-    [[nodiscard]] QString
-    getEffect() const
+    [[nodiscard]] QVector<AdditionalInfoData::StatusEffect>&
+    getEffects()
     {
-        return m_effect;
+        return m_effects;
     }
 
 private slots:
@@ -29,13 +33,18 @@ private slots:
 
 private:
     void
+    createEffect(const QString& effectName);
+
+    void
     findEffect(const QString& filter);
 
 private:
     QPointer<QListWidget> m_listWidget;
     QPointer<QLineEdit> m_lineEdit;
+    QPointer<QCheckBox> m_checkBox;;
+    QPointer<QSpinBox> m_spinBox;
 
-    QString m_effect;
+    QVector<AdditionalInfoData::StatusEffect> m_effects;
 
     const RuleSettings& m_ruleSettings;
 };

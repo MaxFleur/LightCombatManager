@@ -15,6 +15,7 @@
 #include <QSpinBox>
 #include <QTimer>
 
+#include "AdditionalInfoWidget.hpp"
 #include "StatusEffectDialog.hpp"
 #include "UtilsGeneral.hpp"
 
@@ -56,10 +57,9 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     m_enemyBox = new QCheckBox;
     m_enemyBox->setToolTip(tr("Set if the Character is an enemy. Optional."));
 
-    auto *const addInfoLabel = new QLabel(tr("Add. Info:"));
+    auto *const addInfoLabel = new QLabel(tr("Additional Information:"));
     m_addInfoEdit = new QLineEdit;
-    m_addInfoEdit->setToolTip(tr("Set additional information,\n"
-                                 "for example status effects. Optional."));
+    m_addInfoEdit->setToolTip(tr("Set additional information. Optional."));
 
     m_instanceNumberBox = new QSpinBox;
     m_instanceNumberBox->setRange(2, 10);
@@ -77,12 +77,10 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
     auto *const resetButton = new QPushButton(tr("Reset"));
-    auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
     saveButton->setShortcut(QKeySequence::Save);
     const auto saveShortcutText = "Save this Character (" + QKeySequence(QKeySequence::Save).toString() + ").";
     saveButton->setToolTip(tr(saveShortcutText.toLocal8Bit().constData()));
-    statusEffectButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
 
     m_animatedLabel = new QLabel;
     m_timer = new QTimer(this);
@@ -105,20 +103,19 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     layout->addWidget(enemyLabel, 3, 2);
     layout->addWidget(m_enemyBox, 3, 3);
 
-    layout->addWidget(addInfoLabel, 4, 0);
-    layout->addWidget(m_addInfoEdit, 4, 1, 1, 2);
-    layout->addWidget(statusEffectButton, 4, 3);
+    layout->addWidget(addInfoLabel, 4, 0, 1, 2);
+    layout->addWidget(m_addInfoEdit, 5, 0, 1, 4);
 
-    layout->addWidget(m_multipleEnabledBox, 5, 0, 1, 3);
-    layout->addWidget(m_instanceNumberBox, 5, 3, 1, 1);
+    layout->addWidget(m_multipleEnabledBox, 6, 0, 1, 3);
+    layout->addWidget(m_instanceNumberBox, 6, 3, 1, 1);
 
-    layout->addWidget(m_animatedLabel, 6, 0, 1, 2);
-    layout->addWidget(resetButton, 6, 3, 1, 1);
+    layout->addWidget(m_animatedLabel, 7, 0, 1, 2);
+    layout->addWidget(resetButton, 7, 3, 1, 1);
 
     // Keep a little space to the button box
-    layout->setRowMinimumHeight(7, 20);
+    layout->setRowMinimumHeight(8, 20);
 
-    layout->addWidget(buttonBox, 8, 1, 1, 3);
+    layout->addWidget(buttonBox, 9, 1, 1, 3);
 
     setLayout(layout);
     setFocus();
@@ -127,7 +124,6 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
     connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
-    connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);
 
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
@@ -174,8 +170,10 @@ AddCharacterDialog::saveButtonClicked()
     m_somethingStored = true;
 
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
+    AdditionalInfoData::AdditionalInformation additionalInformation { m_addInfoEdit->text(), {} };
+
     CharacterHandler::Character character { m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
-                                            m_enemyBox->isChecked(), m_addInfoEdit->text() };
+                                            m_enemyBox->isChecked(), additionalInformation };
     emit characterCreated(character, numberOfInstances);
     resetButtonClicked();
     setFocus();
@@ -216,18 +214,6 @@ AddCharacterDialog::okButtonClicked()
         saveButtonClicked();
     }
     QDialog::accept();
-}
-
-
-void
-AddCharacterDialog::openStatusEffectDialog()
-{
-    // Open dialog
-    auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
-    if (dialog->exec() == QDialog::Accepted) {
-        const auto itemText = Utils::General::appendCommaToString(m_addInfoEdit->text());
-        m_addInfoEdit->setText(itemText + dialog->getEffect());
-    }
 }
 
 

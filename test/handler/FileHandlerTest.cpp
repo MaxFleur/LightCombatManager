@@ -8,9 +8,11 @@
 
 #include <catch2/catch.hpp>
 
+#include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
 #include "FileHandler.hpp"
 #include "RuleSettings.hpp"
+#include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
 
 class FileHandlerTestUtils
@@ -59,7 +61,13 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         checkBoxBoss->setChecked(true);
 
         auto *const additionalInfoWidgetFighter = new AdditionalInfoWidget;
+
+        AdditionalInfoData::StatusEffect effect1{ "Shaken", false, 2 };
+        AdditionalInfoData::StatusEffect effect2{ "Exhausted", true, 0 };
+
         additionalInfoWidgetFighter->setMainInfoText("Haste");
+        additionalInfoWidgetFighter->setStatusEffects({ effect1, effect2 });
+
         auto *const additionalInfoWidgetBoss = new AdditionalInfoWidget;
 
         const auto createCellWidget = [&] (QWidget* widget) {
@@ -110,7 +118,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
             REQUIRE(rowData[2] == "2");
             REQUIRE(rowData[3] == "36");
             REQUIRE(rowData[4] == "false");
-            REQUIRE(rowData[5] == "Haste");
+            REQUIRE(rowData[5] == "Haste---Shaken+0+2--Exhausted+1+0--");
             REQUIRE(rowData[6] == "0");
             REQUIRE(rowData[7] == "1");
             REQUIRE(rowData[8] == "1");

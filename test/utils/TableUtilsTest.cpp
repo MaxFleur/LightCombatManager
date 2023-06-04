@@ -5,6 +5,7 @@
 
 #include <catch2/catch.hpp>
 
+#include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
 #include "UtilsTable.hpp"
 
@@ -14,7 +15,11 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(false);
     auto* const additionalInformationWidget = new AdditionalInfoWidget;
+
+    AdditionalInfoData::StatusEffect effect1{ "Shaken", false, 2 };
+    QVector<AdditionalInfoData::StatusEffect> statusEffects{ effect1 };
     additionalInformationWidget->setMainInfoText("Haste");
+    additionalInformationWidget->setStatusEffects(statusEffects);
 
     const auto createCellWidget = [&] (QWidget* widget) {
                                       auto *const cellWidget = new QWidget;
@@ -43,7 +48,10 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
             REQUIRE(charHandler->getCharacters().at(0).modifier == 2);
             REQUIRE(charHandler->getCharacters().at(0).hp == 36);
             REQUIRE(charHandler->getCharacters().at(0).isEnemy == false);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation == "Haste");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.mainInfo == "Haste");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).name == "Shaken");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).isPermanent == false);
+            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).duration == 2);
         }
         SECTION("Check for changed data") {
             tableWidget->setItem(0, 3, new QTableWidgetItem("24"));
@@ -59,12 +67,17 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
         auto tableData = Utils::Table::tableDataFromWidget(tableWidget);
 
         SECTION("Check stats") {
+            const auto converted = tableData.at(0).at(5).value<AdditionalInfoData::AdditionalInformation>();
+
             REQUIRE(tableData.at(0).at(0) == "Fighter");
             REQUIRE(tableData.at(0).at(1) == "19");
             REQUIRE(tableData.at(0).at(2) == "2");
             REQUIRE(tableData.at(0).at(3) == "36");
             REQUIRE(tableData.at(0).at(4) == false);
-            REQUIRE(tableData.at(0).at(5) == "Haste");
+            REQUIRE(converted.mainInfo == "Haste");
+            REQUIRE(converted.statusEffects.at(0).name == "Shaken");
+            REQUIRE(converted.statusEffects.at(0).isPermanent == false);
+            REQUIRE(converted.statusEffects.at(0).duration == 2);
         }
         SECTION("Check for changed data") {
             tableWidget->setItem(0, 3, new QTableWidgetItem("24"));
@@ -82,12 +95,17 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
         auto tableData = Utils::Table::tableDataFromCharacterVector(charHandler);
 
         SECTION("Check stats") {
+            const auto converted = tableData.at(0).at(5).value<AdditionalInfoData::AdditionalInformation>();
+
             REQUIRE(tableData.at(0).at(0) == "Fighter");
             REQUIRE(tableData.at(0).at(1) == "19");
             REQUIRE(tableData.at(0).at(2) == "2");
             REQUIRE(tableData.at(0).at(3) == "36");
             REQUIRE(tableData.at(0).at(4) == false);
-            REQUIRE(tableData.at(0).at(5) == "Haste");
+            REQUIRE(converted.mainInfo == "Haste");
+            REQUIRE(converted.statusEffects.at(0).name == "Shaken");
+            REQUIRE(converted.statusEffects.at(0).isPermanent == false);
+            REQUIRE(converted.statusEffects.at(0).duration == 2);
         }
         SECTION("Check for changed data") {
             tableWidget->setItem(0, 3, new QTableWidgetItem("24"));

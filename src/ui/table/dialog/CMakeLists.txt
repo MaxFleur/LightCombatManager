@@ -13,5 +13,5 @@ target_sources(dialog INTERFACE
 )
 
 target_link_libraries(dialog 
-    INTERFACE Qt::Widgets
+    INTERFACE Qt::Widgets utils
 )

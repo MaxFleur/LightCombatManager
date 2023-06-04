@@ -43,9 +43,6 @@ private slots:
     void
     okButtonClicked();
 
-    void
-    openStatusEffectDialog();
-
 private:
     void
     setFocus();

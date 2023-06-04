@@ -5,14 +5,14 @@
 // Stores a new character
 void
 CharacterHandler::storeCharacter(
-    QString name,
-    int     initiative,
-    int     modifier,
-    int     hp,
-    bool    isEnemy,
-    QString additionalInf)
+    QString                                   name,
+    int                                       initiative,
+    int                                       modifier,
+    int                                       hp,
+    bool                                      isEnemy,
+    AdditionalInfoData::AdditionalInformation additionalInformation)
 {
-    characters.push_back(Character { name, initiative, modifier, hp, isEnemy, additionalInf });
+    characters.push_back(Character { name, initiative, modifier, hp, isEnemy, additionalInformation });
 }
 
 

@@ -3,34 +3,27 @@
 #include <random>
 
 #include <QColor>
+#include <QDebug>
 #include <QFileInfo>
 #include <QFont>
 #include <QFontMetrics>
 #include <QTableWidget>
 
+#include "AdditionalInfoWidget.hpp"
+
 namespace Utils
 {
 namespace General
 {
-QString
-appendCommaToString(const QString& inputText)
-{
-    auto finalText = inputText.trimmed();
-    if (!finalText.isEmpty()) {
-        finalText += finalText.back() == ',' ? " " : ", ";
-    }
-    return finalText;
-}
-
-
 bool
 containsSemicolon(const QTableWidget *tableWidget)
 {
     for (int i = 0; i < tableWidget->rowCount(); i++) {
-        for (int j = 0; j < tableWidget->columnCount(); j++) {
-            if ((j == 0 || j == 5) && tableWidget->item(i, j)->text().contains(';')) {
-                return true;
-            }
+        const auto textNameColumn = tableWidget->item(i, 0)->text();
+        const auto textAddInfoColumn = tableWidget->cellWidget(i, 5)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation().mainInfo;
+
+        if (textNameColumn.contains(';') || textAddInfoColumn.contains(';')) {
+            return true;
         }
     }
     return false;
@@ -104,6 +97,42 @@ isColorDark(const QColor& color)
                                 0.587 * std::pow(color.greenF(), 2) +
                                 0.114 * std::pow(color.blueF(), 2));
     return luminance < 0.2;
+}
+
+
+AdditionalInfoData::AdditionalInformation
+convertStringToAdditionalInfoData(const QString& str)
+{
+    AdditionalInfoData::AdditionalInformation additionalInformation;
+    // Main info text to the left of separator
+    auto splitIndex = str.lastIndexOf("---");
+    additionalInformation.mainInfo = splitIndex == -1 ? str : str.left(splitIndex);
+    if (splitIndex == -1) {
+        return additionalInformation;
+    }
+
+    auto statusEffects = str.mid(splitIndex + 3);
+    // Status effects are separated using  '--'
+    auto statusEffectsSplitted = statusEffects.split("--");
+
+    for (auto& statusEffectString : statusEffectsSplitted) {
+        // Abort for last string which is always empty
+        if (statusEffectString.isEmpty()) {
+            break;
+        }
+
+        AdditionalInfoData::StatusEffect statusEffect;
+        // Status effect members are separated using '+'
+        auto statusEffectSplitted = statusEffectString.split("+");
+        // Apply
+        statusEffect.name = statusEffectSplitted.at(0);
+        statusEffect.isPermanent = statusEffectSplitted.at(1).toInt() == 1;
+        statusEffect.duration = statusEffectSplitted.at(2).toInt();
+
+        additionalInformation.statusEffects.push_back(statusEffect);
+    }
+
+    return additionalInformation;
 }
 }
 }

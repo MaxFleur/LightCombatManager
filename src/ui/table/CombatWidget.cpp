@@ -90,15 +90,19 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     redoButton->setShortcut(QKeySequence::Redo);
     redoButton->setDefaultAction(m_redoAction);
 
-    auto *const downButton = new QToolButton;
-    downButton->setArrowType(Qt::DownArrow);
-    downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
-    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
-
     auto *const upButton = new QToolButton;
+    upButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    upButton->setText(tr("Previous"));
     upButton->setArrowType(Qt::UpArrow);
     upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
     upButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Up));
+
+    auto *const downButton = new QToolButton;
+    downButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    downButton->setText(tr("Next"));
+    downButton->setArrowType(Qt::DownArrow);
+    downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
+    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
@@ -133,8 +137,8 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     lowerLayout->addWidget(undoButton);
     lowerLayout->addWidget(redoButton);
     lowerLayout->addSpacing(SPACING);
-    lowerLayout->addWidget(downButton);
     lowerLayout->addWidget(upButton);
+    lowerLayout->addWidget(downButton);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(exitButton);
 

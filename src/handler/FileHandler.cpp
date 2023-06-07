@@ -82,10 +82,8 @@ FileHandler::saveTable(
 int
 FileHandler::getCSVData(const QString& filename)
 {
-    QFile importedCSV(filename);
-
     // If the data can be read, import
-    if (importedCSV.open(QFile::ReadOnly)) {
+    if (QFile importedCSV(filename); importedCSV.open(QFile::ReadOnly)) {
         QTextStream in(&importedCSV);
 #if QT_VERSION_MAJOR > 5
         in.setEncoding(QStringConverter::Utf8);

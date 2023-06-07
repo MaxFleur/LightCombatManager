@@ -10,7 +10,6 @@
 #include <QPushButton>
 #include <QShortcut>
 #include <QSpinBox>
-#include <QStringList>
 #include <QVBoxLayout>
 
 #include "RuleSettings.hpp"

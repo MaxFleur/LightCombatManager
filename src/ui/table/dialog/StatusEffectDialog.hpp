@@ -41,7 +41,7 @@ private:
 private:
     QPointer<QListWidget> m_listWidget;
     QPointer<QLineEdit> m_lineEdit;
-    QPointer<QCheckBox> m_checkBox;;
+    QPointer<QCheckBox> m_checkBox;
     QPointer<QSpinBox> m_spinBox;
 
     QVector<AdditionalInfoData::StatusEffect> m_effects;

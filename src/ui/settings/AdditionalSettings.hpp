@@ -12,8 +12,8 @@ public:
           bool newRollIniMultipleChars);
 
 public:
-    bool indicatorMultipleChars = true;
-    bool rollIniMultipleChars = false;
+    bool indicatorMultipleChars{ true };
+    bool rollIniMultipleChars{ false };
 
 private:
     void

@@ -68,7 +68,7 @@ private:
     createRuleChangeMessageBoxText() const;
 
     void
-    closeEvent(QCloseEvent *event);
+    closeEvent(QCloseEvent *event) override;
 
     [[nodiscard]] bool
     checkStoredTableRules(QString data);

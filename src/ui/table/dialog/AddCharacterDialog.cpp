@@ -118,7 +118,7 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     layout->addWidget(buttonBox, 9, 1, 1, 3);
 
     setLayout(layout);
-    setFocus();
+    m_nameEdit->setFocus(Qt::TabFocusReason);
 
     connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
@@ -176,7 +176,7 @@ AddCharacterDialog::saveButtonClicked()
                                             m_enemyBox->isChecked(), additionalInformation };
     emit characterCreated(character, numberOfInstances);
     resetButtonClicked();
-    setFocus();
+    m_nameEdit->setFocus(Qt::TabFocusReason);
 
     // Only set the label text after the first stored character,
     // otherwise it will be displayed constantly until something is stored
@@ -214,13 +214,6 @@ AddCharacterDialog::okButtonClicked()
         saveButtonClicked();
     }
     QDialog::accept();
-}
-
-
-void
-AddCharacterDialog::setFocus()
-{
-    m_nameEdit->setFocus(Qt::TabFocusReason);
 }
 
 

@@ -11,9 +11,7 @@
 
 #include "AdditionalInfoWidget.hpp"
 
-namespace Utils
-{
-namespace General
+namespace Utils::General
 {
 bool
 containsSemicolon(const QTableWidget *tableWidget)
@@ -133,6 +131,5 @@ convertStringToAdditionalInfoData(const QString& str)
     }
 
     return additionalInformation;
-}
 }
 }

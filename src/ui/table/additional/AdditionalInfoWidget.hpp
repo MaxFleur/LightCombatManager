@@ -27,13 +27,13 @@ public:
         m_additionalInfoLineEdit->setText(text);
     }
 
-    const QString
+    [[nodiscard]] const QString
     getMainInfoText()
     {
         return m_additionalInfoLineEdit->text();
     }
 
-    const AdditionalInfoData::AdditionalInformation
+    [[nodiscard]] const AdditionalInfoData::AdditionalInformation
     getAdditionalInformation()
     {
         return { m_additionalInfoLineEdit->text(), m_statusEffects };

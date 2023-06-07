@@ -280,7 +280,7 @@ CombatWidget::openAddCharacterDialog()
 
 // This function enables drag and drop of table rows
 void
-CombatWidget::dragAndDrop(int logicalIndex, int oldVisualIndex, int newVisualIndex)
+CombatWidget::dragAndDrop(int /* logicalIndex */, int oldVisualIndex, int newVisualIndex)
 {
     // @note
     // A section moved signal only applies to the header's view, not the model.
@@ -314,9 +314,7 @@ CombatWidget::openStatusEffectDialog()
     }
 
     // Open dialog
-    auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
-
-    if (dialog->exec() == QDialog::Accepted) {
+    if (auto *const dialog = new StatusEffectDialog(m_ruleSettings, this); dialog->exec() == QDialog::Accepted) {
         saveOldState();
         Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
         auto& characters = m_char->getCharacters();
@@ -345,8 +343,7 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
     for (int i = 0; i < instanceCount; i++) {
         m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
                                instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier :
-                               character.initiative,
-                               character.modifier, character.hp, character.isEnemy, character.additionalInformation);
+                               character.initiative, character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
     resetNameInfoWidth(trimmedName, character.additionalInformation.mainInfo);
 
@@ -436,7 +433,7 @@ CombatWidget::sortTable()
 void
 CombatWidget::setRowAndPlayer()
 {
-    Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered, m_roundCounter);
+    Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered);
 }
 
 
@@ -566,10 +563,9 @@ CombatWidget::enteredRowChanged(bool goDown)
         }
     }
 
-    // Recreate the table for the updated font
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    // Recreate the table for the updated font´
     setRowAndPlayer();
-    pushOnUndoStack();
+    pushOnUndoStack(true);
 }
 
 
@@ -709,7 +705,7 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         menu->addSeparator();
     }
 
-    auto *const optionMenu = menu->addMenu("Table Options");
+    auto *const optionMenu = menu->addMenu(tr("Table Options"));
 
     auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
         setTableOption(show, 0);

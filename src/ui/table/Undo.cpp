@@ -70,7 +70,7 @@ Undo::setCombatWidget(bool undo)
 
     // Set the remaining label and font data
     m_roundCounterLabel->setText(QObject::tr("Round ") + QString::number(undoData.roundCounter));
-    Utils::Table::setRowAndPlayer(tableWidget, m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered, undoData.roundCounter);
+    Utils::Table::setRowAndPlayer(tableWidget, m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered);
     Utils::Table::setTableRowColor(tableWidget, !m_colorTableRows);
 
     emit m_combatWidget->tableHeightSet(m_combatWidget->getHeight());

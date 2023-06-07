@@ -160,8 +160,8 @@ private:
     const RuleSettings& m_ruleSettings;
     TableSettings m_tableSettings;
 
-    unsigned int m_rowEntered = 0;
-    unsigned int m_roundCounter = 1;
+    unsigned int m_rowEntered{ 0 };
+    unsigned int m_roundCounter{ 1 };
 
     // Data storing old values before pushing on undo stack
     QVector<QVector<QVariant> > m_tableDataOld;

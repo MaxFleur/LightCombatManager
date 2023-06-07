@@ -1,8 +1,5 @@
 #pragma once
 
-#include <QVariant>
-#include <QVector>
-
 #include "CharacterHandler.hpp"
 
 class QLabel;
@@ -11,9 +8,7 @@ class QTableWidget;
 class CombatWidget;
 
 // Utility functions for the Combat Table
-namespace Utils
-{
-namespace Table
+namespace Utils::Table
 {
 // Resynchronize the characters stored in the char handler vector
 // with the data in the table widget
@@ -37,8 +32,7 @@ void
 setRowAndPlayer(QTableWidget *tableWidget,
                 QLabel*       roundCounterLabel,
                 QLabel*       currentPlayerLabel,
-                int           rowEntered,
-                int           roundCounter);
+                int           rowEntered);
 
 void
 setTableRowColor(QTableWidget *tableWidget,
@@ -65,5 +59,4 @@ static constexpr int COL_NAME = 0;
 static constexpr int COL_ENEMY = 4;
 static constexpr int COL_ADDITIONAL = 5;
 static constexpr int FIRST_FOUR_COLUMNS = 4;
-}
 }

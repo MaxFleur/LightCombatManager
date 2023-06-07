@@ -45,9 +45,6 @@ private slots:
 
 private:
     void
-    setFocus();
-
-    void
     keyPressEvent(QKeyEvent *event);
 
     void

@@ -261,7 +261,7 @@ CombatWidget::openAddCharacterDialog()
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     const auto sizeBeforeDialog = m_char->getCharacters().size();
 
-    auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
+    auto *const dialog = new AddCharacterDialog(this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
     });

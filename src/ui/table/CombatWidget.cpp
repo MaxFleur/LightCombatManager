@@ -239,9 +239,6 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     // We got everything, so push
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
                                m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings.colorTableRows));
-
-    // Update table
-    emit changeOccured();
 }
 
 

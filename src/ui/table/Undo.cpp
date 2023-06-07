@@ -74,6 +74,7 @@ Undo::setCombatWidget(bool undo)
     Utils::Table::setTableRowColor(tableWidget, !m_colorTableRows);
 
     emit m_combatWidget->tableHeightSet(m_combatWidget->getHeight());
+    emit m_combatWidget->changeOccured();
 
     tableWidget->blockSignals(false);
 }

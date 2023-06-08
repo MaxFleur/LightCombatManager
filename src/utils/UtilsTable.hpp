@@ -39,6 +39,10 @@ setTableRowColor(QTableWidget *tableWidget,
                  bool          resetColor);
 
 void
+setIniColumnTooltips(QTableWidget *tableWidget,
+                     bool          resetToolTip);
+
+void
 setStatusEffectInWidget(const QTableWidget *                      tableWidget,
                         QVector<AdditionalInfoData::StatusEffect> statusEffects,
                         int                                       row);

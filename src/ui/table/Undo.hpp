@@ -26,7 +26,8 @@ public:
          unsigned int*    roundCounter,
          QPointer<QLabel> roundCounterLabel,
          QPointer<QLabel> currentPlayerLabel,
-         bool             colorTableRows);
+         bool             colorTableRows,
+         bool             showIniToolTips);
 
     void
     undo() override;
@@ -52,6 +53,7 @@ private:
     QPointer<QLabel> m_currentPlayerLabel;
 
     bool m_colorTableRows;
+    bool m_showIniToolTips;
 
     static constexpr int COL_NAME = 0;
     static constexpr int COL_ENEMY = 4;

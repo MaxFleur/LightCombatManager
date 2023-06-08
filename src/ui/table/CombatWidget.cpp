@@ -242,7 +242,8 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
     // We got everything, so push
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
-                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings.colorTableRows));
+                               m_roundCounterLabel, m_currentPlayerLabel,
+                               m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips));
 }
 
 
@@ -583,6 +584,9 @@ CombatWidget::setTableOption(bool option, int valueType)
     case 2:
         Utils::Table::setTableRowColor(m_tableWidget, !option);
         break;
+    case 3:
+        Utils::Table::setIniColumnTooltips(m_tableWidget, !option);
+        break;
     default:
         break;
     }
@@ -725,6 +729,12 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     });
     colorTableAction->setCheckable(true);
     colorTableAction->setChecked(m_tableSettings.colorTableRows);
+
+    auto *const showIniTooltipsAction = optionMenu->addAction(tr("Show Initiative Calculation Tooltips"), this, [this] (bool show) {
+        setTableOption(show, 3);
+    });
+    showIniTooltipsAction->setCheckable(true);
+    showIniTooltipsAction->setChecked(m_tableSettings.showIniToolTips);
 
     menu->exec(event->globalPos());
 }

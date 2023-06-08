@@ -27,6 +27,9 @@ TableSettings::write(bool valueToWrite, ValueType valueType)
         colorTableRows = valueToWrite;
         settings.setValue("ColorTable", colorTableRows);
         break;
+    case SHOW_INI_TOOLTIPS:
+        showIniToolTips = valueToWrite;
+        settings.setValue("IniToolTips", showIniToolTips);
     default:
         break;
     }
@@ -44,5 +47,6 @@ TableSettings::read()
     iniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
     modifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
     colorTableRows = settings.value("ColorTable").isValid() ? settings.value("ColorTable").toBool() : false;
+    showIniToolTips = settings.value("IniToolTips").isValid() ? settings.value("IniToolTips").toBool() : false;
     settings.endGroup();
 }

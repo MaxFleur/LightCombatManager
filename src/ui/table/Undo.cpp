@@ -10,11 +10,11 @@
 Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *CombatWidget,
            unsigned int* rowEntered, unsigned int* roundCounter,
            QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
-           bool colorTableRows) :
+           bool colorTableRows, bool showIniToolTips) :
     m_oldData(oldData), m_newData(newData), m_combatWidget(CombatWidget),
     m_rowEntered(rowEntered), m_roundCounter(roundCounter),
     m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
-    m_colorTableRows(colorTableRows)
+    m_colorTableRows(colorTableRows), m_showIniToolTips(showIniToolTips)
 {
 }
 
@@ -72,6 +72,7 @@ Undo::setCombatWidget(bool undo)
     m_roundCounterLabel->setText(QObject::tr("Round ") + QString::number(undoData.roundCounter));
     Utils::Table::setRowAndPlayer(tableWidget, m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered);
     Utils::Table::setTableRowColor(tableWidget, !m_colorTableRows);
+    Utils::Table::setIniColumnTooltips(tableWidget, !m_showIniToolTips);
 
     emit m_combatWidget->tableHeightSet(m_combatWidget->getHeight());
     emit m_combatWidget->changeOccured();

@@ -165,6 +165,27 @@ setTableRowColor(QTableWidget *tableWidget, bool resetColor)
 
 
 void
+setIniColumnTooltips(QTableWidget *tableWidget, bool resetToolTip)
+{
+    tableWidget->blockSignals(true);
+
+    for (int i = 0; i < tableWidget->rowCount(); i++) {
+        if (resetToolTip) {
+            tableWidget->item(i, 1)->setToolTip(QString());
+        } else {
+            QString toolTipString = "Calculation: Rolled Value ";
+            const auto rolledValue = tableWidget->item(i, 1)->text().toInt() - tableWidget->item(i, 2)->text().toInt();
+            toolTipString += QString::number(rolledValue) + ", Modifier " + tableWidget->item(i, 2)->text();
+
+            tableWidget->item(i, 1)->setToolTip(toolTipString);
+        }
+    }
+
+    tableWidget->blockSignals(false);
+}
+
+
+void
 setStatusEffectInWidget(const QTableWidget *tableWidget, QVector<AdditionalInfoData::StatusEffect> statusEffects, int row)
 {
     auto* const additionalInfoWidget = tableWidget->cellWidget(row, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();

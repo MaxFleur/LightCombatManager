@@ -31,8 +31,8 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
                            int                       mainWidgetWidth,
                            bool                      isDataStored,
                            QString                   data,
-                           QWidget *                 parent)
-    : m_additionalSettings(AdditionalSettings),
+                           QWidget *                 parent) :
+    m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
     m_loadedFileData(data),
     m_isDataStored(isDataStored)
@@ -626,7 +626,7 @@ CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
     if (changeOccured) {
         // Change the main window width
         auto mainWidth = 0;
-        // Ignore the stretchable and indentifier column
+        // Ignore the stretchable and identifier column
         for (int i = 0; i < m_tableWidget->columnCount() - 2; i++) {
             mainWidth += m_tableWidget->columnWidth(i);
         }

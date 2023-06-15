@@ -33,17 +33,16 @@ AdditionalInfoWidget::AdditionalInfoWidget()
 
 
 void
-AdditionalInfoWidget::adjustRoundNumber(bool decrease)
+AdditionalInfoWidget::adjustEffectDuration(bool decrease)
 {
-    const auto valueModifier = decrease ? -1 : 1;
-
     for (auto i = m_statusEffects.size() - 1; i >= 0; i--) {
-        auto& effect = m_statusEffects[i];
-
-        if (effect.isPermanent) {
+        if (m_statusEffects.at(i).isPermanent) {
             continue;
         }
-        effect.duration += valueModifier;
+
+        auto& effect = m_statusEffects[i];
+
+        effect.duration += decrease ? -1 : 1;
         if (effect.duration < 1) {
             m_statusEffects.erase(m_statusEffects.begin() + i);
         }

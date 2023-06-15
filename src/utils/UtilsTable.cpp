@@ -198,7 +198,7 @@ adjustStatusEffectRoundCounter(const QTableWidget *tableWidget, bool decrease)
 {
     for (auto i = 0; i < tableWidget->rowCount(); i++) {
         auto* const additionalInfoWidget = tableWidget->cellWidget(i, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();
-        additionalInfoWidget->adjustRoundNumber(decrease);
+        additionalInfoWidget->adjustEffectDuration(decrease);
     }
 }
 

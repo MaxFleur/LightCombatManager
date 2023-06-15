@@ -16,7 +16,7 @@ public:
     AdditionalInfoWidget();
 
     void
-    adjustRoundNumber(bool decrease);
+    adjustEffectDuration(bool decrease);
 
     void
     setStatusEffects(QVector<AdditionalInfoData::StatusEffect>& effects);

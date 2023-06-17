@@ -7,7 +7,7 @@ int
 main(int argc, char **argv)
 {
 #ifdef _WIN32
-    _putenv("QT_QPA_PLATFORM", "offscreen");
+    _putenv("QT_QPA_PLATFORM=offscreen");
 #else
     setenv("QT_QPA_PLATFORM", "offscreen", 0);
 #endif

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AdditionalInfoData.hpp"
 #include "CharacterHandler.hpp"
 
 class QColor;
@@ -7,14 +8,8 @@ class QFont;
 class QTableWidget;
 
 // General utility functions
-namespace Utils
+namespace Utils::General
 {
-namespace General
-{
-// Append a comma to a string, depending on if the string already ends with a comma
-[[nodiscard]] QString
-appendCommaToString(const QString& inputText);
-
 // CSV files use semicolons to separate the cells, so the name and additional info columns
 // are checked for these to prevent additional, user entered semicolons being saved
 [[nodiscard]] bool
@@ -42,5 +37,8 @@ getAutoRollEnabled(unsigned int autoRollEnabled);
 // Calculate the luminance value of a certain color, determine if the color is in dark mode
 [[nodiscard]] bool
 isColorDark(const QColor& color);
-}
+
+// Convert a stored string to additional information
+[[nodiscard]] AdditionalInfoData::AdditionalInformation
+convertStringToAdditionalInfoData(const QString& str);
 }

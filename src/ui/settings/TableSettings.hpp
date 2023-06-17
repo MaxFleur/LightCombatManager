@@ -8,9 +8,10 @@ public:
     TableSettings();
 
     enum ValueType {
-        INI_SHOWN   = 0,
-        MOD_SHOWN   = 1,
-        COLOR_TABLE = 2
+        INI_SHOWN         = 0,
+        MOD_SHOWN         = 1,
+        COLOR_TABLE       = 2,
+        SHOW_INI_TOOLTIPS = 3
     };
 
     void
@@ -18,9 +19,10 @@ public:
           ValueType valueType);
 
 public:
-    bool iniShown = true;
-    bool modifierShown = true;
-    bool colorTableRows = false;
+    bool iniShown{ true };
+    bool modifierShown{ true };
+    bool colorTableRows{ false };
+    bool showIniToolTips{ false };
 
 private:
     void

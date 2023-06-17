@@ -19,8 +19,7 @@ class AddCharacterDialog : public QDialog {
 
 public:
     explicit
-    AddCharacterDialog(const RuleSettings& RuleSettings,
-                       QWidget*            parent = 0);
+    AddCharacterDialog(QWidget* parent = 0);
 
 signals:
     void
@@ -43,13 +42,7 @@ private slots:
     void
     okButtonClicked();
 
-    void
-    openStatusEffectDialog();
-
 private:
-    void
-    setFocus();
-
     void
     keyPressEvent(QKeyEvent *event);
 
@@ -73,8 +66,6 @@ private:
 
     bool m_somethingStored{ false };
     bool m_isFirstCharStored{ false };
-
-    const RuleSettings& m_ruleSettings;
 
     static constexpr int LABEL_SHOWN = 1000;
     static constexpr int LABEL_FADEOUT = 2000;

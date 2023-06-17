@@ -31,8 +31,8 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
                            int                       mainWidgetWidth,
                            bool                      isDataStored,
                            QString                   data,
-                           QWidget *                 parent)
-    : m_additionalSettings(AdditionalSettings),
+                           QWidget *                 parent) :
+    m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
     m_loadedFileData(data),
     m_isDataStored(isDataStored)
@@ -51,6 +51,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_tableWidget->horizontalHeader()->setStretchLastSection(true);
     m_tableWidget->verticalHeader()->setVisible(true);
     m_tableWidget->verticalHeader()->setSectionsMovable(true);
+    m_tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     m_tableWidget->setShowGrid(true);
     m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -89,15 +90,19 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     redoButton->setShortcut(QKeySequence::Redo);
     redoButton->setDefaultAction(m_redoAction);
 
-    auto *const downButton = new QToolButton;
-    downButton->setArrowType(Qt::DownArrow);
-    downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
-    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
-
     auto *const upButton = new QToolButton;
+    upButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    upButton->setText(tr("Previous"));
     upButton->setArrowType(Qt::UpArrow);
     upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
     upButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Up));
+
+    auto *const downButton = new QToolButton;
+    downButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    downButton->setText(tr("Next"));
+    downButton->setArrowType(Qt::DownArrow);
+    downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
+    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
@@ -132,8 +137,8 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     lowerLayout->addWidget(undoButton);
     lowerLayout->addWidget(redoButton);
     lowerLayout->addSpacing(SPACING);
-    lowerLayout->addWidget(downButton);
     lowerLayout->addWidget(upButton);
+    lowerLayout->addWidget(downButton);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(exitButton);
 
@@ -229,8 +234,6 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
 {
     // Assemble old data
     const auto oldData = Undo::UndoData{ m_tableDataOld, m_rowEnteredOld, m_roundCounterOld };
-    // In one specific case (when clicking the isEnemy checkboxes), the character vector still contains
-    // the old, now outdated state. So in this case, we need to resynchronize the character vector.
     if (resynchronize) {
         Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     }
@@ -239,10 +242,8 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
     // We got everything, so push
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
-                               m_roundCounterLabel, m_currentPlayerLabel, m_tableSettings.colorTableRows));
-
-    // Update table
-    emit changeOccured();
+                               m_roundCounterLabel, m_currentPlayerLabel,
+                               m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips));
 }
 
 
@@ -261,7 +262,7 @@ CombatWidget::openAddCharacterDialog()
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     const auto sizeBeforeDialog = m_char->getCharacters().size();
 
-    auto *const dialog = new AddCharacterDialog(m_ruleSettings, this);
+    auto *const dialog = new AddCharacterDialog(this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
     });
@@ -281,7 +282,7 @@ CombatWidget::openAddCharacterDialog()
 
 // This function enables drag and drop of table rows
 void
-CombatWidget::dragAndDrop(int logicalIndex, int oldVisualIndex, int newVisualIndex)
+CombatWidget::dragAndDrop(int /* logicalIndex */, int oldVisualIndex, int newVisualIndex)
 {
     // @note
     // A section moved signal only applies to the header's view, not the model.
@@ -315,17 +316,18 @@ CombatWidget::openStatusEffectDialog()
     }
 
     // Open dialog
-    auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
-
-    if (dialog->exec() == QDialog::Accepted) {
+    if (auto *const dialog = new StatusEffectDialog(m_ruleSettings, this); dialog->exec() == QDialog::Accepted) {
         saveOldState();
         Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
         auto& characters = m_char->getCharacters();
 
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
-            const auto itemText = Utils::General::appendCommaToString(characters.at(i.row()).additionalInformation);
-            characters[i.row()].additionalInformation = itemText + dialog->getEffect();
+            auto& statusEffects = characters[i.row()].additionalInformation.statusEffects;
+            for (const auto& effect : dialog->getEffects()) {
+                statusEffects.insert(statusEffects.end(), effect);
+            }
+            Utils::Table::setStatusEffectInWidget(m_tableWidget, dialog->getEffects(), i.row());
         }
         // Change table
         pushOnUndoStack();
@@ -343,10 +345,9 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
     for (int i = 0; i < instanceCount; i++) {
         m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
                                instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier :
-                               character.initiative,
-                               character.modifier, character.hp, character.isEnemy, character.additionalInformation);
+                               character.initiative, character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
-    resetNameInfoWidth(trimmedName, character.additionalInformation);
+    resetNameInfoWidth(trimmedName, character.additionalInformation.mainInfo);
 
     pushOnUndoStack();
 }
@@ -401,9 +402,10 @@ CombatWidget::setTableDataWithFileData()
     for (int x = 1; x < rowOfData.size() - 1; x++) {
         rowData = rowOfData.at(x).split(";");
 
+        const auto additionalInfoData = Utils::General::convertStringToAdditionalInfoData(rowData.at(COL_ADDITIONAL));
         characters.push_back(CharacterHandler::Character {
             rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
-            rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", rowData.at(COL_ADDITIONAL) });
+            rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", additionalInfoData });
 
         // If at the first row (which contains information about the round counter
         // and the player on the move), get this data
@@ -433,7 +435,7 @@ CombatWidget::sortTable()
 void
 CombatWidget::setRowAndPlayer()
 {
-    Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered, m_roundCounter);
+    Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered);
 }
 
 
@@ -540,6 +542,8 @@ CombatWidget::enteredRowChanged(bool goDown)
         if (m_rowEntered == m_tableWidget->rowCount() - 1) {
             m_rowEntered = 0;
             m_roundCounter++;
+            Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, true);
+
             emit roundCounterSet();
             // Otherwise just select the next row
         } else {
@@ -553,16 +557,17 @@ CombatWidget::enteredRowChanged(bool goDown)
         if (m_rowEntered == 0) {
             m_rowEntered = m_tableWidget->rowCount() - 1;
             m_roundCounter--;
+            Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, false);
+
             emit roundCounterSet();
         } else {
             m_rowEntered--;
         }
     }
 
-    // Recreate the table for the updated font
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    // Recreate the table for the updated font´
     setRowAndPlayer();
-    pushOnUndoStack();
+    pushOnUndoStack(true);
 }
 
 
@@ -578,6 +583,9 @@ CombatWidget::setTableOption(bool option, int valueType)
         break;
     case 2:
         Utils::Table::setTableRowColor(m_tableWidget, !option);
+        break;
+    case 3:
+        Utils::Table::setIniColumnTooltips(m_tableWidget, !option);
         break;
     default:
         break;
@@ -618,7 +626,7 @@ CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
     if (changeOccured) {
         // Change the main window width
         auto mainWidth = 0;
-        // Ignore the stretchable and indentifier column
+        // Ignore the stretchable and identifier column
         for (int i = 0; i < m_tableWidget->columnCount() - 2; i++) {
             mainWidth += m_tableWidget->columnWidth(i);
         }
@@ -702,7 +710,7 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         menu->addSeparator();
     }
 
-    auto *const optionMenu = menu->addMenu("Table Options");
+    auto *const optionMenu = menu->addMenu(tr("Table Options"));
 
     auto *const iniAction = optionMenu->addAction(tr("Show Initiative"), this, [this] (bool show) {
         setTableOption(show, 0);
@@ -721,6 +729,12 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     });
     colorTableAction->setCheckable(true);
     colorTableAction->setChecked(m_tableSettings.colorTableRows);
+
+    auto *const showIniTooltipsAction = optionMenu->addAction(tr("Show Initiative Calculation Tooltips"), this, [this] (bool show) {
+        setTableOption(show, 3);
+    });
+    showIniTooltipsAction->setCheckable(true);
+    showIniTooltipsAction->setChecked(m_tableSettings.showIniToolTips);
 
     menu->exec(event->globalPos());
 }

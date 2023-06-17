@@ -6,6 +6,8 @@
 
 #include <QtGlobal>
 
+#include "AdditionalInfoData.hpp"
+
 // Stores table data as csv
 bool
 FileHandler::saveTable(
@@ -42,8 +44,22 @@ FileHandler::saveTable(
             // Clear the list at the beginning of every row iteration
             strList.clear();
 
-            for (const auto& item : row) {
-                strList << item.toString();;
+            for (auto i = 0; i < row.size(); i++) {
+                if (i != row.size() - 1) {
+                    strList << row.at(i).toString();
+                } else {
+                    auto addInfo = row.at(i).value<AdditionalInfoData::AdditionalInformation>();
+                    // Use the dashes and plus signs for separation
+                    auto savedAddInfoText = addInfo.mainInfo;
+                    if (!addInfo.statusEffects.empty()) {
+                        savedAddInfoText += "---";
+                    }
+                    for (const auto& statusEffect : addInfo.statusEffects) {
+                        savedAddInfoText.append(statusEffect.name + "+" + QString::number(statusEffect.isPermanent) + "+" +
+                                                QString::number(statusEffect.duration) + "--");
+                    }
+                    strList << savedAddInfoText;
+                }
             }
             if (firstRow) {
                 firstRow = false;
@@ -66,10 +82,8 @@ FileHandler::saveTable(
 int
 FileHandler::getCSVData(const QString& filename)
 {
-    QFile importedCSV(filename);
-
     // If the data can be read, import
-    if (importedCSV.open(QFile::ReadOnly)) {
+    if (QFile importedCSV(filename); importedCSV.open(QFile::ReadOnly)) {
         QTextStream in(&importedCSV);
 #if QT_VERSION_MAJOR > 5
         in.setEncoding(QStringConverter::Utf8);

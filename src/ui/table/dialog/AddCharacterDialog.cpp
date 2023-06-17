@@ -15,11 +15,11 @@
 #include <QSpinBox>
 #include <QTimer>
 
+#include "AdditionalInfoWidget.hpp"
 #include "StatusEffectDialog.hpp"
 #include "UtilsGeneral.hpp"
 
-AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget *parent) :
-    m_ruleSettings(RuleSettings)
+AddCharacterDialog::AddCharacterDialog(QWidget *parent)
 {
     setWindowTitle(tr("Add new Character(s)"));
 
@@ -33,18 +33,14 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     m_iniBox->setMinimum(-20);
     m_iniBox->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
 
-    auto *const iniModifierLabel = new QLabel(m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_30E ?
-                                              tr("DEX value:") :
-                                              tr("INI Modifier:"));
+    auto *const iniModifierLabel = new QLabel(tr("Modifier:"));
     m_iniModifierBox = new QSpinBox;
     m_iniModifierBox->setMinimum(-10);
-    m_iniModifierBox->setToolTip(m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_30E ?
-                                 tr("Set the dexterity value of this Character. Optional.") :
-                                 tr("Set the modifier of the initiative. Optional."));
+    m_iniModifierBox->setToolTip(tr("Set the initiative modifier. Optional."));
 
     m_labelRolled = new QLabel;
-    auto *const rollButton = new QPushButton(tr("Roll random INI value"));
-    rollButton->setToolTip(tr("Roll the Initiative.\n"
+    auto *const rollButton = new QPushButton(tr("Random"));
+    rollButton->setToolTip(tr("Roll a 20 sided dice.\n"
                               "The modifier is added to the rolled value."));
 
     auto *const hpLabel = new QLabel(tr("HP:"));
@@ -56,10 +52,10 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     m_enemyBox = new QCheckBox;
     m_enemyBox->setToolTip(tr("Set if the Character is an enemy. Optional."));
 
-    auto *const addInfoLabel = new QLabel(tr("Add. Info:"));
+    auto *const addInfoLabel = new QLabel(tr("Additional:"));
     m_addInfoEdit = new QLineEdit;
-    m_addInfoEdit->setToolTip(tr("Set additional information,\n"
-                                 "for example status effects. Optional."));
+    m_addInfoEdit->setToolTip(tr("Set additional information. \n"
+                                 "Status Effects are added in the main table widget."));
 
     m_instanceNumberBox = new QSpinBox;
     m_instanceNumberBox->setRange(2, 10);
@@ -77,12 +73,10 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
 
     auto *const resetButton = new QPushButton(tr("Reset"));
-    auto *const statusEffectButton = new QPushButton(tr("Status Effects..."));
 
     saveButton->setShortcut(QKeySequence::Save);
     const auto saveShortcutText = "Save this Character (" + QKeySequence(QKeySequence::Save).toString() + ").";
     saveButton->setToolTip(tr(saveShortcutText.toLocal8Bit().constData()));
-    statusEffectButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
 
     m_animatedLabel = new QLabel;
     m_timer = new QTimer(this);
@@ -98,36 +92,34 @@ AddCharacterDialog::AddCharacterDialog(const RuleSettings& RuleSettings, QWidget
     layout->addWidget(m_iniModifierBox, 1, 3);
 
     layout->addWidget(m_labelRolled, 2, 0, 1, 2);
-    layout->addWidget(rollButton, 2, 2, 1, 2);
+    layout->addWidget(rollButton, 2, 3, 1, 1);
 
-    layout->addWidget(hpLabel, 3, 0);
-    layout->addWidget(m_hpBox, 3, 1);
-    layout->addWidget(enemyLabel, 3, 2);
-    layout->addWidget(m_enemyBox, 3, 3);
+    layout->addWidget(hpLabel, 4, 0);
+    layout->addWidget(m_hpBox, 4, 1);
+    layout->addWidget(enemyLabel, 4, 2);
+    layout->addWidget(m_enemyBox, 4, 3);
 
-    layout->addWidget(addInfoLabel, 4, 0);
-    layout->addWidget(m_addInfoEdit, 4, 1, 1, 2);
-    layout->addWidget(statusEffectButton, 4, 3);
+    layout->addWidget(addInfoLabel, 5, 0);
+    layout->addWidget(m_addInfoEdit, 5, 1, 1, 3);
 
-    layout->addWidget(m_multipleEnabledBox, 5, 0, 1, 3);
-    layout->addWidget(m_instanceNumberBox, 5, 3, 1, 1);
+    layout->addWidget(m_multipleEnabledBox, 6, 0, 1, 3);
+    layout->addWidget(m_instanceNumberBox, 6, 3, 1, 1);
 
-    layout->addWidget(m_animatedLabel, 6, 0, 1, 2);
-    layout->addWidget(resetButton, 6, 3, 1, 1);
+    layout->addWidget(m_animatedLabel, 7, 0, 1, 2);
+    layout->addWidget(resetButton, 7, 3, 1, 1);
 
     // Keep a little space to the button box
-    layout->setRowMinimumHeight(7, 20);
+    layout->setRowMinimumHeight(8, 20);
 
-    layout->addWidget(buttonBox, 8, 1, 1, 3);
+    layout->addWidget(buttonBox, 9, 1, 1, 3);
 
     setLayout(layout);
-    setFocus();
+    m_nameEdit->setFocus(Qt::TabFocusReason);
 
     connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
     connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
-    connect(statusEffectButton, &QPushButton::clicked, this, &AddCharacterDialog::openStatusEffectDialog);
 
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
@@ -174,11 +166,13 @@ AddCharacterDialog::saveButtonClicked()
     m_somethingStored = true;
 
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
+    AdditionalInfoData::AdditionalInformation additionalInformation { m_addInfoEdit->text(), {} };
+
     CharacterHandler::Character character { m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
-                                            m_enemyBox->isChecked(), m_addInfoEdit->text() };
+                                            m_enemyBox->isChecked(), additionalInformation };
     emit characterCreated(character, numberOfInstances);
     resetButtonClicked();
-    setFocus();
+    m_nameEdit->setFocus(Qt::TabFocusReason);
 
     // Only set the label text after the first stored character,
     // otherwise it will be displayed constantly until something is stored
@@ -216,25 +210,6 @@ AddCharacterDialog::okButtonClicked()
         saveButtonClicked();
     }
     QDialog::accept();
-}
-
-
-void
-AddCharacterDialog::openStatusEffectDialog()
-{
-    // Open dialog
-    auto *const dialog = new StatusEffectDialog(m_ruleSettings, this);
-    if (dialog->exec() == QDialog::Accepted) {
-        const auto itemText = Utils::General::appendCommaToString(m_addInfoEdit->text());
-        m_addInfoEdit->setText(itemText + dialog->getEffect());
-    }
-}
-
-
-void
-AddCharacterDialog::setFocus()
-{
-    m_nameEdit->setFocus(Qt::TabFocusReason);
 }
 
 

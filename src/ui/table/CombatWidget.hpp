@@ -160,8 +160,8 @@ private:
     const RuleSettings& m_ruleSettings;
     TableSettings m_tableSettings;
 
-    unsigned int m_rowEntered = 0;
-    unsigned int m_roundCounter = 1;
+    unsigned int m_rowEntered{ 0 };
+    unsigned int m_roundCounter{ 1 };
 
     // Data storing old values before pushing on undo stack
     QVector<QVector<QVariant> > m_tableDataOld;
@@ -187,11 +187,11 @@ private:
     static constexpr float COL_LENGTH_NAME_BUFFER = 20;
     static constexpr float COL_LENGTH_ADD_BUFFER = 20;
 
-    static constexpr float WIDTH_NAME = 0.25f;
+    static constexpr float WIDTH_NAME = 0.20f;
     static constexpr float WIDTH_INI = 0.05f;
     static constexpr float WIDTH_MODIFIER = 0.05f;
-    static constexpr float WIDTH_HP = 0.11f;
-    static constexpr float WIDTH_ENEMY = 0.12f;
+    static constexpr float WIDTH_HP = 0.1f;
+    static constexpr float WIDTH_ENEMY = 0.1f;
 
     static constexpr int HEIGHT_BUFFER = 140;
 };

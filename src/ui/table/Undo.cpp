@@ -10,11 +10,11 @@
 Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *CombatWidget,
            unsigned int* rowEntered, unsigned int* roundCounter,
            QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
-           bool colorTableRows) :
+           bool colorTableRows, bool showIniToolTips) :
     m_oldData(oldData), m_newData(newData), m_combatWidget(CombatWidget),
     m_rowEntered(rowEntered), m_roundCounter(roundCounter),
     m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
-    m_colorTableRows(colorTableRows)
+    m_colorTableRows(colorTableRows), m_showIniToolTips(showIniToolTips)
 {
 }
 
@@ -48,9 +48,17 @@ Undo::setCombatWidget(bool undo)
     // Main table creation
     for (int i = 0; i < undoData.tableData.size(); ++i) {
         for (int j = 0; j < undoData.tableData.at(i).size(); ++j) {
-            j == COL_ENEMY ?
-            Utils::Table::setTableCheckBox(m_combatWidget, i, undoData.tableData.at(i).at(j).toBool()):
-            tableWidget->setItem(i, j, new QTableWidgetItem(undoData.tableData.at(i).at(j).toString()));
+            switch (j) {
+            case COL_ENEMY:
+                Utils::Table::setTableCheckBox(m_combatWidget, i, undoData.tableData.at(i).at(j).toBool());
+                break;
+            case COL_ADDITIONAL:
+                Utils::Table::setTableAdditionalInfoWidget(m_combatWidget, i, undoData.tableData.at(i).at(j));
+                break;
+            default:
+                tableWidget->setItem(i, j, new QTableWidgetItem(undoData.tableData.at(i).at(j).toString()));
+                break;
+            }
         }
     }
 
@@ -62,10 +70,12 @@ Undo::setCombatWidget(bool undo)
 
     // Set the remaining label and font data
     m_roundCounterLabel->setText(QObject::tr("Round ") + QString::number(undoData.roundCounter));
-    Utils::Table::setRowAndPlayer(tableWidget, m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered, undoData.roundCounter);
+    Utils::Table::setRowAndPlayer(tableWidget, m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered);
     Utils::Table::setTableRowColor(tableWidget, !m_colorTableRows);
+    Utils::Table::setIniColumnTooltips(tableWidget, !m_showIniToolTips);
 
     emit m_combatWidget->tableHeightSet(m_combatWidget->getHeight());
+    emit m_combatWidget->changeOccured();
 
     tableWidget->blockSignals(false);
 }

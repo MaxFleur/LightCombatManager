@@ -3,7 +3,7 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![CI badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run.yml/badge.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v1.10.3-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v1.11.0-blue.svg)
 
 </div>
 
@@ -12,10 +12,10 @@
 ### A small cross-platform combat manager for d20-based role-playing games, based on Qt.
 
 With LightCombatManager (or just **LCM**), characters with initiative values, a HP counter and additional information (including ruleset-defined status effects) can be easily created.\
-![image1](https://github.com/MaxFleur/LightCombatManager/assets/15110943/2df600be-f2de-415c-b2eb-0b114da94d7c)
+![image1](https://github.com/MaxFleur/LightCombatManager/assets/15110943/a75d1737-1fca-4b03-913a-b52e6f0839df)
 
 After character generation, LCM creates a full combat table, which can be used to easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the deletion and subsequent addition of characters.\
-![image2](https://github.com/MaxFleur/LightCombatManager/assets/15110943/22ed129f-703f-4886-b037-b44766ea9cf0)
+![image2](https://github.com/MaxFleur/LightCombatManager/assets/15110943/c4492ccf-7c2a-4d94-9a0d-648751abde14)
 
 If the game ends, but the current combat is not finished yet, the combat table can be saved as a csv file and reopened later to continue the combat.
 

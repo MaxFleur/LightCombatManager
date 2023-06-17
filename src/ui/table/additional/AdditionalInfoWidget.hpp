@@ -49,7 +49,10 @@ signals:
 private:
     bool
     eventFilter(QObject* object,
-                QEvent*  event);
+                QEvent*  event) override;
+
+    bool
+    event(QEvent *event) override;
 
 private:
     QPointer<QLineEdit> m_additionalInfoLineEdit;

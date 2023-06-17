@@ -154,12 +154,13 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
         SECTION("Set color") {
             Utils::Table::setTableRowColor(tableWidget, false);
 
-            REQUIRE(tableWidget->item(0, 0)->background().color() == QColor(12, 123, 220, 75));
-            REQUIRE(tableWidget->cellWidget(0, 4)->palette().color(QPalette::Base) == QColor(12, 123, 220, 75));
-            REQUIRE(tableWidget->cellWidget(0, 5)->palette().color(QPalette::Base) == QColor(12, 123, 220, 75));
-            REQUIRE(tableWidget->item(1, 0)->background().color() == QColor(255, 194, 10, 75));
-            REQUIRE(tableWidget->cellWidget(1, 4)->palette().color(QPalette::Base) == QColor(255, 194, 10, 75));
-            REQUIRE(tableWidget->cellWidget(1, 5)->palette().color(QPalette::Base) == QColor(255, 194, 10, 75));
+            REQUIRE(tableWidget->item(0, 0)->background().color() == QColor(12, 123, 220, 60));
+            REQUIRE(tableWidget->cellWidget(0, 4)->palette().color(QPalette::Base) == QColor(12, 123, 220, 60));
+            REQUIRE(tableWidget->cellWidget(0, 5)->palette().color(QPalette::Base) == QColor(12, 123, 220, 60));
+            REQUIRE(tableWidget->cellWidget(0, 5)->palette().color(QPalette::Button) == QColor(12, 123, 220, 10));
+            REQUIRE(tableWidget->item(1, 0)->background().color() == QColor(255, 194, 10, 60));
+            REQUIRE(tableWidget->cellWidget(1, 4)->palette().color(QPalette::Base) == QColor(255, 194, 10, 60));
+            REQUIRE(tableWidget->cellWidget(1, 5)->palette().color(QPalette::Button) == QColor(255, 194, 10, 10));
         }
         SECTION("Reset color") {
             Utils::Table::setTableRowColor(tableWidget, true);
@@ -167,9 +168,11 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
             REQUIRE(tableWidget->item(0, 0)->background().color() == color);
             REQUIRE(tableWidget->cellWidget(0, 4)->palette().color(QPalette::Base) == color);
             REQUIRE(tableWidget->cellWidget(0, 5)->palette().color(QPalette::Base) == color);
+            REQUIRE(tableWidget->cellWidget(0, 5)->palette().color(QPalette::Button) == color);
             REQUIRE(tableWidget->item(1, 0)->background().color() == color);
             REQUIRE(tableWidget->cellWidget(1, 4)->palette().color(QPalette::Base) == color);
             REQUIRE(tableWidget->cellWidget(1, 5)->palette().color(QPalette::Base) == color);
+            REQUIRE(tableWidget->cellWidget(1, 5)->palette().color(QPalette::Button) == color);
         }
     }
 

@@ -139,21 +139,24 @@ setTableRowColor(QTableWidget *tableWidget, bool resetColor)
 {
     tableWidget->blockSignals(true);
 
-    const auto color = [](bool resetColor, bool isEnemy) {
+    const auto color = [](bool resetColor, bool isEnemy, bool isButton) {
+                           // Weaker alpha value so that the button does not stick out too much
+                           const auto alpha = isButton ? 10 : 60;
                            if (resetColor) {
                                return QApplication::palette().color(QPalette::Base);
                            }
-                           return isEnemy ? QColor(255, 194, 10, 75) : QColor(12, 123, 220, 75);
+                           return isEnemy ? QColor(255, 194, 10, alpha) : QColor(12, 123, 220, alpha);
                        };
 
     for (int i = 0; i < tableWidget->rowCount(); i++) {
         const auto isEnemy = tableWidget->cellWidget(i, COL_ENEMY)->findChild<QCheckBox *>()->isChecked();
         for (int j = 0; j < tableWidget->columnCount(); j++) {
             if (j < FIRST_FOUR_COLUMNS) {
-                tableWidget->item(i, j)->setBackground(color(resetColor, isEnemy));
+                tableWidget->item(i, j)->setBackground(color(resetColor, isEnemy, false));
             } else {
                 QPalette palette;
-                palette.setColor(QPalette::Base, color(resetColor, isEnemy));
+                palette.setColor(QPalette::Base, color(resetColor, isEnemy, false));
+                palette.setColor(QPalette::Button, color(resetColor, isEnemy, true));
                 tableWidget->cellWidget(i, j)->setAutoFillBackground(!resetColor);
                 tableWidget->cellWidget(i, j)->setPalette(palette);
             }

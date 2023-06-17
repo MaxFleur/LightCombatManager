@@ -86,3 +86,21 @@ AdditionalInfoWidget::eventFilter(QObject* object, QEvent* event)
     }
     return false;
 }
+
+
+bool
+AdditionalInfoWidget::event(QEvent *event)
+{
+    // The color alpha for the line edit background seems to be applied differently when
+    // the Base background is set in the table utils function. For this reason, we reset it
+    // so that the line edit does not stick out to strongly.
+    if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
+        auto palette = m_additionalInfoLineEdit->palette();
+        auto color = palette.color(QPalette::Base);
+        color.setAlpha(10);
+        palette.setColor(QPalette::Base, color);
+
+        m_additionalInfoLineEdit->setPalette(palette);
+    }
+    return QWidget::event(event);
+}

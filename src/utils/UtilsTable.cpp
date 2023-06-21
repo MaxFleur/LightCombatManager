@@ -82,6 +82,11 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::additionalInfoEdited, combatWidget, [combatWidget] {
             combatWidget->pushOnUndoStack(true);
         });
+    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widthAdjusted, combatWidget,
+                     [combatWidget, tableWidget, row] (int width) {
+            const auto name = tableWidget->item(row, 0)->text();
+            combatWidget->resetNameAndInfoWidth(name, width);
+        });
 
     auto *const widget = new QWidget;
     auto *layout = new QHBoxLayout(widget);

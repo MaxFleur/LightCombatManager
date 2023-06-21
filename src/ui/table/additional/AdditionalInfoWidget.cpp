@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 
 #include "StatusEffectButton.hpp"
+#include "UtilsGeneral.hpp"
 
 AdditionalInfoWidget::AdditionalInfoWidget()
 {
@@ -27,6 +28,7 @@ AdditionalInfoWidget::AdditionalInfoWidget()
 
     connect(m_additionalInfoLineEdit, &QLineEdit::returnPressed, this, [this] {
         m_additionalInfoLineEdit->clearFocus();
+        calculateWidth();
         emit additionalInfoEdited();
     });
 }
@@ -56,6 +58,9 @@ AdditionalInfoWidget::setStatusEffects(QVector<AdditionalInfoData::StatusEffect>
     m_statusEffects = effects;
     m_statusEffectLabel->setVisible(!effects.empty());
 
+    m_statusEffectsLayoutWidth = 0;
+    m_statusEffectsLayoutWidth += Utils::General::getStringWidth(m_statusEffectLabel->text());
+
     for (int i = 0; i < m_statusEffects.size(); i++) {
         auto* const statusEffectButton = new StatusEffectButton(m_statusEffects[i]);
         connect(statusEffectButton, &StatusEffectButton::menuCalled, this, [this] {
@@ -71,9 +76,23 @@ AdditionalInfoWidget::setStatusEffects(QVector<AdditionalInfoData::StatusEffect>
         });
 
         m_statusEffectsLayout->addWidget(statusEffectButton);
+        const auto buttonTextStringWidth = Utils::General::getStringWidth(statusEffectButton->text());
+        // The normal widget width returns weird values, so as a workaround use the text width with a buffer
+        m_statusEffectsLayoutWidth += buttonTextStringWidth + LENGTH_BUFFER;
     }
-
     m_statusEffectsLayout->addStretch();
+
+    calculateWidth();
+}
+
+
+void
+AdditionalInfoWidget::calculateWidth()
+{
+    const auto addInfoNewWidth = Utils::General::getStringWidth(m_additionalInfoLineEdit->text());
+    const auto newWidgetWidth = addInfoNewWidth > m_statusEffectsLayoutWidth ? addInfoNewWidth : m_statusEffectsLayoutWidth;
+
+    emit widthAdjusted(newWidgetWidth);
 }
 
 

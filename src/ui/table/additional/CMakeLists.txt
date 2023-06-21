@@ -14,5 +14,5 @@ target_sources(additional INTERFACE
 )
 
 target_link_libraries(additional
-    INTERFACE Qt::Widgets
+    INTERFACE Qt::Widgets utils
 )

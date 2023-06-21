@@ -2,6 +2,7 @@
 
 #include <random>
 
+#include <QApplication>
 #include <QColor>
 #include <QDebug>
 #include <QFileInfo>
@@ -40,8 +41,12 @@ rollDice()
 
 
 int
-getStringWidth(const QString& str, const QFont& font)
+getStringWidth(const QString& str)
 {
+    // Use a bold font for longer columns
+    auto font = QApplication::font();
+    font.setBold(true);
+
     const QFontMetrics fontMetrics(font);
     return fontMetrics.boundingRect(str).width();
 }

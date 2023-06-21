@@ -21,8 +21,7 @@ rollDice();
 
 // Get a QString width in pixels
 [[nodiscard]] int
-getStringWidth(const QString& str,
-               const QFont&   font);
+getStringWidth(const QString& str);
 
 // Trim a file's path so only the file name remains
 [[nodiscard]] QString

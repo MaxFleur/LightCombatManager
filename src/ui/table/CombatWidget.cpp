@@ -247,6 +247,38 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
 }
 
 
+// Set a new width for the name and/or additional info column if longer strings are used
+void
+CombatWidget::resetNameAndInfoWidth(const QString& name, const int addInfoWidth)
+{
+    auto changeOccured = false;
+
+    const auto nameWidth = Utils::General::getStringWidth(name);
+    // Due to the stretch property, the additional info column will be shortened if the name column
+    // is enhanced. To prevent this, we store the old value and reuse it if necessary
+    auto oldAddInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
+
+    if (m_tableWidget->columnWidth(COL_NAME) < nameWidth) {
+        m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_BUFFER_NAME);
+        changeOccured = true;
+    }
+    if (oldAddInfoWidth < addInfoWidth) {
+        m_tableWidget->setColumnWidth(COL_ADDITIONAL, addInfoWidth + COL_LENGTH_BUFFER_ADDITIONAL);
+        changeOccured = true;
+    }
+
+    if (changeOccured) {
+        // Change the main window width
+        auto mainWidth = 0;
+        for (int i = 0; i < m_tableWidget->columnCount(); i++) {
+            mainWidth += m_tableWidget->columnWidth(i);
+        }
+        // The main window will adjust and the additional info column will be lenghtened
+        emit tableWidthSet(mainWidth + COL_LENGTH_BUFFER_ADDITIONAL);
+    }
+}
+
+
 void
 CombatWidget::setUndoRedoIcon(bool isDarkMode)
 {
@@ -347,7 +379,6 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
                                instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier :
                                character.initiative, character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
-    resetNameInfoWidth(trimmedName, character.additionalInformation.mainInfo);
 
     pushOnUndoStack();
 }
@@ -413,8 +444,6 @@ CombatWidget::setTableDataWithFileData()
             m_rowEntered = rowData[ROW_ENTERED].toInt();
             m_roundCounter = rowData[ROUND_CTR].toInt();
         }
-
-        resetNameInfoWidth(rowData[COL_NAME], rowData[COL_ADDITIONAL]);
     }
     m_isDataStored = false;
 }
@@ -592,47 +621,6 @@ CombatWidget::setTableOption(bool option, int valueType)
     }
 
     m_tableSettings.write(option, static_cast<TableSettings::ValueType>(valueType));
-}
-
-
-// Set a new width for the name and/or additional info column if longer strings are used
-void
-CombatWidget::resetNameInfoWidth(const QString& name, const QString& addInfo)
-{
-    auto changeOccured = false;
-    // Use a bold font for longer columns
-    auto font = QApplication::font();
-    font.setBold(true);
-
-    const auto nameWidth = Utils::General::getStringWidth(name, font);
-    // Due to the stretch property, the additional info column will be shortened if the name column
-    // is enhanced. To prevent this, we store the old value and reuse it if necessary
-    auto addInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
-
-    if (m_tableWidget->columnWidth(COL_NAME) < nameWidth) {
-        m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_NAME_BUFFER);
-        changeOccured = true;
-    }
-    // additional info might be empty, so possibly skip
-    if (!addInfo.isEmpty()) {
-        const auto addInfoNewWidth = Utils::General::getStringWidth(addInfo, font);
-        if (addInfoWidth < addInfoNewWidth) {
-            // Reuse the old value if the new string is too short
-            addInfoWidth = addInfoNewWidth + COL_LENGTH_ADD_BUFFER;
-            changeOccured = true;
-        }
-    }
-
-    if (changeOccured) {
-        // Change the main window width
-        auto mainWidth = 0;
-        // Ignore the stretchable and identifier column
-        for (int i = 0; i < m_tableWidget->columnCount() - 2; i++) {
-            mainWidth += m_tableWidget->columnWidth(i);
-        }
-        // The main window will adjust and the additional info column will be lenghtened
-        emit tableWidthSet(mainWidth + addInfoWidth + COL_LENGTH_ADD_BUFFER);
-    }
 }
 
 

@@ -46,7 +46,13 @@ signals:
     void
     additionalInfoEdited();
 
+    void
+    widthAdjusted(int width);
+
 private:
+    void
+    calculateWidth();
+
     bool
     eventFilter(QObject* object,
                 QEvent*  event) override;
@@ -59,5 +65,9 @@ private:
     QPointer<QLabel> m_statusEffectLabel;
     QPointer<QHBoxLayout> m_statusEffectsLayout;
 
+    unsigned int m_statusEffectsLayoutWidth = 0;
+
     QVector<AdditionalInfoData::StatusEffect> m_statusEffects;
+
+    static constexpr int LENGTH_BUFFER = 30;
 };

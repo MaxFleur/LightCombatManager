@@ -63,6 +63,10 @@ public:
     pushOnUndoStack(bool resynchronize = false);
 
     void
+    resetNameAndInfoWidth(const QString& name,
+                          const int      addInfoWidth);
+
+    void
     setUndoRedoIcon(bool isDarkMode);
 
 public slots:
@@ -131,10 +135,6 @@ private:
                    int  valueType);
 
     void
-    resetNameInfoWidth(const QString& strName,
-                       const QString& strAdd);
-
-    void
     setRowIdentifiers();
 
     void
@@ -184,8 +184,8 @@ private:
 
     static constexpr int SPACING = 30;
 
-    static constexpr float COL_LENGTH_NAME_BUFFER = 20;
-    static constexpr float COL_LENGTH_ADD_BUFFER = 20;
+    static constexpr int COL_LENGTH_BUFFER_NAME = 20;
+    static constexpr int COL_LENGTH_BUFFER_ADDITIONAL = 35;
 
     static constexpr float WIDTH_NAME = 0.20f;
     static constexpr float WIDTH_INI = 0.05f;

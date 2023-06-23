@@ -182,7 +182,7 @@ AddCharacterDialog::saveButtonClicked()
     }
     // Reset the graphics effect and kickoff the animation
     m_animatedLabel->setGraphicsEffect(0);
-    m_timer->start(LABEL_SHOWN);
+    m_timer->start(LABEL_SHOWN_DURATION);
 }
 
 

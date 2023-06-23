@@ -2,7 +2,6 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QStringList>
 
 #include <QtGlobal>
 
@@ -80,7 +79,7 @@ FileHandler::saveTable(
 
 // Open an existing csv table and stream its data
 int
-FileHandler::getCSVData(const QString& filename)
+FileHandler::getCSVStatus(const QString& filename)
 {
     // If the data can be read, import
     if (QFile importedCSV(filename); importedCSV.open(QFile::ReadOnly)) {

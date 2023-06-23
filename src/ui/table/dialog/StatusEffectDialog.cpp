@@ -87,8 +87,8 @@ StatusEffectDialog::okButtonClicked()
     // If nothing is selected, add the line edit text as status effect
     if (m_listWidget->selectedItems().empty() && !m_lineEdit->text().isEmpty()) {
         createEffect(m_lineEdit->text());
-        // Otherwise, add the effect in the list
     } else {
+        // Otherwise, add the effect in the list
         for (auto* const item : m_listWidget->selectedItems()) {
             createEffect(item->text());
         }

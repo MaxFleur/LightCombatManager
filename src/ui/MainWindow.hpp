@@ -95,8 +95,8 @@ private:
     RuleSettings::Ruleset m_loadedTableRule;
     bool m_loadedTableRollAutomatically;
 
-    static constexpr int START_WIDTH = 860;
-    static constexpr int START_HEIGHT = 240;
+    static constexpr unsigned int START_WIDTH = 860;
+    static constexpr unsigned int START_HEIGHT = 240;
 
     static constexpr int COL_RULESET = 8;
     static constexpr int COL_ROLL_AUTOMATICALLY = 9;

@@ -3,11 +3,8 @@
 #include <random>
 
 #include <QApplication>
-#include <QColor>
 #include <QDebug>
 #include <QFileInfo>
-#include <QFont>
-#include <QFontMetrics>
 #include <QTableWidget>
 
 #include "AdditionalInfoWidget.hpp"
@@ -116,9 +113,9 @@ convertStringToAdditionalInfoData(const QString& str)
 
     auto statusEffects = str.mid(splitIndex + 3);
     // Status effects are separated using  '--'
-    auto statusEffectsSplitted = statusEffects.split("--");
+    const auto& statusEffectsSplitted = statusEffects.split("--");
 
-    for (auto& statusEffectString : statusEffectsSplitted) {
+    for (const auto& statusEffectString : statusEffectsSplitted) {
         // Abort for last string which is always empty
         if (statusEffectString.isEmpty()) {
             break;
@@ -126,7 +123,7 @@ convertStringToAdditionalInfoData(const QString& str)
 
         AdditionalInfoData::StatusEffect statusEffect;
         // Status effect members are separated using '+'
-        auto statusEffectSplitted = statusEffectString.split("+");
+        const auto& statusEffectSplitted = statusEffectString.split("+");
         // Apply
         statusEffect.name = statusEffectSplitted.at(0);
         statusEffect.isPermanent = statusEffectSplitted.at(1).toInt() == 1;

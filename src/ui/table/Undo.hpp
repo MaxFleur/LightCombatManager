@@ -52,8 +52,8 @@ private:
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
 
-    bool m_colorTableRows;
-    bool m_showIniToolTips;
+    const bool m_colorTableRows;
+    const bool m_showIniToolTips;
 
     static constexpr int COL_NAME = 0;
     static constexpr int COL_ENEMY = 4;

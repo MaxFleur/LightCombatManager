@@ -9,7 +9,6 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QString>
 #include <QTimer>
 
 #include "CombatWidget.hpp"
@@ -128,8 +127,8 @@ MainWindow::saveTable()
             // No file provided or Cancel pressed
             return false;
         }
-        // Otherwise, just overwrite the loaded file
     } else {
+        // Otherwise, just overwrite the loaded file
         fileName = m_dirSettings.openDir;
     }
     // Save the table
@@ -144,7 +143,7 @@ MainWindow::saveTable()
         // Success
         return true;
     }
-    auto const reply = QMessageBox::critical(this, tr("Could not save table!"), tr("Failed to write file."));
+    auto const reply = QMessageBox::critical(this, tr("Could not save Table!"), tr("Failed to write file."));
     return false;
 }
 
@@ -180,7 +179,7 @@ MainWindow::openTable()
         }
     }
     const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("csv File(*.csv)"));
-    const auto code = m_file->getCSVData(fileName);
+    const auto code = m_file->getCSVStatus(fileName);
     auto rulesModified = false;
 
     switch (code) {
@@ -188,9 +187,9 @@ MainWindow::openTable()
     {
         if (!checkStoredTableRules(m_file->getData())) {
             const auto messageString = createRuleChangeMessageBoxText();
-            auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different rulesets detected!"), messageString, QMessageBox::Cancel);
-            auto* const applyButton = msgBox->addButton(tr("Apply Table ruleset to Settings"), QMessageBox::ApplyRole);
-            auto* const ignoreButton = msgBox->addButton(tr("Ignore Stored Table ruleset"), QMessageBox::AcceptRole);
+            auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different Rulesets detected!"), messageString, QMessageBox::Cancel);
+            auto* const applyButton = msgBox->addButton(tr("Apply Table Ruleset to Settings"), QMessageBox::ApplyRole);
+            auto* const ignoreButton = msgBox->addButton(tr("Ignore stored Table Ruleset"), QMessageBox::AcceptRole);
 
             msgBox->exec();
             if (msgBox->clickedButton() == applyButton) {
@@ -276,7 +275,7 @@ MainWindow::setWelcomingWidget()
 void
 MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
 {
-    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, this->width(), isDataStored, data, this);
+    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, data, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {
@@ -284,17 +283,17 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
             setFixedHeight(height);
         }
     });
-    connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int width) {
-        if (width > this->width()) {
+    connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int tableWidth) {
+        if (tableWidth > width()) {
             // @note A single immediate call to resize() won't actually resize the window
             // So the function is called with a minimal delay of 1 ms, which will actually
             // resize the main window
-            QTimer::singleShot(1, [this, width]() {
-                resize(width, this->height());
+            QTimer::singleShot(1, [this, tableWidth]() {
+                resize(tableWidth, height());
             });
         }
     });
-    connect(m_combatWidget, &CombatWidget::changeOccured, this, [this] () {
+    connect(m_combatWidget, &CombatWidget::changeOccured, this, [this] {
         setCombatTitle(true);
     });
 
@@ -306,7 +305,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
     } else {
         m_combatWidget->generateTable();
         const auto height = m_combatWidget->getHeight();
-        setFixedHeight(height > START_HEIGHT ? height : START_HEIGHT);
+        setFixedHeight(std::max(height, START_HEIGHT));
     }
 
     m_isTableActive = true;
@@ -413,7 +412,7 @@ MainWindow::closeEvent(QCloseEvent *event)
 bool
 MainWindow::checkStoredTableRules(QString data)
 {
-    // Get the first row of the stored table
+    // Get the first stored table row
     const auto firstRowData = data.split("\n").at(1).split(";");
     // Get the loaded ruleset and roll automatically variable
     m_loadedTableRule = static_cast<RuleSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
@@ -428,7 +427,7 @@ bool
 MainWindow::event(QEvent *event)
 {
     if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
-        const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+        const auto isSystemInDarkMode = Utils::General::isColorDark(palette().color(QPalette::Window));
         m_openSettingsAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"));
 
         if (m_combatWidget) {

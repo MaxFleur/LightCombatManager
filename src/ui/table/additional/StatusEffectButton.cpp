@@ -29,7 +29,7 @@ StatusEffectButton::changeDuration(int value)
 {
     auto signedValue = (int) m_statusEffect.duration;
     signedValue += value;
-    m_statusEffect.duration = signedValue < 1 ? 1 : signedValue;
+    m_statusEffect.duration = std::max(signedValue, 1);
     setButtonText();
 
     emit effectChanged(m_statusEffect);

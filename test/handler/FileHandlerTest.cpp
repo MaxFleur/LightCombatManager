@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <string>
 
 #include <QCheckBox>
 #include <QHBoxLayout>
@@ -18,7 +17,6 @@
 class FileHandlerTestUtils
 {
 public:
-
     QString
     resolvePath(std::filesystem::path relativeDir)
     {
@@ -42,13 +40,13 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
 
     SECTION("Check format test") {
         SECTION("Functioning table") {
-            REQUIRE(fileHandler->getCSVData(resolvePath("resources/tables/workingTable.csv")) == 0);
+            REQUIRE(fileHandler->getCSVStatus(resolvePath("resources/tables/workingTable.csv")) == 0);
         }
         SECTION("Broken table") {
-            REQUIRE(fileHandler->getCSVData(resolvePath("resources/tables/brokenTable.csv")) == 1);
+            REQUIRE(fileHandler->getCSVStatus(resolvePath("resources/tables/brokenTable.csv")) == 1);
         }
         SECTION("Non readable/existing table") {
-            REQUIRE(fileHandler->getCSVData("dir/to/nonexisting/table.csv") == 2);
+            REQUIRE(fileHandler->getCSVStatus("dir/to/nonexisting/table.csv") == 2);
         }
     }
 
@@ -104,11 +102,11 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         const auto tableSaved = fileHandler->saveTable(tableDataWidget, "./test.csv", 0, 1,
                                                        ruleSettings->ruleset, ruleSettings->rollAutomatical);
         SECTION("File format correct") {
-            REQUIRE(fileHandler->getCSVData("./test.csv") == 0);
+            REQUIRE(fileHandler->getCSVStatus("./test.csv") == 0);
         }
 
         SECTION("File content correct") {
-            const auto code = fileHandler->getCSVData("./test.csv");
+            const auto code = fileHandler->getCSVStatus("./test.csv");
 
             auto rowOfData = fileHandler->getData().split("\n");
             QStringList rowData;

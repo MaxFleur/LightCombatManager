@@ -2,9 +2,6 @@
 
 #include <memory>
 
-#include <QString>
-#include <QVector>
-
 #include "AdditionalInfoData.hpp"
 #include "RuleSettings.hpp"
 

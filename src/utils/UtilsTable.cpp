@@ -12,6 +12,7 @@
 #include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
 #include "CombatWidget.hpp"
+#include "UtilsGeneral.hpp"
 
 namespace Utils::Table
 {
@@ -83,9 +84,9 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
             combatWidget->pushOnUndoStack(true);
         });
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widthAdjusted, combatWidget,
-                     [combatWidget, tableWidget, row] (int width) {
-            const auto name = tableWidget->item(row, 0)->text();
-            combatWidget->resetNameAndInfoWidth(name, width);
+                     [combatWidget, tableWidget, row] (int additionalInfoWidth) {
+            const auto nameWidth = Utils::General::getStringWidth(tableWidget->item(row, 0)->text());
+            combatWidget->resetNameAndInfoWidth(nameWidth, additionalInfoWidth);
         });
 
     auto *const widget = new QWidget;
@@ -94,7 +95,7 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
     layout->setAlignment(Qt::AlignLeft);
     widget->setLayout(layout);
 
-    auto converted = additionalInfo.value<AdditionalInfoData::AdditionalInformation>();
+    const auto converted = additionalInfo.value<AdditionalInfoData::AdditionalInformation>();
     additionalInfoWidget->setMainInfoText(converted.mainInfo);
     additionalInfoWidget->setStatusEffects(converted.statusEffects);
     tableWidget->setCellWidget(row, COL_ADDITIONAL, widget);
@@ -107,6 +108,7 @@ setRowAndPlayer(QTableWidget *tableWidget, QLabel *roundCounterLabel, QLabel *cu
     tableWidget->selectionModel()->clearSelection();
     // Setting fonts may trigger unwished item setting events, so block the signals
     tableWidget->blockSignals(true);
+
     if (tableWidget->rowCount() != 0) {
         // Reset bold text rows to standard font
         for (int i = 0; i < tableWidget->rowCount(); i++) {
@@ -145,7 +147,7 @@ setTableRowColor(QTableWidget *tableWidget, bool resetColor)
     tableWidget->blockSignals(true);
 
     const auto color = [](bool resetColor, bool isEnemy, bool isButton) {
-                           // Weaker alpha value so that the button does not stick out too much
+                           // Weaker alpha value so that the status effect buttons do not stick out too much
                            const auto alpha = isButton ? 10 : 60;
                            if (resetColor) {
                                return QApplication::palette().color(QPalette::Base);
@@ -249,12 +251,12 @@ tableDataFromCharacterVector(CharacterHandlerRef characterHandler)
     const auto& characters = characterHandler->getCharacters();
 
     QVector<QVector<QVariant> > tableData;
-    for (int i = 0; i < characters.size(); i++) {
+    for (const auto& character : characters) {
         QVector<QVariant> charValues;
 
-        const auto additionalInformationVariant = AdditionalInfoData::getAdditionalInformationVariant(characters.at(i).additionalInformation);
-        charValues << characters.at(i).name << characters.at(i).initiative << characters.at(i).modifier
-                   << characters.at(i).hp << characters.at(i).isEnemy << additionalInformationVariant;
+        const auto additionalInformationVariant = AdditionalInfoData::getAdditionalInformationVariant(character.additionalInformation);
+        charValues << character.name << character.initiative << character.modifier
+                   << character.hp << character.isEnemy << additionalInformationVariant;
 
         tableData.push_back(charValues);
     }

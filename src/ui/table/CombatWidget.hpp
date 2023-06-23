@@ -63,8 +63,8 @@ public:
     pushOnUndoStack(bool resynchronize = false);
 
     void
-    resetNameAndInfoWidth(const QString& name,
-                          const int      addInfoWidth);
+    resetNameAndInfoWidth(const int nameWidth,
+                          const int addInfoWidth);
 
     void
     setUndoRedoIcon(bool isDarkMode);
@@ -116,7 +116,7 @@ private:
     sortTable();
 
     void
-    setRowAndPlayer();
+    setRowAndPlayer() const;
 
     void
     duplicateRow();

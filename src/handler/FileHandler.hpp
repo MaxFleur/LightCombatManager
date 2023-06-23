@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include <QString>
 #include <QVariant>
 
 #include "RuleSettings.hpp"
@@ -21,7 +20,7 @@ public:
 
     // Open a saved table
     [[nodiscard]] int
-    getCSVData(const QString& filename);
+    getCSVStatus(const QString& filename);
 
     [[nodiscard]] QString
     getData() const

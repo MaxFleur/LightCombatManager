@@ -20,8 +20,8 @@ public:
           bool         newRollAutomatical);
 
 public:
-    Ruleset ruleset;
-    bool rollAutomatical;
+    Ruleset ruleset{ PATHFINDER_1E_DND_35E };
+    bool rollAutomatical{ false };
 
 private:
     void

@@ -19,7 +19,7 @@ public:
     adjustEffectDuration(bool decrease);
 
     void
-    setStatusEffects(QVector<AdditionalInfoData::StatusEffect>& effects);
+    setStatusEffects(const QVector<AdditionalInfoData::StatusEffect>& effects);
 
     void
     setMainInfoText(const QString& text)
@@ -65,7 +65,7 @@ private:
     QPointer<QLabel> m_statusEffectLabel;
     QPointer<QHBoxLayout> m_statusEffectsLayout;
 
-    unsigned int m_statusEffectsLayoutWidth = 0;
+    int m_statusEffectsLayoutWidth = 0;
 
     QVector<AdditionalInfoData::StatusEffect> m_statusEffects;
 

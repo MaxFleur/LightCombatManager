@@ -3,8 +3,6 @@
 #include "AdditionalInfoData.hpp"
 #include "CharacterHandler.hpp"
 
-class QColor;
-class QFont;
 class QTableWidget;
 
 // General utility functions

@@ -53,7 +53,7 @@ AdditionalInfoWidget::adjustEffectDuration(bool decrease)
 
 
 void
-AdditionalInfoWidget::setStatusEffects(QVector<AdditionalInfoData::StatusEffect>& effects)
+AdditionalInfoWidget::setStatusEffects(const QVector<AdditionalInfoData::StatusEffect>& effects)
 {
     m_statusEffects = effects;
     m_statusEffectLabel->setVisible(!effects.empty());
@@ -90,7 +90,7 @@ void
 AdditionalInfoWidget::calculateWidth()
 {
     const auto addInfoNewWidth = Utils::General::getStringWidth(m_additionalInfoLineEdit->text());
-    const auto newWidgetWidth = addInfoNewWidth > m_statusEffectsLayoutWidth ? addInfoNewWidth : m_statusEffectsLayoutWidth;
+    const auto newWidgetWidth = std::max(addInfoNewWidth, m_statusEffectsLayoutWidth);
 
     emit widthAdjusted(newWidgetWidth);
 }
@@ -101,7 +101,6 @@ AdditionalInfoWidget::eventFilter(QObject* object, QEvent* event)
 {
     if (object == m_additionalInfoLineEdit && event->type() == QEvent::FocusIn) {
         emit widgetCalled();
-        return false;
     }
     return false;
 }

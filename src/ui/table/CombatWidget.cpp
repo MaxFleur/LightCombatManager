@@ -4,7 +4,6 @@
 #include <QApplication>
 #include <QContextMenuEvent>
 #include <QDebug>
-#include <QFont>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -12,7 +11,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QShortcut>
-#include <QStringList>
 #include <QToolButton>
 #include <QUndoStack>
 #include <QVBoxLayout>
@@ -238,8 +236,8 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
         Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
     }
     // Assemble the new data
-    const auto tableDataNew = Utils::Table::tableDataFromCharacterVector(m_char);
-    const auto newData = Undo::UndoData{ tableDataNew, m_rowEntered, m_roundCounter };
+    const auto tableData = Utils::Table::tableDataFromCharacterVector(m_char);
+    const auto newData = Undo::UndoData{ tableData, m_rowEntered, m_roundCounter };
     // We got everything, so push
     m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
                                m_roundCounterLabel, m_currentPlayerLabel,
@@ -249,14 +247,13 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
 
 // Set a new width for the name and/or additional info column if longer strings are used
 void
-CombatWidget::resetNameAndInfoWidth(const QString& name, const int addInfoWidth)
+CombatWidget::resetNameAndInfoWidth(const int nameWidth, const int addInfoWidth)
 {
     auto changeOccured = false;
 
-    const auto nameWidth = Utils::General::getStringWidth(name);
     // Due to the stretch property, the additional info column will be shortened if the name column
     // is enhanced. To prevent this, we store the old value and reuse it if necessary
-    auto oldAddInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
+    const auto oldAddInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
 
     if (m_tableWidget->columnWidth(COL_NAME) < nameWidth) {
         m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_BUFFER_NAME);
@@ -373,7 +370,7 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
     saveOldState();
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
 
-    auto trimmedName = character.name.trimmed();
+    const auto trimmedName = character.name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
         m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
                                instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier :
@@ -428,8 +425,7 @@ CombatWidget::setTableDataWithFileData()
     QStringList rowData;
 
     // @note For some reason, the splitting of the data creates one empty, obsolete line
-    // To ignore this line, decrement the row count and iteration number
-    // The second line is the header and also ignored, so decrement again and be at -2
+    // To ignore this line, start at index 1
     for (int x = 1; x < rowOfData.size() - 1; x++) {
         rowData = rowOfData.at(x).split(";");
 
@@ -462,7 +458,7 @@ CombatWidget::sortTable()
 
 
 void
-CombatWidget::setRowAndPlayer()
+CombatWidget::setRowAndPlayer() const
 {
     Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered);
 }
@@ -515,10 +511,8 @@ CombatWidget::removeRow()
             m_rowEntered--;
         }
         // If the deleted row was the last one in the table and also the current player, select to the first row
-        if (index == m_tableWidget->rowCount() - 1) {
-            if (m_tableWidget->item(index, COL_NAME)->font().bold()) {
-                m_rowEntered = 0;
-            }
+        if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
+            m_rowEntered = 0;
         }
 
         characters.remove(index);
@@ -579,11 +573,11 @@ CombatWidget::enteredRowChanged(bool goDown)
             m_rowEntered++;
         }
     } else {
-        // Stop for the first round and first char selected
-        if (m_rowEntered == 0 && m_roundCounter == 1) {
-            return;
-        }
         if (m_rowEntered == 0) {
+            // Stop for the first round and first char selected
+            if (m_roundCounter == 1) {
+                return;
+            }
             m_rowEntered = m_tableWidget->rowCount() - 1;
             m_roundCounter--;
             Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, false);

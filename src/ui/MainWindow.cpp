@@ -84,9 +84,8 @@ MainWindow::newCombat()
 {
     // Check if a table is active
     if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        if (createSaveMessageBox(isWindowModified() ?
-                                 tr("Do you want to save the current Combat before starting a new one?") :
-                                 tr("Do you want to start a new Combat?"), false) == 0) {
+        if (createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before starting a new one?")
+                                                    : tr("Do you want to start a new Combat?"), false) == 0) {
             return;
         }
     }
@@ -172,9 +171,8 @@ MainWindow::openTable()
 {
     // Check if a table is active right now
     if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        if (createSaveMessageBox(isWindowModified() ?
-                                 tr("Do you want to save the current Combat before opening another existing Combat?") :
-                                 tr("Do you want to open another existing Combat?"), false) == 0) {
+        if (createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before opening another existing Combat?")
+                                                    : tr("Do you want to open another existing Combat?"), false) == 0) {
             return;
         }
     }
@@ -247,9 +245,9 @@ MainWindow::about()
 void
 MainWindow::exitCombat()
 {
-    if (createSaveMessageBox(isWindowModified() ?
-                             tr("Do you want to save the current Combat before exiting to the Main Window?") :
-                             tr("Are you sure you want to return to the Main Window? This will end the current Combat."), false) == 0) {
+    if (createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before exiting to the Main Window?")
+                                                : tr("Are you sure you want to return to the Main Window? This will end the current Combat."),
+                             false) == 0) {
         return;
     }
     setWelcomingWidget();
@@ -333,9 +331,8 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 {
     auto *const msgBox = new QMessageBox(this);
     msgBox->setIcon(QMessageBox::Question);
-    msgBox->setStandardButtons(isWindowModified() ?
-                               QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel :
-                               QMessageBox::Yes | QMessageBox::No);
+    msgBox->setStandardButtons(isWindowModified() ? QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
+                                                  : QMessageBox::Yes | QMessageBox::No);
     msgBox->setText(tableMessage);
     if (isClosing) {
         isWindowModified() ? msgBox->setWindowTitle(tr("Save and exit?")) : msgBox->setWindowTitle(tr("Exit application?"));

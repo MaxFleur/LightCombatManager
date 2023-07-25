@@ -24,13 +24,13 @@ TEST_CASE("Table Util Testing", "[TableUtils]") {
     additionalInformationWidget->setStatusEffects(statusEffects);
 
     const auto createCellWidget = [&] (QWidget* widget) {
-                                      auto *const cellWidget = new QWidget;
-                                      auto *const cellLayout = new QHBoxLayout(cellWidget);
-                                      cellLayout->addWidget(widget);
-                                      cellWidget->setLayout(cellLayout);
+        auto *const cellWidget = new QWidget;
+        auto *const cellLayout = new QHBoxLayout(cellWidget);
+        cellLayout->addWidget(widget);
+        cellWidget->setLayout(cellLayout);
 
-                                      return cellWidget;
-                                  };
+        return cellWidget;
+    };
 
     tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
     tableWidget->setItem(0, 1, new QTableWidgetItem("19"));

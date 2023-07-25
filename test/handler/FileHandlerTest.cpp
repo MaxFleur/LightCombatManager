@@ -70,13 +70,13 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         auto *const additionalInfoWidgetBoss = new AdditionalInfoWidget;
 
         const auto createCellWidget = [&] (QWidget* widget) {
-                                          auto *const cellWidget = new QWidget;
-                                          auto *const cellLayout = new QHBoxLayout(cellWidget);
-                                          cellLayout->addWidget(widget);
-                                          cellWidget->setLayout(cellLayout);
+            auto *const cellWidget = new QWidget;
+            auto *const cellLayout = new QHBoxLayout(cellWidget);
+            cellLayout->addWidget(widget);
+            cellWidget->setLayout(cellLayout);
 
-                                          return cellWidget;
-                                      };
+            return cellWidget;
+        };
 
         tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
         tableWidget->setItem(0, 1, new QTableWidgetItem("19"));

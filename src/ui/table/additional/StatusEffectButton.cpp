@@ -55,8 +55,8 @@ StatusEffectButton::createMenu()
         }
     }
 
-    auto *const changePermanencyAction = menu->addAction(m_statusEffect.isPermanent ?
-                                                         tr("Make Temporary") : tr("Make Permanent"), this, [this] {
+    auto *const changePermanencyAction = menu->addAction(m_statusEffect.isPermanent ? tr("Make Temporary") : tr("Make Permanent"),
+                                                         this, [this] {
         m_statusEffect.isPermanent = !m_statusEffect.isPermanent;
         emit effectChanged(m_statusEffect);
     });

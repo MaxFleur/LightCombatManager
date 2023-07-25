@@ -46,19 +46,19 @@ setTableCheckBox(CombatWidget *combatWidget, unsigned int row, bool checked)
     auto *const checkBox = new QCheckBox;
     checkBox->setChecked(checked);
     QObject::connect(checkBox, &QCheckBox::stateChanged, tableWidget, [combatWidget, tableWidget, checkBox] {
-            tableWidget->blockSignals(true);
-            // We need to store the old checkbox state, so we will reset the state for a short time
-            // Then, after saving, reset to the new value and set the correct undo command
-            checkBox->blockSignals(true);
-            checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
-            combatWidget->saveOldState();
-            checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
-            combatWidget->pushOnUndoStack(true);
-            checkBox->blockSignals(false);
+        tableWidget->blockSignals(true);
+        // We need to store the old checkbox state, so we will reset the state for a short time
+        // Then, after saving, reset to the new value and set the correct undo command
+        checkBox->blockSignals(true);
+        checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+        combatWidget->saveOldState();
+        checkBox->setChecked(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+        combatWidget->pushOnUndoStack(true);
+        checkBox->blockSignals(false);
 
-            emit combatWidget->changeOccured();
-            tableWidget->blockSignals(false);
-        });
+        emit combatWidget->changeOccured();
+        tableWidget->blockSignals(false);
+    });
 
     // Center the checkboxes
     auto *const widget = new QWidget;
@@ -78,16 +78,16 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
 
     auto* const additionalInfoWidget = new AdditionalInfoWidget;
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widgetCalled, combatWidget, [combatWidget] {
-            combatWidget->saveOldState();
-        });
+        combatWidget->saveOldState();
+    });
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::additionalInfoEdited, combatWidget, [combatWidget] {
-            combatWidget->pushOnUndoStack(true);
-        });
+        combatWidget->pushOnUndoStack(true);
+    });
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widthAdjusted, combatWidget,
                      [combatWidget, tableWidget, row] (int additionalInfoWidth) {
-            const auto nameWidth = Utils::General::getStringWidth(tableWidget->item(row, 0)->text());
-            combatWidget->resetNameAndInfoWidth(nameWidth, additionalInfoWidth);
-        });
+        const auto nameWidth = Utils::General::getStringWidth(tableWidget->item(row, 0)->text());
+        combatWidget->resetNameAndInfoWidth(nameWidth, additionalInfoWidth);
+    });
 
     auto *const widget = new QWidget;
     auto *layout = new QHBoxLayout(widget);
@@ -147,13 +147,13 @@ setTableRowColor(QTableWidget *tableWidget, bool resetColor)
     tableWidget->blockSignals(true);
 
     const auto color = [](bool resetColor, bool isEnemy, bool isButton) {
-                           // Weaker alpha value so that the status effect buttons do not stick out too much
-                           const auto alpha = isButton ? 10 : 60;
-                           if (resetColor) {
-                               return QApplication::palette().color(QPalette::Base);
-                           }
-                           return isEnemy ? QColor(255, 194, 10, alpha) : QColor(12, 123, 220, alpha);
-                       };
+        // Weaker alpha value so that the status effect buttons do not stick out too much
+        const auto alpha = isButton ? 10 : 60;
+        if (resetColor) {
+            return QApplication::palette().color(QPalette::Base);
+        }
+        return isEnemy ? QColor(255, 194, 10, alpha) : QColor(12, 123, 220, alpha);
+    };
 
     for (int i = 0; i < tableWidget->rowCount(); i++) {
         const auto isEnemy = tableWidget->cellWidget(i, COL_ENEMY)->findChild<QCheckBox *>()->isChecked();

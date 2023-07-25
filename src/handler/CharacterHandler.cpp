@@ -21,15 +21,15 @@ void
 CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool rollAutomatically)
 {
     const auto sortUsingHashes = [&] (const auto& c1, const auto& c2) {
-                                     // Use the ini value as additional seed. This will deliver different results depending on
-                                     // the ini value, but stay constant if the table is stored and reopened
-                                     const auto nameToHashOne = c1.name + " " + QString::number(c1.initiative);
-                                     const auto nameToHashTwo = c2.name + " " + QString::number(c2.initiative);
-                                     return rollAutomatically ?
-                                            QCryptographicHash::hash(nameToHashOne.toUtf8(), QCryptographicHash::Sha256).toHex() >
-                                            QCryptographicHash::hash(nameToHashTwo.toUtf8(), QCryptographicHash::Sha256).toHex() :
-                                            false;
-                                 };
+        // Use the ini value as additional seed. This will deliver different results depending on
+        // the ini value, but stay constant if the table is stored and reopened
+        const auto nameToHashOne = c1.name + " " + QString::number(c1.initiative);
+        const auto nameToHashTwo = c2.name + " " + QString::number(c2.initiative);
+        return rollAutomatically ?
+               QCryptographicHash::hash(nameToHashOne.toUtf8(), QCryptographicHash::Sha256).toHex() >
+               QCryptographicHash::hash(nameToHashTwo.toUtf8(), QCryptographicHash::Sha256).toHex() :
+               false;
+    };
 
     std::sort(characters.begin(), characters.end(),
               [ruleset, rollAutomatically, sortUsingHashes](const auto& c1, const auto& c2) {

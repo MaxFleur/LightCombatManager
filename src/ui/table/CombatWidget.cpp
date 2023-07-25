@@ -372,9 +372,11 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
 
     const auto trimmedName = character.name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1) : trimmedName,
-                               instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier :
-                               character.initiative, character.modifier, character.hp, character.isEnemy, character.additionalInformation);
+        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1)
+                                                                                                : trimmedName,
+                               instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier
+                                                                                              : character.initiative,
+                               character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
 
     pushOnUndoStack();

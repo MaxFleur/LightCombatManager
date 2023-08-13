@@ -29,7 +29,7 @@ AdditionalInfoWidget::AdditionalInfoWidget()
     connect(m_additionalInfoLineEdit, &QLineEdit::returnPressed, this, [this] {
         m_additionalInfoLineEdit->clearFocus();
         calculateWidth();
-        emit additionalInfoEdited();
+        if (this->getMainInfoText().toStdString() != "") emit additionalInfoEdited();
     });
 }
 

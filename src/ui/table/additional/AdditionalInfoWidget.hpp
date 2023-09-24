@@ -54,6 +54,9 @@ private:
     calculateWidth();
 
     bool
+    isValidEdit();
+
+    bool
     eventFilter(QObject* object,
                 QEvent*  event) override;
 
@@ -64,7 +67,10 @@ private:
     QPointer<QLineEdit> m_additionalInfoLineEdit;
     QPointer<QLabel> m_statusEffectLabel;
     QPointer<QHBoxLayout> m_statusEffectsLayout;
+	
+    QString m_mainInfoTextCache;
 
+    bool m_isTextCacheLocked = false;
     int m_statusEffectsLayoutWidth = 0;
 
     QVector<AdditionalInfoData::StatusEffect> m_statusEffects;

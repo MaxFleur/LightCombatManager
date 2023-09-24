@@ -29,7 +29,9 @@ AdditionalInfoWidget::AdditionalInfoWidget()
     connect(m_additionalInfoLineEdit, &QLineEdit::returnPressed, this, [this] {
         m_additionalInfoLineEdit->clearFocus();
         calculateWidth();
-        emit additionalInfoEdited();
+        if (isValidEdit()) {
+            emit additionalInfoEdited();
+        }
     });
 }
 
@@ -97,9 +99,21 @@ AdditionalInfoWidget::calculateWidth()
 
 
 bool
+AdditionalInfoWidget::isValidEdit()
+{
+    const auto mainInfoText = getMainInfoText();
+    return !mainInfoText.isEmpty() && m_mainInfoTextCache != mainInfoText;
+}
+
+
+bool
 AdditionalInfoWidget::eventFilter(QObject* object, QEvent* event)
 {
     if (object == m_additionalInfoLineEdit && event->type() == QEvent::FocusIn) {
+        if (!m_isTextCacheLocked) {
+            m_mainInfoTextCache = getMainInfoText();
+            m_isTextCacheLocked = true;
+        }
         emit widgetCalled();
     }
     return false;

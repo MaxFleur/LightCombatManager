@@ -90,7 +90,9 @@ void
 AdditionalInfoWidget::triggerAdditionalInfoEdited()
 {
     calculateWidth();
-    if (isValidEdit()) {
+
+    const auto mainInfoText = getMainInfoText();
+    if (m_mainInfoTextCache != mainInfoText) {
         emit additionalInfoEdited();
     }
 }
@@ -103,14 +105,6 @@ AdditionalInfoWidget::calculateWidth()
     const auto newWidgetWidth = std::max(addInfoNewWidth, m_statusEffectsLayoutWidth);
 
     emit widthAdjusted(newWidgetWidth);
-}
-
-
-bool
-AdditionalInfoWidget::isValidEdit()
-{
-    const auto mainInfoText = getMainInfoText();
-    return !mainInfoText.isEmpty() && m_mainInfoTextCache != mainInfoText;
 }
 
 

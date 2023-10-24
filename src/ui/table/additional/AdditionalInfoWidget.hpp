@@ -59,9 +59,6 @@ private:
     calculateWidth();
 
     bool
-    isValidEdit();
-
-    bool
     eventFilter(QObject* object,
                 QEvent*  event) override;
 

@@ -11,7 +11,7 @@
 
 AdditionalInfoWidget::AdditionalInfoWidget()
 {
-    m_additionalInfoLineEdit = new QLineEdit;
+    m_additionalInfoLineEdit = new FocusOutLineEdit;
     m_additionalInfoLineEdit->installEventFilter(this);
 
     m_statusEffectLabel = new QLabel(tr("Status Effects:"));
@@ -27,12 +27,10 @@ AdditionalInfoWidget::AdditionalInfoWidget()
     setLayout(mainLayout);
 
     connect(m_additionalInfoLineEdit, &QLineEdit::returnPressed, this, [this] {
+        // Will trigger a focus out event and thus a possible signal emit
         m_additionalInfoLineEdit->clearFocus();
-        calculateWidth();
-        if (isValidEdit()) {
-            emit additionalInfoEdited();
-        }
     });
+    connect(m_additionalInfoLineEdit, &FocusOutLineEdit::focusOut, this, &AdditionalInfoWidget::triggerAdditionalInfoEdited);
 }
 
 
@@ -85,6 +83,16 @@ AdditionalInfoWidget::setStatusEffects(const QVector<AdditionalInfoData::StatusE
     m_statusEffectsLayout->addStretch();
 
     calculateWidth();
+}
+
+
+void
+AdditionalInfoWidget::triggerAdditionalInfoEdited()
+{
+    calculateWidth();
+    if (isValidEdit()) {
+        emit additionalInfoEdited();
+    }
 }
 
 

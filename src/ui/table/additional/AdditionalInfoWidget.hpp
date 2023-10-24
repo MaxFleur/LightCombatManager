@@ -4,6 +4,7 @@
 #include <QPointer>
 
 #include "AdditionalInfoData.hpp"
+#include "FocusOutLineEdit.hpp"
 
 class QHBoxLayout;
 class QLabel;
@@ -49,6 +50,10 @@ signals:
     void
     widthAdjusted(int width);
 
+private slots:
+    void
+    triggerAdditionalInfoEdited();
+
 private:
     void
     calculateWidth();
@@ -64,10 +69,10 @@ private:
     event(QEvent *event) override;
 
 private:
-    QPointer<QLineEdit> m_additionalInfoLineEdit;
+    QPointer<FocusOutLineEdit> m_additionalInfoLineEdit;
     QPointer<QLabel> m_statusEffectLabel;
     QPointer<QHBoxLayout> m_statusEffectsLayout;
-	
+
     QString m_mainInfoTextCache;
 
     bool m_isTextCacheLocked = false;

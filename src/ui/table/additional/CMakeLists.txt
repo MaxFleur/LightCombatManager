@@ -9,6 +9,7 @@ target_sources(additional INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/AdditionalInfoData.cpp
     ${CMAKE_CURRENT_LIST_DIR}/AdditionalInfoWidget.hpp
     ${CMAKE_CURRENT_LIST_DIR}/AdditionalInfoWidget.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/FocusOutLineEdit.hpp
     ${CMAKE_CURRENT_LIST_DIR}/StatusEffectButton.hpp
     ${CMAKE_CURRENT_LIST_DIR}/StatusEffectButton.cpp
 )

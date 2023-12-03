@@ -106,13 +106,12 @@ MainWindow::saveTable()
     }
 
     if (m_combatWidget->isEmpty()) {
-        auto const reply = QMessageBox::critical(this, tr("Table empty!"),
-                                                 tr("Can't save an empty table."));
+        QMessageBox::critical(this, tr("Table empty!"), tr("Can't save an empty table."));
         return false;
     }
     if (Utils::General::containsSemicolon(m_combatWidget->getTableWidget())) {
-        auto const reply = QMessageBox::critical(this, tr("Semicolons detected!"),
-                                                 tr("Can't save because the table contains semicolons. Please remove them and continue."));
+        QMessageBox::critical(this, tr("Semicolons detected!"),
+                              tr("Can't save because the table contains semicolons. Please remove them and continue."));
         return false;
     }
 
@@ -142,7 +141,7 @@ MainWindow::saveTable()
         // Success
         return true;
     }
-    auto const reply = QMessageBox::critical(this, tr("Could not save Table!"), tr("Failed to write file."));
+    QMessageBox::critical(this, tr("Could not save Table!"), tr("Failed to write file."));
     return false;
 }
 
@@ -212,8 +211,8 @@ MainWindow::openTable()
     }
     case 1:
     {
-        auto const reply = QMessageBox::critical(this, tr("Wrong Table format!"),
-                                                 tr("The loading of the Table failed because the Table has the wrong format."));
+        QMessageBox::critical(this, tr("Wrong Table format!"),
+                              tr("The loading of the Table failed because the Table has the wrong format."));
         break;
     }
     case 2:
@@ -276,7 +275,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QStri
     m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, data, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
-    connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {
+    connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
         if (height > START_HEIGHT) {
             setFixedHeight(height);
         }

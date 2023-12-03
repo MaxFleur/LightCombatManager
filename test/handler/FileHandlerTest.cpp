@@ -101,12 +101,14 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         const auto tableDataWidget = Utils::Table::tableDataFromWidget(tableWidget);
         const auto tableSaved = fileHandler->saveTable(tableDataWidget, "./test.csv", 0, 1,
                                                        ruleSettings->ruleset, ruleSettings->rollAutomatical);
-        SECTION("File format correct") {
-            REQUIRE(fileHandler->getCSVStatus("./test.csv") == 0);
+
+        SECTION("Table successfully saved") {
+            REQUIRE(tableSaved == true);
         }
 
-        SECTION("File content correct") {
-            const auto code = fileHandler->getCSVStatus("./test.csv");
+        SECTION("File format and content correct") {
+            const auto codeCSVStatus = fileHandler->getCSVStatus("./test.csv");
+            REQUIRE(codeCSVStatus == 0);
 
             auto rowOfData = fileHandler->getData().split("\n");
             QStringList rowData;

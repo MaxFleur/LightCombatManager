@@ -30,6 +30,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
                            bool                      isDataStored,
                            QString                   data,
                            QWidget *                 parent) :
+    QWidget(parent),
     m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
     m_loadedFileData(data),
@@ -401,7 +402,7 @@ CombatWidget::rerollIni()
     characters[row].initiative = newInitiative;
 
     // Restore the bold font if the current player gets an ini reroll
-    if (row == m_rowEntered) {
+    if (row == (int) m_rowEntered) {
         setRowAndPlayer();
     }
     pushOnUndoStack();
@@ -410,7 +411,7 @@ CombatWidget::rerollIni()
                                tr("Rolled dice value: ") + QString::number(newRolledDice) + "<br>" +
                                tr("Modifier: ") + QString::number(characters.at(row).modifier);
 
-    auto const reply = QMessageBox::information(this, tr("Rerolled initiative"), messageString);
+    QMessageBox::information(this, tr("Rerolled initiative"), messageString);
 }
 
 
@@ -564,7 +565,7 @@ CombatWidget::enteredRowChanged(bool goDown)
     // Are we going down or up?
     if (goDown) {
         // If the current selected row is the last one, reset to the first row
-        if (m_rowEntered == m_tableWidget->rowCount() - 1) {
+        if ((int) m_rowEntered == m_tableWidget->rowCount() - 1) {
             m_rowEntered = 0;
             m_roundCounter++;
             Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, true);

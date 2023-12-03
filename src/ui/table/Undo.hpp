@@ -41,10 +41,10 @@ private:
     setCombatWidget(bool undo);
 
 private:
-    QPointer<CombatWidget> m_combatWidget;
-
     const UndoData m_oldData;
     const UndoData m_newData;
+
+    QPointer<CombatWidget> m_combatWidget;
 
     unsigned int *m_rowEntered;
     unsigned int *m_roundCounter;

@@ -19,7 +19,8 @@
 #include "StatusEffectDialog.hpp"
 #include "UtilsGeneral.hpp"
 
-AddCharacterDialog::AddCharacterDialog(QWidget *parent)
+AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
+    QDialog(parent)
 {
     setWindowTitle(tr("Add new Character(s)"));
 
@@ -70,7 +71,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent)
     auto *const buttonBox = new QDialogButtonBox;
     auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
-    auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
 
     auto *const resetButton = new QPushButton(tr("Reset"));
 
@@ -159,8 +160,8 @@ void
 AddCharacterDialog::saveButtonClicked()
 {
     if (m_nameEdit->text().isEmpty()) {
-        auto const reply = QMessageBox::warning(this, tr("Creation not possible!"),
-                                                tr("No name has been set. Please set at least a name before storing the Character!"));
+        QMessageBox::warning(this, tr("Creation not possible!"),
+                             tr("No name has been set. Please set at least a name before storing the Character!"));
         return;
     }
     m_somethingStored = true;
@@ -226,7 +227,7 @@ AddCharacterDialog::keyPressEvent(QKeyEvent *event)
 
 
 void
-AddCharacterDialog::closeEvent(QCloseEvent *event)
+AddCharacterDialog::closeEvent(QCloseEvent /* *event */)
 {
     // Accept means that Characters have been stored, whereas Reject
     // just returns without new Characters stored

@@ -3,10 +3,16 @@ cmake_minimum_required(VERSION 3.8)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-project(LightCombatManager LANGUAGES CXX)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(MSVC)
+    add_compile_options(/W4)
+else()
+    add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+project(LightCombatManager LANGUAGES CXX)
 
 find_package(Qt6 QUIET COMPONENTS Widgets)
 

@@ -16,7 +16,7 @@
 #include "StatusEffectData.hpp"
 
 StatusEffectDialog::StatusEffectDialog(const RuleSettings& RuleSettings, QWidget *parent) :
-    m_ruleSettings(RuleSettings)
+    QDialog(parent), m_ruleSettings(RuleSettings)
 {
     setWindowTitle(tr("Add Status Effect(s)"));
 

@@ -150,15 +150,15 @@ private:
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
 
-    bool m_isDataStored;
-
-    QString m_loadedFileData;
-
     CharacterHandlerRef m_char;
 
     const AdditionalSettings& m_additionalSettings;
     const RuleSettings& m_ruleSettings;
     TableSettings m_tableSettings;
+
+    QString m_loadedFileData;
+
+    bool m_isDataStored;
 
     unsigned int m_rowEntered{ 0 };
     unsigned int m_roundCounter{ 1 };

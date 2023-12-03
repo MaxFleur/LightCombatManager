@@ -47,7 +47,7 @@ private:
     keyPressEvent(QKeyEvent *event);
 
     void
-    closeEvent(QCloseEvent *event);
+    closeEvent(QCloseEvent /* *event */);
 
 private:
     QPointer<QLineEdit> m_nameEdit;

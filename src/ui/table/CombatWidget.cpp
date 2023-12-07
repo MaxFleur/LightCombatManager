@@ -429,7 +429,7 @@ CombatWidget::setTableDataWithFileData()
 
     // @note For some reason, the splitting of the data creates one empty, obsolete line
     // To ignore this line, start at index 1
-    for (int x = 1; x < rowOfData.size() - 1; x++) {
+    for (auto x = 1; x < rowOfData.size() - 1; x++) {
         rowData = rowOfData.at(x).split(";");
 
         const auto additionalInfoData = Utils::General::convertStringToAdditionalInfoData(rowData.at(COL_ADDITIONAL));

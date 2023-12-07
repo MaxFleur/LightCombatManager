@@ -46,8 +46,8 @@ Undo::setCombatWidget(bool undo)
     tableWidget->setRowCount(undoData.tableData.size());
 
     // Main table creation
-    for (int i = 0; i < undoData.tableData.size(); ++i) {
-        for (int j = 0; j < undoData.tableData.at(i).size(); ++j) {
+    for (auto i = 0; i < undoData.tableData.size(); ++i) {
+        for (auto j = 0; j < undoData.tableData.at(i).size(); ++j) {
             switch (j) {
             case COL_ENEMY:
                 Utils::Table::setTableCheckBox(m_combatWidget, i, undoData.tableData.at(i).at(j).toBool());

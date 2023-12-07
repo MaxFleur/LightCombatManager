@@ -11,9 +11,9 @@ Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *Comba
            unsigned int* rowEntered, unsigned int* roundCounter,
            QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
            bool colorTableRows, bool showIniToolTips) :
-    m_oldData(oldData), m_newData(newData), m_combatWidget(CombatWidget),
+    m_combatWidget(CombatWidget), m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
+    m_oldData(oldData), m_newData(newData),
     m_rowEntered(rowEntered), m_roundCounter(roundCounter),
-    m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
     m_colorTableRows(colorTableRows), m_showIniToolTips(showIniToolTips)
 {
 }

@@ -41,16 +41,16 @@ private:
     setCombatWidget(bool undo);
 
 private:
-    const UndoData m_oldData;
-    const UndoData m_newData;
-
     QPointer<CombatWidget> m_combatWidget;
-
-    unsigned int *m_rowEntered;
-    unsigned int *m_roundCounter;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
+
+    const UndoData m_oldData;
+    const UndoData m_newData;
+
+    unsigned int *m_rowEntered;
+    unsigned int *m_roundCounter;
 
     const bool m_colorTableRows;
     const bool m_showIniToolTips;

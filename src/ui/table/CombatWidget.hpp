@@ -156,19 +156,20 @@ private:
     const RuleSettings& m_ruleSettings;
     TableSettings m_tableSettings;
 
-    QString m_loadedFileData;
+    QVector<QVector<QVariant> > m_tableDataOld;
 
-    bool m_isDataStored;
+    QByteArray m_headerDataState;
+
+    QString m_loadedFileData;
 
     unsigned int m_rowEntered{ 0 };
     unsigned int m_roundCounter{ 1 };
 
     // Data storing old values before pushing on undo stack
-    QVector<QVector<QVariant> > m_tableDataOld;
     unsigned int m_rowEnteredOld;
     unsigned int m_roundCounterOld;
 
-    QByteArray m_headerDataState;
+    bool m_isDataStored;
 
     static constexpr int NMBR_COLUMNS = 6;
 

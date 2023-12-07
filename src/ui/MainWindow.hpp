@@ -81,11 +81,6 @@ private:
     QPointer<CombatWidget> m_combatWidget;
     QPointer<QAction> m_openSettingsAction;
 
-    bool m_isTableActive{ false };
-    bool m_tableInFile{ false };
-
-    QString m_fileName{ "" };
-
     FileHandlerRef m_file;
 
     AdditionalSettings m_additionalSettings;
@@ -93,6 +88,12 @@ private:
     DirSettings m_dirSettings;
 
     RuleSettings::Ruleset m_loadedTableRule;
+
+    QString m_fileName{ "" };
+
+    bool m_isTableActive{ false };
+    bool m_tableInFile{ false };
+
     bool m_loadedTableRollAutomatically;
 
     static constexpr unsigned int START_WIDTH = 860;

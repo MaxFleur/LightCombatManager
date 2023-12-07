@@ -1,18 +1,18 @@
-#include <filesystem>
-
-#include <QCheckBox>
-#include <QHBoxLayout>
-#include <QTableWidget>
-#include <QWidget>
-
-#include <catch2/catch.hpp>
-
 #include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
 #include "FileHandler.hpp"
 #include "RuleSettings.hpp"
 #include "UtilsGeneral.hpp"
 #include "UtilsTable.hpp"
+
+#include <catch2/catch.hpp>
+
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QTableWidget>
+#include <QWidget>
+
+#include <filesystem>
 
 class FileHandlerTestUtils
 {

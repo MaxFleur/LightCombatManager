@@ -1,5 +1,14 @@
 #include "CombatWidget.hpp"
 
+#include "AddCharacterDialog.hpp"
+#include "AdditionalSettings.hpp"
+#include "DelegateSpinBox.hpp"
+#include "RuleSettings.hpp"
+#include "StatusEffectDialog.hpp"
+#include "Undo.hpp"
+#include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
+
 #include <QAction>
 #include <QApplication>
 #include <QContextMenuEvent>
@@ -14,15 +23,6 @@
 #include <QToolButton>
 #include <QUndoStack>
 #include <QVBoxLayout>
-
-#include "AddCharacterDialog.hpp"
-#include "AdditionalSettings.hpp"
-#include "DelegateSpinBox.hpp"
-#include "RuleSettings.hpp"
-#include "StatusEffectDialog.hpp"
-#include "Undo.hpp"
-#include "UtilsGeneral.hpp"
-#include "UtilsTable.hpp"
 
 CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
                            const RuleSettings&       RuleSettings,

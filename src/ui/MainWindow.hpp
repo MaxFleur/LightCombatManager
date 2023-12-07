@@ -1,12 +1,12 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QPointer>
-
 #include "AdditionalSettings.hpp"
 #include "DirSettings.hpp"
 #include "FileHandler.hpp"
 #include "RuleSettings.hpp"
+
+#include <QMainWindow>
+#include <QPointer>
 
 class QAction;
 

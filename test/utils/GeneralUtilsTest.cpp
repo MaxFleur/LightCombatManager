@@ -1,10 +1,10 @@
+#include "AdditionalInfoWidget.hpp"
+#include "UtilsGeneral.hpp"
+
 #include <catch2/catch.hpp>
 
 #include <QHBoxLayout>
 #include <QTableWidget>
-
-#include "AdditionalInfoWidget.hpp"
-#include "UtilsGeneral.hpp"
 
 TEST_CASE("General Util Testing", "[GeneralUtils]") {
     auto *const tableWidget = new QTableWidget(1, 6);

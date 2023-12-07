@@ -1,5 +1,9 @@
 #include "AddCharacterDialog.hpp"
 
+#include "AdditionalInfoWidget.hpp"
+#include "StatusEffectDialog.hpp"
+#include "UtilsGeneral.hpp"
+
 #include <QCheckBox>
 #include <QDebug>
 #include <QDialogButtonBox>
@@ -14,10 +18,6 @@
 #include <QShortcut>
 #include <QSpinBox>
 #include <QTimer>
-
-#include "AdditionalInfoWidget.hpp"
-#include "StatusEffectDialog.hpp"
-#include "UtilsGeneral.hpp"
 
 AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     QDialog(parent)

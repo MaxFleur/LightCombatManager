@@ -1,13 +1,13 @@
 #include "AdditionalInfoWidget.hpp"
 
+#include "StatusEffectButton.hpp"
+#include "UtilsGeneral.hpp"
+
 #include <QDebug>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
-
-#include "StatusEffectButton.hpp"
-#include "UtilsGeneral.hpp"
 
 AdditionalInfoWidget::AdditionalInfoWidget()
 {

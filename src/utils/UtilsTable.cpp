@@ -1,5 +1,10 @@
 #include "UtilsTable.hpp"
 
+#include "AdditionalInfoData.hpp"
+#include "AdditionalInfoWidget.hpp"
+#include "CombatWidget.hpp"
+#include "UtilsGeneral.hpp"
+
 #include <QApplication>
 #include <QCheckBox>
 #include <QDebug>
@@ -8,11 +13,6 @@
 #include <QObject>
 #include <QTableWidget>
 #include <QWidget>
-
-#include "AdditionalInfoData.hpp"
-#include "AdditionalInfoWidget.hpp"
-#include "CombatWidget.hpp"
-#include "UtilsGeneral.hpp"
 
 namespace Utils::Table
 {

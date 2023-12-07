@@ -1,5 +1,11 @@
 #include "MainWindow.hpp"
 
+#include "CombatWidget.hpp"
+#include "SettingsDialog.hpp"
+#include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
+#include "WelcomeWidget.hpp"
+
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
@@ -10,12 +16,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QTimer>
-
-#include "CombatWidget.hpp"
-#include "SettingsDialog.hpp"
-#include "UtilsGeneral.hpp"
-#include "UtilsTable.hpp"
-#include "WelcomeWidget.hpp"
 
 MainWindow::MainWindow()
 {

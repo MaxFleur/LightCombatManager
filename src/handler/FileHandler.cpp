@@ -1,11 +1,11 @@
 #include "FileHandler.hpp"
 
+#include "AdditionalInfoData.hpp"
+
 #include <QDebug>
 #include <QFile>
 
 #include <QtGlobal>
-
-#include "AdditionalInfoData.hpp"
 
 // Stores table data as csv
 bool

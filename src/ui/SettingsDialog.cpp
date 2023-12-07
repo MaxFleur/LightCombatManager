@@ -1,5 +1,8 @@
 #include "SettingsDialog.hpp"
 
+#include "AdditionalSettings.hpp"
+#include "RuleSettings.hpp"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>
@@ -9,9 +12,6 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
-
-#include "AdditionalSettings.hpp"
-#include "RuleSettings.hpp"
 
 SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
                                RuleSettings&       RuleSettings,

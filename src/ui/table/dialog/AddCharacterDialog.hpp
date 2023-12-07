@@ -1,9 +1,9 @@
 #pragma once
 
+#include "CharacterHandler.hpp"
+
 #include <QDialog>
 #include <QPointer>
-
-#include "CharacterHandler.hpp"
 
 class QCheckBox;
 class QLabel;

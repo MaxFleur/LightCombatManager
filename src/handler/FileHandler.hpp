@@ -1,10 +1,10 @@
 #pragma once
 
-#include <memory>
+#include "RuleSettings.hpp"
 
 #include <QVariant>
 
-#include "RuleSettings.hpp"
+#include <memory>
 
 // This class handles the saving and opening of csv table data
 class FileHandler {

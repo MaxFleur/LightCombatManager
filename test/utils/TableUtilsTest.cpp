@@ -1,16 +1,15 @@
+#include "AdditionalInfoData.hpp"
+#include "AdditionalInfoWidget.hpp"
+#include "UtilsTable.hpp"
+
+#include <catch2/catch.hpp>
+
 #include <QApplication>
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QTableWidget>
 #include <QWidget>
-
-#include <catch2/catch.hpp>
-
-#include "AdditionalInfoData.hpp"
-#include "AdditionalInfoWidget.hpp"
-#include "UtilsTable.hpp"
-
 
 TEST_CASE("Table Util Testing", "[TableUtils]") {
     auto *const tableWidget = new QTableWidget(1, 6);

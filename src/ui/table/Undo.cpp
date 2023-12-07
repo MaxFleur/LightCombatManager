@@ -1,11 +1,11 @@
 #include "Undo.hpp"
 
+#include "CombatWidget.hpp"
+#include "UtilsTable.hpp"
+
 #include <QDebug>
 #include <QLabel>
 #include <QObject>
-
-#include "CombatWidget.hpp"
-#include "UtilsTable.hpp"
 
 Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *CombatWidget,
            unsigned int* rowEntered, unsigned int* roundCounter,

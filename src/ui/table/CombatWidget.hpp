@@ -1,11 +1,11 @@
 #pragma once
 
-#include <QPointer>
-#include <QWidget>
-
 #include "CharacterHandler.hpp"
 #include "DisabledNavigationKeyTable.hpp"
 #include "TableSettings.hpp"
+
+#include <QPointer>
+#include <QWidget>
 
 class QAction;
 class QLabel;

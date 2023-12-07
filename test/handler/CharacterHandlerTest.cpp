@@ -1,8 +1,8 @@
-#include <catch2/catch.hpp>
-
 #include "AdditionalInfoData.hpp"
 #include "CharacterHandler.hpp"
 #include "RuleSettings.hpp"
+
+#include <catch2/catch.hpp>
 
 TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
     SECTION("Storage test") {

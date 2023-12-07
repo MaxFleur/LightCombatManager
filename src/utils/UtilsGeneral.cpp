@@ -1,13 +1,13 @@
 #include "UtilsGeneral.hpp"
 
-#include <random>
+#include "AdditionalInfoWidget.hpp"
 
 #include <QApplication>
 #include <QDebug>
 #include <QFileInfo>
 #include <QTableWidget>
 
-#include "AdditionalInfoWidget.hpp"
+#include <random>
 
 namespace Utils::General
 {

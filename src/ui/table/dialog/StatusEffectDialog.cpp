@@ -1,5 +1,8 @@
 #include "StatusEffectDialog.hpp"
 
+#include "RuleSettings.hpp"
+#include "StatusEffectData.hpp"
+
 #include <QCheckBox>
 #include <QDebug>
 #include <QDialogButtonBox>
@@ -11,9 +14,6 @@
 #include <QShortcut>
 #include <QSpinBox>
 #include <QVBoxLayout>
-
-#include "RuleSettings.hpp"
-#include "StatusEffectData.hpp"
 
 StatusEffectDialog::StatusEffectDialog(const RuleSettings& RuleSettings, QWidget *parent) :
     QDialog(parent), m_ruleSettings(RuleSettings)

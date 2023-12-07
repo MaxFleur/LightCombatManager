@@ -72,7 +72,7 @@ MainWindow::MainWindow()
     helpMenu->addAction(aboutAction);
     helpMenu->addAction(aboutQtAction);
 
-    m_file = std::make_shared<FileHandler>();
+    m_fileHandler = std::make_unique<FileHandler>();
 
     resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
@@ -131,8 +131,8 @@ MainWindow::saveTable()
     }
     // Save the table
     const auto tableDataWidget = Utils::Table::tableDataFromWidget(m_combatWidget->getTableWidget());
-    if (m_file->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
-                          m_combatWidget->getRoundCounter(), m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
+    if (m_fileHandler->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
+                                 m_combatWidget->getRoundCounter(), m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
         m_tableInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getCSVName(fileName);
@@ -176,13 +176,13 @@ MainWindow::openTable()
         }
     }
     const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("csv File(*.csv)"));
-    const auto code = m_file->getCSVStatus(fileName);
+    const auto code = m_fileHandler->getCSVStatus(fileName);
     auto rulesModified = false;
 
     switch (code) {
     case 0:
     {
-        if (!checkStoredTableRules(m_file->getData())) {
+        if (!checkStoredTableRules(m_fileHandler->getData())) {
             const auto messageString = createRuleChangeMessageBoxText();
             auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different Rulesets detected!"), messageString, QMessageBox::Cancel);
             auto* const applyButton = msgBox->addButton(tr("Apply Table Ruleset to Settings"), QMessageBox::ApplyRole);
@@ -203,7 +203,7 @@ MainWindow::openTable()
         // Save the opened file dir
         m_dirSettings.write(fileName);
         m_fileName = Utils::General::getCSVName(fileName);
-        setTableWidget(true, false, m_file->getData());
+        setTableWidget(true, false, m_fileHandler->getData());
 
         // If the settings rules are applied to the table, it is modified
         setCombatTitle(rulesModified);

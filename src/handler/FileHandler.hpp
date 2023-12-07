@@ -4,8 +4,6 @@
 
 #include <QVariant>
 
-#include <memory>
-
 // This class handles the saving and opening of csv table data
 class FileHandler {
 public:
@@ -37,4 +35,3 @@ private:
     // Data used to fill the table
     QString m_data;
 };
-using FileHandlerRef = std::shared_ptr<FileHandler>;

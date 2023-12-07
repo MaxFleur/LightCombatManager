@@ -17,8 +17,8 @@
 namespace Utils::Table
 {
 void
-resynchronizeCharacters(const QTableWidget *tableWidget,
-                        CharacterHandlerRef characterHandler)
+resynchronizeCharacters(const QTableWidget *              tableWidget,
+                        std::shared_ptr<CharacterHandler> characterHandler)
 {
     characterHandler->clearCharacters();
 
@@ -246,7 +246,7 @@ tableDataFromWidget(const QTableWidget *tableWidget)
 
 
 QVector<QVector<QVariant> >
-tableDataFromCharacterVector(CharacterHandlerRef characterHandler)
+tableDataFromCharacterVector(std::shared_ptr<CharacterHandler> characterHandler)
 {
     const auto& characters = characterHandler->getCharacters();
 

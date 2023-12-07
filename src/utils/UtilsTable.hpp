@@ -2,6 +2,8 @@
 
 #include "CharacterHandler.hpp"
 
+#include <memory>
+
 class QLabel;
 class QTableWidget;
 
@@ -13,8 +15,8 @@ namespace Utils::Table
 // Resynchronize the characters stored in the char handler vector
 // with the data in the table widget
 void
-resynchronizeCharacters(const QTableWidget *tableWidget,
-                        CharacterHandlerRef characterHandler);
+resynchronizeCharacters(const QTableWidget *              tableWidget,
+                        std::shared_ptr<CharacterHandler> characterHandler);
 
 // Create checkboxes in the table to show the is enemy status
 void
@@ -57,7 +59,7 @@ tableDataFromWidget(const QTableWidget *tableWidget);
 
 // Reformat the character vector in a QVariant vector
 [[nodiscard]] QVector<QVector<QVariant> >
-tableDataFromCharacterVector(CharacterHandlerRef characterHandler);
+tableDataFromCharacterVector(std::shared_ptr<CharacterHandler> characterHandler);
 
 static constexpr int COL_NAME = 0;
 static constexpr int COL_ENEMY = 4;

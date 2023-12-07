@@ -3,8 +3,6 @@
 #include "AdditionalInfoData.hpp"
 #include "RuleSettings.hpp"
 
-#include <memory>
-
 // This class handles the creation, sorting and deletion of the created characters
 class CharacterHandler {
 public:
@@ -50,4 +48,3 @@ private:
     // Vector storing all created characters
     QVector<Character> characters;
 };
-using CharacterHandlerRef = std::shared_ptr<CharacterHandler>;

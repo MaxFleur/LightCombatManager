@@ -81,7 +81,7 @@ private:
     QPointer<CombatWidget> m_combatWidget;
     QPointer<QAction> m_openSettingsAction;
 
-    FileHandlerRef m_file;
+    std::unique_ptr<FileHandler> m_fileHandler;
 
     AdditionalSettings m_additionalSettings;
     RuleSettings m_ruleSettings;

@@ -150,7 +150,7 @@ private:
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
 
-    CharacterHandlerRef m_char;
+    std::shared_ptr<CharacterHandler> m_characterHandler;
 
     const AdditionalSettings& m_additionalSettings;
     const RuleSettings& m_ruleSettings;

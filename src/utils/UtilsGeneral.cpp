@@ -84,9 +84,9 @@ getRulesetName(unsigned int ruleset)
 
 
 QString
-getAutoRollEnabled(unsigned int autoRollEnabled)
+getAutoRollEnabled(bool autoRollEnabled)
 {
-    return (autoRollEnabled == 1) ? "automatic rolling enabled" : "automatic rolling disabled";
+    return autoRollEnabled ? "automatic rolling enabled" : "automatic rolling disabled";
 }
 
 

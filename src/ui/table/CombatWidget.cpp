@@ -500,7 +500,7 @@ CombatWidget::removeRow()
     // So we get the selection and resort it so the rows can be easily removed
     std::vector<int> indicesList;
     for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
-        indicesList.push_back(index.row());
+        indicesList.emplace_back(index.row());
     }
     std::sort(indicesList.begin(), indicesList.end(), [indicesList](const auto& a, const auto& b) {
         // Sort reversed so items in the vector can be removed without using offsets

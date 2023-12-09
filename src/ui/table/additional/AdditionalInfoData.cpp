@@ -3,7 +3,7 @@
 namespace AdditionalInfoData
 {
 const QVariant
-getAdditionalInformationVariant(const AdditionalInformation additionalInformation)
+getAdditionalInformationVariant(const AdditionalInformation& additionalInformation)
 {
     QVariant variant;
     variant.setValue(additionalInformation);

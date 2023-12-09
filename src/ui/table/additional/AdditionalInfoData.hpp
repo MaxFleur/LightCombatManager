@@ -25,7 +25,7 @@ struct AdditionalInformation {
 };
 
 [[nodiscard]] const QVariant
-getAdditionalInformationVariant(const AdditionalInformation additionalInformation);
+getAdditionalInformationVariant(const AdditionalInformation& additionalInformation);
 }
 
 Q_DECLARE_METATYPE(AdditionalInfoData::AdditionalInformation);

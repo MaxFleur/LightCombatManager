@@ -7,12 +7,12 @@
 #include <QLabel>
 #include <QObject>
 
-Undo::Undo(const UndoData& oldData, const UndoData& newData, CombatWidget *CombatWidget,
+Undo::Undo(CombatWidget *CombatWidget, QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
+           const UndoData& oldData, const UndoData& newData,
            unsigned int* rowEntered, unsigned int* roundCounter,
-           QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
            bool colorTableRows, bool showIniToolTips) :
     m_combatWidget(CombatWidget), m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
-    m_oldData(oldData), m_newData(newData),
+    m_oldData(std::move(oldData)), m_newData(std::move(newData)),
     m_rowEntered(rowEntered), m_roundCounter(roundCounter),
     m_colorTableRows(colorTableRows), m_showIniToolTips(showIniToolTips)
 {

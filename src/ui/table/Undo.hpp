@@ -19,13 +19,13 @@ public:
     };
 
 public:
-    Undo(const UndoData&  oldData,
-         const UndoData&  newData,
-         CombatWidget*    CombatWidget,
-         unsigned int*    rowEntered,
-         unsigned int*    roundCounter,
+    Undo(CombatWidget*    CombatWidget,
          QPointer<QLabel> roundCounterLabel,
          QPointer<QLabel> currentPlayerLabel,
+         const UndoData&  oldData,
+         const UndoData&  newData,
+         unsigned int*    rowEntered,
+         unsigned int*    roundCounter,
          bool             colorTableRows,
          bool             showIniToolTips);
 

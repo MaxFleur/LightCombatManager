@@ -167,10 +167,10 @@ AddCharacterDialog::saveButtonClicked()
     m_somethingStored = true;
 
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
-    AdditionalInfoData::AdditionalInformation additionalInformation { m_addInfoEdit->text(), {} };
+    AdditionalInfoData::AdditionalInformation additionalInformation{ m_addInfoEdit->text(), {} };
 
-    CharacterHandler::Character character { m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
-                                            m_enemyBox->isChecked(), additionalInformation };
+    CharacterHandler::Character character(m_nameEdit->text(), m_iniBox->value(), m_iniModifierBox->value(), m_hpBox->value(),
+                                          m_enemyBox->isChecked(), additionalInformation);
     emit characterCreated(character, numberOfInstances);
     resetButtonClicked();
     m_nameEdit->setFocus(Qt::TabFocusReason);

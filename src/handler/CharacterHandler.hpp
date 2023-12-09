@@ -20,6 +20,14 @@ public:
         bool                                      isEnemy = false;
         // Various information, including status effects
         AdditionalInfoData::AdditionalInformation additionalInformation = {};
+
+        Character(const QString& name, int initiative, int modifier, int hp, bool isEnemy,
+                  const AdditionalInfoData::AdditionalInformation& additionalInformation) :
+            name(std::move(name)), initiative(std::move(initiative)),
+            modifier(std::move(modifier)), hp(std::move(hp)), isEnemy(std::move(isEnemy)),
+            additionalInformation(std::move(additionalInformation))
+        {
+        }
     };
 
 public:

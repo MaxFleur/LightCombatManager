@@ -121,14 +121,12 @@ convertStringToAdditionalInfoData(const QString& str)
             break;
         }
 
-        AdditionalInfoData::StatusEffect statusEffect;
         // Status effect members are separated using '+'
         const auto& statusEffectSplitted = statusEffectString.split("+");
         // Apply
-        statusEffect.name = statusEffectSplitted.at(0);
-        statusEffect.isPermanent = statusEffectSplitted.at(1).toInt() == 1;
-        statusEffect.duration = statusEffectSplitted.at(2).toInt();
-
+        AdditionalInfoData::StatusEffect statusEffect(statusEffectSplitted.at(0),
+                                                      statusEffectSplitted.at(1).toInt() == 1,
+                                                      statusEffectSplitted.at(2).toInt());
         additionalInformation.statusEffects.push_back(statusEffect);
     }
 

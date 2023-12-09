@@ -102,8 +102,8 @@ StatusEffectDialog::okButtonClicked()
 void
 StatusEffectDialog::createEffect(const QString& effectName)
 {
-    AdditionalInfoData::StatusEffect effect { effectName, m_checkBox->checkState() == Qt::Checked,
-                                              (unsigned int) m_spinBox->value() };
+    AdditionalInfoData::StatusEffect effect(effectName, m_checkBox->checkState() == Qt::Checked,
+                                            (unsigned int) m_spinBox->value());
 
     m_effects.push_back(effect);
 }

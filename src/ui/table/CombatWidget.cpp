@@ -34,7 +34,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
     m_loadedFileData(data),
-    m_isDataStored(isDataStored)
+    m_isDataStored(std::move(isDataStored))
 {
     m_characterHandler = std::make_shared<CharacterHandler>();
 
@@ -240,8 +240,8 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto tableData = Utils::Table::tableDataFromCharacterVector(m_characterHandler);
     const auto newData = Undo::UndoData{ tableData, m_rowEntered, m_roundCounter };
     // We got everything, so push
-    m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
-                               m_roundCounterLabel, m_currentPlayerLabel,
+    m_undoStack->push(new Undo(this, m_roundCounterLabel, m_currentPlayerLabel,
+                               oldData, newData, &m_rowEntered, &m_roundCounter,
                                m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips));
 }
 

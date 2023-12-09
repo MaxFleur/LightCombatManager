@@ -10,6 +10,13 @@ struct StatusEffect {
     QString      name;
     bool         isPermanent;
     unsigned int duration;
+
+    StatusEffect(const QString& name, bool isPermanent,
+                 unsigned int duration) :
+        name(std::move(name)), isPermanent(std::move(isPermanent)),
+        duration(std::move(duration))
+    {
+    }
 };
 
 struct AdditionalInformation {

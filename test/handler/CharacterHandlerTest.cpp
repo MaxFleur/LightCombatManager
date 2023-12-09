@@ -26,18 +26,6 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).duration == 2);
             REQUIRE(charHandler->getCharacters().at(0).additionalInformation.mainInfo == "Fire Resistance");
         }
-        SECTION("Minimal Character stored test") {
-            auto const charHandler = std::make_shared<CharacterHandler>();
-            charHandler->storeCharacter("Generic Character");
-
-            REQUIRE(charHandler->getCharacters().at(0).name == "Generic Character");
-            REQUIRE(charHandler->getCharacters().at(0).initiative == 0);
-            REQUIRE(charHandler->getCharacters().at(0).modifier == 0);
-            REQUIRE(charHandler->getCharacters().at(0).hp == 0);
-            REQUIRE(charHandler->getCharacters().at(0).isEnemy == false);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.mainInfo.isEmpty());
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.isEmpty());
-        }
     }
     SECTION("Sorting tests") {
         auto const ruleSettings = std::make_shared<RuleSettings>();
@@ -46,12 +34,12 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             ruleSettings->ruleset = RuleSettings::Ruleset::PATHFINDER_1E_DND_35E;
             auto const charHandler = std::make_shared<CharacterHandler>();
 
-            charHandler->storeCharacter("Bard", 12, 2, 29);
-            charHandler->storeCharacter("Zombie", 12, 1, 13, true);
-            charHandler->storeCharacter("Fighter", 19, 4, 36, false);
-            charHandler->storeCharacter("Undead Boss", 23, 6, 62, true);
-            charHandler->storeCharacter("Cleric", 7, 1, 31, false);
-            charHandler->storeCharacter("Ranger", 27, 8, 36, false);
+            charHandler->storeCharacter("Bard", 12, 2, 29, false, {});
+            charHandler->storeCharacter("Zombie", 12, 1, 13, true, {});
+            charHandler->storeCharacter("Fighter", 19, 4, 36, false, {});
+            charHandler->storeCharacter("Undead Boss", 23, 6, 62, true, {});
+            charHandler->storeCharacter("Cleric", 7, 1, 31, false, {});
+            charHandler->storeCharacter("Ranger", 27, 8, 36, false, {});
 
             charHandler->sortCharacters(ruleSettings->ruleset, ruleSettings->rollAutomatical);
             REQUIRE(charHandler->getCharacters().at(0).name == "Ranger");
@@ -66,12 +54,12 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
 
             auto const charHandler = std::make_shared<CharacterHandler>();
 
-            charHandler->storeCharacter("Bard", 12, 2, 29);
-            charHandler->storeCharacter("Zombie", 12, 1, 13, true);
-            charHandler->storeCharacter("Fighter", 12, 4, 36, false);
-            charHandler->storeCharacter("Undead Boss", 12, 6, 62, true);
-            charHandler->storeCharacter("Cleric", 7, 1, 31, false);
-            charHandler->storeCharacter("Ranger", 27, 8, 36, false);
+            charHandler->storeCharacter("Bard", 12, 2, 29, false, {});
+            charHandler->storeCharacter("Zombie", 12, 1, 13, true, {});
+            charHandler->storeCharacter("Fighter", 12, 4, 36, false, {});
+            charHandler->storeCharacter("Undead Boss", 12, 6, 62, true, {});
+            charHandler->storeCharacter("Cleric", 7, 1, 31, false, {});
+            charHandler->storeCharacter("Ranger", 27, 8, 36, false, {});
 
             charHandler->sortCharacters(ruleSettings->ruleset, ruleSettings->rollAutomatical);
             REQUIRE(charHandler->getCharacters().at(0).name == "Ranger");
@@ -86,12 +74,12 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
 
             auto const charHandler = std::make_shared<CharacterHandler>();
 
-            charHandler->storeCharacter("Bard", 3, 2, 29);
-            charHandler->storeCharacter("Zombie", 14, 1, 13, true);
-            charHandler->storeCharacter("Fighter", 20, 4, 36, false);
-            charHandler->storeCharacter("Undead Boss", 20, 6, 62, true);
-            charHandler->storeCharacter("Cleric", 14, 1, 31, false);
-            charHandler->storeCharacter("Ranger", 27, 8, 36, false);
+            charHandler->storeCharacter("Bard", 3, 2, 29, false, {});
+            charHandler->storeCharacter("Zombie", 14, 1, 13, true, {});
+            charHandler->storeCharacter("Fighter", 20, 4, 36, false, {});
+            charHandler->storeCharacter("Undead Boss", 20, 6, 62, true, {});
+            charHandler->storeCharacter("Cleric", 14, 1, 31, false, {});
+            charHandler->storeCharacter("Ranger", 27, 8, 36, false, {});
 
             charHandler->sortCharacters(ruleSettings->ruleset, ruleSettings->rollAutomatical);
             REQUIRE(charHandler->getCharacters().at(0).name == "Ranger");
@@ -104,7 +92,7 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
         SECTION("Clear Characters test") {
             auto const charHandler = std::make_shared<CharacterHandler>();
 
-            charHandler->storeCharacter("Bard", 12, 2, 29);
+            charHandler->storeCharacter("Bard", 12, 2, 29, false, {});
             charHandler->clearCharacters();
 
             charHandler->sortCharacters(ruleSettings->ruleset, ruleSettings->rollAutomatical);

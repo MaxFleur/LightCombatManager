@@ -11,15 +11,15 @@ public:
         // Name of the character. Because this name must be set manually, it is the only variable without a standard value
         QString                                   name;
         // Final initiative roll of the character, including all modifiers
-        int                                       initiative = 0;
+        int                                       initiative;
         // Modifiers only
-        int                                       modifier = 0;
+        int                                       modifier;
         // The hp for this character
-        int                                       hp = 0;
+        int                                       hp;
         // Is the character an enemy or not
-        bool                                      isEnemy = false;
+        bool                                      isEnemy;
         // Various information, including status effects
-        AdditionalInfoData::AdditionalInformation additionalInformation = {};
+        AdditionalInfoData::AdditionalInformation additionalInformation;
 
         Character(const QString& name, int initiative, int modifier, int hp, bool isEnemy,
                   const AdditionalInfoData::AdditionalInformation& additionalInformation) :
@@ -33,11 +33,11 @@ public:
 public:
     void
     storeCharacter(QString                                   name,
-                   int                                       initiative = 0,
-                   int                                       modifier = 0,
-                   int                                       hp = 0,
-                   bool                                      isEnemy = false,
-                   AdditionalInfoData::AdditionalInformation additionalInformation = {});
+                   int                                       initiative,
+                   int                                       modifier,
+                   int                                       hp,
+                   bool                                      isEnemy,
+                   AdditionalInfoData::AdditionalInformation additionalInformation);
 
     void
     sortCharacters(const RuleSettings::Ruleset& ruleset,

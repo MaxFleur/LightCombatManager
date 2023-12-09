@@ -13,9 +13,9 @@ class Undo : public QUndoCommand
 {
 public:
     struct UndoData {
-        const QVector<QVector<QVariant> > tableData;
-        const unsigned int                rowEntered;
-        const unsigned int                roundCounter;
+        const QVector<QVector<QVariant> > tableData{};
+        const unsigned int                rowEntered{ 0 };
+        const unsigned int                roundCounter{ 0 };
     };
 
 public:

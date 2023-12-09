@@ -20,8 +20,8 @@ struct StatusEffect {
 };
 
 struct AdditionalInformation {
-    QString               mainInfo;
-    QVector<StatusEffect> statusEffects;
+    QString               mainInfo{ "" };
+    QVector<StatusEffect> statusEffects{};
 };
 
 [[nodiscard]] const QVariant

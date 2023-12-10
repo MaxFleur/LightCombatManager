@@ -32,7 +32,7 @@ CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool roll
     };
 
     std::sort(characters.begin(), characters.end(),
-              [ruleset, rollAutomatically, sortUsingHashes](const auto& c1, const auto& c2) {
+              [ruleset, sortUsingHashes](const auto& c1, const auto& c2) {
         // Common for all rulesets: Sort for higher initiative
         if (c1.initiative != c2.initiative) {
             return c1.initiative > c2.initiative;

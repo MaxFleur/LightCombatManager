@@ -164,7 +164,6 @@ AddCharacterDialog::saveButtonClicked()
                              tr("No name has been set. Please set at least a name before storing the Character!"));
         return;
     }
-    m_somethingStored = true;
 
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
     AdditionalInfoData::AdditionalInformation additionalInformation{ m_addInfoEdit->text(), {} };
@@ -223,13 +222,4 @@ AddCharacterDialog::keyPressEvent(QKeyEvent *event)
         return;
     }
     QDialog::keyPressEvent(event);
-}
-
-
-void
-AddCharacterDialog::closeEvent(QCloseEvent /* *event */)
-{
-    // Accept means that Characters have been stored, whereas Reject
-    // just returns without new Characters stored
-    m_somethingStored ? QDialog::accept() : QDialog::reject();
 }

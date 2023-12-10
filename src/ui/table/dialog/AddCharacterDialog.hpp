@@ -46,9 +46,6 @@ private:
     void
     keyPressEvent(QKeyEvent *event);
 
-    void
-    closeEvent(QCloseEvent /* *event */);
-
 private:
     QPointer<QLineEdit> m_nameEdit;
     QPointer<QSpinBox> m_iniBox;
@@ -64,7 +61,6 @@ private:
 
     QPointer<QTimer> m_timer;
 
-    bool m_somethingStored{ false };
     bool m_isFirstCharStored{ false };
 
     static constexpr int LABEL_SHOWN_DURATION = 1000;

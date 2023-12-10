@@ -94,13 +94,13 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         tableWidget->setCellWidget(1, 5, createCellWidget(additionalInfoWidgetBoss));
         tableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 
-        auto const ruleSettings = std::make_shared<RuleSettings>();
-        ruleSettings->ruleset = RuleSettings::Ruleset::PATHFINDER_2E;
-        ruleSettings->rollAutomatical = true;
+        RuleSettings ruleSettings;
+        ruleSettings.ruleset = RuleSettings::Ruleset::PATHFINDER_2E;
+        ruleSettings.rollAutomatical = true;
 
         const auto tableDataWidget = Utils::Table::tableDataFromWidget(tableWidget);
         const auto tableSaved = fileHandler->saveTable(tableDataWidget, "./test.csv", 0, 1,
-                                                       ruleSettings->ruleset, ruleSettings->rollAutomatical);
+                                                       ruleSettings.ruleset, ruleSettings.rollAutomatical);
 
         SECTION("Table successfully saved") {
             REQUIRE(tableSaved == true);

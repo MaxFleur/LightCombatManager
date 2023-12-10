@@ -355,7 +355,7 @@ CombatWidget::openStatusEffectDialog()
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
             auto& statusEffects = characters[i.row()].additionalInformation.statusEffects;
             for (const auto& effect : dialog->getEffects()) {
-                statusEffects.insert(statusEffects.end(), effect);
+                statusEffects.push_back(effect);
             }
             Utils::Table::setStatusEffectInWidget(m_tableWidget, dialog->getEffects(), i.row());
         }
@@ -479,7 +479,7 @@ CombatWidget::duplicateRow()
     Utils::Table::resynchronizeCharacters(m_tableWidget, m_characterHandler);
     auto& characters = m_characterHandler->getCharacters();
     const auto currentIndex = m_tableWidget->currentIndex().row();
-    characters.insert(currentIndex + 1, characters.at(currentIndex));
+    characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
 
     pushOnUndoStack();
 }

@@ -7,7 +7,7 @@ class TableSettings : public BaseSettings {
 public:
     TableSettings();
 
-    enum ValueType {
+    enum class ValueType {
         INI_SHOWN         = 0,
         MOD_SHOWN         = 1,
         COLOR_TABLE       = 2,

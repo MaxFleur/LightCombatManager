@@ -1,9 +1,9 @@
 #include "Undo.hpp"
 
 #include "CombatWidget.hpp"
+#include "CombatTableWidget.hpp"
 #include "UtilsTable.hpp"
 
-#include <QDebug>
 #include <QLabel>
 #include <QObject>
 
@@ -37,7 +37,7 @@ void
 Undo::setCombatWidget(bool undo)
 {
     // Set with old or new values, depending on if we are undoing or not
-    auto *const tableWidget = m_combatWidget->getTableWidget();
+    auto *const tableWidget = m_combatWidget->getCombatTableWidget();
     const auto& undoData = undo ? m_oldData : m_newData;
 
     // Creating the table widget items will trigger the item changed signal, which would recall the undo stack
@@ -70,11 +70,11 @@ Undo::setCombatWidget(bool undo)
 
     // Set the remaining label and font data
     m_roundCounterLabel->setText(QObject::tr("Round ") + QString::number(undoData.roundCounter));
-    Utils::Table::setRowAndPlayer(tableWidget, m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered);
-    Utils::Table::setTableRowColor(tableWidget, !m_colorTableRows);
-    Utils::Table::setIniColumnTooltips(tableWidget, !m_showIniToolTips);
+    tableWidget->setRowAndPlayer(m_roundCounterLabel, m_currentPlayerLabel, undoData.rowEntered);
+    tableWidget->setTableRowColor(!m_colorTableRows);
+    tableWidget->setIniColumnTooltips(!m_showIniToolTips);
 
-    emit m_combatWidget->tableHeightSet(m_combatWidget->getHeight());
+    emit m_combatWidget->tableHeightSet(tableWidget->getHeight());
     emit m_combatWidget->changeOccured();
 
     tableWidget->blockSignals(false);

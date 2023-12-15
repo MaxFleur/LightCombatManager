@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CharacterHandler.hpp"
-#include "DisabledNavigationKeyTable.hpp"
+#include "CombatTableWidget.hpp"
 #include "TableSettings.hpp"
 
 #include <QPointer>
@@ -29,8 +29,8 @@ public:
     void
     generateTable();
 
-    [[nodiscard]] QTableWidget*
-    getTableWidget() const
+    [[nodiscard]] CombatTableWidget*
+    getCombatTableWidget() const
     {
         return m_tableWidget;
     }
@@ -54,7 +54,10 @@ public:
     }
 
     [[nodiscard]] unsigned int
-    getHeight() const;
+    getHeight() const
+    {
+        return m_tableWidget->getHeight();
+    }
 
     void
     saveOldState();
@@ -141,7 +144,7 @@ private:
     contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-    QPointer<DisabledNavigationKeyTable> m_tableWidget;
+    QPointer<CombatTableWidget> m_tableWidget;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
@@ -193,6 +196,4 @@ private:
     static constexpr float WIDTH_MODIFIER = 0.05f;
     static constexpr float WIDTH_HP = 0.1f;
     static constexpr float WIDTH_ENEMY = 0.1f;
-
-    static constexpr int HEIGHT_BUFFER = 140;
 };

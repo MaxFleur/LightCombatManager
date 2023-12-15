@@ -3,7 +3,6 @@
 #include "CombatWidget.hpp"
 #include "SettingsDialog.hpp"
 #include "UtilsGeneral.hpp"
-#include "UtilsTable.hpp"
 #include "WelcomeWidget.hpp"
 
 #include <QAction>
@@ -109,7 +108,7 @@ MainWindow::saveTable()
         QMessageBox::critical(this, tr("Table empty!"), tr("Can't save an empty table."));
         return false;
     }
-    if (Utils::General::containsSemicolon(m_combatWidget->getTableWidget())) {
+    if (Utils::General::containsSemicolon(m_combatWidget->getCombatTableWidget())) {
         QMessageBox::critical(this, tr("Semicolons detected!"),
                               tr("Can't save because the table contains semicolons. Please remove them and continue."));
         return false;
@@ -130,8 +129,9 @@ MainWindow::saveTable()
         fileName = m_dirSettings.openDir;
     }
     // Save the table
-    const auto tableDataWidget = Utils::Table::tableDataFromWidget(m_combatWidget->getTableWidget());
-    if (m_fileHandler->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
+    auto* const combatTableWidget = m_combatWidget->getCombatTableWidget();
+    const auto tableData = combatTableWidget->tableDataFromWidget();
+    if (m_fileHandler->saveTable(tableData, fileName, m_combatWidget->getRowEntered(),
                                  m_combatWidget->getRoundCounter(), m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
         m_tableInFile = true;
         m_dirSettings.write(fileName, true);

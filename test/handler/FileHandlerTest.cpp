@@ -1,9 +1,10 @@
 #include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
+#include "CharacterHandler.hpp"
+#include "CombatTableWidget.hpp"
 #include "FileHandler.hpp"
 #include "RuleSettings.hpp"
 #include "UtilsGeneral.hpp"
-#include "UtilsTable.hpp"
 
 #include <catch2/catch.hpp>
 
@@ -51,7 +52,10 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
     }
 
     SECTION("Check file saving") {
-        auto *const tableWidget = new QTableWidget(2, 6);
+        auto characterHandler = std::make_shared<CharacterHandler>();
+        auto *const combatTableWidget = new CombatTableWidget(characterHandler);
+        combatTableWidget->setRowCount(2);
+        combatTableWidget->setColumnCount(6);
 
         auto *const checkBoxFighter = new QCheckBox;
         checkBoxFighter->setChecked(false);
@@ -78,28 +82,28 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
             return cellWidget;
         };
 
-        tableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
-        tableWidget->setItem(0, 1, new QTableWidgetItem("19"));
-        tableWidget->setItem(0, 2, new QTableWidgetItem("2"));
-        tableWidget->setItem(0, 3, new QTableWidgetItem("36"));
-        tableWidget->setCellWidget(0, 4, createCellWidget(checkBoxFighter));
-        tableWidget->setCellWidget(0, 5, createCellWidget(additionalInfoWidgetFighter));
-        tableWidget->setItem(0, 6, new QTableWidgetItem("0"));
+        combatTableWidget->setItem(0, 0, new QTableWidgetItem("Fighter"));
+        combatTableWidget->setItem(0, 1, new QTableWidgetItem("19"));
+        combatTableWidget->setItem(0, 2, new QTableWidgetItem("2"));
+        combatTableWidget->setItem(0, 3, new QTableWidgetItem("36"));
+        combatTableWidget->setCellWidget(0, 4, createCellWidget(checkBoxFighter));
+        combatTableWidget->setCellWidget(0, 5, createCellWidget(additionalInfoWidgetFighter));
+        combatTableWidget->setItem(0, 6, new QTableWidgetItem("0"));
 
-        tableWidget->setItem(1, 0, new QTableWidgetItem("Boss"));
-        tableWidget->setItem(1, 1, new QTableWidgetItem("21"));
-        tableWidget->setItem(1, 2, new QTableWidgetItem("7"));
-        tableWidget->setItem(1, 3, new QTableWidgetItem("42"));
-        tableWidget->setCellWidget(1, 4, createCellWidget(checkBoxBoss));
-        tableWidget->setCellWidget(1, 5, createCellWidget(additionalInfoWidgetBoss));
-        tableWidget->setItem(1, 6, new QTableWidgetItem("1"));
+        combatTableWidget->setItem(1, 0, new QTableWidgetItem("Boss"));
+        combatTableWidget->setItem(1, 1, new QTableWidgetItem("21"));
+        combatTableWidget->setItem(1, 2, new QTableWidgetItem("7"));
+        combatTableWidget->setItem(1, 3, new QTableWidgetItem("42"));
+        combatTableWidget->setCellWidget(1, 4, createCellWidget(checkBoxBoss));
+        combatTableWidget->setCellWidget(1, 5, createCellWidget(additionalInfoWidgetBoss));
+        combatTableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 
         RuleSettings ruleSettings;
         ruleSettings.ruleset = RuleSettings::Ruleset::PATHFINDER_2E;
         ruleSettings.rollAutomatical = true;
 
-        const auto tableDataWidget = Utils::Table::tableDataFromWidget(tableWidget);
-        const auto tableSaved = fileHandler->saveTable(tableDataWidget, "./test.csv", 0, 1,
+        const auto tableData = combatTableWidget->tableDataFromWidget();
+        const auto tableSaved = fileHandler->saveTable(tableData, "./test.csv", 0, 1,
                                                        ruleSettings.ruleset, ruleSettings.rollAutomatical);
 
         SECTION("Table successfully saved") {

@@ -335,6 +335,9 @@ CombatWidget::openStatusEffectDialog()
 
     // Open dialog
     if (auto *const dialog = new StatusEffectDialog(m_ruleSettings, this); dialog->exec() == QDialog::Accepted) {
+        if (const auto& effects = dialog->getEffects(); effects.empty()) {
+            return;
+        }
         saveOldState();
         m_tableWidget->resynchronizeCharacters();
         auto& characters = m_characterHandler->getCharacters();

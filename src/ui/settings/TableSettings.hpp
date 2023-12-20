@@ -15,8 +15,8 @@ public:
     };
 
     void
-    write(bool      valueToWrite,
-          ValueType valueType);
+    write(ValueType valueType,
+          bool      valueToWrite);
 
 public:
     bool iniShown{ true };

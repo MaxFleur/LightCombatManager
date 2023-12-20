@@ -605,7 +605,7 @@ CombatWidget::setTableOption(bool option, int valueType)
         break;
     }
 
-    m_tableSettings.write(option, static_cast<TableSettings::ValueType>(valueType));
+    m_tableSettings.write(static_cast<TableSettings::ValueType>(valueType), option);
 }
 
 

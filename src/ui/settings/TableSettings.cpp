@@ -9,7 +9,7 @@ TableSettings::TableSettings()
 
 
 void
-TableSettings::write(bool valueToWrite, ValueType valueType)
+TableSettings::write(ValueType valueType, bool valueToWrite)
 {
     QSettings settings;
 

@@ -27,7 +27,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
                            const RuleSettings&       RuleSettings,
                            int                       mainWidgetWidth,
                            bool                      isDataStored,
-                           QString                   data,
+                           const QJsonObject&        data,
                            QWidget *                 parent) :
     QWidget(parent),
     m_additionalSettings(AdditionalSettings),
@@ -414,26 +414,36 @@ CombatWidget::setTableDataWithFileData()
         return;
     }
 
+    m_rowEntered = m_loadedFileData.value("row_entered").toInt();
+    m_roundCounter = m_loadedFileData.value("round_counter").toInt();
+
     auto& characters = m_characterHandler->getCharacters();
-    const auto rowOfData = m_loadedFileData.split("\n");
-    QStringList rowData;
+    const auto& charactersObject = m_loadedFileData.value("characters").toObject();
 
-    // @note For some reason, the splitting of the data creates one empty, obsolete line
-    // To ignore this line, start at index 1
-    for (auto x = 1; x < rowOfData.size() - 1; x++) {
-        rowData = rowOfData.at(x).split(";");
+    // Single character
+    for (const auto& character : charactersObject) {
+        const auto& characterObject = character.toObject();
+        const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
 
-        const auto additionalInfoData = Utils::General::convertStringToAdditionalInfoData(rowData.at(COL_ADDITIONAL));
-        characters.push_back(CharacterHandler::Character {
-            rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
-            rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", additionalInfoData });
+        // Additional info
+        AdditionalInfoData::AdditionalInformation additionalInfoData;
+        additionalInfoData.mainInfo = additionalInfoObject.value("main_info").toString();
 
-        // If at the first row (which contains information about the round counter
-        // and the player on the move), get this data
-        if (x == 1) {
-            m_rowEntered = rowData[ROW_ENTERED].toInt();
-            m_roundCounter = rowData[ROUND_CTR].toInt();
+        // Status effects
+        const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
+        for (const auto& singleEffect : statusEffectsObject) {
+            const auto& singleEffectObject = singleEffect.toObject();
+
+            AdditionalInfoData::StatusEffect effect(singleEffectObject.value("name").toString(),
+                                                    singleEffectObject.value("is_permanent").toBool(),
+                                                    singleEffectObject.value("duration").toInt());
+            additionalInfoData.statusEffects.push_back(effect);
         }
+
+        characters.push_back(CharacterHandler::Character {
+            characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
+            characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
+            characterObject.value("is_enemy").toBool(), additionalInfoData });
     }
     m_isDataStored = false;
 }

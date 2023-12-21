@@ -8,11 +8,6 @@ class QTableWidget;
 // General utility functions
 namespace Utils::General
 {
-// CSV files use semicolons to separate the cells, so the name and additional info columns
-// are checked for these to prevent additional, user entered semicolons being saved
-[[nodiscard]] bool
-containsSemicolon(const QTableWidget *tableWidget);
-
 // Roll a 20 sided dice
 [[nodiscard]] int
 rollDice();
@@ -34,8 +29,4 @@ getAutoRollEnabled(bool autoRollEnabled);
 // Calculate the luminance value of a certain color, determine if the color is in dark mode
 [[nodiscard]] bool
 isColorDark(const QColor& color);
-
-// Convert a stored string to additional information
-[[nodiscard]] AdditionalInfoData::AdditionalInformation
-convertStringToAdditionalInfoData(const QString& str);
 }

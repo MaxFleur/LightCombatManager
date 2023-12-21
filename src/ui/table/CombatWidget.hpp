@@ -4,6 +4,7 @@
 #include "CombatTableWidget.hpp"
 #include "TableSettings.hpp"
 
+#include <QJsonObject>
 #include <QPointer>
 #include <QWidget>
 
@@ -23,7 +24,7 @@ public:
                  const RuleSettings&       RuleSettings,
                  int                       mainWidgetWidth,
                  bool                      isDataStored,
-                 QString                   data = "",
+                 const QJsonObject&        data = {},
                  QWidget *                 parent = 0);
 
     void
@@ -163,7 +164,7 @@ private:
 
     QByteArray m_headerDataState;
 
-    QString m_loadedFileData;
+    QJsonObject m_loadedFileData;
 
     unsigned int m_rowEntered{ 0 };
     unsigned int m_roundCounter{ 1 };

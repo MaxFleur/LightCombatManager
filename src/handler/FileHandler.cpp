@@ -2,138 +2,93 @@
 
 #include "AdditionalInfoData.hpp"
 
-#include <QDebug>
 #include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 
-#include <QtGlobal>
-
-// Stores table data as csv
 bool
-FileHandler::saveTable(
+FileHandler::writeTableToFile(
     const QVector<QVector<QVariant> >& tableData,
-    const QString&                     filename,
+    const QString&                     fileName,
     unsigned int                       rowEntered,
     unsigned int                       roundCounter,
     const RuleSettings::Ruleset&       ruleset,
     bool                               rollAutomatically) const
 {
-    // Create file
-    QFile file(filename);
+    // Main combat stats
+    QJsonObject lcmFile;
+    lcmFile["row_entered"] = (int) rowEntered;
+    lcmFile["round_counter"] = (int) roundCounter;
+    lcmFile["ruleset"] = (int) ruleset;
+    lcmFile["roll_automatically"] = rollAutomatically;
 
-    // Check if the device is open for writing
-    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
-        QTextStream data(&file);
+    QJsonObject charactersObject;
+    for (auto i = 0; i < tableData.size(); i++) {
+        const auto& row = tableData.at(i);
+        // Character values
+        QJsonObject singleCharacterObject;
+        singleCharacterObject["name"] = row.at(0).toString();
+        singleCharacterObject["initiative"] = row.at(1).toInt();
+        singleCharacterObject["modifier"] = row.at(2).toInt();
+        singleCharacterObject["hp"] = row.at(3).toInt();
+        singleCharacterObject["is_enemy"] = row.at(4).toBool();
 
-#if QT_VERSION_MAJOR > 5
-        data.setEncoding(QStringConverter::Utf8);
-#else
-        data.setCodec("UTF-8");
-#endif
-        data.setGenerateByteOrderMark(false);
+        // Additional info
+        QJsonObject additionalInfoObject;
+        auto addInfo = row.at(5).value<AdditionalInfoData::AdditionalInformation>();
+        additionalInfoObject["main_info"] = addInfo.mainInfo;
 
-        QStringList strList;
+        // Status effects for additional info
+        QJsonObject statusEffectsObject;
+        for (auto j = 0; j < addInfo.statusEffects.size(); j++) {
+            const auto& statusEffect = addInfo.statusEffects.at(j);
+            QJsonObject singleEffectObject;
+            singleEffectObject["name"] = statusEffect.name;
+            singleEffectObject["duration"] = (int) statusEffect.duration;
+            singleEffectObject["is_permanent"] = statusEffect.isPermanent;
 
-        // Store the table data header
-        strList << "Name" << "Initiative" << "INI modifier" << "HP" << "Is Enemy" << "Additional information";
-        data << strList.join(";") + "\n";
-
-        // Store main table data
-        auto firstRow = true;
-        for (const auto& row : tableData) {
-            // Clear the list at the beginning of every row iteration
-            strList.clear();
-
-            for (auto i = 0; i < row.size(); i++) {
-                if (i != row.size() - 1) {
-                    strList << row.at(i).toString();
-                } else {
-                    auto addInfo = row.at(i).value<AdditionalInfoData::AdditionalInformation>();
-                    // Use the dashes and plus signs for separation
-                    auto savedAddInfoText = addInfo.mainInfo;
-                    if (!addInfo.statusEffects.empty()) {
-                        savedAddInfoText += "---";
-                    }
-                    for (const auto& statusEffect : addInfo.statusEffects) {
-                        savedAddInfoText.append(statusEffect.name + "+" + QString::number(statusEffect.isPermanent) + "+" +
-                                                QString::number(statusEffect.duration) + "--");
-                    }
-                    strList << savedAddInfoText;
-                }
-            }
-            if (firstRow) {
-                firstRow = false;
-                strList << QString::number(rowEntered) << QString::number(roundCounter)
-                        << QString::number(ruleset) << QString::number(rollAutomatically);
-            }
-
-            // Line break
-            data << strList.join(";") + "\n";
+            statusEffectsObject[QString::number(j)] = singleEffectObject;
         }
+        additionalInfoObject["status_effects"] = statusEffectsObject;
+        singleCharacterObject["additional_info"] = additionalInfoObject;
 
-        file.close();
-        return true;
+        const auto& name = row.at(0).toString();
+        charactersObject[QString::number(i)] = singleCharacterObject;
     }
-    return false;
+    lcmFile["characters"] = charactersObject;
+
+    // Write to file
+    auto byteArray = QJsonDocument(lcmFile).toJson();
+    QFile fileOut(fileName);
+    fileOut.open(QIODevice::WriteOnly);
+    return fileOut.write(byteArray);
 }
 
 
-// Open an existing csv table and stream its data
 int
-FileHandler::getCSVStatus(const QString& filename)
+FileHandler::getLCMStatus(const QString& fileName)
 {
-    // If the data can be read, import
-    if (QFile importedCSV(filename); importedCSV.open(QFile::ReadOnly)) {
-        QTextStream in(&importedCSV);
-#if QT_VERSION_MAJOR > 5
-        in.setEncoding(QStringConverter::Utf8);
-#else
-        in.setCodec("UTF-8");
-#endif
-        in.setGenerateByteOrderMark(false);
-        m_data = QString();
-
-        // Import file
-        while (!in.atEnd()) {
-            m_data.append(in.readLine() + "\n");
-        }
-        importedCSV.close();
-
-        if (checkTableFormat(m_data)) {
-            // Success
-            return 0;
-        }
-        // Table in false format
-        return 1;
+    // Try to open
+    QFile fileIin(fileName);
+    if (!fileIin.open(QIODevice::ReadOnly)) {
+        // Read failed
+        return 2;
     }
-    // Unreadable data
-    return 2;
+
+    auto byteArray = fileIin.readAll();
+    const auto document = QJsonDocument::fromJson(byteArray);
+    m_lcmFile = document.object();
+    // Correct or false format
+    return !checkLCMFormat();
 }
 
 
-// Checks if a table is in the correct format
 bool
-FileHandler::checkTableFormat(const QString& data) const
+FileHandler::checkLCMFormat() const
 {
-    if (data.isEmpty()) {
-        return false;
-    }
+    auto checker = !m_lcmFile.empty() && m_lcmFile.contains("row_entered") && m_lcmFile.contains("round_counter") &&
+                   m_lcmFile.contains("ruleset") && m_lcmFile.contains("roll_automatically") &&
+                   m_lcmFile.contains("characters");
 
-    const auto rowDataHeader = data.split("\n").at(0).split(";");
-    const auto rowDataFirstRow = data.split("\n").at(1).split(";");
-
-    // Test if the stored data has the correct header columns
-    if (rowDataHeader.size() == 6
-        && rowDataHeader[0] == "Name"
-        && rowDataHeader[1] == "Initiative"
-        && rowDataHeader[2] == "INI modifier"
-        && rowDataHeader[3] == "HP"
-        && rowDataHeader[4] == "Is Enemy"
-        && rowDataHeader[5] == "Additional information"
-
-        // 7th entry should contain the player on the move, 8th the round counter,
-        // 9th the ruleset and 10th the roll automatically option
-        && rowDataFirstRow.size() == 10) {
-        return true;
-    }
-    return false;
+    return checker;
 }

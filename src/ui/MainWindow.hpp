@@ -53,9 +53,9 @@ private:
     setWelcomingWidget();
 
     void
-    setTableWidget(bool           isDataStored,
-                   bool           newCombatStarted,
-                   const QString& data = "");
+    setTableWidget(bool               isDataStored,
+                   bool               newCombatStarted,
+                   const QJsonObject& data = {});
 
     void
     setCombatTitle(bool isCombatActive);
@@ -71,7 +71,7 @@ private:
     closeEvent(QCloseEvent *event) override;
 
     [[nodiscard]] bool
-    checkStoredTableRules(QString data);
+    checkStoredTableRules(const QJsonObject& data);
 
     bool
     event(QEvent *event) override;

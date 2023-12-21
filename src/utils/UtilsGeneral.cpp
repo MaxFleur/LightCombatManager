@@ -3,29 +3,12 @@
 #include "AdditionalInfoWidget.hpp"
 
 #include <QApplication>
-#include <QDebug>
 #include <QFileInfo>
-#include <QTableWidget>
 
 #include <random>
 
 namespace Utils::General
 {
-bool
-containsSemicolon(const QTableWidget *tableWidget)
-{
-    for (int i = 0; i < tableWidget->rowCount(); i++) {
-        const auto textNameColumn = tableWidget->item(i, 0)->text();
-        const auto textAddInfoColumn = tableWidget->cellWidget(i, 5)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation().mainInfo;
-
-        if (textNameColumn.contains(';') || textAddInfoColumn.contains(';')) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
 int
 rollDice()
 {
@@ -97,39 +80,5 @@ isColorDark(const QColor& color)
                                 0.587 * std::pow(color.greenF(), 2) +
                                 0.114 * std::pow(color.blueF(), 2));
     return luminance < 0.2;
-}
-
-
-AdditionalInfoData::AdditionalInformation
-convertStringToAdditionalInfoData(const QString& str)
-{
-    AdditionalInfoData::AdditionalInformation additionalInformation;
-    // Main info text to the left of separator
-    auto splitIndex = str.lastIndexOf("---");
-    additionalInformation.mainInfo = splitIndex == -1 ? str : str.left(splitIndex);
-    if (splitIndex == -1) {
-        return additionalInformation;
-    }
-
-    auto statusEffects = str.mid(splitIndex + 3);
-    // Status effects are separated using  '--'
-    const auto& statusEffectsSplitted = statusEffects.split("--");
-
-    for (const auto& statusEffectString : statusEffectsSplitted) {
-        // Abort for last string which is always empty
-        if (statusEffectString.isEmpty()) {
-            break;
-        }
-
-        // Status effect members are separated using '+'
-        const auto& statusEffectSplitted = statusEffectString.split("+");
-        // Apply
-        AdditionalInfoData::StatusEffect statusEffect(statusEffectSplitted.at(0),
-                                                      statusEffectSplitted.at(1).toInt() == 1,
-                                                      statusEffectSplitted.at(2).toInt());
-        additionalInformation.statusEffects.push_back(statusEffect);
-    }
-
-    return additionalInformation;
 }
 }

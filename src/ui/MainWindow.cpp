@@ -91,9 +91,9 @@ MainWindow::newCombat()
     m_tableInFile = false;
 
     m_fileName = QString();
-    setCombatTitle(false);
 
     setTableWidget(false, true);
+    setCombatTitle(true);
 }
 
 
@@ -104,21 +104,11 @@ MainWindow::saveTable()
         return false;
     }
 
-    if (m_combatWidget->isEmpty()) {
-        QMessageBox::critical(this, tr("Table empty!"), tr("Can't save an empty table."));
-        return false;
-    }
-    if (Utils::General::containsSemicolon(m_combatWidget->getCombatTableWidget())) {
-        QMessageBox::critical(this, tr("Semicolons detected!"),
-                              tr("Can't save because the table contains semicolons. Please remove them and continue."));
-        return false;
-    }
-
     QString fileName;
     // Save to standard save dir if a new combat has been started
     if (!m_tableInFile) {
         fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings.saveDir,
-                                                tr("Table (*.csv);;All Files (*)"));
+                                                tr("Table (*.lcm);;All Files (*)"));
 
         if (fileName.isEmpty()) {
             // No file provided or Cancel pressed
@@ -131,8 +121,9 @@ MainWindow::saveTable()
     // Save the table
     auto* const combatTableWidget = m_combatWidget->getCombatTableWidget();
     const auto tableData = combatTableWidget->tableDataFromWidget();
-    if (m_fileHandler->saveTable(tableData, fileName, m_combatWidget->getRowEntered(),
-                                 m_combatWidget->getRoundCounter(), m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
+    if (m_fileHandler->writeTableToFile(tableData, fileName, m_combatWidget->getRowEntered(),
+                                        m_combatWidget->getRoundCounter(),
+                                        m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
         m_tableInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getCSVName(fileName);
@@ -175,11 +166,10 @@ MainWindow::openTable()
             return;
         }
     }
-    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("csv File(*.csv)"));
-    const auto code = m_fileHandler->getCSVStatus(fileName);
+    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
     auto rulesModified = false;
 
-    switch (code) {
+    switch (const auto code = m_fileHandler->getLCMStatus(fileName); code) {
     case 0:
     {
         if (!checkStoredTableRules(m_fileHandler->getData())) {
@@ -270,7 +260,7 @@ MainWindow::setWelcomingWidget()
 
 
 void
-MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
+MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJsonObject& data)
 {
     m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, data, this);
     setCentralWidget(m_combatWidget);
@@ -406,13 +396,10 @@ MainWindow::closeEvent(QCloseEvent *event)
 
 
 bool
-MainWindow::checkStoredTableRules(QString data)
+MainWindow::checkStoredTableRules(const QJsonObject& data)
 {
-    // Get the first stored table row
-    const auto firstRowData = data.split("\n").at(1).split(";");
-    // Get the loaded ruleset and roll automatically variable
-    m_loadedTableRule = static_cast<RuleSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
-    m_loadedTableRollAutomatically = static_cast<bool>(firstRowData[COL_ROLL_AUTOMATICALLY].toInt());
+    m_loadedTableRule = static_cast<RuleSettings::Ruleset>(data.value("ruleset").toInt());
+    m_loadedTableRollAutomatically = data.value("roll_automatically").toBool();
 
     return m_ruleSettings.ruleset == m_loadedTableRule &&
            m_ruleSettings.rollAutomatical == m_loadedTableRollAutomatically;

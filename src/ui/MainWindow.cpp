@@ -412,6 +412,7 @@ MainWindow::event(QEvent *event)
     if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
         const auto isSystemInDarkMode = Utils::General::isColorDark(palette().color(QPalette::Window));
         m_openSettingsAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"));
+        QApplication::setWindowIcon(isSystemInDarkMode ? QIcon(":/icons/logo_main_white.png") : QIcon(":/icons/logo_main_black.png"));
 
         if (m_combatWidget) {
             m_combatWidget->setUndoRedoIcon(isSystemInDarkMode);

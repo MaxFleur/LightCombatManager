@@ -7,5 +7,8 @@
         <file>icons/redo_white.png</file>
         <file>icons/undo_black.png</file>
         <file>icons/undo_white.png</file>
+
+        <file>icons/logo_main_black.png</file>
+        <file>icons/logo_main_white.png</file>
     </qresource>
 </RCC>

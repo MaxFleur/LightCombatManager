@@ -83,11 +83,10 @@ void
 MainWindow::newCombat()
 {
     // Check if a table is active
-    if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        if (createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before starting a new one?")
-                                                    : tr("Do you want to start a new Combat?"), false) == 0) {
-            return;
-        }
+    if (m_isTableActive &&
+        createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before starting a new one?")
+                                                : tr("Do you want to start a new Combat?"), false) == 0) {
+        return;
     }
     m_tableInFile = false;
 

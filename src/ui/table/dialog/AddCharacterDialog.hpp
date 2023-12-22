@@ -28,7 +28,7 @@ signals:
 
 private slots:
     void
-    setLabelRolled();
+    randomButtonClicked();
 
     void
     animateLabel();
@@ -46,7 +46,7 @@ private:
     QPointer<QLineEdit> m_nameEdit;
     QPointer<QSpinBox> m_iniBox;
     QPointer<QSpinBox> m_iniModifierBox;
-    QPointer<QLabel> m_labelRolled;
+    QPointer<QLabel> m_rolledValueLabel;
     QPointer<QSpinBox> m_hpBox;
     QPointer<QCheckBox> m_enemyBox;
     QPointer<QLineEdit> m_addInfoEdit;

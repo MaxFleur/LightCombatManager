@@ -32,28 +32,28 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     auto *const iniLabel = new QLabel(tr("Initiative:"));
     m_iniBox = new QSpinBox;
     m_iniBox->setMinimum(-20);
-    m_iniBox->setToolTip(tr("Set the initiative, including all modifiers. Optional."));
+    m_iniBox->setToolTip(tr("Set the initiative, including all modifiers."));
+
+    auto *const randomIniButton = new QPushButton(tr("Random Initiative Value"));
+    randomIniButton->setToolTip(tr("Roll a 20-sided dice to set the initiative."));
 
     auto *const iniModifierLabel = new QLabel(tr("Modifier:"));
     m_iniModifierBox = new QSpinBox;
     m_iniModifierBox->setMinimum(-10);
-    m_iniModifierBox->setToolTip(tr("Set the initiative modifier. Optional."));
+    m_iniModifierBox->setToolTip(tr("Set the initiative modifier."));
 
-    m_labelRolled = new QLabel;
-    auto *const rollButton = new QPushButton(tr("Random"));
-    rollButton->setToolTip(tr("Roll a 20 sided dice.\n"
-                              "The modifier is added to the rolled value."));
+    m_rolledValueLabel = new QLabel;
 
-    auto *const hpLabel = new QLabel(tr("HP:"));
+    auto *const hpLabel = new QLabel(tr("Health Points:"));
     m_hpBox = new QSpinBox;
     m_hpBox->setRange(-10000, 10000);
-    m_hpBox->setToolTip(tr("Set the HP of this Character. Optional."));
+    m_hpBox->setToolTip(tr("Set the Character's HP."));
 
     auto *const enemyLabel = new QLabel(tr("Is Enemy:"));
     m_enemyBox = new QCheckBox;
-    m_enemyBox->setToolTip(tr("Set if the Character is an enemy. Optional."));
+    m_enemyBox->setToolTip(tr("Set if the Character is an enemy."));
 
-    auto *const addInfoLabel = new QLabel(tr("Additional:"));
+    auto *const addInfoLabel = new QLabel(tr("Additional Info:"));
     m_addInfoEdit = new QLineEdit;
     m_addInfoEdit->setToolTip(tr("Set additional information. \n"
                                  "Status Effects are added in the main table widget."));
@@ -62,7 +62,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     m_instanceNumberBox->setRange(2, 10);
     m_instanceNumberBox->setEnabled(false);
 
-    m_multipleEnabledBox = new QCheckBox(tr("Add Character multiple times:"));
+    m_multipleEnabledBox = new QCheckBox(tr("Add Character multiple Times:"));
     m_multipleEnabledBox->setTristate(false);
     m_multipleEnabledBox->setCheckState(Qt::Unchecked);
     m_multipleEnabledBox->setToolTip(tr("If this is selected and 'Save' is pressed,\n"
@@ -73,7 +73,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
     buttonBox->addButton(QDialogButtonBox::Cancel);
 
-    auto *const resetButton = new QPushButton(tr("Reset"));
+    auto *const resetButton = new QPushButton(tr("Reset all entered Values"));
 
     okButton->setShortcut(Qt::Key_Return);
 
@@ -89,37 +89,44 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     layout->addWidget(nameLabel, 0, 0);
     layout->addWidget(m_nameEdit, 0, 1, 1, 3);
 
-    layout->addWidget(iniLabel, 1, 0);
-    layout->addWidget(m_iniBox, 1, 1);
-    layout->addWidget(iniModifierLabel, 1, 2);
-    layout->addWidget(m_iniModifierBox, 1, 3);
+    layout->setRowMinimumHeight(1, 12);
 
-    layout->addWidget(m_labelRolled, 2, 0, 1, 2);
-    layout->addWidget(rollButton, 2, 3, 1, 1);
+    layout->addWidget(iniLabel, 2, 0);
+    layout->addWidget(m_iniBox, 2, 1);
+    layout->addWidget(iniModifierLabel, 2, 2);
+    layout->addWidget(m_iniModifierBox, 2, 3);
 
-    layout->addWidget(hpLabel, 4, 0);
-    layout->addWidget(m_hpBox, 4, 1);
-    layout->addWidget(enemyLabel, 4, 2);
-    layout->addWidget(m_enemyBox, 4, 3);
+    layout->addWidget(randomIniButton, 3, 0, 1, 2);
+    layout->addWidget(m_rolledValueLabel, 3, 3);
 
-    layout->addWidget(addInfoLabel, 5, 0);
-    layout->addWidget(m_addInfoEdit, 5, 1, 1, 3);
+    layout->setRowMinimumHeight(4, 12);
 
-    layout->addWidget(m_multipleEnabledBox, 6, 0, 1, 3);
-    layout->addWidget(m_instanceNumberBox, 6, 3, 1, 1);
+    layout->addWidget(hpLabel, 5, 0);
+    layout->addWidget(m_hpBox, 5, 1);
+    layout->addWidget(enemyLabel, 5, 2);
+    layout->addWidget(m_enemyBox, 5, 3);
 
-    layout->addWidget(m_animatedLabel, 7, 0, 1, 2);
-    layout->addWidget(resetButton, 7, 3, 1, 1);
+    layout->addWidget(addInfoLabel, 6, 0);
+    layout->addWidget(m_addInfoEdit, 6, 1, 1, 3);
 
-    // Keep a little space to the button box
-    layout->setRowMinimumHeight(8, 20);
+    layout->setRowMinimumHeight(7, 12);
 
-    layout->addWidget(buttonBox, 9, 1, 1, 3);
+    layout->addWidget(m_multipleEnabledBox, 8, 0, 1, 3);
+    layout->addWidget(m_instanceNumberBox, 8, 3, 1, 1);
+
+    layout->setRowMinimumHeight(9, 12);
+
+    layout->addWidget(m_animatedLabel, 10, 0, 1, 2);
+    layout->addWidget(resetButton, 10, 2, 1, 2);
+
+    layout->setRowMinimumHeight(11, 10);
+    layout->addWidget(buttonBox, 12, 1, 1, 3);
 
     setLayout(layout);
     m_nameEdit->setFocus(Qt::TabFocusReason);
 
-    connect(rollButton, &QPushButton::clicked, this, &AddCharacterDialog::setLabelRolled);
+    connect(randomIniButton, &QPushButton::clicked, this, &AddCharacterDialog::randomButtonClicked);
+
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
     connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
@@ -134,11 +141,11 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
 
 
 void
-AddCharacterDialog::setLabelRolled()
+AddCharacterDialog::randomButtonClicked()
 {
     const auto rand = Utils::General::rollDice();
     m_iniBox->setValue(rand + m_iniModifierBox->value());
-    m_labelRolled->setText(tr("Rolled number: ") + QString::number(rand));
+    m_rolledValueLabel->setText(tr("Rolled a <b>") + QString::number(rand) + "</b>.");
 }
 
 
@@ -195,7 +202,7 @@ AddCharacterDialog::resetButtonClicked()
     m_nameEdit->clear();
     m_iniBox->setValue(0);
     m_iniModifierBox->setValue(0);
-    m_labelRolled->setText("");
+    m_rolledValueLabel->setText("");
     m_hpBox->setValue(0);
     m_enemyBox->setChecked(false);
     m_addInfoEdit->clear();

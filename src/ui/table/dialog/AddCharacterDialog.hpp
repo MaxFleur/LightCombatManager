@@ -43,10 +43,6 @@ private slots:
     okButtonClicked();
 
 private:
-    void
-    keyPressEvent(QKeyEvent *event);
-
-private:
     QPointer<QLineEdit> m_nameEdit;
     QPointer<QSpinBox> m_iniBox;
     QPointer<QSpinBox> m_iniModifierBox;

@@ -75,6 +75,8 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
 
     auto *const resetButton = new QPushButton(tr("Reset"));
 
+    okButton->setShortcut(Qt::Key_Return);
+
     saveButton->setShortcut(QKeySequence::Save);
     const auto saveShortcutText = "Save this Character (" + QKeySequence(QKeySequence::Save).toString() + ").";
     saveButton->setToolTip(tr(saveShortcutText.toLocal8Bit().constData()));
@@ -210,16 +212,4 @@ AddCharacterDialog::okButtonClicked()
         saveButtonClicked();
     }
     QDialog::accept();
-}
-
-
-// Normally, pressing the Enter key closes a QDialog, calling reject but we do not want that
-// The user has to press Escape, the Return key or the closing "X" button
-void
-AddCharacterDialog::keyPressEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-        return;
-    }
-    QDialog::keyPressEvent(event);
 }

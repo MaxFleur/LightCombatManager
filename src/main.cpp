@@ -3,6 +3,11 @@
 #include "UtilsGeneral.hpp"
 
 #include <QApplication>
+#include <QSplashScreen>
+#include <QWidget>
+
+#include <chrono>
+#include <thread>
 
 int
 main(int argc, char *argv[])
@@ -11,10 +16,18 @@ main(int argc, char *argv[])
     app.setApplicationName("LCM");
     app.setOrganizationName("LCM");
 
-    MainWindow mainWindow;
-    const auto isSystemInDarkMode = Utils::General::isColorDark(mainWindow.palette().color(QPalette::Window));
-    app.setWindowIcon(isSystemInDarkMode ? QIcon(":/icons/logo_main_white.png") : QIcon(":/icons/logo_main_black.png"));
+    // Tiny placeholder widget to determine system color
+    QWidget widget;
+    const auto isSystemInDarkMode = Utils::General::isColorDark(widget.palette().color(QPalette::Window));
+    QPixmap pixmap(isSystemInDarkMode ? ":/icons/logo_splash_dark.png" : ":/icons/logo_splash_light.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+    MainWindow mainWindow;
     mainWindow.show();
+    splash.finish(&mainWindow);
+
     return app.exec();
 }

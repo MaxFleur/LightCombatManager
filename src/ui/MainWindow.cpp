@@ -216,6 +216,7 @@ MainWindow::openSettings()
 {
     auto *const dialog = new SettingsDialog(m_additionalSettings, m_ruleSettings, m_isTableActive, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setModal(true);
     dialog->show();
 }
 

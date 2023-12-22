@@ -37,9 +37,10 @@ StatusEffectDialog::StatusEffectDialog(const RuleSettings& RuleSettings, QWidget
         m_listWidget->addItem(new QListWidgetItem(effect));
     }
 
-    m_checkBox = new QCheckBox(tr("Is Permanent"));
+    m_checkBox = new QCheckBox(tr("Permanent"));
     m_checkBox->setTristate(false);
     m_checkBox->setCheckState(Qt::Unchecked);
+    m_checkBox->setToolTip(tr("If the effect is permanent, it won't be removed from the Character."));
 
     m_spinBox = new QSpinBox;
     m_spinBox->setRange(0, 99);
@@ -48,11 +49,10 @@ StatusEffectDialog::StatusEffectDialog(const RuleSettings& RuleSettings, QWidget
     auto* const spinBoxLabel = new QLabel(tr("Rounds:"));
 
     auto* const spinBoxLayout = new QHBoxLayout;
+    spinBoxLayout->addWidget(m_checkBox);
+    spinBoxLayout->addStretch();
     spinBoxLayout->addWidget(spinBoxLabel);
     spinBoxLayout->addWidget(m_spinBox);
-
-    auto* const spinBoxLayoutWidget = new QWidget;
-    spinBoxLayoutWidget->setLayout(spinBoxLayout);
 
     auto *const buttonBox = new QDialogButtonBox;
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
@@ -61,16 +61,16 @@ StatusEffectDialog::StatusEffectDialog(const RuleSettings& RuleSettings, QWidget
     auto *const layout = new QVBoxLayout(this);
     layout->addWidget(m_lineEdit);
     layout->addWidget(m_listWidget);
-    layout->addWidget(m_checkBox);
-    layout->addWidget(spinBoxLayoutWidget);
+    layout->addLayout(spinBoxLayout);
     layout->addWidget(buttonBox);
     setLayout(layout);
 
     connect(m_lineEdit, &QLineEdit::textChanged, this, [this] () {
         findEffect(m_lineEdit->text());
     });
-    connect(m_checkBox, &QCheckBox::stateChanged, this, [this, spinBoxLayoutWidget] {
-        spinBoxLayoutWidget->setEnabled(m_checkBox->checkState() != Qt::Checked);
+    connect(m_checkBox, &QCheckBox::stateChanged, this, [this, spinBoxLabel] {
+        spinBoxLabel->setEnabled(m_checkBox->checkState() != Qt::Checked);
+        m_spinBox->setEnabled(m_checkBox->checkState() != Qt::Checked);
     });
     connect(m_listWidget, &QListWidget::itemDoubleClicked, this, [this] (QListWidgetItem *item) {
         createEffect(item->text());

@@ -19,61 +19,59 @@
 MainWindow::MainWindow()
 {
     // Actions
-    auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
-    newCombatAction->setShortcuts(QKeySequence::New);
-    connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
+    m_newCombatAction = new QAction(tr("&New"), this);
+    m_newCombatAction->setShortcuts(QKeySequence::New);
+    connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
-    auto *const openTableAction = new QAction(style()->standardIcon(QStyle::SP_DirOpenIcon), tr("&Open..."), this);
-    openTableAction->setShortcuts(QKeySequence::Open);
-    connect(openTableAction, &QAction::triggered, this, &MainWindow::openTable);
+    m_openCombatAction = new QAction(tr("&Open..."), this);
+    m_openCombatAction->setShortcuts(QKeySequence::Open);
+    connect(m_openCombatAction, &QAction::triggered, this, &MainWindow::openTable);
 
-    auto *const closeTableAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarCloseButton), tr("&Close"), this);
-    closeTableAction->setShortcuts(QKeySequence::Close);
-    connect(closeTableAction, &QAction::triggered, this, [this] () {
+    m_saveAction = new QAction(tr("&Save"), this);
+    m_saveAction->setShortcuts(QKeySequence::Save);
+    connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
+
+    m_saveAsAction = new QAction(tr("&Save As..."), this);
+    m_saveAsAction->setShortcuts(QKeySequence::SaveAs);
+    connect(m_saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    // Both options have to be enabled or disabled simultaneously
+    connect(this, &MainWindow::setSaveAction, this, [this] (bool enable) {
+        m_saveAction->setEnabled(enable);
+        m_saveAsAction->setEnabled(enable);
+    });
+
+    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.png"), tr("&Close"), this);
+    closeAction->setShortcuts(QKeySequence::Close);
+    connect(closeAction, &QAction::triggered, this, [this] () {
         m_isTableActive ? exitCombat() : QApplication::quit();
     });
 
-    auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
-    saveTableAction->setShortcuts(QKeySequence::Save);
-    connect(saveTableAction, &QAction::triggered, this, &MainWindow::saveTable);
-
-    auto *const saveAsAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save As..."), this);
-    saveAsAction->setShortcuts(QKeySequence::SaveAs);
-    connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
-    // Both options have to be enabled or disabled simultaneously
-    connect(this, &MainWindow::setSaveAction, this, [saveTableAction, saveAsAction] (bool enable) {
-        saveTableAction->setEnabled(enable);
-        saveAsAction->setEnabled(enable);
-    });
-
-    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
-    QApplication::setWindowIcon(isSystemInDarkMode ? QIcon(":/icons/logos/main_white.png") : QIcon(":/icons/logos/main_black.png"));
-    m_openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/menus/gear_white.png") : QIcon(":/icons/menus/gear_black.png"),
-                                       tr("Settings..."), this);
+    m_openSettingsAction = new QAction(tr("Settings..."), this);
     connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 
-    auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);
-    connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
+    m_aboutLCMAction = new QAction(tr("&About LCM"), this);
+    connect(m_aboutLCMAction, &QAction::triggered, this, &MainWindow::about);
 
     auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
     connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
     // Add actions
     auto *const fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(newCombatAction);
-    fileMenu->addAction(openTableAction);
-    fileMenu->addAction(closeTableAction);
-    fileMenu->addAction(saveTableAction);
-    fileMenu->addAction(saveAsAction);
+    fileMenu->addAction(m_newCombatAction);
+    fileMenu->addAction(m_openCombatAction);
+    fileMenu->addAction(m_saveAction);
+    fileMenu->addAction(m_saveAsAction);
+    fileMenu->addAction(closeAction);
     fileMenu->addAction(m_openSettingsAction);
     fileMenu->addSeparator();
 
     auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
-    helpMenu->addAction(aboutAction);
+    helpMenu->addAction(m_aboutLCMAction);
     helpMenu->addAction(aboutQtAction);
 
     m_fileHandler = std::make_unique<FileHandler>();
 
+    setMainWindowIcons();
     resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
 }
@@ -407,15 +405,30 @@ MainWindow::checkStoredTableRules(const QJsonObject& data)
 }
 
 
+void
+MainWindow::setMainWindowIcons()
+{
+    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+
+    m_newCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/new_white.png" : ":/icons/menus/new_black.png"));
+    m_openCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.png" : ":/icons/menus/open_black.png"));
+    m_saveAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_white.png" : ":/icons/menus/save_black.png"));
+    m_saveAsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_as_white.png" : ":/icons/menus/save_as_black.png"));
+    m_openSettingsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/gear_white.png" : ":/icons/menus/gear_black.png"));
+    m_aboutLCMAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.png" : ":/icons/logos/main_dark.png"));
+
+    QApplication::setWindowIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.png" : ":/icons/logos/main_dark.png"));
+}
+
+
 bool
 MainWindow::event(QEvent *event)
 {
     if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
-        const auto isSystemInDarkMode = Utils::General::isColorDark(palette().color(QPalette::Window));
-        m_openSettingsAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/menus/gear_white.png") : QIcon(":/icons/menus/gear_black.png"));
-        QApplication::setWindowIcon(isSystemInDarkMode ? QIcon(":/icons/logos/main_white.png") : QIcon(":/icons/logos/main_black.png"));
+        setMainWindowIcons();
 
         if (m_combatWidget) {
+            const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
             m_combatWidget->setUndoRedoIcon(isSystemInDarkMode);
         }
     }

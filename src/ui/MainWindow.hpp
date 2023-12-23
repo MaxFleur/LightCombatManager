@@ -73,13 +73,23 @@ private:
     [[nodiscard]] bool
     checkStoredTableRules(const QJsonObject& data);
 
+    void
+    setMainWindowIcons();
+
     bool
     event(QEvent *event) override;
 
 private:
     QPointer<WelcomeWidget> m_welcomeWidget;
     QPointer<CombatWidget> m_combatWidget;
+
+    QPointer<QAction> m_newCombatAction;
+    QPointer<QAction> m_openCombatAction;
+    QPointer<QAction> m_saveAction;
+    QPointer<QAction> m_saveAsAction;
+    QPointer<QAction> m_closeAction;
     QPointer<QAction> m_openSettingsAction;
+    QPointer<QAction> m_aboutLCMAction;
 
     std::unique_ptr<FileHandler> m_fileHandler;
 

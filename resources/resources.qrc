@@ -1,12 +1,21 @@
 <RCC>
     <qresource>
-        <file>icons/logos/main_black.png</file>
-        <file>icons/logos/main_white.png</file>
+        <file>icons/logos/main_dark.png</file>
+        <file>icons/logos/main_light.png</file>
         <file>icons/logos/splash_dark.png</file>
         <file>icons/logos/splash_light.png</file>
 
+        <file>icons/menus/close.png</file>
         <file>icons/menus/gear_black.png</file>
         <file>icons/menus/gear_white.png</file>
+        <file>icons/menus/new_black.png</file>
+        <file>icons/menus/new_white.png</file>
+        <file>icons/menus/open_black.png</file>
+        <file>icons/menus/open_white.png</file>
+        <file>icons/menus/save_black.png</file>
+        <file>icons/menus/save_white.png</file>
+        <file>icons/menus/save_as_black.png</file>
+        <file>icons/menus/save_as_white.png</file>
 
         <file>icons/table/redo_black.png</file>
         <file>icons/table/redo_white.png</file>

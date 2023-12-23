@@ -19,7 +19,7 @@ main(int argc, char *argv[])
     // Tiny placeholder widget to determine system color
     QWidget widget;
     const auto isSystemInDarkMode = Utils::General::isColorDark(widget.palette().color(QPalette::Window));
-    QPixmap pixmap(isSystemInDarkMode ? ":/icons/logo_splash_dark.png" : ":/icons/logo_splash_light.png");
+    QPixmap pixmap(isSystemInDarkMode ? ":/icons/logos/splash_dark.png" : ":/icons/logos/splash_light.png");
     QSplashScreen splash(pixmap);
     splash.show();
 

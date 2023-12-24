@@ -157,14 +157,19 @@ MainWindow::saveAs()
 void
 MainWindow::openTable()
 {
-    // Check if a table is active right now
-    if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        if (createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before opening another existing Combat?")
-                                                    : tr("Do you want to open another existing Combat?"), false) == 0) {
-            return;
-        }
-    }
     const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
+    // Return for equal names, but let it load the first time
+    if (fileName == m_dirSettings.openDir && m_isTableAlreadyLoaded) {
+        return;
+    }
+
+    // Check if a table is active right now
+    if (m_isTableActive && !m_combatWidget->isEmpty() && isWindowModified() &&
+        createSaveMessageBox(tr("Do you want to save the current Combat before opening another existing Combat?"), false) == 0) {
+        return;
+    }
+
+    m_isTableAlreadyLoaded = true;
     auto rulesModified = false;
 
     switch (const auto code = m_fileHandler->getLCMStatus(fileName); code) {

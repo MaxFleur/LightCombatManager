@@ -126,6 +126,12 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     m_nameEdit->setFocus(Qt::TabFocusReason);
 
     connect(randomIniButton, &QPushButton::clicked, this, &AddCharacterDialog::randomButtonClicked);
+    connect(m_iniBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
+        m_iniWithoutModValue = m_iniBox->value() - m_iniModifierBox->value();
+    });
+    connect(m_iniModifierBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
+        m_iniBox->setValue(m_iniWithoutModValue + m_iniModifierBox->value());
+    });
 
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
@@ -201,6 +207,7 @@ AddCharacterDialog::resetButtonClicked()
     // Reset all displayed values
     m_nameEdit->clear();
     m_iniBox->setValue(0);
+    m_iniWithoutModValue = 0;
     m_iniModifierBox->setValue(0);
     m_rolledValueLabel->setText("");
     m_hpBox->setValue(0);

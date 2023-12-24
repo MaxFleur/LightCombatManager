@@ -57,6 +57,8 @@ private:
 
     QPointer<QTimer> m_timer;
 
+    int m_iniWithoutModValue = 0;
+
     bool m_isFirstCharStored{ false };
 
     static constexpr int LABEL_SHOWN_DURATION = 1000;

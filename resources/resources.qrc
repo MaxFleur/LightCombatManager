@@ -1,25 +1,26 @@
 <RCC>
     <qresource>
-        <file>icons/logos/main_dark.png</file>
-        <file>icons/logos/main_light.png</file>
+        <file>icons/logos/main_dark.svg</file>
+        <file>icons/logos/main_light.svg</file>
+
         <file>icons/logos/splash_dark.png</file>
         <file>icons/logos/splash_light.png</file>
 
-        <file>icons/menus/close.png</file>
-        <file>icons/menus/gear_black.png</file>
-        <file>icons/menus/gear_white.png</file>
-        <file>icons/menus/new_black.png</file>
-        <file>icons/menus/new_white.png</file>
-        <file>icons/menus/open_black.png</file>
-        <file>icons/menus/open_white.png</file>
-        <file>icons/menus/save_black.png</file>
-        <file>icons/menus/save_white.png</file>
-        <file>icons/menus/save_as_black.png</file>
-        <file>icons/menus/save_as_white.png</file>
+        <file>icons/menus/close.svg</file>
+        <file>icons/menus/gear_black.svg</file>
+        <file>icons/menus/gear_white.svg</file>
+        <file>icons/menus/new_black.svg</file>
+        <file>icons/menus/new_white.svg</file>
+        <file>icons/menus/open_black.svg</file>
+        <file>icons/menus/open_white.svg</file>
+        <file>icons/menus/save_black.svg</file>
+        <file>icons/menus/save_white.svg</file>
+        <file>icons/menus/save_as_black.svg</file>
+        <file>icons/menus/save_as_white.svg</file>
 
-        <file>icons/table/redo_black.png</file>
-        <file>icons/table/redo_white.png</file>
-        <file>icons/table/undo_black.png</file>
-        <file>icons/table/undo_white.png</file>
+        <file>icons/table/redo_black.svg</file>
+        <file>icons/table/redo_white.svg</file>
+        <file>icons/table/undo_black.svg</file>
+        <file>icons/table/undo_white.svg</file>
     </qresource>
 </RCC>

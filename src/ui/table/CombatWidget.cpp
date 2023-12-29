@@ -268,8 +268,8 @@ CombatWidget::resetNameAndInfoWidth(const int nameWidth, const int addInfoWidth)
 void
 CombatWidget::setUndoRedoIcon(bool isDarkMode)
 {
-    m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.png") : QIcon(":/icons/table/undo_black.png"));
-    m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.png") : QIcon(":/icons/table/redo_black.png"));
+    m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
+    m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
 }
 
 

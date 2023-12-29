@@ -40,7 +40,7 @@ MainWindow::MainWindow()
         m_saveAsAction->setEnabled(enable);
     });
 
-    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.png"), tr("&Close"), this);
+    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.svg"), tr("&Close"), this);
     closeAction->setShortcuts(QKeySequence::Close);
     connect(closeAction, &QAction::triggered, this, [this] () {
         m_isTableActive ? exitCombat() : QApplication::quit();
@@ -415,14 +415,14 @@ MainWindow::setMainWindowIcons()
 {
     const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
 
-    m_newCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/new_white.png" : ":/icons/menus/new_black.png"));
-    m_openCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.png" : ":/icons/menus/open_black.png"));
-    m_saveAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_white.png" : ":/icons/menus/save_black.png"));
-    m_saveAsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_as_white.png" : ":/icons/menus/save_as_black.png"));
-    m_openSettingsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/gear_white.png" : ":/icons/menus/gear_black.png"));
-    m_aboutLCMAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.png" : ":/icons/logos/main_dark.png"));
+    m_newCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/new_white.svg" : ":/icons/menus/new_black.svg"));
+    m_openCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.svg" : ":/icons/menus/open_black.svg"));
+    m_saveAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_white.svg" : ":/icons/menus/save_black.svg"));
+    m_saveAsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_as_white.svg" : ":/icons/menus/save_as_black.svg"));
+    m_openSettingsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/gear_white.svg" : ":/icons/menus/gear_black.svg"));
+    m_aboutLCMAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
 
-    QApplication::setWindowIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.png" : ":/icons/logos/main_dark.png"));
+    QApplication::setWindowIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
 }
 
 

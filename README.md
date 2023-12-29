@@ -37,24 +37,31 @@ Support for more d20-based rulesets might be added in the future.
 
 # Tools & Installation
 LCM is written in C++17. The following tools are used for development:
-* [Qt6 or Qt5](https://www.qt.io/) for the user interface and the storing and loading of tables
+* [Qt6 or Qt5](https://www.qt.io/) for the user interface and the storing and loading of tables.
+   * If no Qt6 installation is found on the system, the application searches for a Qt5 installation instead.
+   * Note that for the correct displaying of svg files, the Qt SVG plugin is needed.
 * [Catch2](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 
-For most Linux distributions, all these libraries can be installed using their respective official package manager. For Windows, installers for Qt, CMake and Catch2 are available. If no Qt6 installation is found on the system, the application searches for a Qt5 installation instead.\
+For most Linux distributions, all these libraries can be installed using their respective official package manager. For example, this command installs all dependencies for Ubuntu 22.04:\
+`sudo apt install qtbase5-dev libqt5svg5 qt6-base-dev libqt6svg6 catch2 uncrustify cmake`\
+For Arch Linux and derivates:\
+`sudo pacman -S qt5-base qt5-svg qt6-base qt6-svg catch2 uncrustify cmake`
+
+For Windows, installers for Qt, CMake and Catch2 are available. Make sure to install the Qt SVG plugin as well!\
 Alternatively, if you want to run the application without any additional installing, just download the binaries provided with the latest release.
 
-## Linux
+## Build on Linux
 
 1. Download or clone this repository.
 2. Open a terminal and `cd` into this repository.
 3. Create a build folder: `mkdir build`. Navigate into this folder via `cd build`.
 4. Hit `cmake ..` and then `make`. Start the application with `./src/LightCombatManager`.
 
-## Windows
+## Build on Windows
 
-The following description is focused on building the application with `cmake` and Visual Studio 2022.
+The following description is focused on building the application with `cmake`, MSVC 2019 and Visual Studio 2022.
 
 1. Download or clone this repository.
 2. Open up `cmd` or `git cmd` and navigate to this repository. 
@@ -63,9 +70,19 @@ The following description is focused on building the application with `cmake` an
 5. Hit `cmake.exe -G “Visual Studio 17 2022” -A x64 ..` This will create an sln-file. 
 6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
 7. Inside the build-file, a file named `Debug` or `Release` should have been created. Navigate to this folder and then to the `src` subdirectory.
-8. The exe-file for the application should be found here. To successfully run the exe, `QT6Core.dll`, `QT6Widgets.dll` and `QT6Gui.dll` 
-   have to be in the same file path as the exe (`QT5Core.dll`, `QT5Widgets.dll` and `QT5Gui.dll` for Qt5). You also have to create a directory named
-   `platforms` in the same dir as the exe-file and copy the `qwindows.dll` into it. 
+8. The exe-file for the application should be found here. To successfully run the exe, make sure that the directory contains the corresponding qt dll files as well. The final built application dir for Qt6 should look as follows:
+```
+├── platforms
+|   ├── qwindows.dll
+├── imageformats
+|   ├── qsvg.dll
+├── LightCombatManager.exe
+├── Qt6Core.dll
+├── Qt6Gui.dll
+├── Qt6Svg.dll
+├── Qt6Widgets.dll
+```
+The dll files can be found under the Qt installation path under `/bin` and `/plugins`.
 
 # Contribution
 

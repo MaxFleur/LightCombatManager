@@ -74,8 +74,10 @@ getAutoRollEnabled(bool autoRollEnabled)
 
 
 bool
-isColorDark(const QColor& color)
+isSystemInDarkMode()
 {
+    const QWidget widget;
+    const auto color = widget.palette().color(QPalette::Window);
     const auto luminance = sqrt(0.299 * std::pow(color.redF(), 2) +
                                 0.587 * std::pow(color.greenF(), 2) +
                                 0.114 * std::pow(color.blueF(), 2));

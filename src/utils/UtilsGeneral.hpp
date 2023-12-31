@@ -28,5 +28,5 @@ getAutoRollEnabled(bool autoRollEnabled);
 
 // Calculate the luminance value of a certain color, determine if the color is in dark mode
 [[nodiscard]] bool
-isColorDark(const QColor& color);
+isSystemInDarkMode();
 }

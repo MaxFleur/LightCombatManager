@@ -71,7 +71,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_redoAction->setShortcuts(QKeySequence::Redo);
     this->addAction(m_redoAction);
 
-    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+    const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     setUndoRedoIcon(isSystemInDarkMode);
 
     // Spinbox for the hp column
@@ -391,11 +391,6 @@ CombatWidget::rerollIni()
     const auto newInitiative = newRolledDice + characters.at(row).modifier;
 
     characters[row].initiative = newInitiative;
-
-    // Restore the bold font if the current player gets an ini reroll
-    if (row == (int) m_rowEntered) {
-        setRowAndPlayer();
-    }
     pushOnUndoStack();
 
     const auto messageString = tr("New initiative value: ") + QString::number(newInitiative) + "<br>" +
@@ -497,14 +492,13 @@ CombatWidget::removeRow()
     saveOldState();
     m_tableWidget->resynchronizeCharacters();
 
-    // If rows are selected, indices are stored in the order a user clicked at the rows
-    // So we get the selection and resort it so the rows can be easily removed
+    // Get selected rows indices
     std::vector<int> indicesList;
     for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
         indicesList.emplace_back(index.row());
     }
+    // Sort reversed so items in the vector can be removed without using offsets
     std::sort(indicesList.begin(), indicesList.end(), [indicesList](const auto& a, const auto& b) {
-        // Sort reversed so items in the vector can be removed without using offsets
         return a > b;
     });
 
@@ -513,9 +507,8 @@ CombatWidget::removeRow()
         // If the deleted row is before the current entered row, move one up
         if (index < (int) m_rowEntered) {
             m_rowEntered--;
-        }
-        // If the deleted row was the last one in the table and also the current player, select to the first row
-        if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
+        } else if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
+            // If the deleted row was the last one in the table and also the current player, select to the first row
             m_rowEntered = 0;
         }
 
@@ -557,39 +550,26 @@ CombatWidget::switchCharacterPosition(bool goDown)
 void
 CombatWidget::enteredRowChanged(bool goDown)
 {
-    if (m_tableWidget->rowCount() == 0) {
+    if (m_tableWidget->rowCount() == 0 || (!goDown && m_rowEntered == 0 && m_roundCounter == 1)) {
         return;
     }
 
     saveOldState();
 
-    // Are we going down or up?
-    if (goDown) {
-        // If the current selected row is the last one, reset to the first row
-        if ((int) m_rowEntered == m_tableWidget->rowCount() - 1) {
-            m_rowEntered = 0;
-            m_roundCounter++;
-            m_tableWidget->adjustStatusEffectRoundCounter(true);
+    const auto setForBound = [this, goDown] {
+        m_rowEntered = goDown ? 0 : m_tableWidget->rowCount() - 1;
+        m_roundCounter += goDown ? 1 : -1;
+        m_tableWidget->adjustStatusEffectRoundCounter(goDown);
 
-            emit roundCounterSet();
-            // Otherwise just select the next row
-        } else {
-            m_rowEntered++;
-        }
+        emit roundCounterSet();
+    };
+
+    const auto rowEnteredModifier = goDown ? 1 : -1;
+    const auto tableWidgetBoundIndex = goDown ? m_tableWidget->rowCount() - 1 : 0;
+    if ((int) m_rowEntered == tableWidgetBoundIndex) {
+        setForBound();
     } else {
-        if (m_rowEntered == 0) {
-            // Stop for the first round and first char selected
-            if (m_roundCounter == 1) {
-                return;
-            }
-            m_rowEntered = m_tableWidget->rowCount() - 1;
-            m_roundCounter--;
-            m_tableWidget->adjustStatusEffectRoundCounter(false);
-
-            emit roundCounterSet();
-        } else {
-            m_rowEntered--;
-        }
+        m_rowEntered += rowEnteredModifier;
     }
 
     // Recreate the table for the updated font´

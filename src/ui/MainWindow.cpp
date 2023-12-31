@@ -86,7 +86,7 @@ MainWindow::newCombat()
                                                 : tr("Do you want to start a new Combat?"), false) == 0) {
         return;
     }
-    m_tableInFile = false;
+    m_isTableSavedInFile = false;
 
     m_fileName = QString();
 
@@ -104,7 +104,7 @@ MainWindow::saveTable()
 
     QString fileName;
     // Save to standard save dir if a new combat has been started
-    if (!m_tableInFile) {
+    if (!m_isTableSavedInFile) {
         fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings.saveDir,
                                                 tr("Table (*.lcm);;All Files (*)"));
 
@@ -122,7 +122,7 @@ MainWindow::saveTable()
     if (m_fileHandler->writeTableToFile(tableData, fileName, m_combatWidget->getRowEntered(),
                                         m_combatWidget->getRoundCounter(),
                                         m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
-        m_tableInFile = true;
+        m_isTableSavedInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getCSVName(fileName);
 
@@ -141,15 +141,15 @@ MainWindow::saveAs()
 {
     // Save state
     const auto saveChangeOccured = isWindowModified();
-    const auto saveTableInFile = m_tableInFile;
+    const auto saveTableInFile = m_isTableSavedInFile;
 
     // Change variables to call the file dialog
     setWindowModified(true);
-    m_tableInFile = false;
+    m_isTableSavedInFile = false;
     // Restore old state if the save fails
     if (!saveTable()) {
         setWindowModified(saveChangeOccured);
-        m_tableInFile = saveTableInFile;
+        m_isTableSavedInFile = saveTableInFile;
     }
 }
 
@@ -162,7 +162,6 @@ MainWindow::openTable()
     if (fileName == m_dirSettings.openDir && m_isTableAlreadyLoaded) {
         return;
     }
-
     // Check if a table is active right now
     if (m_isTableActive && !m_combatWidget->isEmpty() && isWindowModified() &&
         createSaveMessageBox(tr("Do you want to save the current Combat before opening another existing Combat?"), false) == 0) {
@@ -192,7 +191,7 @@ MainWindow::openTable()
         }
         // Table not active for a short time
         m_isTableActive = false;
-        m_tableInFile = true;
+        m_isTableSavedInFile = true;
         // Save the opened file dir
         m_dirSettings.write(fileName);
         m_fileName = Utils::General::getCSVName(fileName);
@@ -258,7 +257,7 @@ MainWindow::setWelcomingWidget()
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     setCentralWidget(m_welcomeWidget);
 
-    m_tableInFile = false;
+    m_isTableSavedInFile = false;
     emit setSaveAction(false);
 }
 
@@ -328,7 +327,7 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
                                                   : QMessageBox::Yes | QMessageBox::No);
     msgBox->setText(tableMessage);
     if (isClosing) {
-        isWindowModified() ? msgBox->setWindowTitle(tr("Save and exit?")) : msgBox->setWindowTitle(tr("Exit application?"));
+        msgBox->setWindowTitle(isWindowModified() ? tr("Save and exit?") : tr("Exit application?"));
     } else {
         msgBox->setWindowTitle(tr("Save Combat?"));
     }
@@ -413,7 +412,7 @@ MainWindow::checkStoredTableRules(const QJsonObject& data)
 void
 MainWindow::setMainWindowIcons()
 {
-    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+    const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
 
     m_newCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/new_white.svg" : ":/icons/menus/new_black.svg"));
     m_openCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.svg" : ":/icons/menus/open_black.svg"));
@@ -433,7 +432,7 @@ MainWindow::event(QEvent *event)
         setMainWindowIcons();
 
         if (m_combatWidget) {
-            const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+            const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
             m_combatWidget->setUndoRedoIcon(isSystemInDarkMode);
         }
     }

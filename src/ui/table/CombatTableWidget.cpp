@@ -43,37 +43,33 @@ void
 CombatTableWidget::setRowAndPlayer(QLabel *roundCounterLabel, QLabel *currentPlayerLabel, int rowEntered)
 {
     selectionModel()->clearSelection();
-    // Setting fonts may trigger unwished item setting events, so block the signals
-    blockSignals(true);
-
-    if (rowCount() != 0) {
-        // Reset bold text rows to standard font
-        for (auto i = 0; i < rowCount(); i++) {
-            if (item(i, 0)->font().bold()) {
-                const auto font = item(i, 0)->font();
-
-                for (auto j = 0; j < columnCount(); j++) {
-                    if (j < FIRST_FOUR_COLUMNS) {
-                        item(i, j)->setFont(font.defaultFamily());
-                    }
-                }
-            }
-        }
-
-        // Highlight selected row with bold fonts, but ignore the last columns (widgets)
-        for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
-            auto font = item(rowEntered, 0)->font();
-            font.setBold(true);
-            item(rowEntered, j)->setFont(font);
-        }
-    }
-    blockSignals(false);
 
     if (rowCount() == 0) {
         currentPlayerLabel->setText(QObject::tr("Current: None"));
         roundCounterLabel->setText(QObject::tr("Round 0"));
         return;
     }
+
+    // Setting fonts may trigger unwished item setting events, so block the signals
+    blockSignals(true);
+    // Reset bold text rows to standard font
+    for (auto i = 0; i < rowCount(); i++) {
+        if (const auto font = item(i, 0)->font(); font.bold()) {
+            for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
+                item(i, j)->setFont(font.defaultFamily());
+            }
+            break;
+        }
+    }
+
+    // Highlight selected row with bold fonts, but ignore the last columns (widgets)
+    auto font = item(rowEntered, 0)->font();
+    font.setBold(true);
+    for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
+        item(rowEntered, j)->setFont(font);
+    }
+    blockSignals(false);
+
     currentPlayerLabel->setText(QObject::tr("Current: ") + item(rowEntered, 0)->text());
 }
 
@@ -94,17 +90,19 @@ CombatTableWidget::setTableRowColor(bool resetColor)
 
     for (auto i = 0; i < rowCount(); i++) {
         const auto isEnemy = cellWidget(i, COL_ENEMY)->findChild<QCheckBox *>()->isChecked();
-        for (auto j = 0; j < columnCount(); j++) {
-            if (j < FIRST_FOUR_COLUMNS) {
-                item(i, j)->setBackground(color(resetColor, isEnemy, false));
-            } else {
-                QPalette palette;
-                palette.setColor(QPalette::Base, color(resetColor, isEnemy, false));
-                palette.setColor(QPalette::Button, color(resetColor, isEnemy, true));
-                cellWidget(i, j)->setAutoFillBackground(!resetColor);
-                cellWidget(i, j)->setPalette(palette);
-            }
+        const auto noButtonColor = color(resetColor, isEnemy, false);
+
+        for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
+            item(i, j)->setBackground(noButtonColor);
         }
+
+        QPalette palette;
+        palette.setColor(QPalette::Base, noButtonColor);
+        palette.setColor(QPalette::Button, resetColor ? noButtonColor : color(resetColor, isEnemy, true));
+        cellWidget(i, COL_ENEMY)->setAutoFillBackground(!resetColor);
+        cellWidget(i, COL_ADDITIONAL)->setAutoFillBackground(!resetColor);
+        cellWidget(i, COL_ENEMY)->setPalette(palette);
+        cellWidget(i, COL_ADDITIONAL)->setPalette(palette);
     }
 
     blockSignals(false);
@@ -116,16 +114,14 @@ CombatTableWidget::setIniColumnTooltips(bool resetToolTip)
 {
     blockSignals(true);
 
-    for (int i = 0; i < rowCount(); i++) {
-        if (resetToolTip) {
-            item(i, 1)->setToolTip(QString());
-        } else {
-            QString toolTipString = "Calculation: Rolled Value ";
+    for (auto i = 0; i < rowCount(); i++) {
+        auto toolTipString = QString();
+        if (!resetToolTip) {
             const auto rolledValue = item(i, 1)->text().toInt() - item(i, 2)->text().toInt();
-            toolTipString += QString::number(rolledValue) + ", Modifier " + item(i, 2)->text();
-
-            item(i, 1)->setToolTip(toolTipString);
+            toolTipString += "Calculation: Rolled Value " + QString::number(rolledValue) + ", Modifier " + item(i, 2)->text();
         }
+
+        item(i, 1)->setToolTip(toolTipString);
     }
 
     blockSignals(false);
@@ -164,7 +160,7 @@ CombatTableWidget::tableDataFromWidget()
                 break;
             case COL_ADDITIONAL:
             {
-                const auto variant = AdditionalInfoData::getAdditionalInformationVariant(
+                const auto& variant = AdditionalInfoData::getAdditionalInformationVariant(
                     cellWidget(i, j)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation()
                     );
                 rowValues.push_back(variant);

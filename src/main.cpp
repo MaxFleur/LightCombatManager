@@ -4,7 +4,6 @@
 
 #include <QApplication>
 #include <QSplashScreen>
-#include <QWidget>
 
 #include <chrono>
 #include <thread>
@@ -16,9 +15,7 @@ main(int argc, char *argv[])
     app.setApplicationName("LCM");
     app.setOrganizationName("LCM");
 
-    // Tiny placeholder widget to determine system color
-    QWidget widget;
-    const auto isSystemInDarkMode = Utils::General::isColorDark(widget.palette().color(QPalette::Window));
+    const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     QPixmap pixmap(isSystemInDarkMode ? ":/icons/logos/splash_dark.png" : ":/icons/logos/splash_light.png");
     QSplashScreen splash(pixmap);
     splash.show();

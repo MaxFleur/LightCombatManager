@@ -102,7 +102,7 @@ private:
     QString m_fileName{ "" };
 
     bool m_isTableActive{ false };
-    bool m_tableInFile{ false };
+    bool m_isTableSavedInFile{ false };
     bool m_isTableAlreadyLoaded{ false };
 
     bool m_loadedTableRollAutomatically;

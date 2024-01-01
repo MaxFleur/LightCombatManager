@@ -163,7 +163,7 @@ MainWindow::openTable()
         return;
     }
     // Check if a table is active right now
-    if (m_isTableActive && !m_combatWidget->isEmpty() && isWindowModified() &&
+    if (m_isTableActive && isWindowModified() &&
         createSaveMessageBox(tr("Do you want to save the current Combat before opening another existing Combat?"), false) == 0) {
         return;
     }
@@ -326,11 +326,7 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
     msgBox->setStandardButtons(isWindowModified() ? QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
                                                   : QMessageBox::Yes | QMessageBox::No);
     msgBox->setText(tableMessage);
-    if (isClosing) {
-        msgBox->setWindowTitle(isWindowModified() ? tr("Save and exit?") : tr("Exit application?"));
-    } else {
-        msgBox->setWindowTitle(tr("Save Combat?"));
-    }
+    msgBox->setWindowTitle(isClosing ? tr("Save and exit?") : tr("Save Combat?"));
 
     // openTable and newCombat use an identical message box, so do the handling directly
     if (!isClosing) {
@@ -374,23 +370,18 @@ void
 MainWindow::closeEvent(QCloseEvent *event)
 {
     // Check if a table is active and filled
-    if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        const auto val = createSaveMessageBox(isWindowModified() ?
-                                              tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
-                                              tr("Do you really want to exit the application?"), true);
-
-        switch (val) {
+    if (m_isTableActive && isWindowModified()) {
+        switch (const auto val = createSaveMessageBox(tr("Currently, you are in a Combat. Do you want "
+                                                         "to save the Characters before exiting the program?"), true); val) {
         case QMessageBox::Save:
         {
             saveTable() ? event->accept() : event->ignore();
             break;
         }
         case QMessageBox::Discard:
-        case QMessageBox::Yes:
             event->accept();
             break;
         case QMessageBox::Cancel:
-        case QMessageBox::No:
             event->ignore();
             break;
         }

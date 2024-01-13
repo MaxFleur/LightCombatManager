@@ -1,31 +1,14 @@
 #include "UtilsGeneral.hpp"
 
-#include <random>
+#include "AdditionalInfoWidget.hpp"
 
 #include <QApplication>
-#include <QDebug>
 #include <QFileInfo>
-#include <QTableWidget>
 
-#include "AdditionalInfoWidget.hpp"
+#include <random>
 
 namespace Utils::General
 {
-bool
-containsSemicolon(const QTableWidget *tableWidget)
-{
-    for (int i = 0; i < tableWidget->rowCount(); i++) {
-        const auto textNameColumn = tableWidget->item(i, 0)->text();
-        const auto textAddInfoColumn = tableWidget->cellWidget(i, 5)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation().mainInfo;
-
-        if (textNameColumn.contains(';') || textAddInfoColumn.contains(';')) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
 int
 rollDice()
 {
@@ -84,54 +67,20 @@ getRulesetName(unsigned int ruleset)
 
 
 QString
-getAutoRollEnabled(unsigned int autoRollEnabled)
+getAutoRollEnabled(bool autoRollEnabled)
 {
-    return (autoRollEnabled == 1) ? "automatic rolling enabled" : "automatic rolling disabled";
+    return autoRollEnabled ? "automatic rolling enabled" : "automatic rolling disabled";
 }
 
 
 bool
-isColorDark(const QColor& color)
+isSystemInDarkMode()
 {
+    const QWidget widget;
+    const auto color = widget.palette().color(QPalette::Window);
     const auto luminance = sqrt(0.299 * std::pow(color.redF(), 2) +
                                 0.587 * std::pow(color.greenF(), 2) +
                                 0.114 * std::pow(color.blueF(), 2));
     return luminance < 0.2;
-}
-
-
-AdditionalInfoData::AdditionalInformation
-convertStringToAdditionalInfoData(const QString& str)
-{
-    AdditionalInfoData::AdditionalInformation additionalInformation;
-    // Main info text to the left of separator
-    auto splitIndex = str.lastIndexOf("---");
-    additionalInformation.mainInfo = splitIndex == -1 ? str : str.left(splitIndex);
-    if (splitIndex == -1) {
-        return additionalInformation;
-    }
-
-    auto statusEffects = str.mid(splitIndex + 3);
-    // Status effects are separated using  '--'
-    const auto& statusEffectsSplitted = statusEffects.split("--");
-
-    for (const auto& statusEffectString : statusEffectsSplitted) {
-        // Abort for last string which is always empty
-        if (statusEffectString.isEmpty()) {
-            break;
-        }
-
-        AdditionalInfoData::StatusEffect statusEffect;
-        // Status effect members are separated using '+'
-        const auto& statusEffectSplitted = statusEffectString.split("+");
-        // Apply
-        statusEffect.name = statusEffectSplitted.at(0);
-        statusEffect.isPermanent = statusEffectSplitted.at(1).toInt() == 1;
-        statusEffect.duration = statusEffectSplitted.at(2).toInt();
-
-        additionalInformation.statusEffects.push_back(statusEffect);
-    }
-
-    return additionalInformation;
 }
 }

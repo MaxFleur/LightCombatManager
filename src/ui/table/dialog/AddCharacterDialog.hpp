@@ -1,9 +1,9 @@
 #pragma once
 
+#include "CharacterHandler.hpp"
+
 #include <QDialog>
 #include <QPointer>
-
-#include "CharacterHandler.hpp"
 
 class QCheckBox;
 class QLabel;
@@ -28,7 +28,7 @@ signals:
 
 private slots:
     void
-    setLabelRolled();
+    randomButtonClicked();
 
     void
     animateLabel();
@@ -43,28 +43,22 @@ private slots:
     okButtonClicked();
 
 private:
-    void
-    keyPressEvent(QKeyEvent *event);
-
-    void
-    closeEvent(QCloseEvent *event);
-
-private:
     QPointer<QLineEdit> m_nameEdit;
     QPointer<QSpinBox> m_iniBox;
     QPointer<QSpinBox> m_iniModifierBox;
-    QPointer<QLabel> m_labelRolled;
+    QPointer<QLabel> m_rolledValueLabel;
     QPointer<QSpinBox> m_hpBox;
     QPointer<QCheckBox> m_enemyBox;
     QPointer<QLineEdit> m_addInfoEdit;
-
     QPointer<QCheckBox> m_multipleEnabledBox;
     QPointer<QSpinBox> m_instanceNumberBox;
 
     QPointer<QLabel> m_animatedLabel;
+
     QPointer<QTimer> m_timer;
 
-    bool m_somethingStored{ false };
+    int m_iniWithoutModValue = 0;
+
     bool m_isFirstCharStored{ false };
 
     static constexpr int LABEL_SHOWN_DURATION = 1000;

@@ -35,5 +35,6 @@ private:
 
     RuleSettings& m_ruleSettings;
     AdditionalSettings& m_additionalSettings;
+
     const bool m_isTableActive;
 };

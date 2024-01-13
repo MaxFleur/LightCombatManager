@@ -1,12 +1,12 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QPointer>
-
 #include "AdditionalSettings.hpp"
 #include "DirSettings.hpp"
 #include "FileHandler.hpp"
 #include "RuleSettings.hpp"
+
+#include <QMainWindow>
+#include <QPointer>
 
 class QAction;
 
@@ -53,9 +53,9 @@ private:
     setWelcomingWidget();
 
     void
-    setTableWidget(bool           isDataStored,
-                   bool           newCombatStarted,
-                   const QString& data = "");
+    setTableWidget(bool               isDataStored,
+                   bool               newCombatStarted,
+                   const QJsonObject& jsonObjectData = {});
 
     void
     setCombatTitle(bool isCombatActive);
@@ -71,7 +71,10 @@ private:
     closeEvent(QCloseEvent *event) override;
 
     [[nodiscard]] bool
-    checkStoredTableRules(QString data);
+    checkStoredTableRules(const QJsonObject& jsonObjectData);
+
+    void
+    setMainWindowIcons();
 
     bool
     event(QEvent *event) override;
@@ -79,20 +82,29 @@ private:
 private:
     QPointer<WelcomeWidget> m_welcomeWidget;
     QPointer<CombatWidget> m_combatWidget;
+
+    QPointer<QAction> m_newCombatAction;
+    QPointer<QAction> m_openCombatAction;
+    QPointer<QAction> m_saveAction;
+    QPointer<QAction> m_saveAsAction;
+    QPointer<QAction> m_closeAction;
     QPointer<QAction> m_openSettingsAction;
+    QPointer<QAction> m_aboutLCMAction;
 
-    bool m_isTableActive{ false };
-    bool m_tableInFile{ false };
-
-    QString m_fileName{ "" };
-
-    FileHandlerRef m_file;
+    std::unique_ptr<FileHandler> m_fileHandler;
 
     AdditionalSettings m_additionalSettings;
     RuleSettings m_ruleSettings;
     DirSettings m_dirSettings;
 
     RuleSettings::Ruleset m_loadedTableRule;
+
+    QString m_fileName{ "" };
+
+    bool m_isTableActive{ false };
+    bool m_isTableSavedInFile{ false };
+    bool m_isTableAlreadyLoaded{ false };
+
     bool m_loadedTableRollAutomatically;
 
     static constexpr unsigned int START_WIDTH = 860;

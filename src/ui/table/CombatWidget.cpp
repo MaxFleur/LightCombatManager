@@ -1,5 +1,13 @@
 #include "CombatWidget.hpp"
 
+#include "AddCharacterDialog.hpp"
+#include "AdditionalSettings.hpp"
+#include "DelegateSpinBox.hpp"
+#include "RuleSettings.hpp"
+#include "StatusEffectDialog.hpp"
+#include "Undo.hpp"
+#include "UtilsGeneral.hpp"
+
 #include <QAction>
 #include <QApplication>
 #include <QContextMenuEvent>
@@ -15,29 +23,21 @@
 #include <QUndoStack>
 #include <QVBoxLayout>
 
-#include "AddCharacterDialog.hpp"
-#include "AdditionalSettings.hpp"
-#include "DelegateSpinBox.hpp"
-#include "RuleSettings.hpp"
-#include "StatusEffectDialog.hpp"
-#include "Undo.hpp"
-#include "UtilsGeneral.hpp"
-#include "UtilsTable.hpp"
-
 CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
                            const RuleSettings&       RuleSettings,
                            int                       mainWidgetWidth,
                            bool                      isDataStored,
-                           QString                   data,
+                           const QJsonObject&        data,
                            QWidget *                 parent) :
+    QWidget(parent),
     m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
     m_loadedFileData(data),
-    m_isDataStored(isDataStored)
+    m_isDataStored(std::move(isDataStored))
 {
-    m_char = std::make_shared<CharacterHandler>();
+    m_characterHandler = std::make_shared<CharacterHandler>();
 
-    m_tableWidget = new DisabledNavigationKeyTable();
+    m_tableWidget = new CombatTableWidget(m_characterHandler, this);
     m_tableWidget->setColumnCount(NMBR_COLUMNS);
 
     m_undoStack = new QUndoStack(this);
@@ -71,7 +71,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_redoAction->setShortcuts(QKeySequence::Redo);
     this->addAction(m_redoAction);
 
-    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
+    const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     setUndoRedoIcon(isSystemInDarkMode);
 
     // Spinbox for the hp column
@@ -118,10 +118,10 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
         saveOldState();
     });
     connect(m_tableWidget, &QTableWidget::itemChanged, this, [this] {
-        const auto& tableData = Utils::Table::tableDataFromWidget(m_tableWidget);
+        const auto& tableData = m_tableWidget->tableDataFromWidget();
 
         if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
-            Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+            m_tableWidget->resynchronizeCharacters();
             pushOnUndoStack();
         }
     });
@@ -204,22 +204,11 @@ CombatWidget::generateTable()
 }
 
 
-unsigned int
-CombatWidget::getHeight() const
-{
-    auto height = 0;
-    for (int i = 0; i < m_tableWidget->rowCount(); i++) {
-        height += m_tableWidget->rowHeight(i);
-    }
-    return height + HEIGHT_BUFFER;
-}
-
-
 // Save the old table state before a change occurs, which is important for the undo command
 void
 CombatWidget::saveOldState()
 {
-    m_tableDataOld = Utils::Table::tableDataFromWidget(m_tableWidget);
+    m_tableDataOld = m_tableWidget->tableDataFromWidget();
     m_rowEnteredOld = m_rowEntered;
     m_roundCounterOld = m_roundCounter;
 
@@ -233,14 +222,14 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     // Assemble old data
     const auto oldData = Undo::UndoData{ m_tableDataOld, m_rowEnteredOld, m_roundCounterOld };
     if (resynchronize) {
-        Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+        m_tableWidget->resynchronizeCharacters();
     }
     // Assemble the new data
-    const auto tableData = Utils::Table::tableDataFromCharacterVector(m_char);
+    const auto tableData = m_tableWidget->tableDataFromCharacterVector();
     const auto newData = Undo::UndoData{ tableData, m_rowEntered, m_roundCounter };
     // We got everything, so push
-    m_undoStack->push(new Undo(oldData, newData, this, &m_rowEntered, &m_roundCounter,
-                               m_roundCounterLabel, m_currentPlayerLabel,
+    m_undoStack->push(new Undo(this, m_roundCounterLabel, m_currentPlayerLabel,
+                               oldData, newData, &m_rowEntered, &m_roundCounter,
                                m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips));
 }
 
@@ -279,8 +268,8 @@ CombatWidget::resetNameAndInfoWidth(const int nameWidth, const int addInfoWidth)
 void
 CombatWidget::setUndoRedoIcon(bool isDarkMode)
 {
-    m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/undo_white.png") : QIcon(":/icons/undo_black.png"));
-    m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/redo_white.png") : QIcon(":/icons/redo_black.png"));
+    m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
+    m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
 }
 
 
@@ -288,8 +277,8 @@ void
 CombatWidget::openAddCharacterDialog()
 {
     // Resynchronize because the table could have been modified
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-    const auto sizeBeforeDialog = m_char->getCharacters().size();
+    m_tableWidget->resynchronizeCharacters();
+    const auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
 
     auto *const dialog = new AddCharacterDialog(this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
@@ -298,7 +287,7 @@ CombatWidget::openAddCharacterDialog()
 
     if (dialog->exec() == QDialog::Accepted) {
         // Only ask to sort if there are enough chars and additional chars have been added
-        if (m_char->getCharacters().size() > 1 && m_char->getCharacters().size() != sizeBeforeDialog) {
+        if (m_characterHandler->getCharacters().size() > 1 && m_characterHandler->getCharacters().size() != sizeBeforeDialog) {
             auto const reply = QMessageBox::question(this, tr("Sort characters?"), tr("Do you want to sort the table?"),
                                                      QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
@@ -319,10 +308,10 @@ CombatWidget::dragAndDrop(int /* logicalIndex */, int oldVisualIndex, int newVis
     // For this reason, the header is stored when an item is pressed (which is always done before a drag & drop),
     // then reset after the section has been moved. Afterwards, a manual drag & drop is performed.
     m_tableWidget->verticalHeader()->restoreState(m_headerDataState);
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    m_tableWidget->resynchronizeCharacters();
 
     // Switch the character order according to the indices
-    auto& characters = m_char->getCharacters();
+    auto& characters = m_characterHandler->getCharacters();
     if (oldVisualIndex > newVisualIndex) {
         std::rotate(characters.rend() - oldVisualIndex - 1, characters.rend() - oldVisualIndex, characters.rend() - newVisualIndex);
     } else {
@@ -346,17 +335,20 @@ CombatWidget::openStatusEffectDialog()
 
     // Open dialog
     if (auto *const dialog = new StatusEffectDialog(m_ruleSettings, this); dialog->exec() == QDialog::Accepted) {
+        if (const auto& effects = dialog->getEffects(); effects.empty()) {
+            return;
+        }
         saveOldState();
-        Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-        auto& characters = m_char->getCharacters();
+        m_tableWidget->resynchronizeCharacters();
+        auto& characters = m_characterHandler->getCharacters();
 
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
             auto& statusEffects = characters[i.row()].additionalInformation.statusEffects;
             for (const auto& effect : dialog->getEffects()) {
-                statusEffects.insert(statusEffects.end(), effect);
+                statusEffects.push_back(effect);
             }
-            Utils::Table::setStatusEffectInWidget(m_tableWidget, dialog->getEffects(), i.row());
+            m_tableWidget->setStatusEffectInWidget(dialog->getEffects(), i.row());
         }
         // Change table
         pushOnUndoStack();
@@ -368,15 +360,15 @@ void
 CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCount)
 {
     saveOldState();
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    m_tableWidget->resynchronizeCharacters();
 
     const auto trimmedName = character.name.trimmed();
     for (int i = 0; i < instanceCount; i++) {
-        m_char->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1)
-                                                                                                : trimmedName,
-                               instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier
-                                                                                              : character.initiative,
-                               character.modifier, character.hp, character.isEnemy, character.additionalInformation);
+        m_characterHandler->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1)
+                                                                                                            : trimmedName,
+                                           instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier
+                                                                                                          : character.initiative,
+                                           character.modifier, character.hp, character.isEnemy, character.additionalInformation);
     }
 
     pushOnUndoStack();
@@ -391,26 +383,21 @@ CombatWidget::rerollIni()
     }
 
     saveOldState();
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    m_tableWidget->resynchronizeCharacters();
 
     const auto row = m_tableWidget->currentRow();
-    auto& characters = m_char->getCharacters();
+    auto& characters = m_characterHandler->getCharacters();
     const auto newRolledDice = Utils::General::rollDice();
     const auto newInitiative = newRolledDice + characters.at(row).modifier;
 
     characters[row].initiative = newInitiative;
-
-    // Restore the bold font if the current player gets an ini reroll
-    if (row == m_rowEntered) {
-        setRowAndPlayer();
-    }
     pushOnUndoStack();
 
     const auto messageString = tr("New initiative value: ") + QString::number(newInitiative) + "<br>" +
                                tr("Rolled dice value: ") + QString::number(newRolledDice) + "<br>" +
                                tr("Modifier: ") + QString::number(characters.at(row).modifier);
 
-    auto const reply = QMessageBox::information(this, tr("Rerolled initiative"), messageString);
+    QMessageBox::information(this, tr("Rerolled initiative"), messageString);
 }
 
 
@@ -422,26 +409,36 @@ CombatWidget::setTableDataWithFileData()
         return;
     }
 
-    auto& characters = m_char->getCharacters();
-    const auto rowOfData = m_loadedFileData.split("\n");
-    QStringList rowData;
+    m_rowEntered = m_loadedFileData.value("row_entered").toInt();
+    m_roundCounter = m_loadedFileData.value("round_counter").toInt();
 
-    // @note For some reason, the splitting of the data creates one empty, obsolete line
-    // To ignore this line, start at index 1
-    for (int x = 1; x < rowOfData.size() - 1; x++) {
-        rowData = rowOfData.at(x).split(";");
+    auto& characters = m_characterHandler->getCharacters();
+    const auto& charactersObject = m_loadedFileData.value("characters").toObject();
 
-        const auto additionalInfoData = Utils::General::convertStringToAdditionalInfoData(rowData.at(COL_ADDITIONAL));
-        characters.push_back(CharacterHandler::Character {
-            rowData.at(COL_NAME), rowData.at(COL_INI).toInt(), rowData.at(COL_MODIFIER).toInt(),
-            rowData.at(COL_HP).toInt(), rowData.at(COL_ENEMY) == "true", additionalInfoData });
+    // Single character
+    for (const auto& character : charactersObject) {
+        const auto& characterObject = character.toObject();
+        const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
 
-        // If at the first row (which contains information about the round counter
-        // and the player on the move), get this data
-        if (x == 1) {
-            m_rowEntered = rowData[ROW_ENTERED].toInt();
-            m_roundCounter = rowData[ROUND_CTR].toInt();
+        // Additional info
+        AdditionalInfoData::AdditionalInformation additionalInfoData;
+        additionalInfoData.mainInfo = additionalInfoObject.value("main_info").toString();
+
+        // Status effects
+        const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
+        for (const auto& singleEffect : statusEffectsObject) {
+            const auto& singleEffectObject = singleEffect.toObject();
+
+            AdditionalInfoData::StatusEffect effect(singleEffectObject.value("name").toString(),
+                                                    singleEffectObject.value("is_permanent").toBool(),
+                                                    singleEffectObject.value("duration").toInt());
+            additionalInfoData.statusEffects.push_back(effect);
         }
+
+        characters.push_back(CharacterHandler::Character {
+            characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
+            characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
+            characterObject.value("is_enemy").toBool(), additionalInfoData });
     }
     m_isDataStored = false;
 }
@@ -452,8 +449,8 @@ CombatWidget::sortTable()
 {
     saveOldState();
     // Main sorting
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-    m_char->sortCharacters(m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
+    m_tableWidget->resynchronizeCharacters();
+    m_characterHandler->sortCharacters(m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
     m_rowEntered = 0;
     pushOnUndoStack();
 }
@@ -462,7 +459,7 @@ CombatWidget::sortTable()
 void
 CombatWidget::setRowAndPlayer() const
 {
-    Utils::Table::setRowAndPlayer(m_tableWidget, m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered);
+    m_tableWidget->setRowAndPlayer(m_roundCounterLabel, m_currentPlayerLabel, m_rowEntered);
 }
 
 
@@ -475,10 +472,10 @@ CombatWidget::duplicateRow()
 
     saveOldState();
 
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
-    auto& characters = m_char->getCharacters();
+    m_tableWidget->resynchronizeCharacters();
+    auto& characters = m_characterHandler->getCharacters();
     const auto currentIndex = m_tableWidget->currentIndex().row();
-    characters.insert(currentIndex + 1, characters.at(currentIndex));
+    characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
 
     pushOnUndoStack();
 }
@@ -493,27 +490,25 @@ CombatWidget::removeRow()
     }
 
     saveOldState();
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    m_tableWidget->resynchronizeCharacters();
 
-    // If rows are selected, indices are stored in the order a user clicked at the rows
-    // So we get the selection and resort it so the rows can be easily removed
+    // Get selected rows indices
     std::vector<int> indicesList;
     for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
-        indicesList.push_back(index.row());
+        indicesList.emplace_back(index.row());
     }
+    // Sort reversed so items in the vector can be removed without using offsets
     std::sort(indicesList.begin(), indicesList.end(), [indicesList](const auto& a, const auto& b) {
-        // Sort reversed so items in the vector can be removed without using offsets
         return a > b;
     });
 
-    auto& characters = m_char->getCharacters();
+    auto& characters = m_characterHandler->getCharacters();
     for (const auto& index : indicesList) {
         // If the deleted row is before the current entered row, move one up
         if (index < (int) m_rowEntered) {
             m_rowEntered--;
-        }
-        // If the deleted row was the last one in the table and also the current player, select to the first row
-        if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
+        } else if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
+            // If the deleted row was the last one in the table and also the current player, select to the first row
             m_rowEntered = 0;
         }
 
@@ -535,10 +530,10 @@ CombatWidget::switchCharacterPosition(bool goDown)
         return;
     }
 
-    Utils::Table::resynchronizeCharacters(m_tableWidget, m_char);
+    m_tableWidget->resynchronizeCharacters();
     saveOldState();
 
-    auto& characters = m_char->getCharacters();
+    auto& characters = m_characterHandler->getCharacters();
     const auto indexToSwap = goDown ? 1 : -1;
     std::iter_swap(characters.begin() + originalIndex, characters.begin() + originalIndex + indexToSwap);
 
@@ -555,39 +550,26 @@ CombatWidget::switchCharacterPosition(bool goDown)
 void
 CombatWidget::enteredRowChanged(bool goDown)
 {
-    if (m_tableWidget->rowCount() == 0) {
+    if (m_tableWidget->rowCount() == 0 || (!goDown && m_rowEntered == 0 && m_roundCounter == 1)) {
         return;
     }
 
     saveOldState();
 
-    // Are we going down or up?
-    if (goDown) {
-        // If the current selected row is the last one, reset to the first row
-        if (m_rowEntered == m_tableWidget->rowCount() - 1) {
-            m_rowEntered = 0;
-            m_roundCounter++;
-            Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, true);
+    const auto setForBound = [this, goDown] {
+        m_rowEntered = goDown ? 0 : m_tableWidget->rowCount() - 1;
+        m_roundCounter += goDown ? 1 : -1;
+        m_tableWidget->adjustStatusEffectRoundCounter(goDown);
 
-            emit roundCounterSet();
-            // Otherwise just select the next row
-        } else {
-            m_rowEntered++;
-        }
+        emit roundCounterSet();
+    };
+
+    const auto rowEnteredModifier = goDown ? 1 : -1;
+    const auto tableWidgetBoundIndex = goDown ? m_tableWidget->rowCount() - 1 : 0;
+    if ((int) m_rowEntered == tableWidgetBoundIndex) {
+        setForBound();
     } else {
-        if (m_rowEntered == 0) {
-            // Stop for the first round and first char selected
-            if (m_roundCounter == 1) {
-                return;
-            }
-            m_rowEntered = m_tableWidget->rowCount() - 1;
-            m_roundCounter--;
-            Utils::Table::adjustStatusEffectRoundCounter(m_tableWidget, false);
-
-            emit roundCounterSet();
-        } else {
-            m_rowEntered--;
-        }
+        m_rowEntered += rowEnteredModifier;
     }
 
     // Recreate the table for the updated font´
@@ -607,16 +589,16 @@ CombatWidget::setTableOption(bool option, int valueType)
         m_tableWidget->setColumnHidden(COL_MODIFIER, !option);
         break;
     case 2:
-        Utils::Table::setTableRowColor(m_tableWidget, !option);
+        m_tableWidget->setTableRowColor(!option);
         break;
     case 3:
-        Utils::Table::setIniColumnTooltips(m_tableWidget, !option);
+        m_tableWidget->setIniColumnTooltips(!option);
         break;
     default:
         break;
     }
 
-    m_tableSettings.write(option, static_cast<TableSettings::ValueType>(valueType));
+    m_tableSettings.write(static_cast<TableSettings::ValueType>(valueType), option);
 }
 
 

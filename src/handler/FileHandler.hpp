@@ -1,40 +1,37 @@
 #pragma once
 
-#include <memory>
-
-#include <QVariant>
-
 #include "RuleSettings.hpp"
+
+#include <QJsonObject>
 
 // This class handles the saving and opening of csv table data
 class FileHandler {
 public:
-    // Save the characters
+    // Write the table to an lcm file
     [[nodiscard]] bool
-    saveTable(const QVector<QVector<QVariant> >& tableData,
-              const QString&                     filename,
-              unsigned int                       rowEntered,
-              unsigned int                       roundCounter,
-              const RuleSettings::Ruleset&       ruleset,
-              bool                               rollAutomatically) const;
+    writeTableToFile(const QVector<QVector<QVariant> >& tableData,
+                     const QString&                     fileName,
+                     unsigned int                       rowEntered,
+                     unsigned int                       roundCounter,
+                     const RuleSettings::Ruleset&       ruleset,
+                     bool                               rollAutomatically) const;
 
     // Open a saved table
     [[nodiscard]] int
-    getCSVStatus(const QString& filename);
+    getLCMStatus(const QString& fileName);
 
-    [[nodiscard]] QString
-    getData() const
+    [[nodiscard]] QJsonObject&
+    getData()
     {
-        return m_data;
+        return m_lcmFile;
     }
 
 private:
-    // Checks if data is in the right format
+    // Checks if a loaded lcm file is in the right format
     bool
-    checkTableFormat(const QString& data) const;
+    checkLCMFormat() const;
 
 private:
-    // Data used to fill the table
-    QString m_data;
+    // Object storing file content
+    QJsonObject m_lcmFile;
 };
-using FileHandlerRef = std::shared_ptr<FileHandler>;

@@ -1,7 +1,0 @@
-Name;Initiative;INI modifier;HP;Is Enemy;Additional information
-Ranger;27;8;36;false;Bleed, Invisible, Sickened;2;2;0;0
-Undead Boss;23;6;62;true;Haste
-Fighter;19;4;36;false;Shaken
-Bard;12;2;29;false;
-Zombie;11;1;13;true;Confused, Dazzled, Disabled
-Cleric;7;1;31;false;Fascinated

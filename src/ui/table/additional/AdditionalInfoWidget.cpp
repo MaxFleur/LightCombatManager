@@ -1,13 +1,13 @@
 #include "AdditionalInfoWidget.hpp"
 
+#include "StatusEffectButton.hpp"
+#include "UtilsGeneral.hpp"
+
 #include <QDebug>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
-
-#include "StatusEffectButton.hpp"
-#include "UtilsGeneral.hpp"
 
 AdditionalInfoWidget::AdditionalInfoWidget()
 {
@@ -61,7 +61,7 @@ AdditionalInfoWidget::setStatusEffects(const QVector<AdditionalInfoData::StatusE
     m_statusEffectsLayoutWidth = 0;
     m_statusEffectsLayoutWidth += Utils::General::getStringWidth(m_statusEffectLabel->text());
 
-    for (int i = 0; i < m_statusEffects.size(); i++) {
+    for (auto i = 0; i < m_statusEffects.size(); i++) {
         auto* const statusEffectButton = new StatusEffectButton(m_statusEffects[i]);
         connect(statusEffectButton, &StatusEffectButton::menuCalled, this, [this] {
             emit widgetCalled();

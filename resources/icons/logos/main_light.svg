@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg
+   width="156mm"
+   height="118mm"
+   version="1.1"
+   viewBox="0 0 156 118"
+   xmlns="http://www.w3.org/2000/svg">
+
+ <g transform="matrix(13.236 0 0 13.236 -326.27 -321.75)" fill="none" stroke="#ffffff">
+  <path d="m28.476 24.384v1.8648" stroke-width=".26458px"/>
+  <g stroke-width=".30304">
+   <path d="m28.439 26.083-3.542 0.48374 1.439 4.1981 2.1371 2.1844"/>
+   <path d="m28.472 26.102-2.046 4.5331"/>
+   <path d="m32.117 26.497-3.6597-0.40902" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+ </g>
+ <g font-family="sans-serif" stroke-width="2.3397">
+  <text x="76.685829" y="79.278786" fill="#ffefbe" font-size="61.348px" stroke="#241e20" style="line-height:1.25" xml:space="preserve"><tspan x="76.685829" y="79.278786" fill="#ffefbe" font-family="sans-serif" font-size="61.348px" font-weight="bold" stroke="#241e20" stroke-width="2.3397">C</tspan></text>
+  <text x="45.742302" y="78.873825" fill="#e62107" font-size="61.348px" stroke="#241e20" style="line-height:1.25" xml:space="preserve"><tspan x="45.742302" y="78.873825" fill="#e62107" font-family="sans-serif" font-size="61.348px" font-weight="bold" stroke="#241e20" stroke-width="2.3397">L</tspan></text>
+  <text transform="scale(.90136 1.1094)" x="124.50937" y="71.054062" fill="#000000" font-size="55.514px" style="line-height:1.25" xml:space="preserve"><tspan x="124.50937" y="71.054062" fill="#db4100" font-family="sans-serif" font-size="55.514px" font-weight="bold" stroke="#0a070c" stroke-width="2.3397">M</tspan></text>
+ </g>
+ <g fill="none" stroke="#ffffff" stroke-width="4.0109">
+  <path d="m99.056 29.157-48.606-27.048-48.307 26.986 0.15469 56.627 48.272 28.588 50.603-28.639" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m2.499 85.52 98.824 5e-6" stroke-linecap="round"/>
+  <path d="m50.752 113.83 29.559-28.599"/>
+ </g>
+</svg>

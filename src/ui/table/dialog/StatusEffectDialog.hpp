@@ -1,9 +1,9 @@
 #pragma once
 
+#include "AdditionalInfoData.hpp"
+
 #include <QDialog>
 #include <QPointer>
-
-#include "AdditionalInfoData.hpp"
 
 class QCheckBox;
 class QLineEdit;

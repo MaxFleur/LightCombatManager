@@ -1,5 +1,8 @@
 #include "SettingsDialog.hpp"
 
+#include "AdditionalSettings.hpp"
+#include "RuleSettings.hpp"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDebug>
@@ -10,16 +13,14 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-#include "AdditionalSettings.hpp"
-#include "RuleSettings.hpp"
-
 SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
                                RuleSettings&       RuleSettings,
                                bool                isTableActive,
                                QWidget*            parent) :
-    m_isTableActive(isTableActive),
+    QDialog(parent),
     m_ruleSettings(RuleSettings),
-    m_additionalSettings(AdditionalSettings)
+    m_additionalSettings(AdditionalSettings),
+    m_isTableActive(isTableActive)
 {
     setWindowTitle(tr("Settings"));
 
@@ -86,9 +87,9 @@ SettingsDialog::applyClicked()
         m_rollTieBox->isChecked() != m_ruleSettings.rollAutomatical) {
         // It could be dangerous to change the combat rules while a combat is active, so abort
         if (m_isTableActive) {
-            auto const reply = QMessageBox::critical(this, tr("Combat active!"),
-                                                     tr("You changed the ruleset while a Combat is active. Please save and exit "
-                                                        "the current Combat before changing the ruleset."));
+            QMessageBox::critical(this, tr("Combat active!"),
+                                  tr("You changed the ruleset while a Combat is active. Please save and exit "
+                                     "the current Combat before changing the ruleset."));
             return false;
         }
         m_ruleSettings.write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());

@@ -9,25 +9,25 @@ TableSettings::TableSettings()
 
 
 void
-TableSettings::write(bool valueToWrite, ValueType valueType)
+TableSettings::write(ValueType valueType, bool valueToWrite)
 {
     QSettings settings;
 
     settings.beginGroup("TableSettings");
     switch (valueType) {
-    case INI_SHOWN:
+    case ValueType::INI_SHOWN:
         iniShown = valueToWrite;
         settings.setValue("INI", iniShown);
         break;
-    case MOD_SHOWN:
+    case ValueType::MOD_SHOWN:
         modifierShown = valueToWrite;
         settings.setValue("Modifier", modifierShown);
         break;
-    case COLOR_TABLE:
+    case ValueType::COLOR_TABLE:
         colorTableRows = valueToWrite;
         settings.setValue("ColorTable", colorTableRows);
         break;
-    case SHOW_INI_TOOLTIPS:
+    case ValueType::SHOW_INI_TOOLTIPS:
         showIniToolTips = valueToWrite;
         settings.setValue("IniToolTips", showIniToolTips);
     default:

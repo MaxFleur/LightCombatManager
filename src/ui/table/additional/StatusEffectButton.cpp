@@ -46,21 +46,21 @@ StatusEffectButton::createMenu()
         auto *const decreaseMenu = menu->addMenu(tr("Remove Rounds..."));
 
         for (int i = 1; i < 4; i++) {
-            auto *const increaseAction = increaseMenu->addAction(QString::number(i), this, [this, i] {
+            increaseMenu->addAction(QString::number(i), this, [this, i] {
                 changeDuration(i);
             });
-            auto *const decreaseAction = decreaseMenu->addAction(QString::number(i), this, [this, i] {
+            decreaseMenu->addAction(QString::number(i), this, [this, i] {
                 changeDuration(i * (-1));
             });
         }
     }
 
-    auto *const changePermanencyAction = menu->addAction(m_statusEffect.isPermanent ? tr("Make Temporary") : tr("Make Permanent"),
-                                                         this, [this] {
+    menu->addAction(m_statusEffect.isPermanent ? tr("Make Temporary") : tr("Make Permanent"),
+                    this, [this] {
         m_statusEffect.isPermanent = !m_statusEffect.isPermanent;
         emit effectChanged(m_statusEffect);
     });
-    auto *const deleteAction = menu->addAction(tr("Remove"), this, [this] {
+    menu->addAction(tr("Remove"), this, [this] {
         emit removeCalled();
     });
 

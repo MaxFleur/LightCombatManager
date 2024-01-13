@@ -1,11 +1,12 @@
 #pragma once
 
+#include "CharacterHandler.hpp"
+#include "CombatTableWidget.hpp"
+#include "TableSettings.hpp"
+
+#include <QJsonObject>
 #include <QPointer>
 #include <QWidget>
-
-#include "CharacterHandler.hpp"
-#include "DisabledNavigationKeyTable.hpp"
-#include "TableSettings.hpp"
 
 class QAction;
 class QLabel;
@@ -23,14 +24,14 @@ public:
                  const RuleSettings&       RuleSettings,
                  int                       mainWidgetWidth,
                  bool                      isDataStored,
-                 QString                   data = "",
+                 const QJsonObject&        data = {},
                  QWidget *                 parent = 0);
 
     void
     generateTable();
 
-    [[nodiscard]] QTableWidget*
-    getTableWidget() const
+    [[nodiscard]] CombatTableWidget*
+    getCombatTableWidget() const
     {
         return m_tableWidget;
     }
@@ -54,7 +55,10 @@ public:
     }
 
     [[nodiscard]] unsigned int
-    getHeight() const;
+    getHeight() const
+    {
+        return m_tableWidget->getHeight();
+    }
 
     void
     saveOldState();
@@ -141,7 +145,7 @@ private:
     contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-    QPointer<DisabledNavigationKeyTable> m_tableWidget;
+    QPointer<CombatTableWidget> m_tableWidget;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
@@ -150,25 +154,26 @@ private:
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
 
-    bool m_isDataStored;
-
-    QString m_loadedFileData;
-
-    CharacterHandlerRef m_char;
+    std::shared_ptr<CharacterHandler> m_characterHandler;
 
     const AdditionalSettings& m_additionalSettings;
     const RuleSettings& m_ruleSettings;
     TableSettings m_tableSettings;
 
+    QVector<QVector<QVariant> > m_tableDataOld;
+
+    QByteArray m_headerDataState;
+
+    QJsonObject m_loadedFileData;
+
     unsigned int m_rowEntered{ 0 };
     unsigned int m_roundCounter{ 1 };
 
     // Data storing old values before pushing on undo stack
-    QVector<QVector<QVariant> > m_tableDataOld;
     unsigned int m_rowEnteredOld;
     unsigned int m_roundCounterOld;
 
-    QByteArray m_headerDataState;
+    bool m_isDataStored;
 
     static constexpr int NMBR_COLUMNS = 6;
 
@@ -192,6 +197,4 @@ private:
     static constexpr float WIDTH_MODIFIER = 0.05f;
     static constexpr float WIDTH_HP = 0.1f;
     static constexpr float WIDTH_ENEMY = 0.1f;
-
-    static constexpr int HEIGHT_BUFFER = 140;
 };

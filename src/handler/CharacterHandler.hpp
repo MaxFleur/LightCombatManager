@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "AdditionalInfoData.hpp"
 #include "RuleSettings.hpp"
 
@@ -13,25 +11,33 @@ public:
         // Name of the character. Because this name must be set manually, it is the only variable without a standard value
         QString                                   name;
         // Final initiative roll of the character, including all modifiers
-        int                                       initiative = 0;
+        int                                       initiative;
         // Modifiers only
-        int                                       modifier = 0;
+        int                                       modifier;
         // The hp for this character
-        int                                       hp = 0;
+        int                                       hp;
         // Is the character an enemy or not
-        bool                                      isEnemy = false;
+        bool                                      isEnemy;
         // Various information, including status effects
-        AdditionalInfoData::AdditionalInformation additionalInformation = {};
+        AdditionalInfoData::AdditionalInformation additionalInformation;
+
+        Character(const QString& name, int initiative, int modifier, int hp, bool isEnemy,
+                  const AdditionalInfoData::AdditionalInformation& additionalInformation) :
+            name(std::move(name)), initiative(std::move(initiative)),
+            modifier(std::move(modifier)), hp(std::move(hp)), isEnemy(std::move(isEnemy)),
+            additionalInformation(std::move(additionalInformation))
+        {
+        }
     };
 
 public:
     void
     storeCharacter(QString                                   name,
-                   int                                       initiative = 0,
-                   int                                       modifier = 0,
-                   int                                       hp = 0,
-                   bool                                      isEnemy = false,
-                   AdditionalInfoData::AdditionalInformation additionalInformation = {});
+                   int                                       initiative,
+                   int                                       modifier,
+                   int                                       hp,
+                   bool                                      isEnemy,
+                   AdditionalInfoData::AdditionalInformation additionalInformation);
 
     void
     sortCharacters(const RuleSettings::Ruleset& ruleset,
@@ -50,4 +56,3 @@ private:
     // Vector storing all created characters
     QVector<Character> characters;
 };
-using CharacterHandlerRef = std::shared_ptr<CharacterHandler>;

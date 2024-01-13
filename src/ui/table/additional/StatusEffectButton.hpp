@@ -1,9 +1,9 @@
 #pragma once
 
+#include "AdditionalInfoData.hpp"
+
 #include <QPointer>
 #include <QPushButton>
-
-#include "AdditionalInfoData.hpp"
 
 // This class displays additional information and status effects
 class StatusEffectButton : public QPushButton {

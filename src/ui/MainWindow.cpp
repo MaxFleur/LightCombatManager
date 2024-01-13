@@ -1,5 +1,10 @@
 #include "MainWindow.hpp"
 
+#include "CombatWidget.hpp"
+#include "SettingsDialog.hpp"
+#include "UtilsGeneral.hpp"
+#include "WelcomeWidget.hpp"
+
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
@@ -11,69 +16,62 @@
 #include <QPushButton>
 #include <QTimer>
 
-#include "CombatWidget.hpp"
-#include "SettingsDialog.hpp"
-#include "UtilsGeneral.hpp"
-#include "UtilsTable.hpp"
-#include "WelcomeWidget.hpp"
-
 MainWindow::MainWindow()
 {
     // Actions
-    auto *const newCombatAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
-    newCombatAction->setShortcuts(QKeySequence::New);
-    connect(newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
+    m_newCombatAction = new QAction(tr("&New"), this);
+    m_newCombatAction->setShortcuts(QKeySequence::New);
+    connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
 
-    auto *const openTableAction = new QAction(style()->standardIcon(QStyle::SP_DirOpenIcon), tr("&Open..."), this);
-    openTableAction->setShortcuts(QKeySequence::Open);
-    connect(openTableAction, &QAction::triggered, this, &MainWindow::openTable);
+    m_openCombatAction = new QAction(tr("&Open..."), this);
+    m_openCombatAction->setShortcuts(QKeySequence::Open);
+    connect(m_openCombatAction, &QAction::triggered, this, &MainWindow::openTable);
 
-    auto *const closeTableAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarCloseButton), tr("&Close"), this);
-    closeTableAction->setShortcuts(QKeySequence::Close);
-    connect(closeTableAction, &QAction::triggered, this, [this] () {
+    m_saveAction = new QAction(tr("&Save"), this);
+    m_saveAction->setShortcuts(QKeySequence::Save);
+    connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
+
+    m_saveAsAction = new QAction(tr("&Save As..."), this);
+    m_saveAsAction->setShortcuts(QKeySequence::SaveAs);
+    connect(m_saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    // Both options have to be enabled or disabled simultaneously
+    connect(this, &MainWindow::setSaveAction, this, [this] (bool enable) {
+        m_saveAction->setEnabled(enable);
+        m_saveAsAction->setEnabled(enable);
+    });
+
+    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.svg"), tr("&Close"), this);
+    closeAction->setShortcuts(QKeySequence::Close);
+    connect(closeAction, &QAction::triggered, this, [this] () {
         m_isTableActive ? exitCombat() : QApplication::quit();
     });
 
-    auto *const saveTableAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
-    saveTableAction->setShortcuts(QKeySequence::Save);
-    connect(saveTableAction, &QAction::triggered, this, &MainWindow::saveTable);
-
-    auto *const saveAsAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save As..."), this);
-    saveAsAction->setShortcuts(QKeySequence::SaveAs);
-    connect(saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
-    // Both options have to be enabled or disabled simultaneously
-    connect(this, &MainWindow::setSaveAction, this, [saveTableAction, saveAsAction] (bool enable) {
-        saveTableAction->setEnabled(enable);
-        saveAsAction->setEnabled(enable);
-    });
-
-    const auto isSystemInDarkMode = Utils::General::isColorDark(this->palette().color(QPalette::Window));
-    m_openSettingsAction = new QAction(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"),
-                                       tr("Settings..."), this);
+    m_openSettingsAction = new QAction(tr("Settings..."), this);
     connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
 
-    auto *const aboutAction = new QAction(style()->standardIcon(QStyle::SP_DialogHelpButton), tr("&About"), this);
-    connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
+    m_aboutLCMAction = new QAction(tr("&About LCM"), this);
+    connect(m_aboutLCMAction, &QAction::triggered, this, &MainWindow::about);
 
     auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
     connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
     // Add actions
     auto *const fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(newCombatAction);
-    fileMenu->addAction(openTableAction);
-    fileMenu->addAction(closeTableAction);
-    fileMenu->addAction(saveTableAction);
-    fileMenu->addAction(saveAsAction);
+    fileMenu->addAction(m_newCombatAction);
+    fileMenu->addAction(m_openCombatAction);
+    fileMenu->addAction(m_saveAction);
+    fileMenu->addAction(m_saveAsAction);
+    fileMenu->addAction(closeAction);
     fileMenu->addAction(m_openSettingsAction);
     fileMenu->addSeparator();
 
     auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
-    helpMenu->addAction(aboutAction);
+    helpMenu->addAction(m_aboutLCMAction);
     helpMenu->addAction(aboutQtAction);
 
-    m_file = std::make_shared<FileHandler>();
+    m_fileHandler = std::make_unique<FileHandler>();
 
+    setMainWindowIcons();
     resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
 }
@@ -83,18 +81,17 @@ void
 MainWindow::newCombat()
 {
     // Check if a table is active
-    if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        if (createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before starting a new one?")
-                                                    : tr("Do you want to start a new Combat?"), false) == 0) {
-            return;
-        }
+    if (m_isTableActive &&
+        createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before starting a new one?")
+                                                : tr("Do you want to start a new Combat?"), false) == 0) {
+        return;
     }
-    m_tableInFile = false;
+    m_isTableSavedInFile = false;
 
     m_fileName = QString();
-    setCombatTitle(false);
 
     setTableWidget(false, true);
+    setCombatTitle(true);
 }
 
 
@@ -105,22 +102,11 @@ MainWindow::saveTable()
         return false;
     }
 
-    if (m_combatWidget->isEmpty()) {
-        auto const reply = QMessageBox::critical(this, tr("Table empty!"),
-                                                 tr("Can't save an empty table."));
-        return false;
-    }
-    if (Utils::General::containsSemicolon(m_combatWidget->getTableWidget())) {
-        auto const reply = QMessageBox::critical(this, tr("Semicolons detected!"),
-                                                 tr("Can't save because the table contains semicolons. Please remove them and continue."));
-        return false;
-    }
-
     QString fileName;
     // Save to standard save dir if a new combat has been started
-    if (!m_tableInFile) {
+    if (!m_isTableSavedInFile) {
         fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings.saveDir,
-                                                tr("Table (*.csv);;All Files (*)"));
+                                                tr("Table (*.lcm);;All Files (*)"));
 
         if (fileName.isEmpty()) {
             // No file provided or Cancel pressed
@@ -131,10 +117,12 @@ MainWindow::saveTable()
         fileName = m_dirSettings.openDir;
     }
     // Save the table
-    const auto tableDataWidget = Utils::Table::tableDataFromWidget(m_combatWidget->getTableWidget());
-    if (m_file->saveTable(tableDataWidget, fileName, m_combatWidget->getRowEntered(),
-                          m_combatWidget->getRoundCounter(), m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
-        m_tableInFile = true;
+    auto* const combatTableWidget = m_combatWidget->getCombatTableWidget();
+    const auto tableData = combatTableWidget->tableDataFromWidget();
+    if (m_fileHandler->writeTableToFile(tableData, fileName, m_combatWidget->getRowEntered(),
+                                        m_combatWidget->getRoundCounter(),
+                                        m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
+        m_isTableSavedInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getCSVName(fileName);
 
@@ -142,7 +130,7 @@ MainWindow::saveTable()
         // Success
         return true;
     }
-    auto const reply = QMessageBox::critical(this, tr("Could not save Table!"), tr("Failed to write file."));
+    QMessageBox::critical(this, tr("Could not save Table!"), tr("Failed to write file."));
     return false;
 }
 
@@ -153,15 +141,15 @@ MainWindow::saveAs()
 {
     // Save state
     const auto saveChangeOccured = isWindowModified();
-    const auto saveTableInFile = m_tableInFile;
+    const auto saveTableInFile = m_isTableSavedInFile;
 
     // Change variables to call the file dialog
     setWindowModified(true);
-    m_tableInFile = false;
+    m_isTableSavedInFile = false;
     // Restore old state if the save fails
     if (!saveTable()) {
         setWindowModified(saveChangeOccured);
-        m_tableInFile = saveTableInFile;
+        m_isTableSavedInFile = saveTableInFile;
     }
 }
 
@@ -169,21 +157,24 @@ MainWindow::saveAs()
 void
 MainWindow::openTable()
 {
-    // Check if a table is active right now
-    if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        if (createSaveMessageBox(isWindowModified() ? tr("Do you want to save the current Combat before opening another existing Combat?")
-                                                    : tr("Do you want to open another existing Combat?"), false) == 0) {
-            return;
-        }
+    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
+    // Return for equal names, but let it load the first time
+    if (fileName == m_dirSettings.openDir && m_isTableAlreadyLoaded) {
+        return;
     }
-    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("csv File(*.csv)"));
-    const auto code = m_file->getCSVStatus(fileName);
+    // Check if a table is active right now
+    if (m_isTableActive && isWindowModified() &&
+        createSaveMessageBox(tr("Do you want to save the current Combat before opening another existing Combat?"), false) == 0) {
+        return;
+    }
+
+    m_isTableAlreadyLoaded = true;
     auto rulesModified = false;
 
-    switch (code) {
+    switch (const auto code = m_fileHandler->getLCMStatus(fileName); code) {
     case 0:
     {
-        if (!checkStoredTableRules(m_file->getData())) {
+        if (!checkStoredTableRules(m_fileHandler->getData())) {
             const auto messageString = createRuleChangeMessageBoxText();
             auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different Rulesets detected!"), messageString, QMessageBox::Cancel);
             auto* const applyButton = msgBox->addButton(tr("Apply Table Ruleset to Settings"), QMessageBox::ApplyRole);
@@ -200,11 +191,11 @@ MainWindow::openTable()
         }
         // Table not active for a short time
         m_isTableActive = false;
-        m_tableInFile = true;
+        m_isTableSavedInFile = true;
         // Save the opened file dir
         m_dirSettings.write(fileName);
         m_fileName = Utils::General::getCSVName(fileName);
-        setTableWidget(true, false, m_file->getData());
+        setTableWidget(true, false, m_fileHandler->getData());
 
         // If the settings rules are applied to the table, it is modified
         setCombatTitle(rulesModified);
@@ -212,8 +203,8 @@ MainWindow::openTable()
     }
     case 1:
     {
-        auto const reply = QMessageBox::critical(this, tr("Wrong Table format!"),
-                                                 tr("The loading of the Table failed because the Table has the wrong format."));
+        QMessageBox::critical(this, tr("Wrong Table format!"),
+                              tr("The loading of the Table failed because the Table has the wrong format."));
         break;
     }
     case 2:
@@ -227,6 +218,7 @@ MainWindow::openSettings()
 {
     auto *const dialog = new SettingsDialog(m_additionalSettings, m_ruleSettings, m_isTableActive, this);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
+    dialog->setModal(true);
     dialog->show();
 }
 
@@ -237,7 +229,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small, lightweight Combat Manager for d20-based role playing games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 1.11.1.<br>"
+                          "<p>Version 2.0.0.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 
@@ -265,18 +257,18 @@ MainWindow::setWelcomingWidget()
     setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     setCentralWidget(m_welcomeWidget);
 
-    m_tableInFile = false;
+    m_isTableSavedInFile = false;
     emit setSaveAction(false);
 }
 
 
 void
-MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QString& data)
+MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJsonObject& jsonObjectData)
 {
-    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, data, this);
+    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, jsonObjectData, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
-    connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (int height) {
+    connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
         if (height > START_HEIGHT) {
             setFixedHeight(height);
         }
@@ -334,11 +326,7 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
     msgBox->setStandardButtons(isWindowModified() ? QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel
                                                   : QMessageBox::Yes | QMessageBox::No);
     msgBox->setText(tableMessage);
-    if (isClosing) {
-        isWindowModified() ? msgBox->setWindowTitle(tr("Save and exit?")) : msgBox->setWindowTitle(tr("Exit application?"));
-    } else {
-        msgBox->setWindowTitle(tr("Save Combat?"));
-    }
+    msgBox->setWindowTitle(isClosing ? tr("Save and exit?") : tr("Save Combat?"));
 
     // openTable and newCombat use an identical message box, so do the handling directly
     if (!isClosing) {
@@ -382,23 +370,18 @@ void
 MainWindow::closeEvent(QCloseEvent *event)
 {
     // Check if a table is active and filled
-    if (m_isTableActive && !m_combatWidget->isEmpty()) {
-        const auto val = createSaveMessageBox(isWindowModified() ?
-                                              tr("Currently, you are in a Combat. Do you want to save the Characters before exiting the program?") :
-                                              tr("Do you really want to exit the application?"), true);
-
-        switch (val) {
+    if (m_isTableActive && isWindowModified()) {
+        switch (const auto val = createSaveMessageBox(tr("Currently, you are in a Combat. Do you want "
+                                                         "to save the Characters before exiting the program?"), true); val) {
         case QMessageBox::Save:
         {
             saveTable() ? event->accept() : event->ignore();
             break;
         }
         case QMessageBox::Discard:
-        case QMessageBox::Yes:
             event->accept();
             break;
         case QMessageBox::Cancel:
-        case QMessageBox::No:
             event->ignore();
             break;
         }
@@ -407,16 +390,29 @@ MainWindow::closeEvent(QCloseEvent *event)
 
 
 bool
-MainWindow::checkStoredTableRules(QString data)
+MainWindow::checkStoredTableRules(const QJsonObject& jsonObjectData)
 {
-    // Get the first stored table row
-    const auto firstRowData = data.split("\n").at(1).split(";");
-    // Get the loaded ruleset and roll automatically variable
-    m_loadedTableRule = static_cast<RuleSettings::Ruleset>(firstRowData[COL_RULESET].toInt());
-    m_loadedTableRollAutomatically = static_cast<bool>(firstRowData[COL_ROLL_AUTOMATICALLY].toInt());
+    m_loadedTableRule = static_cast<RuleSettings::Ruleset>(jsonObjectData.value("ruleset").toInt());
+    m_loadedTableRollAutomatically = jsonObjectData.value("roll_automatically").toBool();
 
     return m_ruleSettings.ruleset == m_loadedTableRule &&
            m_ruleSettings.rollAutomatical == m_loadedTableRollAutomatically;
+}
+
+
+void
+MainWindow::setMainWindowIcons()
+{
+    const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
+
+    m_newCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/new_white.svg" : ":/icons/menus/new_black.svg"));
+    m_openCombatAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.svg" : ":/icons/menus/open_black.svg"));
+    m_saveAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_white.svg" : ":/icons/menus/save_black.svg"));
+    m_saveAsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_as_white.svg" : ":/icons/menus/save_as_black.svg"));
+    m_openSettingsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/gear_white.svg" : ":/icons/menus/gear_black.svg"));
+    m_aboutLCMAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
+
+    QApplication::setWindowIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
 }
 
 
@@ -424,10 +420,10 @@ bool
 MainWindow::event(QEvent *event)
 {
     if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
-        const auto isSystemInDarkMode = Utils::General::isColorDark(palette().color(QPalette::Window));
-        m_openSettingsAction->setIcon(isSystemInDarkMode ? QIcon(":/icons/gear_white.png") : QIcon(":/icons/gear_black.png"));
+        setMainWindowIcons();
 
         if (m_combatWidget) {
+            const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
             m_combatWidget->setUndoRedoIcon(isSystemInDarkMode);
         }
     }

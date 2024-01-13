@@ -1,10 +1,10 @@
 #pragma once
 
-#include <QLineEdit>
-#include <QPointer>
-
 #include "AdditionalInfoData.hpp"
 #include "FocusOutLineEdit.hpp"
+
+#include <QLineEdit>
+#include <QPointer>
 
 class QHBoxLayout;
 class QLabel;

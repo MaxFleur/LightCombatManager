@@ -14,7 +14,7 @@ RuleSettings::write(unsigned int newRuleset, bool newRollAutomatical)
     QSettings settings;
 
     settings.beginGroup("RuleSettings");
-    if (ruleset != newRuleset) {
+    if (ruleset != (int) newRuleset) {
         ruleset = static_cast<Ruleset>(newRuleset);
         settings.setValue("ruleset", ruleset);
     }
@@ -32,7 +32,6 @@ RuleSettings::read()
     QSettings settings;
 
     settings.beginGroup("RuleSettings");
-
     ruleset = settings.value("ruleset").isValid() ?
               static_cast<Ruleset>(settings.value("ruleset").toInt()) :
               Ruleset::PATHFINDER_1E_DND_35E;

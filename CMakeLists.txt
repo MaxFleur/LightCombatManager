@@ -6,12 +6,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(MSVC)
-    add_compile_options(/W4)
-else()
-    add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
-
 project(LightCombatManager LANGUAGES CXX)
 
 find_package(Qt6 QUIET COMPONENTS Widgets)
@@ -31,6 +25,12 @@ add_dependencies(checks tests)
 
 add_subdirectory(src)
 add_subdirectory(test)
+
+if(MSVC)
+  target_compile_options(LightCombatManager PRIVATE /W4 /WX)
+else()
+  target_compile_options(LightCombatManager PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 # Install and uninstall options
 install(TARGETS LightCombatManager)

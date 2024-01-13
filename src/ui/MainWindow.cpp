@@ -263,9 +263,9 @@ MainWindow::setWelcomingWidget()
 
 
 void
-MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJsonObject& data)
+MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJsonObject& jsonObjectData)
 {
-    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, data, this);
+    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, jsonObjectData, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
@@ -390,10 +390,10 @@ MainWindow::closeEvent(QCloseEvent *event)
 
 
 bool
-MainWindow::checkStoredTableRules(const QJsonObject& data)
+MainWindow::checkStoredTableRules(const QJsonObject& jsonObjectData)
 {
-    m_loadedTableRule = static_cast<RuleSettings::Ruleset>(data.value("ruleset").toInt());
-    m_loadedTableRollAutomatically = data.value("roll_automatically").toBool();
+    m_loadedTableRule = static_cast<RuleSettings::Ruleset>(jsonObjectData.value("ruleset").toInt());
+    m_loadedTableRollAutomatically = jsonObjectData.value("roll_automatically").toBool();
 
     return m_ruleSettings.ruleset == m_loadedTableRule &&
            m_ruleSettings.rollAutomatical == m_loadedTableRollAutomatically;

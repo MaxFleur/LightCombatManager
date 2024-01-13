@@ -52,7 +52,6 @@ FileHandler::writeTableToFile(
         additionalInfoObject["status_effects"] = statusEffectsObject;
         singleCharacterObject["additional_info"] = additionalInfoObject;
 
-        const auto& name = row.at(0).toString();
         charactersObject[QString::number(i)] = singleCharacterObject;
     }
     lcmFile["characters"] = charactersObject;

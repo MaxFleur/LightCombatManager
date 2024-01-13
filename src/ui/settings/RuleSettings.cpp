@@ -14,7 +14,7 @@ RuleSettings::write(unsigned int newRuleset, bool newRollAutomatical)
     QSettings settings;
 
     settings.beginGroup("RuleSettings");
-    if (ruleset != newRuleset) {
+    if (ruleset != (int) newRuleset) {
         ruleset = static_cast<Ruleset>(newRuleset);
         settings.setValue("ruleset", ruleset);
     }

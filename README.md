@@ -3,7 +3,7 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![CI badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run.yml/badge.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v1.11.1-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v2.0.0-blue.svg)
 
 </div>
 
@@ -66,7 +66,7 @@ The following description is focused on building the application with `cmake`, M
 1. Download or clone this repository.
 2. Open up `cmd` or `git cmd` and navigate to this repository. 
 3. Create a build folder: `mkdir build`. Navigate into this folder via `cd build`.
-4. Set the CMake Prefix Path for Qt inside the `CMakeLists.txt`. Example: `set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.1\\msvc2019_64\\")` for Qt 5.15 and msvc compiler.
+4. Set the CMake Prefix Path for Qt inside the `CMakeLists.txt`. Example: `set(CMAKE_PREFIX_PATH "C:\\Qt\\5.15.2\\msvc2019_64\\")` for Qt 5.15 and msvc compiler.
 5. Hit `cmake.exe -G “Visual Studio 17 2022” -A x64 ..` This will create an sln-file. 
 6. Open the sln file using Visual Studio. Build the application in Debug- or Release-Mode.
 7. Inside the build-file, a file named `Debug` or `Release` should have been created. Navigate to this folder and then to the `src` subdirectory.
@@ -97,4 +97,4 @@ If you want to contribute code, please format it using the provided `uncrustify.
 find . \( -name "*.cpp" -o -name "*.hpp" \) -exec uncrustify -c uncrustify.cfg --replace --no-backup {} +
 ```
 
-The repository always contains branches for the current and last major release. As `dev_staging` is the branch constantly being developed on, make sure to select it as target branch in case you want to open a new Pull Request.
+The repository always contains branches for the current and last major release. As `dev_staging` is the branch constantly being developed on, make sure to select it as target branch in case you want to open a new Pull Request. In addition, the branches for the last corresponding major release and its minor updates are also stored for better bug traceability.

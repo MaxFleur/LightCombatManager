@@ -158,8 +158,8 @@ void
 MainWindow::openTable()
 {
     const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
-    // Return for equal names, but let it load the first time
-    if (fileName == m_dirSettings.openDir && m_isTableAlreadyLoaded) {
+    // Return for equal names or if file dialog has been cancelled
+    if ((fileName == m_dirSettings.openDir && m_isTableAlreadyLoaded) || fileName.isEmpty()) {
         return;
     }
     // Check if a table is active right now
@@ -229,7 +229,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small, lightweight Combat Manager for d20-based role playing games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 2.0.0.<br>"
+                          "<p>Version 2.0.1.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 

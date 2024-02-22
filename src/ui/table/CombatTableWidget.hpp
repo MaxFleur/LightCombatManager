@@ -54,7 +54,13 @@ protected:
     keyPressEvent(QKeyEvent *event) override;
 
 private:
+    void
+    removeAlphaValueForCellWidgets();
+
+private:
     std::shared_ptr<CharacterHandler> m_characterHandler;
+
+    bool m_rowsUncolored;
 
     static constexpr int COL_ENEMY = 4;
     static constexpr int COL_ADDITIONAL = 5;

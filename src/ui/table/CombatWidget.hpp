@@ -162,6 +162,8 @@ private:
 
     QVector<QVector<QVariant> > m_tableDataOld;
 
+    std::vector<int> m_removedOrAddedRowIndices;
+
     QByteArray m_headerDataState;
 
     QJsonObject m_loadedFileData;

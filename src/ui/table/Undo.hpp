@@ -19,15 +19,16 @@ public:
     };
 
 public:
-    Undo(CombatWidget*    CombatWidget,
-         QPointer<QLabel> roundCounterLabel,
-         QPointer<QLabel> currentPlayerLabel,
-         const UndoData&  oldData,
-         const UndoData&  newData,
-         unsigned int*    rowEntered,
-         unsigned int*    roundCounter,
-         bool             colorTableRows,
-         bool             showIniToolTips);
+    Undo(CombatWidget*          CombatWidget,
+         QPointer<QLabel>       roundCounterLabel,
+         QPointer<QLabel>       currentPlayerLabel,
+         const UndoData&        oldData,
+         const UndoData&        newData,
+         const std::vector<int> affectedRows,
+         unsigned int*          rowEntered,
+         unsigned int*          roundCounter,
+         bool                   colorTableRows,
+         bool                   showIniToolTips);
 
     void
     undo() override;
@@ -36,9 +37,16 @@ public:
     redo() override;
 
 private:
-
     void
     setCombatWidget(bool undo);
+
+    void
+    fillTableWidgetCell(const QVariant& data,
+                        int             row,
+                        int             col);
+
+    void
+    adjustTableWidgetRowCount(bool addRow);
 
 private:
     QPointer<CombatWidget> m_combatWidget;
@@ -49,13 +57,15 @@ private:
     const UndoData m_oldData;
     const UndoData m_newData;
 
+    const std::vector<int> m_affectedRows;
+
     unsigned int *m_rowEntered;
     unsigned int *m_roundCounter;
 
     const bool m_colorTableRows;
     const bool m_showIniToolTips;
 
-    static constexpr int COL_NAME = 0;
     static constexpr int COL_ENEMY = 4;
     static constexpr int COL_ADDITIONAL = 5;
+    static constexpr int COL_COUNT = 6;
 };

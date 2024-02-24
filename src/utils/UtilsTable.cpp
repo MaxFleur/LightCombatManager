@@ -69,8 +69,8 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
     layout->setAlignment(Qt::AlignLeft);
     widget->setLayout(layout);
 
-    const auto converted = additionalInfo.value<AdditionalInfoData::AdditionalInformation>();
-    additionalInfoWidget->setMainInfoText(converted.mainInfo);
+    const auto converted = additionalInfo.value<AdditionalInfoData>();
+    additionalInfoWidget->setMainInfoText(converted.mainInfoText);
     additionalInfoWidget->setStatusEffects(converted.statusEffects);
     combatTableWidget->setCellWidget(row, COL_ADDITIONAL, widget);
 }

@@ -25,6 +25,7 @@ public:
     void
     setMainInfoText(const QString& text)
     {
+        m_additionalInfoData.mainInfoText = text;
         m_additionalInfoLineEdit->setText(text);
     }
 
@@ -34,10 +35,10 @@ public:
         return m_additionalInfoLineEdit->text();
     }
 
-    [[nodiscard]] const AdditionalInfoData::AdditionalInformation
+    [[nodiscard]] const AdditionalInfoData
     getAdditionalInformation()
     {
-        return { m_additionalInfoLineEdit->text(), m_statusEffects };
+        return m_additionalInfoData;
     }
 
 signals:
@@ -70,12 +71,12 @@ private:
     QPointer<QLabel> m_statusEffectLabel;
     QPointer<QHBoxLayout> m_statusEffectsLayout;
 
+    AdditionalInfoData m_additionalInfoData;
+
     QString m_mainInfoTextCache;
 
-    bool m_isTextCacheLocked = false;
     int m_statusEffectsLayoutWidth = 0;
-
-    QVector<AdditionalInfoData::StatusEffect> m_statusEffects;
+    bool m_isTextCacheLocked = false;
 
     static constexpr int LENGTH_BUFFER = 30;
 };

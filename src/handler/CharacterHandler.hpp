@@ -9,35 +9,35 @@ public:
     // Main character instance used for the table generation
     struct Character {
         // Name of the character. Because this name must be set manually, it is the only variable without a standard value
-        QString                                   name;
+        QString            name;
         // Final initiative roll of the character, including all modifiers
-        int                                       initiative;
+        int                initiative;
         // Modifiers only
-        int                                       modifier;
+        int                modifier;
         // The hp for this character
-        int                                       hp;
+        int                hp;
         // Is the character an enemy or not
-        bool                                      isEnemy;
+        bool               isEnemy;
         // Various information, including status effects
-        AdditionalInfoData::AdditionalInformation additionalInformation;
+        AdditionalInfoData additionalInfoData;
 
         Character(const QString& name, int initiative, int modifier, int hp, bool isEnemy,
-                  const AdditionalInfoData::AdditionalInformation& additionalInformation) :
+                  const AdditionalInfoData& additionalInfoData) :
             name(std::move(name)), initiative(std::move(initiative)),
             modifier(std::move(modifier)), hp(std::move(hp)), isEnemy(std::move(isEnemy)),
-            additionalInformation(std::move(additionalInformation))
+            additionalInfoData(std::move(additionalInfoData))
         {
         }
     };
 
 public:
     void
-    storeCharacter(QString                                   name,
-                   int                                       initiative,
-                   int                                       modifier,
-                   int                                       hp,
-                   bool                                      isEnemy,
-                   AdditionalInfoData::AdditionalInformation additionalInformation);
+    storeCharacter(QString            name,
+                   int                initiative,
+                   int                modifier,
+                   int                hp,
+                   bool               isEnemy,
+                   AdditionalInfoData additionalInfoData);
 
     void
     sortCharacters(const RuleSettings::Ruleset& ruleset,

@@ -10,9 +10,9 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             auto const charHandler = std::make_shared<CharacterHandler>();
 
             AdditionalInfoData::StatusEffect statusEffect{ "Dazed", false, 2 };
-            AdditionalInfoData::AdditionalInformation additionalInformation { "Fire Resistance", { statusEffect } };
+            AdditionalInfoData additionalInfoData { { statusEffect }, "Fire Resistance" };
 
-            charHandler->storeCharacter("Witch", 14, 5, 23, true, additionalInformation);
+            charHandler->storeCharacter("Witch", 14, 5, 23, true, additionalInfoData);
 
             REQUIRE(charHandler->getCharacters().size() == 1);
 
@@ -21,10 +21,10 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
             REQUIRE(charHandler->getCharacters().at(0).modifier == 5);
             REQUIRE(charHandler->getCharacters().at(0).hp == 23);
             REQUIRE(charHandler->getCharacters().at(0).isEnemy == true);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).name == "Dazed");
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).isPermanent == false);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).duration == 2);
-            REQUIRE(charHandler->getCharacters().at(0).additionalInformation.mainInfo == "Fire Resistance");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).name == "Dazed");
+            REQUIRE(charHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).isPermanent == false);
+            REQUIRE(charHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).duration == 2);
+            REQUIRE(charHandler->getCharacters().at(0).additionalInfoData.mainInfoText == "Fire Resistance");
         }
     }
     SECTION("Sorting tests") {
@@ -51,7 +51,6 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
         }
         SECTION("Sorting test - PF2") {
             ruleSettings.ruleset = RuleSettings::Ruleset::PATHFINDER_2E;
-
             auto const charHandler = std::make_shared<CharacterHandler>();
 
             charHandler->storeCharacter("Bard", 12, 2, 29, false, {});
@@ -71,7 +70,6 @@ TEST_CASE("CharacterHandler Testing", "[CharacterHandler]") {
         }
         SECTION("Sorting test - D&D 5E") {
             ruleSettings.ruleset = RuleSettings::Ruleset::DND_5E;
-
             auto const charHandler = std::make_shared<CharacterHandler>();
 
             charHandler->storeCharacter("Bard", 3, 2, 29, false, {});

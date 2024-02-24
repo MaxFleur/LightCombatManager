@@ -162,9 +162,8 @@ CombatTableWidget::tableDataFromWidget()
                 break;
             case COL_ADDITIONAL:
             {
-                const auto& variant = AdditionalInfoData::getAdditionalInformationVariant(
-                    cellWidget(i, j)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation()
-                    );
+                QVariant variant;
+                variant.setValue(cellWidget(i, j)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation());
                 rowValues.push_back(variant);
                 break;
             }
@@ -187,9 +186,10 @@ CombatTableWidget::tableDataFromCharacterVector()
     for (const auto& character : m_characterHandler->getCharacters()) {
         QVector<QVariant> charValues;
 
-        const auto additionalInformationVariant = AdditionalInfoData::getAdditionalInformationVariant(character.additionalInformation);
+        QVariant additionalInfoVariant;
+        additionalInfoVariant.setValue(character.additionalInfoData);
         charValues << character.name << character.initiative << character.modifier
-                   << character.hp << character.isEnemy << additionalInformationVariant;
+                   << character.hp << character.isEnemy << additionalInfoVariant;
 
         tableData.push_back(charValues);
     }

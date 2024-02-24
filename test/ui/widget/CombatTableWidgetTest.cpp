@@ -64,10 +64,10 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
             REQUIRE(characterHandler->getCharacters().at(0).modifier == 2);
             REQUIRE(characterHandler->getCharacters().at(0).hp == 36);
             REQUIRE(characterHandler->getCharacters().at(0).isEnemy == false);
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInformation.mainInfo == "Haste");
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).name == "Shaken");
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).isPermanent == false);
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInformation.statusEffects.at(0).duration == 2);
+            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.mainInfoText == "Haste");
+            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).name == "Shaken");
+            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).isPermanent == false);
+            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).duration == 2);
         }
         SECTION("Check for changed data") {
             combatTableWidget->setItem(0, 3, new QTableWidgetItem("24"));
@@ -152,14 +152,14 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
         auto tableData = combatTableWidget->tableDataFromWidget();
 
         SECTION("Check stats") {
-            const auto converted = tableData.at(0).at(5).value<AdditionalInfoData::AdditionalInformation>();
+            const auto converted = tableData.at(0).at(5).value<AdditionalInfoData>();
 
             REQUIRE(tableData.at(0).at(0) == "Fighter");
             REQUIRE(tableData.at(0).at(1) == "19");
             REQUIRE(tableData.at(0).at(2) == "2");
             REQUIRE(tableData.at(0).at(3) == "36");
             REQUIRE(tableData.at(0).at(4) == false);
-            REQUIRE(converted.mainInfo == "Haste");
+            REQUIRE(converted.mainInfoText == "Haste");
             REQUIRE(converted.statusEffects.at(0).name == "Shaken");
             REQUIRE(converted.statusEffects.at(0).isPermanent == false);
             REQUIRE(converted.statusEffects.at(0).duration == 2);
@@ -180,14 +180,14 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
         auto tableData = combatTableWidget->tableDataFromCharacterVector();
 
         SECTION("Check stats") {
-            const auto converted = tableData.at(0).at(5).value<AdditionalInfoData::AdditionalInformation>();
+            const auto converted = tableData.at(0).at(5).value<AdditionalInfoData>();
 
             REQUIRE(tableData.at(0).at(0) == "Fighter");
             REQUIRE(tableData.at(0).at(1) == "19");
             REQUIRE(tableData.at(0).at(2) == "2");
             REQUIRE(tableData.at(0).at(3) == "36");
             REQUIRE(tableData.at(0).at(4) == false);
-            REQUIRE(converted.mainInfo == "Haste");
+            REQUIRE(converted.mainInfoText == "Haste");
             REQUIRE(converted.statusEffects.at(0).name == "Shaken");
             REQUIRE(converted.statusEffects.at(0).isPermanent == false);
             REQUIRE(converted.statusEffects.at(0).duration == 2);

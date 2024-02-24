@@ -37,16 +37,17 @@ AdditionalInfoWidget::AdditionalInfoWidget()
 void
 AdditionalInfoWidget::adjustEffectDuration(bool decrease)
 {
-    for (auto i = m_statusEffects.size() - 1; i >= 0; i--) {
-        if (m_statusEffects.at(i).isPermanent) {
+    auto& statusEffects = m_additionalInfoData.statusEffects;
+    for (auto i = statusEffects.size() - 1; i >= 0; i--) {
+        if (statusEffects.at(i).isPermanent) {
             continue;
         }
 
-        auto& effect = m_statusEffects[i];
+        auto& effect = statusEffects[i];
 
         effect.duration += decrease ? -1 : 1;
         if (effect.duration < 1) {
-            m_statusEffects.erase(m_statusEffects.begin() + i);
+            statusEffects.erase(statusEffects.begin() + i);
         }
     }
 }
@@ -55,23 +56,23 @@ AdditionalInfoWidget::adjustEffectDuration(bool decrease)
 void
 AdditionalInfoWidget::setStatusEffects(const QVector<AdditionalInfoData::StatusEffect>& effects)
 {
-    m_statusEffects = effects;
+    m_additionalInfoData.statusEffects = effects;
     m_statusEffectLabel->setVisible(!effects.empty());
 
     m_statusEffectsLayoutWidth = 0;
     m_statusEffectsLayoutWidth += Utils::General::getStringWidth(m_statusEffectLabel->text());
 
-    for (auto i = 0; i < m_statusEffects.size(); i++) {
-        auto* const statusEffectButton = new StatusEffectButton(m_statusEffects[i]);
+    for (auto i = 0; i < m_additionalInfoData.statusEffects.size(); i++) {
+        auto* const statusEffectButton = new StatusEffectButton(m_additionalInfoData.statusEffects[i]);
         connect(statusEffectButton, &StatusEffectButton::menuCalled, this, [this] {
             emit widgetCalled();
         });
         connect(statusEffectButton, &StatusEffectButton::effectChanged, this, [this, i] (auto statusEffect) {
-            m_statusEffects[i] = statusEffect;
+            m_additionalInfoData.statusEffects[i] = statusEffect;
             emit additionalInfoEdited();
         });
         connect(statusEffectButton, &StatusEffectButton::removeCalled, this, [this, i] {
-            m_statusEffects.erase(m_statusEffects.begin() + i);
+            m_additionalInfoData.statusEffects.erase(m_additionalInfoData.statusEffects.begin() + i);
             emit additionalInfoEdited();
         });
 

@@ -35,8 +35,8 @@ FileHandler::writeTableToFile(
 
         // Additional info
         QJsonObject additionalInfoObject;
-        auto addInfo = row.at(5).value<AdditionalInfoData::AdditionalInformation>();
-        additionalInfoObject["main_info"] = addInfo.mainInfo;
+        auto addInfo = row.at(5).value<AdditionalInfoData>();
+        additionalInfoObject["main_info"] = addInfo.mainInfoText;
 
         // Status effects for additional info
         QJsonObject statusEffectsObject;

@@ -349,7 +349,7 @@ CombatWidget::openStatusEffectDialog()
 
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
-            auto& statusEffects = characters[i.row()].additionalInformation.statusEffects;
+            auto& statusEffects = characters[i.row()].additionalInfoData.statusEffects;
             for (const auto& effect : dialog->getEffects()) {
                 statusEffects.push_back(effect);
             }
@@ -373,7 +373,7 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
                                                                                                             : trimmedName,
                                            instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier
                                                                                                           : character.initiative,
-                                           character.modifier, character.hp, character.isEnemy, character.additionalInformation);
+                                           character.modifier, character.hp, character.isEnemy, character.additionalInfoData);
         m_removedOrAddedRowIndices.emplace_back(m_characterHandler->getCharacters().size() - 1);
     }
 
@@ -427,8 +427,8 @@ CombatWidget::setTableDataWithFileData()
         const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
 
         // Additional info
-        AdditionalInfoData::AdditionalInformation additionalInfoData;
-        additionalInfoData.mainInfo = additionalInfoObject.value("main_info").toString();
+        AdditionalInfoData additionalInfoData;
+        additionalInfoData.mainInfoText = additionalInfoObject.value("main_info").toString();
 
         // Status effects
         const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();

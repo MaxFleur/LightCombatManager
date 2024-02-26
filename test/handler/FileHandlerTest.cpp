@@ -7,7 +7,6 @@
 
 #include <catch2/catch.hpp>
 
-#include <QCheckBox>
 #include <QFile>
 #include <QHBoxLayout>
 #include <QJsonDocument>
@@ -45,11 +44,6 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         combatTableWidget->setRowCount(2);
         combatTableWidget->setColumnCount(6);
 
-        auto *const checkBoxFighter = new QCheckBox;
-        checkBoxFighter->setChecked(false);
-        auto *const checkBoxBoss = new QCheckBox;
-        checkBoxBoss->setChecked(true);
-
         auto *const additionalInfoWidgetFighter = new AdditionalInfoWidget;
 
         AdditionalInfoData::StatusEffect effect1{ "Shaken", false, 2 };
@@ -74,7 +68,8 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         combatTableWidget->setItem(0, 1, new QTableWidgetItem("19"));
         combatTableWidget->setItem(0, 2, new QTableWidgetItem("2"));
         combatTableWidget->setItem(0, 3, new QTableWidgetItem("36"));
-        combatTableWidget->setCellWidget(0, 4, createCellWidget(checkBoxFighter));
+        combatTableWidget->setItem(0, 4, new QTableWidgetItem);
+        combatTableWidget->item(0, 4)->setCheckState(Qt::Unchecked);
         combatTableWidget->setCellWidget(0, 5, createCellWidget(additionalInfoWidgetFighter));
         combatTableWidget->setItem(0, 6, new QTableWidgetItem("0"));
 
@@ -82,7 +77,8 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         combatTableWidget->setItem(1, 1, new QTableWidgetItem("21"));
         combatTableWidget->setItem(1, 2, new QTableWidgetItem("7"));
         combatTableWidget->setItem(1, 3, new QTableWidgetItem("42"));
-        combatTableWidget->setCellWidget(1, 4, createCellWidget(checkBoxBoss));
+        combatTableWidget->setItem(1, 4, new QTableWidgetItem);
+        combatTableWidget->item(1, 4)->setCheckState(Qt::Checked);
         combatTableWidget->setCellWidget(1, 5, createCellWidget(additionalInfoWidgetBoss));
         combatTableWidget->setItem(1, 6, new QTableWidgetItem("1"));
 

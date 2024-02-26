@@ -94,7 +94,8 @@ Undo::fillTableWidgetCell(const QVariant& data, int row, int col)
 
     switch (col) {
     case COL_ENEMY:
-        Utils::Table::setTableCheckBox(m_combatWidget, row, data.toBool());
+        tableWidget->setItem(row, COL_ENEMY, new QTableWidgetItem());
+        tableWidget->item(row, COL_ENEMY)->setCheckState(data.toBool() ? Qt::Checked : Qt::Unchecked);
         break;
     case COL_ADDITIONAL:
         Utils::Table::setTableAdditionalInfoWidget(m_combatWidget, row, data);

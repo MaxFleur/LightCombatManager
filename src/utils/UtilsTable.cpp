@@ -5,46 +5,12 @@
 #include "CombatWidget.hpp"
 #include "UtilsGeneral.hpp"
 
-#include <QCheckBox>
 #include <QHBoxLayout>
 #include <QObject>
 #include <QWidget>
 
 namespace Utils::Table
 {
-void
-setTableCheckBox(CombatWidget *combatWidget, unsigned int row, bool checked)
-{
-    auto *const combatTableWidget = combatWidget->getCombatTableWidget();
-
-    auto *const checkBox = new QCheckBox;
-    checkBox->setChecked(checked);
-    QObject::connect(checkBox, &QCheckBox::stateChanged, combatTableWidget, [combatWidget, combatTableWidget, checkBox] {
-        combatTableWidget->blockSignals(true);
-        // We need to store the old checkbox state, so we will reset the state for a short time
-        // Then, after saving, reset to the new value and set the correct undo command
-        checkBox->blockSignals(true);
-        checkBox->setCheckState(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
-        combatWidget->saveOldState();
-        checkBox->setCheckState(checkBox->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
-        combatWidget->pushOnUndoStack(true);
-        checkBox->blockSignals(false);
-
-        emit combatWidget->changeOccured();
-        combatTableWidget->blockSignals(false);
-    });
-
-    // Center the checkboxes
-    auto *const widget = new QWidget;
-    auto *layout = new QHBoxLayout(widget);
-    layout->addWidget(checkBox);
-    layout->setAlignment(Qt::AlignCenter);
-    widget->setLayout(layout);
-
-    combatTableWidget->setCellWidget(row, COL_ENEMY, widget);
-}
-
-
 void
 setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const QVariant& additionalInfo)
 {

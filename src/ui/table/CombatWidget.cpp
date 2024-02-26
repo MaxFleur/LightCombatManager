@@ -117,14 +117,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     connect(m_tableWidget, &QTableWidget::currentCellChanged, this, [this] {
         saveOldState();
     });
-    connect(m_tableWidget, &QTableWidget::itemChanged, this, [this] {
-        const auto& tableData = m_tableWidget->tableDataFromWidget();
-
-        if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
-            m_tableWidget->resynchronizeCharacters();
-            pushOnUndoStack();
-        }
-    });
+    connect(m_tableWidget, &QTableWidget::itemChanged, this, &CombatWidget::handleTableWidgetItemPressed);
 
     // Lower layout
     auto *const lowerLayout = new QHBoxLayout();
@@ -404,6 +397,31 @@ CombatWidget::rerollIni()
                                tr("Modifier: ") + QString::number(characters.at(row).modifier);
 
     QMessageBox::information(this, tr("Rerolled initiative"), messageString);
+}
+
+
+void
+CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
+{
+    if (item->column() == COL_ENEMY) {
+        m_tableWidget->blockSignals(true);
+        // We need to store the old checkbox state, so we will reset the state for a short time
+        // Then, after saving, reset to the new value and set the correct undo command
+        item->setCheckState(item->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+        saveOldState();
+        item->setCheckState(item->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+        pushOnUndoStack(true);
+
+        emit changeOccured();
+        m_tableWidget->blockSignals(false);
+        return;
+    }
+    const auto& tableData = m_tableWidget->tableDataFromWidget();
+
+    if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
+        m_tableWidget->resynchronizeCharacters();
+        pushOnUndoStack();
+    }
 }
 
 

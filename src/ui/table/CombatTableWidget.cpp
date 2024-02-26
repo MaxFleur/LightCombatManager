@@ -5,7 +5,6 @@
 #include "UtilsGeneral.hpp"
 
 #include <QApplication>
-#include <QCheckBox>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QObject>
@@ -26,15 +25,13 @@ CombatTableWidget::resynchronizeCharacters()
     m_characterHandler->clearCharacters();
 
     for (auto i = 0; i < rowCount(); i++) {
-        // Cell widget is a checkbox within another widget, so find the child
-        auto *const checkBox = cellWidget(i, 4)->findChild<QCheckBox *>();
         auto *const additionalInfoWidget = cellWidget(i, 5)->findChild<AdditionalInfoWidget *>();
 
         m_characterHandler->storeCharacter(item(i, 0)->text(),
                                            item(i, 1)->text().toInt(),
                                            item(i, 2)->text().toInt(),
                                            item(i, 3)->text().toInt(),
-                                           checkBox->isChecked(),
+                                           item(i, 4)->checkState() == Qt::Checked,
                                            additionalInfoWidget->getAdditionalInformation());
     }
 }
@@ -91,19 +88,17 @@ CombatTableWidget::setTableRowColor(bool resetColor)
     };
 
     for (auto i = 0; i < rowCount(); i++) {
-        const auto isEnemy = cellWidget(i, COL_ENEMY)->findChild<QCheckBox *>()->isChecked();
+        const auto isEnemy = item(i, COL_ENEMY)->checkState() == Qt::Checked;
         const auto noButtonColor = color(isEnemy, false);
 
-        for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
+        for (auto j = 0; j < 5; j++) {
             item(i, j)->setBackground(noButtonColor);
         }
 
         QPalette palette;
         palette.setColor(QPalette::Base, noButtonColor);
         palette.setColor(QPalette::Button, m_rowsUncolored ? noButtonColor : color(isEnemy, true));
-        cellWidget(i, COL_ENEMY)->setAutoFillBackground(!m_rowsUncolored);
         cellWidget(i, COL_ADDITIONAL)->setAutoFillBackground(!m_rowsUncolored);
-        cellWidget(i, COL_ENEMY)->setPalette(palette);
         cellWidget(i, COL_ADDITIONAL)->setPalette(palette);
     }
 
@@ -155,23 +150,16 @@ CombatTableWidget::tableDataFromWidget()
     for (auto i = 0; i < rowCount(); i++) {
         QVector<QVariant> rowValues;
 
-        for (auto j = 0; j < columnCount(); j++) {
-            switch (j) {
-            case COL_ENEMY:
-                rowValues.push_back(cellWidget(i, j)->findChild<QCheckBox *>()->isChecked());
-                break;
-            case COL_ADDITIONAL:
-            {
-                QVariant variant;
-                variant.setValue(cellWidget(i, j)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation());
-                rowValues.push_back(variant);
-                break;
-            }
-            default:
-                rowValues.push_back(item(i, j)->text());
-                break;
-            }
+        for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
+            rowValues.push_back(item(i, j)->text());
         }
+
+        rowValues.push_back(item(i, COL_ENEMY)->checkState() == Qt::Checked);
+
+        QVariant variant;
+        variant.setValue(cellWidget(i, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation());
+        rowValues.push_back(variant);
+
         tableData.push_back(rowValues);
     }
 
@@ -238,12 +226,11 @@ CombatTableWidget::removeAlphaValueForCellWidgets()
     for (const auto& selectedModel : selectedRows) {
         const auto row = selectedModel.row();
 
-        auto palette = cellWidget(row, COL_ENEMY)->palette();
+        auto palette = cellWidget(row, COL_ADDITIONAL)->palette();
         auto color = palette.color(QPalette::Base);
 
         color.setAlpha(0);
         palette.setColor(QPalette::Base, color);
-        cellWidget(row, COL_ENEMY)->setPalette(palette);
         cellWidget(row, COL_ADDITIONAL)->setPalette(palette);
     }
 }

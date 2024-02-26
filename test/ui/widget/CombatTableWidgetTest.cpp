@@ -6,7 +6,6 @@
 #include <catch2/catch.hpp>
 
 #include <QApplication>
-#include <QCheckBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QTableWidget>
@@ -18,8 +17,6 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
     combatTableWidget->setRowCount(2);
     combatTableWidget->setColumnCount(6);
 
-    auto *const checkBox = new QCheckBox;
-    checkBox->setChecked(false);
     auto* const additionalInformationWidget = new AdditionalInfoWidget;
 
     AdditionalInfoData::StatusEffect effect{ "Shaken", false, 2 };
@@ -40,11 +37,10 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
     combatTableWidget->setItem(0, 1, new QTableWidgetItem("19"));
     combatTableWidget->setItem(0, 2, new QTableWidgetItem("2"));
     combatTableWidget->setItem(0, 3, new QTableWidgetItem("36"));
-    combatTableWidget->setCellWidget(0, 4, createCellWidget(checkBox));
+    combatTableWidget->setItem(0, 4, new QTableWidgetItem);
+    combatTableWidget->item(0, 4)->setCheckState(Qt::Unchecked);
     combatTableWidget->setCellWidget(0, 5, createCellWidget(additionalInformationWidget));
 
-    auto *const checkBoxSecondRow = new QCheckBox;
-    checkBoxSecondRow->setChecked(true);
     auto* const additionalInformationWidgetSecondRow = new AdditionalInfoWidget;
 
     combatTableWidget->setRowCount(2);
@@ -52,7 +48,8 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
     combatTableWidget->setItem(1, 1, new QTableWidgetItem("23"));
     combatTableWidget->setItem(1, 2, new QTableWidgetItem("5"));
     combatTableWidget->setItem(1, 3, new QTableWidgetItem("66"));
-    combatTableWidget->setCellWidget(1, 4, createCellWidget(checkBoxSecondRow));
+    combatTableWidget->setItem(1, 4, new QTableWidgetItem);
+    combatTableWidget->item(1, 4)->setCheckState(Qt::Checked);
     combatTableWidget->setCellWidget(1, 5, createCellWidget(additionalInformationWidgetSecondRow));
 
     SECTION("Resynchronizing characters test") {
@@ -71,7 +68,7 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
         }
         SECTION("Check for changed data") {
             combatTableWidget->setItem(0, 3, new QTableWidgetItem("24"));
-            checkBox->setChecked(true);
+            combatTableWidget->item(0, 4)->setCheckState(Qt::Checked);
             combatTableWidget->resynchronizeCharacters();
 
             REQUIRE(characterHandler->getCharacters().at(0).hp == 24);
@@ -112,22 +109,18 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
             combatTableWidget->setTableRowColor(false);
 
             REQUIRE(combatTableWidget->item(0, 0)->background().color() == QColor(12, 123, 220, 60));
-            REQUIRE(combatTableWidget->cellWidget(0, 4)->palette().color(QPalette::Base) == QColor(12, 123, 220, 60));
             REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Base) == QColor(12, 123, 220, 60));
             REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Button) == QColor(12, 123, 220, 10));
             REQUIRE(combatTableWidget->item(1, 0)->background().color() == QColor(255, 194, 10, 60));
-            REQUIRE(combatTableWidget->cellWidget(1, 4)->palette().color(QPalette::Base) == QColor(255, 194, 10, 60));
             REQUIRE(combatTableWidget->cellWidget(1, 5)->palette().color(QPalette::Button) == QColor(255, 194, 10, 10));
         }
         SECTION("Reset color") {
             combatTableWidget->setTableRowColor(true);
 
             REQUIRE(combatTableWidget->item(0, 0)->background().color() == color);
-            REQUIRE(combatTableWidget->cellWidget(0, 4)->palette().color(QPalette::Base) == color);
             REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Base) == color);
             REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Button) == color);
             REQUIRE(combatTableWidget->item(1, 0)->background().color() == color);
-            REQUIRE(combatTableWidget->cellWidget(1, 4)->palette().color(QPalette::Base) == color);
             REQUIRE(combatTableWidget->cellWidget(1, 5)->palette().color(QPalette::Base) == color);
             REQUIRE(combatTableWidget->cellWidget(1, 5)->palette().color(QPalette::Button) == color);
         }
@@ -166,7 +159,7 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
         }
         SECTION("Check for changed data") {
             combatTableWidget->setItem(0, 3, new QTableWidgetItem("24"));
-            checkBox->setChecked(true);
+            combatTableWidget->item(0, 4)->setCheckState(Qt::Checked);
             tableData = combatTableWidget->tableDataFromWidget();
 
             REQUIRE(tableData.at(0).at(3) == "24");
@@ -194,7 +187,7 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
         }
         SECTION("Check for changed data") {
             combatTableWidget->setItem(0, 3, new QTableWidgetItem("24"));
-            checkBox->setChecked(true);
+            combatTableWidget->item(0, 4)->setCheckState(Qt::Checked);
             combatTableWidget->resynchronizeCharacters();
             characters = characterHandler->getCharacters();
             tableData = combatTableWidget->tableDataFromCharacterVector();

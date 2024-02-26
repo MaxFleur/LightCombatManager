@@ -112,6 +112,9 @@ private slots:
     void
     rerollIni();
 
+    void
+    handleTableWidgetItemPressed(QTableWidgetItem *item);
+
 private:
     void
     setTableDataWithFileData();

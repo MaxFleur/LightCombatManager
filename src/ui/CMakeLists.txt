@@ -8,6 +8,7 @@ target_include_directories (ui
 ) 
 
 target_sources(ui INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/CheckBoxStyle.hpp
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.cpp
     ${CMAKE_CURRENT_LIST_DIR}/MainWindow.hpp
     ${CMAKE_CURRENT_LIST_DIR}/SettingsDialog.hpp

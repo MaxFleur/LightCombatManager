@@ -3,7 +3,7 @@
 #include "StatusEffectButton.hpp"
 #include "UtilsGeneral.hpp"
 
-#include <QDebug>
+#include <QApplication>
 #include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -126,16 +126,16 @@ AdditionalInfoWidget::eventFilter(QObject* object, QEvent* event)
 bool
 AdditionalInfoWidget::event(QEvent *event)
 {
-    // The color alpha for the line edit background seems to be applied differently when
-    // the Base background is set in the table utils function. For this reason, we reset it
-    // so that the line edit does not stick out to strongly.
     if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
-        auto palette = m_additionalInfoLineEdit->palette();
-        auto color = palette.color(QPalette::Base);
-        color.setAlpha(10);
-        palette.setColor(QPalette::Base, color);
+        auto lineEditPalette = m_additionalInfoLineEdit->palette();
+        auto applicationBaseColor = QApplication::palette().color(QPalette::Button);
+        lineEditPalette.setColor(QPalette::Base, applicationBaseColor);
+        m_additionalInfoLineEdit->setPalette(lineEditPalette);
 
-        m_additionalInfoLineEdit->setPalette(palette);
+        auto thisPalette = palette();
+        thisPalette.setColor(QPalette::Button, QApplication::palette().color(QPalette::Button));
+        thisPalette.setColor(QPalette::ButtonText, QApplication::palette().color(QPalette::ButtonText));
+        setPalette(thisPalette);
     }
     return QWidget::event(event);
 }

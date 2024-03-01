@@ -55,7 +55,7 @@ protected:
 
 private:
     void
-    removeAlphaValueForCellWidgets();
+    adjustAdditionalInfoWidgetPalette();
 
 private:
     std::shared_ptr<CharacterHandler> m_characterHandler;

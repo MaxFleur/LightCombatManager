@@ -15,7 +15,7 @@ CombatTableWidget::CombatTableWidget(std::shared_ptr<CharacterHandler> character
     QTableWidget(parent),
     m_characterHandler(characterHandler)
 {
-    connect(this, &QTableWidget::itemSelectionChanged, this, &CombatTableWidget::removeAlphaValueForCellWidgets);
+    connect(this, &QTableWidget::itemSelectionChanged, this, &CombatTableWidget::adjustAdditionalInfoWidgetPalette);
 }
 
 
@@ -78,26 +78,22 @@ CombatTableWidget::setTableRowColor(bool resetColor)
     blockSignals(true);
 
     m_rowsUncolored = resetColor;
-    const auto color = [this](bool isEnemy, bool isButton) {
-        // Weaker alpha value so that the status effect buttons do not stick out too much
-        const auto alpha = isButton ? 10 : 60;
+    const auto color = [this](bool isEnemy) {
         if (m_rowsUncolored) {
             return QApplication::palette().color(QPalette::Base);
         }
-        return isEnemy ? QColor(255, 194, 10, alpha) : QColor(12, 123, 220, alpha);
+        return isEnemy ? QColor(255, 194, 10, 60) : QColor(12, 123, 220, 60);
     };
 
     for (auto i = 0; i < rowCount(); i++) {
-        const auto isEnemy = item(i, COL_ENEMY)->checkState() == Qt::Checked;
-        const auto noButtonColor = color(isEnemy, false);
+        const auto cellColor = color(item(i, COL_ENEMY)->checkState() == Qt::Checked);
 
         for (auto j = 0; j < 5; j++) {
-            item(i, j)->setBackground(noButtonColor);
+            item(i, j)->setBackground(cellColor);
         }
 
         QPalette palette;
-        palette.setColor(QPalette::Base, noButtonColor);
-        palette.setColor(QPalette::Button, m_rowsUncolored ? noButtonColor : color(isEnemy, true));
+        palette.setColor(QPalette::Base, cellColor);
         cellWidget(i, COL_ADDITIONAL)->setAutoFillBackground(!m_rowsUncolored);
         cellWidget(i, COL_ADDITIONAL)->setPalette(palette);
     }
@@ -210,7 +206,7 @@ CombatTableWidget::keyPressEvent(QKeyEvent *event)
 
 
 void
-CombatTableWidget::removeAlphaValueForCellWidgets()
+CombatTableWidget::adjustAdditionalInfoWidgetPalette()
 {
     // If the table rows are colored and a row is selected, the selection color will mix
     // with the cell widget color because of the non-maximum alpha values.
@@ -227,10 +223,10 @@ CombatTableWidget::removeAlphaValueForCellWidgets()
         const auto row = selectedModel.row();
 
         auto palette = cellWidget(row, COL_ADDITIONAL)->palette();
-        auto color = palette.color(QPalette::Base);
+        auto baseColor = palette.color(QPalette::Base);
 
-        color.setAlpha(0);
-        palette.setColor(QPalette::Base, color);
+        baseColor.setAlpha(0);
+        palette.setColor(QPalette::Base, baseColor);
         cellWidget(row, COL_ADDITIONAL)->setPalette(palette);
     }
 }

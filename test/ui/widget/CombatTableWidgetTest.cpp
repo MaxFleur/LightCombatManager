@@ -110,19 +110,15 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
 
             REQUIRE(combatTableWidget->item(0, 0)->background().color() == QColor(12, 123, 220, 60));
             REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Base) == QColor(12, 123, 220, 60));
-            REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Button) == QColor(12, 123, 220, 10));
             REQUIRE(combatTableWidget->item(1, 0)->background().color() == QColor(255, 194, 10, 60));
-            REQUIRE(combatTableWidget->cellWidget(1, 5)->palette().color(QPalette::Button) == QColor(255, 194, 10, 10));
         }
         SECTION("Reset color") {
             combatTableWidget->setTableRowColor(true);
 
             REQUIRE(combatTableWidget->item(0, 0)->background().color() == color);
             REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Base) == color);
-            REQUIRE(combatTableWidget->cellWidget(0, 5)->palette().color(QPalette::Button) == color);
             REQUIRE(combatTableWidget->item(1, 0)->background().color() == color);
             REQUIRE(combatTableWidget->cellWidget(1, 5)->palette().color(QPalette::Base) == color);
-            REQUIRE(combatTableWidget->cellWidget(1, 5)->palette().color(QPalette::Button) == color);
         }
     }
 

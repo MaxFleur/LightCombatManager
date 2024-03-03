@@ -40,7 +40,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
 
     SECTION("Check file saving") {
         auto characterHandler = std::make_shared<CharacterHandler>();
-        auto *const combatTableWidget = new CombatTableWidget(characterHandler);
+        auto *const combatTableWidget = new CombatTableWidget(characterHandler, 720);
         combatTableWidget->setRowCount(2);
         combatTableWidget->setColumnCount(6);
 

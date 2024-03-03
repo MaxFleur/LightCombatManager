@@ -180,8 +180,6 @@ private:
 
     bool m_isDataStored;
 
-    static constexpr int NMBR_COLUMNS = 6;
-
     static constexpr int COL_NAME = 0;
     static constexpr int COL_INI = 1;
     static constexpr int COL_MODIFIER = 2;
@@ -189,17 +187,8 @@ private:
     static constexpr int COL_ENEMY = 4;
     static constexpr int COL_ADDITIONAL = 5;
 
-    static constexpr int ROW_ENTERED = 6;
-    static constexpr int ROUND_CTR = 7;
-
     static constexpr int SPACING = 30;
 
     static constexpr int COL_LENGTH_BUFFER_NAME = 20;
     static constexpr int COL_LENGTH_BUFFER_ADDITIONAL = 35;
-
-    static constexpr float WIDTH_NAME = 0.20f;
-    static constexpr float WIDTH_INI = 0.05f;
-    static constexpr float WIDTH_MODIFIER = 0.05f;
-    static constexpr float WIDTH_HP = 0.1f;
-    static constexpr float WIDTH_ENEMY = 0.1f;
 };

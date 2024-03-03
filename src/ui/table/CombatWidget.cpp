@@ -37,31 +37,9 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 {
     m_characterHandler = std::make_shared<CharacterHandler>();
 
-    m_tableWidget = new CombatTableWidget(m_characterHandler, this);
-    m_tableWidget->setColumnCount(NMBR_COLUMNS);
+    m_tableWidget = new CombatTableWidget(m_characterHandler, mainWidgetWidth, this);
 
     m_undoStack = new QUndoStack(this);
-
-    QStringList tableHeader;
-    tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional Information") << "";
-
-    m_tableWidget->setHorizontalHeaderLabels(tableHeader);
-    m_tableWidget->horizontalHeader()->setStretchLastSection(true);
-    m_tableWidget->verticalHeader()->setVisible(true);
-    m_tableWidget->verticalHeader()->setSectionsMovable(true);
-    m_tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-
-    m_tableWidget->setShowGrid(true);
-    m_tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
-    m_tableWidget->setFocusPolicy(Qt::ClickFocus);
-
-    m_tableWidget->setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
-    m_tableWidget->setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
-    m_tableWidget->setColumnWidth(COL_MODIFIER, mainWidgetWidth * WIDTH_MODIFIER);
-    m_tableWidget->setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
-    m_tableWidget->setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
 
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);

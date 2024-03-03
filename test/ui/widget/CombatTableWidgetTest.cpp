@@ -13,7 +13,7 @@
 
 TEST_CASE("Combat Table Testing", "[TableUtils]") {
     auto characterHandler = std::make_shared<CharacterHandler>();
-    auto *const combatTableWidget = new CombatTableWidget(characterHandler);
+    auto *const combatTableWidget = new CombatTableWidget(characterHandler, 720);
     combatTableWidget->setRowCount(2);
     combatTableWidget->setColumnCount(6);
 
@@ -194,7 +194,8 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
     }
 
     SECTION("Set row and player test") {
-        const unsigned int rowHeight = combatTableWidget->rowHeight(0);
-        REQUIRE(combatTableWidget->getHeight() == 2 * rowHeight + 140);
+        const unsigned int rowHeightFirst = combatTableWidget->rowHeight(0);
+        const unsigned int rowHeightSecond = combatTableWidget->rowHeight(1);
+        REQUIRE(combatTableWidget->getHeight() == rowHeightFirst + rowHeightSecond + 140);
     }
 }

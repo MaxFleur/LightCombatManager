@@ -5,16 +5,41 @@
 #include "UtilsGeneral.hpp"
 
 #include <QApplication>
+#include <QHeaderView>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QObject>
 #include <QWidget>
 
 CombatTableWidget::CombatTableWidget(std::shared_ptr<CharacterHandler> characterHandler,
+                                     int                               mainWidgetWidth,
                                      QWidget *                         parent) :
     QTableWidget(parent),
     m_characterHandler(characterHandler)
 {
+    setColumnCount(NMBR_COLUMNS);
+
+    QStringList tableHeader;
+    tableHeader << tr("Name") << "INI" << "Mod" << "HP" << tr("Is Enemy") << tr("Additional Information") << "";
+
+    setHorizontalHeaderLabels(tableHeader);
+    horizontalHeader()->setStretchLastSection(true);
+    verticalHeader()->setVisible(true);
+    verticalHeader()->setSectionsMovable(true);
+    verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    setShowGrid(true);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    setFocusPolicy(Qt::ClickFocus);
+
+    setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
+    setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
+    setColumnWidth(COL_MODIFIER, mainWidgetWidth * WIDTH_MODIFIER);
+    setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
+    setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
+
     connect(this, &QTableWidget::itemSelectionChanged, this, &CombatTableWidget::adjustAdditionalInfoWidgetPalette);
 }
 
@@ -27,11 +52,11 @@ CombatTableWidget::resynchronizeCharacters()
     for (auto i = 0; i < rowCount(); i++) {
         auto *const additionalInfoWidget = cellWidget(i, 5)->findChild<AdditionalInfoWidget *>();
 
-        m_characterHandler->storeCharacter(item(i, 0)->text(),
-                                           item(i, 1)->text().toInt(),
-                                           item(i, 2)->text().toInt(),
-                                           item(i, 3)->text().toInt(),
-                                           item(i, 4)->checkState() == Qt::Checked,
+        m_characterHandler->storeCharacter(item(i, COL_NAME)->text(),
+                                           item(i, COL_INI)->text().toInt(),
+                                           item(i, COL_MODIFIER)->text().toInt(),
+                                           item(i, COL_HP)->text().toInt(),
+                                           item(i, COL_ENEMY)->checkState() == Qt::Checked,
                                            additionalInfoWidget->getAdditionalInformation());
     }
 }
@@ -88,7 +113,7 @@ CombatTableWidget::setTableRowColor(bool resetColor)
     for (auto i = 0; i < rowCount(); i++) {
         const auto cellColor = color(item(i, COL_ENEMY)->checkState() == Qt::Checked);
 
-        for (auto j = 0; j < 5; j++) {
+        for (auto j = 0; j < FIRST_FIVE_COLUMNS; j++) {
             item(i, j)->setBackground(cellColor);
         }
 

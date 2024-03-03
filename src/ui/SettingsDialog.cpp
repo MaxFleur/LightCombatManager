@@ -19,12 +19,13 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
                                QWidget*            parent) :
     QDialog(parent),
     m_ruleSettings(RuleSettings),
-    m_additionalSettings(AdditionalSettings),
-    m_isTableActive(isTableActive)
+    m_additionalSettings(AdditionalSettings)
 {
     setWindowTitle(tr("Settings"));
 
     auto* const rulesLabel = new QLabel(tr("<b>Rules</b>"));
+    rulesLabel->setEnabled(!isTableActive);
+    auto* const rulesetLabel = new QLabel(tr("Ruleset:"));
 
     m_rulesetBox = new QComboBox;
     m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", RuleSettings::Ruleset::PATHFINDER_1E_DND_35E);
@@ -37,14 +38,17 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
 
     auto *const rulesetLayout = new QHBoxLayout;
     rulesetLayout->setAlignment(Qt::AlignLeft);
-    rulesetLayout->addWidget(new QLabel(tr("Ruleset:")));
+    rulesetLayout->addWidget(rulesetLabel);
     rulesetLayout->addWidget(m_rulesetBox);
+    rulesetLabel->setEnabled(!isTableActive);
+    m_rulesetBox->setEnabled(!isTableActive);
 
     m_rollTieBox = new QCheckBox;
     m_rollTieBox->setChecked(m_ruleSettings.rollAutomatical);
     m_rollTieBox->setText(tr("Roll automatically for tie"));
     m_rollTieBox->setToolTip(tr("If a tie occurs while Characters are generated for a Combat,\n"
                                 "the app will automatically decide the turn order."));
+    m_rollTieBox->setEnabled(!isTableActive);
 
     auto* const additionalLabel = new QLabel(tr("<b>Additional:</b>"));
 
@@ -80,33 +84,23 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
 }
 
 
-bool
+void
 SettingsDialog::applyClicked()
 {
     if (m_rulesetBox->currentIndex() != m_ruleSettings.ruleset ||
         m_rollTieBox->isChecked() != m_ruleSettings.rollAutomatical) {
-        // It could be dangerous to change the combat rules while a combat is active, so abort
-        if (m_isTableActive) {
-            QMessageBox::critical(this, tr("Combat active!"),
-                                  tr("You changed the ruleset while a Combat is active. Please save and exit "
-                                     "the current Combat before changing the ruleset."));
-            return false;
-        }
         m_ruleSettings.write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
-        return true;
     }
     if (m_indicatorMultipleCharsBox->isChecked() != m_additionalSettings.indicatorMultipleChars ||
         m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings.rollIniMultipleChars) {
         m_additionalSettings.write(m_indicatorMultipleCharsBox->isChecked(), m_rollIniMultipleCharsBox->isChecked());
     }
-    return true;
 }
 
 
 void
 SettingsDialog::okClicked()
 {
-    if (applyClicked()) {
-        QDialog::accept();
-    }
+    applyClicked();
+    QDialog::accept();
 }

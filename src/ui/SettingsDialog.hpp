@@ -21,7 +21,7 @@ public:
                    QWidget*            parent = 0);
 
 private slots:
-    bool
+    void
     applyClicked();
 
     void
@@ -35,6 +35,4 @@ private:
 
     RuleSettings& m_ruleSettings;
     AdditionalSettings& m_additionalSettings;
-
-    const bool m_isTableActive;
 };

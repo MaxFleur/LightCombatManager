@@ -105,7 +105,8 @@ MainWindow::saveTable()
     QString fileName;
     // Save to standard save dir if a new combat has been started
     if (!m_isTableSavedInFile) {
-        fileName = QFileDialog::getSaveFileName(this, tr("Save Table"), m_dirSettings.saveDir,
+        fileName = QFileDialog::getSaveFileName(this, tr("Save Table"),
+                                                m_dirSettings.saveDir.isEmpty() ? "combat.lcm" : m_dirSettings.saveDir,
                                                 tr("Table (*.lcm);;All Files (*)"));
 
         if (fileName.isEmpty()) {

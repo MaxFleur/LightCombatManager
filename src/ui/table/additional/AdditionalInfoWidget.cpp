@@ -113,9 +113,11 @@ bool
 AdditionalInfoWidget::eventFilter(QObject* object, QEvent* event)
 {
     if (object == m_additionalInfoLineEdit && event->type() == QEvent::FocusIn) {
-        if (!m_isTextCacheLocked) {
+        static auto isTextCacheLocked = false;
+
+        if (!isTextCacheLocked) {
             m_mainInfoTextCache = getMainInfoText();
-            m_isTextCacheLocked = true;
+            isTextCacheLocked = true;
         }
         emit widgetCalled();
     }

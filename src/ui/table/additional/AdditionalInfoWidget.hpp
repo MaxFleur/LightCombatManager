@@ -76,7 +76,6 @@ private:
     QString m_mainInfoTextCache;
 
     int m_statusEffectsLayoutWidth = 0;
-    bool m_isTextCacheLocked = false;
 
     static constexpr int LENGTH_BUFFER = 30;
 };

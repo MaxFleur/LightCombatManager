@@ -191,8 +191,9 @@ AddCharacterDialog::saveButtonClicked()
 
     // Only set the label text after the first stored character,
     // otherwise it will be displayed constantly until something is stored
-    if (!m_isFirstCharStored) {
-        m_isFirstCharStored = true;
+    static auto isFirstCharStored = false;
+    if (!isFirstCharStored) {
+        isFirstCharStored = true;
         m_animatedLabel->setText(tr("Character saved!"));
     }
     // Reset the graphics effect and kickoff the animation

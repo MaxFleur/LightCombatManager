@@ -158,8 +158,9 @@ void
 MainWindow::openTable()
 {
     const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
+    static auto isTableAlreadyLoaded = false;
     // Return for equal names or if file dialog has been cancelled
-    if ((fileName == m_dirSettings.openDir && m_isTableAlreadyLoaded) || fileName.isEmpty()) {
+    if ((fileName == m_dirSettings.openDir && isTableAlreadyLoaded) || fileName.isEmpty()) {
         return;
     }
     // Check if a table is active right now
@@ -168,7 +169,7 @@ MainWindow::openTable()
         return;
     }
 
-    m_isTableAlreadyLoaded = true;
+    isTableAlreadyLoaded = true;
     auto rulesModified = false;
 
     switch (const auto code = m_fileHandler->getLCMStatus(fileName); code) {

@@ -103,7 +103,6 @@ private:
 
     bool m_isTableActive{ false };
     bool m_isTableSavedInFile{ false };
-    bool m_isTableAlreadyLoaded{ false };
 
     bool m_loadedTableRollAutomatically;
 

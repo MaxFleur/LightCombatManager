@@ -151,7 +151,7 @@ AddCharacterDialog::randomButtonClicked()
 {
     const auto rand = Utils::General::rollDice();
     m_iniBox->setValue(rand + m_iniModifierBox->value());
-    m_rolledValueLabel->setText(tr("Rolled a <b>") + QString::number(rand) + "</b>.");
+    m_rolledValueLabel->setText(tr("Rolled: <b>") + QString::number(rand) + "</b>.");
 }
 
 

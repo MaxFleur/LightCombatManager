@@ -45,7 +45,7 @@ LCM is written in C++17. The following tools are used for development:
 * CMake as build system.
 
 For most Linux distributions, all these libraries can be installed using their respective official package manager. For example, this command installs all dependencies for Ubuntu 22.04:\
-`sudo apt install qtbase5-dev libqt5svg5 qt6-base-dev libqt6svg6 catch2 uncrustify cmake`\
+`sudo apt install qtbase5-dev libqt5svg5 libqt5svg5-dev qt6-base-dev libqt6svg6 libqt6svg6-dev catch2 uncrustify cmake`\
 For Arch Linux and derivates:\
 `sudo pacman -S qt5-base qt5-svg qt6-base qt6-svg catch2 uncrustify cmake`
 

@@ -17,6 +17,12 @@ target_sources(ui INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/WelcomeWidget.hpp 
 )
 
-target_link_libraries(ui 
-    INTERFACE Qt::Widgets settings table
-)
+if(${Qt6_FOUND})
+    target_link_libraries(ui
+        INTERFACE Qt::SvgWidgets Qt::Widgets settings table
+    )
+else()
+    target_link_libraries(ui
+        INTERFACE Qt::Svg Qt::Widgets settings table
+    )
+endif()

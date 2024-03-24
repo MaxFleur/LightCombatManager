@@ -318,16 +318,40 @@ CombatWidget::openStatusEffectDialog()
         m_tableWidget->resynchronizeCharacters();
         auto& characters = m_characterHandler->getCharacters();
 
+        auto needsUndo = false;
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
             auto& statusEffects = characters[i.row()].additionalInfoData.statusEffects;
-            for (const auto& effect : dialog->getEffects()) {
-                statusEffects.push_back(effect);
+
+            for (const auto& dialogEffect : dialog->getEffects()) {
+                // Store normally for DnD 5E, for the others only if it's new or the duration is bigger
+                if (m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_5E) {
+                    statusEffects.push_back(dialogEffect);
+                    needsUndo = true;
+                    continue;
+                }
+
+                auto it = std::find_if(statusEffects.begin(), statusEffects.end(), [dialogEffect] (const auto& statusEffect) {
+                    return statusEffect.name == dialogEffect.name;
+                });
+                if (it != statusEffects.end()) {
+                    if (it->duration < dialogEffect.duration) {
+                        it->duration = dialogEffect.duration;
+                        needsUndo = true;
+                    }
+                    continue;
+                }
+
+                statusEffects.push_back(dialogEffect);
+                needsUndo = true;
             }
-            m_tableWidget->setStatusEffectInWidget(dialog->getEffects(), i.row());
+            if (needsUndo) {
+                m_tableWidget->setStatusEffectInWidget(dialog->getEffects(), i.row());
+            }
         }
-        // Change table
-        pushOnUndoStack();
+        if (needsUndo) {
+            pushOnUndoStack();
+        }
     }
 }
 

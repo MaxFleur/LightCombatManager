@@ -69,7 +69,7 @@ MainWindow::MainWindow()
     helpMenu->addAction(m_aboutLCMAction);
     helpMenu->addAction(aboutQtAction);
 
-    m_fileHandler = std::make_unique<FileHandler>();
+    m_tableFileHandöer = std::make_unique<TableFileHandler>();
 
     setMainWindowIcons();
     resize(START_WIDTH, START_HEIGHT);
@@ -119,7 +119,7 @@ MainWindow::saveTable()
     // Save the table
     auto* const combatTableWidget = m_combatWidget->getCombatTableWidget();
     const auto tableData = combatTableWidget->tableDataFromWidget();
-    if (m_fileHandler->writeTableToFile(tableData, fileName, m_combatWidget->getRowEntered(),
+    if (m_tableFileHandöer->writeToFile(tableData, fileName, m_combatWidget->getRowEntered(),
                                         m_combatWidget->getRoundCounter(),
                                         m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
         m_isTableSavedInFile = true;
@@ -171,10 +171,10 @@ MainWindow::openTable()
     m_isTableAlreadyLoaded = true;
     auto rulesModified = false;
 
-    switch (const auto code = m_fileHandler->getLCMStatus(fileName); code) {
+    switch (const auto code = m_tableFileHandöer->getStatus(fileName); code) {
     case 0:
     {
-        if (!checkStoredTableRules(m_fileHandler->getData())) {
+        if (!checkStoredTableRules(m_tableFileHandöer->getData())) {
             const auto messageString = createRuleChangeMessageBoxText();
             auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different Rulesets detected!"), messageString, QMessageBox::Cancel);
             auto* const applyButton = msgBox->addButton(tr("Apply Table Ruleset to Settings"), QMessageBox::ApplyRole);
@@ -195,7 +195,7 @@ MainWindow::openTable()
         // Save the opened file dir
         m_dirSettings.write(fileName);
         m_fileName = Utils::General::getCSVName(fileName);
-        setTableWidget(true, false, m_fileHandler->getData());
+        setTableWidget(true, false, m_tableFileHandöer->getData());
 
         // If the settings rules are applied to the table, it is modified
         setCombatTitle(rulesModified);

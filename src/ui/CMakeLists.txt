@@ -18,5 +18,5 @@ target_sources(ui INTERFACE
 )
 
 target_link_libraries(ui 
-    INTERFACE Qt::Widgets settings table
+    INTERFACE Qt::Widgets fileHandler settings table
 )

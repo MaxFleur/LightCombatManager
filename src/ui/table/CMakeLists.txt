@@ -19,5 +19,5 @@ target_sources(table INTERFACE
 )
 
 target_link_libraries(table 
-    INTERFACE Qt::Widgets additional dialog settings
+    INTERFACE Qt::Widgets additional charHandler dialog settings
 )

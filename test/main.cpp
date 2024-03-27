@@ -2,6 +2,7 @@
 #include <catch2/catch.hpp>
 
 #include <QApplication>
+#include <QSettings>
 
 int
 main(int argc, char **argv)
@@ -13,6 +14,13 @@ main(int argc, char **argv)
 #endif
 
     QApplication app(argc, argv);
+    app.setApplicationName("LCM");
+    app.setOrganizationName("LCM");
+
+    // CharFileHandler needs a created conf file, so create the instance now
+    QSettings settings;
+    settings.setValue("test_value", "value");
+    settings.sync();
 
     return Catch::Session().run(argc, argv);
 }

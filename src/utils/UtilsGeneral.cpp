@@ -4,11 +4,19 @@
 
 #include <QApplication>
 #include <QFileInfo>
+#include <QMessageBox>
 
 #include <random>
 
 namespace Utils::General
 {
+void
+displayWarningMessageBox(QWidget* widget, const QString& title, const QString& text)
+{
+    QMessageBox::warning(widget, title, text);
+}
+
+
 int
 rollDice()
 {

@@ -1,3 +1,5 @@
+add_subdirectory(template)
+
 add_library (dialog INTERFACE)
 
 target_include_directories (dialog 
@@ -13,5 +15,5 @@ target_sources(dialog INTERFACE
 )
 
 target_link_libraries(dialog 
-    INTERFACE Qt::Widgets utils
+    INTERFACE Qt::Widgets fileHandler template utils
 )

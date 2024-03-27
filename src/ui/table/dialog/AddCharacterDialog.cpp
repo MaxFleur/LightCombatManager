@@ -1,14 +1,14 @@
 #include "AddCharacterDialog.hpp"
 
-#include "AdditionalInfoWidget.hpp"
-#include "StatusEffectDialog.hpp"
 #include "UtilsGeneral.hpp"
+#include "TemplatesWidget.hpp"
 
 #include <QCheckBox>
-#include <QDebug>
 #include <QDialogButtonBox>
+#include <QDirIterator>
 #include <QGraphicsEffect>
 #include <QGridLayout>
+#include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
@@ -18,6 +18,8 @@
 #include <QShortcut>
 #include <QSpinBox>
 #include <QTimer>
+
+class TemplatesListWidget;
 
 AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     QDialog(parent)
@@ -68,62 +70,77 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     m_multipleEnabledBox->setToolTip(tr("If this is selected and 'Save' is pressed,\n"
                                         "the Character is added multiple times to the Table."));
 
-    auto *const buttonBox = new QDialogButtonBox;
-    auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
-    auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
-    buttonBox->addButton(QDialogButtonBox::Cancel);
-
+    m_storeTemplatesButton = new QPushButton(tr("Store in Templates"));
+    m_storeTemplatesButton->setVisible(false);
     auto *const resetButton = new QPushButton(tr("Reset all entered Values"));
 
-    okButton->setShortcut(Qt::Key_Return);
+    m_animatedLabel = new QLabel;
 
+    auto *const openTemplatesButton = new QPushButton(tr("Templates >>"));
+
+    auto *const buttonBox = new QDialogButtonBox;
+    auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
+    auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+
+    okButton->setShortcut(Qt::Key_Return);
     saveButton->setShortcut(QKeySequence::Save);
     const auto saveShortcutText = "Save this Character (" + QKeySequence(QKeySequence::Save).toString() + ").";
     saveButton->setToolTip(tr(saveShortcutText.toLocal8Bit().constData()));
 
-    m_animatedLabel = new QLabel;
+    auto *const gridLayout = new QGridLayout;
+    gridLayout->addWidget(nameLabel, 0, 0);
+    gridLayout->addWidget(m_nameEdit, 0, 1, 1, 3);
+
+    gridLayout->setRowMinimumHeight(1, MIN_ROW_HEIGHT);
+
+    gridLayout->addWidget(iniLabel, 2, 0);
+    gridLayout->addWidget(m_iniBox, 2, 1);
+    gridLayout->addWidget(iniModifierLabel, 2, 2);
+    gridLayout->addWidget(m_iniModifierBox, 2, 3);
+
+    gridLayout->addWidget(randomIniButton, 3, 0, 1, 2);
+    gridLayout->addWidget(m_rolledValueLabel, 3, 3);
+
+    gridLayout->setRowMinimumHeight(4, MIN_ROW_HEIGHT);
+
+    gridLayout->addWidget(hpLabel, 5, 0);
+    gridLayout->addWidget(m_hpBox, 5, 1);
+    gridLayout->addWidget(enemyLabel, 5, 2);
+    gridLayout->addWidget(m_enemyBox, 5, 3);
+
+    gridLayout->addWidget(addInfoLabel, 6, 0);
+    gridLayout->addWidget(m_addInfoEdit, 6, 1, 1, 3);
+
+    gridLayout->setRowMinimumHeight(7, MIN_ROW_HEIGHT);
+
+    gridLayout->addWidget(m_multipleEnabledBox, 8, 0, 1, 3);
+    gridLayout->addWidget(m_instanceNumberBox, 8, 3, 1, 1);
+
+    gridLayout->setRowMinimumHeight(9, MIN_ROW_HEIGHT);
+
+    gridLayout->addWidget(m_animatedLabel, 10, 0, 1, 2);
+
+    gridLayout->addWidget(resetButton, 11, 2, 1, 2);
+    gridLayout->addWidget(m_storeTemplatesButton, 11, 0, 1, 2);
+
+    gridLayout->setRowMinimumHeight(12, MIN_ROW_HEIGHT);
+
+    gridLayout->addWidget(openTemplatesButton, 13, 0, 1, 1);
+    gridLayout->addWidget(buttonBox, 13, 1, 1, 3);
+
+    m_templatesWidget = new TemplatesWidget;
+    m_templatesWidget->setVisible(false);
+
+    auto* const mainLayout = new QHBoxLayout;
+    mainLayout->addLayout(gridLayout);
+    mainLayout->addWidget(m_templatesWidget);
+    setLayout(mainLayout);
+
+    m_nameEdit->setFocus(Qt::TabFocusReason);
+
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
-
-    auto *const layout = new QGridLayout(this);
-    layout->addWidget(nameLabel, 0, 0);
-    layout->addWidget(m_nameEdit, 0, 1, 1, 3);
-
-    layout->setRowMinimumHeight(1, 12);
-
-    layout->addWidget(iniLabel, 2, 0);
-    layout->addWidget(m_iniBox, 2, 1);
-    layout->addWidget(iniModifierLabel, 2, 2);
-    layout->addWidget(m_iniModifierBox, 2, 3);
-
-    layout->addWidget(randomIniButton, 3, 0, 1, 2);
-    layout->addWidget(m_rolledValueLabel, 3, 3);
-
-    layout->setRowMinimumHeight(4, 12);
-
-    layout->addWidget(hpLabel, 5, 0);
-    layout->addWidget(m_hpBox, 5, 1);
-    layout->addWidget(enemyLabel, 5, 2);
-    layout->addWidget(m_enemyBox, 5, 3);
-
-    layout->addWidget(addInfoLabel, 6, 0);
-    layout->addWidget(m_addInfoEdit, 6, 1, 1, 3);
-
-    layout->setRowMinimumHeight(7, 12);
-
-    layout->addWidget(m_multipleEnabledBox, 8, 0, 1, 3);
-    layout->addWidget(m_instanceNumberBox, 8, 3, 1, 1);
-
-    layout->setRowMinimumHeight(9, 12);
-
-    layout->addWidget(m_animatedLabel, 10, 0, 1, 2);
-    layout->addWidget(resetButton, 10, 2, 1, 2);
-
-    layout->setRowMinimumHeight(11, 10);
-    layout->addWidget(buttonBox, 12, 1, 1, 3);
-
-    setLayout(layout);
-    m_nameEdit->setFocus(Qt::TabFocusReason);
 
     connect(randomIniButton, &QPushButton::clicked, this, &AddCharacterDialog::randomButtonClicked);
     connect(m_iniBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
@@ -132,17 +149,25 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     connect(m_iniModifierBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
         m_iniBox->setValue(m_iniWithoutModValue + m_iniModifierBox->value());
     });
+    connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {
+        m_instanceNumberBox->setEnabled(m_multipleEnabledBox->checkState() == Qt::Checked);
+    });
 
+    connect(m_storeTemplatesButton, &QPushButton::clicked, this, &AddCharacterDialog::storeTemplatesButtonClicked);
+
+    connect(m_templatesWidget, &TemplatesWidget::characterLoaded, this, &AddCharacterDialog::applyLoadedCharacterToUI);
+
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    connect(openTemplatesButton, &QPushButton::clicked, this, [this, openTemplatesButton] {
+        const auto isVisible = m_storeTemplatesButton->isVisible();
+        openTemplatesButton->setText(isVisible ? "Templates >>" : "Templates <<");
+        manageTemplatesVisibility(!isVisible);
+    });
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
     connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
 
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
     connect(m_timer, &QTimer::timeout, this, &AddCharacterDialog::animateLabel);
-    connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {
-        m_instanceNumberBox->setEnabled(m_multipleEnabledBox->checkState() == Qt::Checked);
-    });
 }
 
 
@@ -156,18 +181,30 @@ AddCharacterDialog::randomButtonClicked()
 
 
 void
-AddCharacterDialog::animateLabel()
+AddCharacterDialog::storeTemplatesButtonClicked()
 {
-    // Create a small fading text if a character has been stored
-    auto *const effect = new QGraphicsOpacityEffect;
-    m_animatedLabel->setGraphicsEffect(effect);
+    if (m_nameEdit->text().isEmpty()) {
+        Utils::General::displayWarningMessageBox(this, tr("Creation not possible!"),
+                                                 tr("No name has been set. Please set at least a name before caching the Character!"));
+        return;
+    }
 
-    auto *const animation = new QPropertyAnimation(effect, "opacity");
-    animation->setDuration(LABEL_FADEOUT);
-    animation->setStartValue(1.0);
-    animation->setEndValue(0.0);
-    animation->setEasingCurve(QEasingCurve::OutQuad);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    const auto character = CharacterHandler::Character(m_nameEdit->text(), m_iniBox->value() - m_iniModifierBox->value(), m_iniModifierBox->value(),
+                                                       m_hpBox->value(), m_enemyBox->isChecked(), AdditionalInfoData{ {}, m_addInfoEdit->text() });
+    m_templatesWidget->addCharacter(character);
+}
+
+
+void
+AddCharacterDialog::manageTemplatesVisibility(bool isVisible)
+{
+    m_storeTemplatesButton->setVisible(isVisible);
+    m_templatesWidget->setVisible(isVisible);
+    if (isVisible && m_templatesWidget->getTemplatesCount() == 0) {
+        m_templatesWidget->loadTemplates();
+    }
+
+    QDialog::adjustSize();
 }
 
 
@@ -175,11 +212,10 @@ void
 AddCharacterDialog::saveButtonClicked()
 {
     if (m_nameEdit->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Creation not possible!"),
-                             tr("No name has been set. Please set at least a name before storing the Character!"));
+        Utils::General::displayWarningMessageBox(this, tr("Creation not possible!"),
+                                                 tr("No name has been set. Please set at least a name before storing the Character!"));
         return;
     }
-
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
     AdditionalInfoData additionalInfoData{ {}, m_addInfoEdit->text() };
 
@@ -226,4 +262,32 @@ AddCharacterDialog::okButtonClicked()
         saveButtonClicked();
     }
     QDialog::accept();
+}
+
+
+void
+AddCharacterDialog::applyLoadedCharacterToUI(const CharacterHandler::Character& character)
+{
+    m_nameEdit->setText(character.name);
+    m_iniBox->setValue(character.initiative);
+    m_iniModifierBox->setValue(character.modifier);
+    m_hpBox->setValue(character.hp);
+    m_enemyBox->setChecked(character.isEnemy);
+    m_addInfoEdit->setText(character.additionalInfoData.mainInfoText);
+}
+
+
+void
+AddCharacterDialog::animateLabel()
+{
+    // Create a small fading text if a character has been stored
+    auto *const effect = new QGraphicsOpacityEffect;
+    m_animatedLabel->setGraphicsEffect(effect);
+
+    auto *const animation = new QPropertyAnimation(effect, "opacity");
+    animation->setDuration(LABEL_FADEOUT);
+    animation->setStartValue(1.0);
+    animation->setEndValue(0.0);
+    animation->setEasingCurve(QEasingCurve::OutQuad);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }

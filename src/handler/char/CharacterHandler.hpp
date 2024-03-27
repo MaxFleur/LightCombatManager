@@ -8,9 +8,11 @@ class CharacterHandler {
 public:
     // Main character instance used for the table generation
     struct Character {
-        // Name of the character. Because this name must be set manually, it is the only variable without a standard value
+        Character() = default;
+
+        // Name must be set manually, it is the only variable without a standard value
         QString            name;
-        // Final initiative roll of the character, including all modifiers
+        // Final initiative roll, including all modifiers
         int                initiative;
         // Modifiers only
         int                modifier;
@@ -56,3 +58,5 @@ private:
     // Vector storing all created characters
     QVector<Character> characters;
 };
+
+Q_DECLARE_METATYPE(CharacterHandler::Character);

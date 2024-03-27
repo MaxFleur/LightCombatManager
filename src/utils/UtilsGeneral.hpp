@@ -8,6 +8,11 @@ class QTableWidget;
 // General utility functions
 namespace Utils::General
 {
+void
+displayWarningMessageBox(QWidget*       widget,
+                         const QString& title,
+                         const QString& text);
+
 // Roll a 20 sided dice
 [[nodiscard]] int
 rollDice();

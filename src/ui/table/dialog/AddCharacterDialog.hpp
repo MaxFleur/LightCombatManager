@@ -4,14 +4,16 @@
 
 #include <QDialog>
 #include <QPointer>
+#include <QGridLayout>
 
 class QCheckBox;
+class QDialogButtonBox;
 class QLabel;
 class QLineEdit;
-class QMessageBox;
 class QSpinBox;
 
 class RuleSettings;
+class TemplatesWidget;
 
 // Dialog used to add new characters to an existing Combat
 class AddCharacterDialog : public QDialog {
@@ -31,7 +33,10 @@ private slots:
     randomButtonClicked();
 
     void
-    animateLabel();
+    storeTemplatesButtonClicked();
+
+    void
+    manageTemplatesVisibility(bool isVisible);
 
     void
     saveButtonClicked();
@@ -41,6 +46,12 @@ private slots:
 
     void
     okButtonClicked();
+
+    void
+    applyLoadedCharacterToUI(const CharacterHandler::Character& character);
+
+    void
+    animateLabel();
 
 private:
     QPointer<QLineEdit> m_nameEdit;
@@ -52,6 +63,10 @@ private:
     QPointer<QLineEdit> m_addInfoEdit;
     QPointer<QCheckBox> m_multipleEnabledBox;
     QPointer<QSpinBox> m_instanceNumberBox;
+    QPointer<QPushButton> m_storeTemplatesButton;
+
+    QPointer<TemplatesWidget> m_templatesWidget;
+    QPointer<QWidget> m_rightSideWidget;
 
     QPointer<QLabel> m_animatedLabel;
 
@@ -63,4 +78,5 @@ private:
 
     static constexpr int LABEL_SHOWN_DURATION = 1000;
     static constexpr int LABEL_FADEOUT = 2000;
+    static constexpr int MIN_ROW_HEIGHT = 12;
 };

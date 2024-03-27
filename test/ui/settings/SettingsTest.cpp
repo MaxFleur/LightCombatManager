@@ -2,6 +2,7 @@
 #include "DirSettings.hpp"
 #include "RuleSettings.hpp"
 #include "TableSettings.hpp"
+#include "CharDirSettings.hpp"
 
 #include <catch2/catch.hpp>
 
@@ -51,7 +52,24 @@ TEST_CASE("Settings Testing", "[Settings]") {
         REQUIRE(settings.value("dir_open").toString() == "/example/path/new_path");
         REQUIRE(settings.value("dir_save").toString() == "/example/path/dir_open_and_save");
     }
+    SECTION("Char Dir settings test") {
+        CharDirSettings dirSettings;
+        QSettings settings;
+        settings.clear();
 
+        REQUIRE(settings.value("char_dir_save").isValid() == false);
+        REQUIRE(settings.value("char_dir_open").isValid() == false);
+
+        dirSettings.write("/example/path/dir_open_and_save", true);
+        REQUIRE(settings.value("char_dir_save").isValid() == true);
+        REQUIRE(settings.value("char_dir_open").isValid() == true);
+        REQUIRE(settings.value("char_dir_open").toString() == "/example/path/dir_open_and_save");
+        REQUIRE(settings.value("char_dir_save").toString() == "/example/path/dir_open_and_save");
+
+        dirSettings.write("/example/path/new_path", false);
+        REQUIRE(settings.value("char_dir_open").toString() == "/example/path/new_path");
+        REQUIRE(settings.value("char_dir_save").toString() == "/example/path/dir_open_and_save");
+    }
     SECTION("Rule settings test") {
         RuleSettings ruleSettings;
         QSettings settings;

@@ -1,11 +1,12 @@
 #include "AddCharacterDialog.hpp"
 
-#include "AdditionalInfoWidget.hpp"
-#include "StatusEffectDialog.hpp"
+
 #include "UtilsGeneral.hpp"
 
+#include "templates/TemplatesListWidget.hpp"
+
 #include <QCheckBox>
-#include <QDebug>
+
 #include <QDialogButtonBox>
 #include <QGraphicsEffect>
 #include <QGridLayout>
@@ -18,10 +19,14 @@
 #include <QShortcut>
 #include <QSpinBox>
 #include <QTimer>
+#include <QDirIterator>
+
+class TemplatesListWidget;
 
 AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     QDialog(parent)
 {
+    m_fileHandler = std::make_unique<CharFileHandler>();
     setWindowTitle(tr("Add new Character(s)"));
 
     auto *const nameLabel = new QLabel(tr("Name:"));
@@ -69,9 +74,20 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
                                         "the Character is added multiple times to the Table."));
 
     auto *const buttonBox = new QDialogButtonBox;
+    m_templatesButtonBox = new QDialogButtonBox;
+
+    auto *const openTemplatesButton = new QPushButton(tr("Templates"));
+
+    m_storeTemplatesButton =new QPushButton(tr("Store"));
+
     auto *const saveButton = buttonBox->addButton(QDialogButtonBox::Save);
+
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
     buttonBox->addButton(QDialogButtonBox::Cancel);
+
+    m_hideTemplatesButton = new QPushButton(tr("<<"));
+    auto *const applyTemplateButton = m_templatesButtonBox->addButton(QDialogButtonBox::Apply);
+    m_removeTemplatesButton = new QPushButton(tr("Remove"));
 
     auto *const resetButton = new QPushButton(tr("Reset all entered Values"));
 
@@ -81,6 +97,14 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     const auto saveShortcutText = "Save this Character (" + QKeySequence(QKeySequence::Save).toString() + ").";
     saveButton->setToolTip(tr(saveShortcutText.toLocal8Bit().constData()));
 
+    m_templatesListWidget = new TemplatesListWidget(this);
+
+    m_storeTemplatesButton->hide();
+    m_templatesListWidget->hide();
+    m_templatesButtonBox->hide();
+    m_hideTemplatesButton->hide();
+    m_removeTemplatesButton->hide();
+
     m_animatedLabel = new QLabel;
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
@@ -88,6 +112,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     auto *const layout = new QGridLayout(this);
     layout->addWidget(nameLabel, 0, 0);
     layout->addWidget(m_nameEdit, 0, 1, 1, 3);
+    layout->addWidget(m_templatesListWidget, 0, 4, 13, 4);
 
     layout->setRowMinimumHeight(1, 12);
 
@@ -117,11 +142,19 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     layout->setRowMinimumHeight(9, 12);
 
     layout->addWidget(m_animatedLabel, 10, 0, 1, 2);
-    layout->addWidget(resetButton, 10, 2, 1, 2);
 
-    layout->setRowMinimumHeight(11, 10);
-    layout->addWidget(buttonBox, 12, 1, 1, 3);
+    layout->addWidget(resetButton, 11, 2, 1, 2);
+    layout ->addWidget(m_storeTemplatesButton, 11, 0, 1, 1);
 
+    layout->setRowMinimumHeight(12, 12);
+
+    layout->addWidget(openTemplatesButton, 13, 0, 1, 1);
+    layout->addWidget(buttonBox, 13, 1, 1, 3);
+
+    layout->addWidget(m_hideTemplatesButton, 13, 4, 1, 1);
+    layout->addWidget(m_templatesButtonBox, 13, 5, 1, 2);
+
+    layout->addWidget(m_removeTemplatesButton,13, 7, 1, 1 );
     setLayout(layout);
     m_nameEdit->setFocus(Qt::TabFocusReason);
 
@@ -133,10 +166,23 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
         m_iniBox->setValue(m_iniWithoutModValue + m_iniModifierBox->value());
     });
 
+    connect(m_storeTemplatesButton, &QPushButton::clicked, this, &AddCharacterDialog::storeTemplatesButtonClicked);
+
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
     connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
 
+    connect(openTemplatesButton, &QPushButton::clicked, this, &AddCharacterDialog::showTemplatesButtonClicked);
+    connect(m_hideTemplatesButton, &QPushButton::clicked, this, &AddCharacterDialog::hideTemplatesButtonClicked);
+
+    connect(applyTemplateButton, &QPushButton::clicked, this, &AddCharacterDialog::applyTemplateButtonClicked);
+    connect(m_removeTemplatesButton, &QPushButton::clicked, this, &AddCharacterDialog::removeTemplateButtonClicked);
+    //connect(saveTemplateButton, &QPushButton::clicked, this, &AddCharacterDialog::saveTemplateButtonClicked);
+
+    connect(m_templatesListWidget, &TemplatesListWidget::itemDoubleClicked, this, &AddCharacterDialog::applyTemplateButtonClicked);
+
+    //necessary??
+    connect(m_templatesButtonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     connect(m_timer, &QTimer::timeout, this, &AddCharacterDialog::animateLabel);
@@ -175,11 +221,9 @@ void
 AddCharacterDialog::saveButtonClicked()
 {
     if (m_nameEdit->text().isEmpty()) {
-        QMessageBox::warning(this, tr("Creation not possible!"),
-                             tr("No name has been set. Please set at least a name before storing the Character!"));
+        displayWarning(tr("Creation not possible!"), tr("No name has been set. Please set at least a name before storing the Character!"));
         return;
     }
-
     const auto numberOfInstances = m_multipleEnabledBox->checkState() == Qt::Checked ? m_instanceNumberBox->value() : 1;
     AdditionalInfoData additionalInfoData{ {}, m_addInfoEdit->text() };
 
@@ -199,7 +243,11 @@ AddCharacterDialog::saveButtonClicked()
     m_animatedLabel->setGraphicsEffect(0);
     m_timer->start(LABEL_SHOWN_DURATION);
 }
-
+void
+AddCharacterDialog::displayWarning(const QString& title, const QString& text){
+    QMessageBox::warning(this, title,
+                             text);
+}
 
 void
 AddCharacterDialog::resetButtonClicked()
@@ -226,4 +274,120 @@ AddCharacterDialog::okButtonClicked()
         saveButtonClicked();
     }
     QDialog::accept();
+}
+
+void
+AddCharacterDialog::storeTemplatesButtonClicked(){
+    if (m_nameEdit->text().isEmpty()) {
+        displayWarning(tr("Creation not possible!"), tr("No name has been set. Please set at least a name before caching the Character!"));
+        return;
+    }
+    CharacterHandler::Character character = CharacterHandler::Character( m_nameEdit->text(),
+                                                                         m_iniBox->value(),
+                                                                         m_iniModifierBox->value(),
+                                                                         m_hpBox->value(),
+                                                                         m_enemyBox->isChecked(),
+                                                                         AdditionalInfoData{ {}, m_addInfoEdit->text()});
+    if (!m_fileHandler->writeToFile(character, character.name + ".char")) {
+        displayWarning(tr("Action not possible!"), tr("The Character could not be saved!"));
+        return;
+    }
+    if (!m_templatesListWidget->addCharacter(character)) {
+        displayWarning(tr("Action not possible!"), tr("The Character is already in the list!"));
+        return;
+    }
+}
+void
+AddCharacterDialog::showTemplatesButtonClicked()
+{
+    m_templatesListWidget->show();
+    m_templatesButtonBox->show();
+    m_hideTemplatesButton->show();
+    m_storeTemplatesButton->show();
+    m_removeTemplatesButton->show();
+    if (m_templatesListWidget->count() == 0) loadTemplates();
+    QDialog::adjustSize();
+}
+void
+AddCharacterDialog::hideTemplatesButtonClicked()
+{
+    m_templatesListWidget->hide();
+    m_templatesButtonBox->hide();
+    m_hideTemplatesButton->hide();
+    m_storeTemplatesButton->hide();
+    m_removeTemplatesButton->hide();
+
+    QDialog::adjustSize();
+}
+void
+AddCharacterDialog::applyTemplateButtonClicked() {
+    auto const selectedItems = m_templatesListWidget->selectedItems();
+    if (selectedItems.isEmpty()) {
+        displayWarning(tr("Action not possible!"), tr("Please select a Character from the list to apply it to the current Character!"));
+        return;
+    }
+    auto const character = selectedItems.first()->data(Qt::UserRole).value<CharacterHandler::Character>();
+    m_nameEdit->setText(character.name);
+    m_iniBox->setValue(character.initiative);
+    m_iniModifierBox->setValue(character.modifier);
+    m_hpBox->setValue(character.hp);
+    m_enemyBox->setChecked(character.isEnemy);
+    m_addInfoEdit->setText(character.additionalInfoData.mainInfoText);
+}
+void
+AddCharacterDialog::loadTemplates()
+{
+    QDirIterator it(m_fileHandler->getDirSettings().saveDir, {"*.char"}, QDir::Files);
+    while (it.hasNext()) {
+        it.next();
+        QString fileName = it.fileName();
+        switch (auto const code = m_fileHandler->getStatus(fileName); code) {
+            case 0:
+            {
+                auto const characterObject = m_fileHandler->getData();
+                CharacterHandler::Character character;
+                character.name = characterObject["name"].toString();
+                character.initiative = characterObject["initiative"].toInt();
+                character.modifier = characterObject["modifier"].toInt();
+                character.hp = characterObject["hp"].toInt();
+                character.isEnemy = characterObject["is_enemy"].toBool();
+                character.additionalInfoData.mainInfoText = characterObject["additional_info"].toString();
+                if (!m_templatesListWidget->addCharacter(character)) {
+                    displayWarning(tr("Action not possible!"), tr("The Character is already in the list!"));
+                }
+                break;
+            }
+            case 1:
+            {
+                QMessageBox::critical(this, tr("Wrong Table format!"),
+                                      tr("The loading of the Table failed because the Table has the wrong format."));
+                break;
+            }
+            case 2:
+            {
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+}
+void
+AddCharacterDialog::removeTemplateButtonClicked()
+{
+    auto const selectedItems = m_templatesListWidget->selectedItems();
+    if (selectedItems.isEmpty()) {
+        displayWarning(tr("Action not possible!"), tr("Please select a Character from the list to remove the current Character!"));
+        return;
+    }
+    auto const character = selectedItems.first()->data(Qt::UserRole).value<CharacterHandler::Character>();
+    if (!m_templatesListWidget->removeCharacter(character)) {
+        displayWarning(tr("Action not possible!"), tr("Could not remove Character!"));
+        return;
+    }
+    //TODO: check assumption about char name identity and uniqueness
+    if (!m_fileHandler->removeCharacter(character.name + ".char")) {
+        displayWarning(tr("Action not possible!"), tr("The Character could not be removed!"));
+    }
 }

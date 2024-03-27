@@ -1,7 +1,8 @@
-add_library (table INTERFACE)
+add_library (table INTERFACE )
 
 add_subdirectory(additional)
 add_subdirectory(dialog)
+add_subdirectory(templates)
 
 target_include_directories (table 
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -19,5 +20,5 @@ target_sources(table INTERFACE
 )
 
 target_link_libraries(table 
-    INTERFACE Qt::Widgets additional dialog settings
+    INTERFACE Qt::Widgets additional dialog settings templates
 )

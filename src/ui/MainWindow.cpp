@@ -69,7 +69,7 @@ MainWindow::MainWindow()
     helpMenu->addAction(m_aboutLCMAction);
     helpMenu->addAction(aboutQtAction);
 
-    m_fileHandler = std::make_unique<FileHandler>();
+    m_fileHandler = std::make_unique<TableFileHandler>();
 
     setMainWindowIcons();
     resize(START_WIDTH, START_HEIGHT);
@@ -119,9 +119,9 @@ MainWindow::saveTable()
     // Save the table
     auto* const combatTableWidget = m_combatWidget->getCombatTableWidget();
     const auto tableData = combatTableWidget->tableDataFromWidget();
-    if (m_fileHandler->writeTableToFile(tableData, fileName, m_combatWidget->getRowEntered(),
-                                        m_combatWidget->getRoundCounter(),
-                                        m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
+    if (m_fileHandler->writeToFile(tableData, fileName, m_combatWidget->getRowEntered(),
+                                   m_combatWidget->getRoundCounter(),
+                                   m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
         m_isTableSavedInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getCSVName(fileName);
@@ -171,7 +171,7 @@ MainWindow::openTable()
     m_isTableAlreadyLoaded = true;
     auto rulesModified = false;
 
-    switch (const auto code = m_fileHandler->getLCMStatus(fileName); code) {
+    switch (const auto code = m_fileHandler->getStatus(fileName); code) {
     case 0:
     {
         if (!checkStoredTableRules(m_fileHandler->getData())) {

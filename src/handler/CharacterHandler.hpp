@@ -20,6 +20,7 @@ public:
         bool               isEnemy;
         // Various information, including status effects
         AdditionalInfoData additionalInfoData;
+        Character() = default;
 
         Character(const QString& name, int initiative, int modifier, int hp, bool isEnemy,
                   const AdditionalInfoData& additionalInfoData) :
@@ -56,3 +57,5 @@ private:
     // Vector storing all created characters
     QVector<Character> characters;
 };
+
+Q_DECLARE_METATYPE(CharacterHandler::Character);

@@ -2,7 +2,7 @@
 #include "AdditionalInfoWidget.hpp"
 #include "CharacterHandler.hpp"
 #include "CombatTableWidget.hpp"
-#include "FileHandler.hpp"
+#include "TableFileHandler.hpp"
 #include "RuleSettings.hpp"
 
 #include <catch2/catch.hpp>
@@ -35,8 +35,8 @@ public:
 };
 
 
-TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
-    auto const fileHandler = std::make_shared<FileHandler>();
+TEST_CASE_METHOD(FileHandlerTestUtils, "TableFileHandler Testing", "[TableFileHandler]") {
+    auto const fileHandler = std::make_shared<TableFileHandler>();
 
     SECTION("Check file saving") {
         auto characterHandler = std::make_shared<CharacterHandler>();
@@ -87,7 +87,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         ruleSettings.rollAutomatical = true;
 
         const auto tableData = combatTableWidget->tableDataFromWidget();
-        const auto tableSaved = fileHandler->writeTableToFile(tableData, "./test.lcm", 0, 1,
+        const auto tableSaved = fileHandler->writeToFile(tableData, "./test.lcm", 0, 1,
                                                               ruleSettings.ruleset, ruleSettings.rollAutomatical);
 
         SECTION("Table successfully saved") {
@@ -95,7 +95,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
         }
 
         SECTION("File format and content correct") {
-            const auto codeCSVStatus = fileHandler->getLCMStatus("./test.lcm");
+            const auto codeCSVStatus = fileHandler->getStatus("./test.lcm");
             REQUIRE(codeCSVStatus == 0);
 
             const auto& jsonObject = fileHandler->getData();
@@ -140,7 +140,7 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
 
         SECTION("Check format test") {
             SECTION("Functioning table") {
-                REQUIRE(fileHandler->getLCMStatus(resolvePath("./test.lcm")) == 0);
+                REQUIRE(fileHandler->getStatus(resolvePath("./test.lcm")) == 0);
             }
             SECTION("Broken table") {
                 // Incomplete json object
@@ -154,14 +154,15 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "FileHandler Testing", "[FileHandler]") {
                 fileOut.open(QIODevice::WriteOnly);
 
                 fileOut.write(byteArray);
-                REQUIRE(fileHandler->getLCMStatus(resolvePath("./broken.lcm")) == 1);
-                std::remove("./broken.lcm");
+                REQUIRE(fileHandler->getStatus(resolvePath("./broken.lcm")) == 1);
+
             }
             SECTION("Non readable/existing table") {
-                REQUIRE(fileHandler->getLCMStatus("dir/to/nonexisting/file.lcm") == 2);
+                REQUIRE(fileHandler->getStatus("dir/to/nonexisting/file.lcm") == 2);
             }
         }
 
         std::remove("./test.lcm");
+        std::remove("./broken.lcm");
     }
 }

@@ -1,4 +1,4 @@
-#include "FileHandler.hpp"
+#include "TableFileHandler.hpp"
 
 #include "AdditionalInfoData.hpp"
 
@@ -7,7 +7,7 @@
 #include <QJsonObject>
 
 bool
-FileHandler::writeTableToFile(
+TableFileHandler::writeToFile(
     const QVector<QVector<QVariant> >& tableData,
     const QString&                     fileName,
     unsigned int                       rowEntered,
@@ -60,12 +60,10 @@ FileHandler::writeTableToFile(
     auto byteArray = QJsonDocument(lcmFile).toJson();
     QFile fileOut(fileName);
     fileOut.open(QIODevice::WriteOnly);
-    return fileOut.write(byteArray);
+    return fileOut.write(byteArray) != -1;
 }
-
-
 int
-FileHandler::getLCMStatus(const QString& fileName)
+TableFileHandler::getStatus(const QString& fileName)
 {
     // Try to open
     QFile fileIin(fileName);
@@ -78,12 +76,10 @@ FileHandler::getLCMStatus(const QString& fileName)
     const auto document = QJsonDocument::fromJson(byteArray);
     m_lcmFile = document.object();
     // Correct or false format
-    return !checkLCMFormat();
+    return !checkFileFormat();
 }
-
-
 bool
-FileHandler::checkLCMFormat() const
+TableFileHandler::checkFileFormat() const
 {
     auto checker = !m_lcmFile.empty() && m_lcmFile.contains("row_entered") && m_lcmFile.contains("round_counter") &&
                    m_lcmFile.contains("ruleset") && m_lcmFile.contains("roll_automatically") &&

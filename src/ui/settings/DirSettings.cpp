@@ -40,13 +40,13 @@ DirSettings::handleSubDir()
     // Create a subdir to save the tables into
     QDir dir(QDir::currentPath());
     // Write into settings so this subdir is used as standard path for saving tables
-    if (dir.mkdir("tables")) {
-        const auto tableSubDir = QDir::currentPath() + "/tables";
-        // Save and open get the same directory, user might change it later
-        saveDir = tableSubDir;
-        openDir = tableSubDir;
-
-        write(tableSubDir, true);
-        return;
+    if (!dir.exists("tables")){
+        // Exit gracefully if necessary directory cannot be created?
+        if (!dir.mkdir("tables")) return;
     }
+    const auto tableSubDir = QDir::currentPath() + "/tables";
+    // Save and open get the same directory, user might change it later
+    saveDir = tableSubDir;
+    openDir = tableSubDir;
+    write(tableSubDir, true);
 }

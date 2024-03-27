@@ -10,6 +10,8 @@ target_sources(settings INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/BaseSettings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/DirSettings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/DirSettings.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/CharDirSettings.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/CharDirSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/RuleSettings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/RuleSettings.cpp
     ${CMAKE_CURRENT_LIST_DIR}/TableSettings.hpp

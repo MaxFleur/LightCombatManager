@@ -1,9 +1,13 @@
 #pragma once
 
 #include "CharacterHandler.hpp"
+#include "templates/TemplatesListWidget.hpp"
+#include "CharFileHandler.hpp"
 
 #include <QDialog>
 #include <QPointer>
+#include <QDialogButtonBox>
+#include <QGridLayout>
 
 class QCheckBox;
 class QLabel;
@@ -42,6 +46,27 @@ private slots:
     void
     okButtonClicked();
 
+    void
+    storeTemplatesButtonClicked();
+
+    void
+    showTemplatesButtonClicked();
+
+    void
+    hideTemplatesButtonClicked();
+
+    void
+    applyTemplateButtonClicked();
+
+    void
+    loadTemplates();
+
+    void
+    removeTemplateButtonClicked();
+
+    void
+    displayWarning(const QString &title, const QString &text);
+
 private:
     QPointer<QLineEdit> m_nameEdit;
     QPointer<QSpinBox> m_iniBox;
@@ -56,6 +81,14 @@ private:
     QPointer<QLabel> m_animatedLabel;
 
     QPointer<QTimer> m_timer;
+
+    TemplatesListWidget* m_templatesListWidget;
+    QDialogButtonBox* m_templatesButtonBox;
+    QPushButton* m_storeTemplatesButton;
+    QPushButton* m_hideTemplatesButton;
+    QPushButton* m_removeTemplatesButton;
+
+    std::unique_ptr<CharFileHandler> m_fileHandler;
 
     int m_iniWithoutModValue = 0;
 

@@ -19,6 +19,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QShortcut>
+#include <QToolBar>
 #include <QToolButton>
 #include <QUndoStack>
 #include <QVBoxLayout>
@@ -37,8 +38,6 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 {
     m_characterHandler = std::make_shared<CharacterHandler>();
 
-    m_tableWidget = new CombatTableWidget(m_characterHandler, mainWidgetWidth, this);
-
     m_undoStack = new QUndoStack(this);
 
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
@@ -52,19 +51,15 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     setUndoRedoIcon(isSystemInDarkMode);
 
+    auto* const toolBar = new QToolBar("Actions");
+    toolBar->addAction(m_undoAction);
+    toolBar->addAction(m_redoAction);
+
+    m_tableWidget = new CombatTableWidget(m_characterHandler, mainWidgetWidth, this);
+
     // Spinbox for the hp column
     auto *const delegateSpinBox = new DelegateSpinBox(this);
     m_tableWidget->setItemDelegateForColumn(COL_HP, delegateSpinBox);
-
-    auto* const undoButton = new QToolButton;
-    undoButton->setToolTip(tr("Undo last action."));
-    undoButton->setShortcut(QKeySequence::Undo);
-    undoButton->setDefaultAction(m_undoAction);
-
-    auto* const redoButton = new QToolButton;
-    redoButton->setToolTip(tr("Redo last action."));
-    redoButton->setShortcut(QKeySequence::Redo);
-    redoButton->setDefaultAction(m_redoAction);
 
     auto *const upButton = new QToolButton;
     upButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -103,8 +98,6 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(m_currentPlayerLabel);
     lowerLayout->addStretch();
-    lowerLayout->addWidget(undoButton);
-    lowerLayout->addWidget(redoButton);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(upButton);
     lowerLayout->addWidget(downButton);
@@ -112,6 +105,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     lowerLayout->addWidget(exitButton);
 
     auto *const mainLayout = new QVBoxLayout(this);
+    mainLayout->addWidget(toolBar);
     mainLayout->addWidget(m_tableWidget);
     mainLayout->addLayout(lowerLayout);
     setLayout(mainLayout);

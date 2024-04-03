@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg
+    width="43mm"
+    height="43mm"
+    version="1.1"
+    viewBox="0 0 43 43"
+    xmlns="http://www.w3.org/2000/svg">
+
+ <g stroke="#000" stroke-linecap="square" stroke-width="2.6291">
+  <rect x="1.5454" y="16.976" width="39.921" height="9.1096"/>
+  <rect transform="rotate(90)" x="1.5706" y="-26.061" width="39.921" height="9.1096"/>
+ </g>
+</svg>

@@ -40,18 +40,33 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 
     m_undoStack = new QUndoStack(this);
 
+    m_addCharacterAction = createAction(tr("Add new Character(s)..."), tr("Add new Character(s)"),
+                                        QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), true);
+    m_removeAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
+    m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(Qt::CTRL | Qt::Key_E), false);
+    m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(Qt::CTRL | Qt::Key_D), false);
+    m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(Qt::CTRL | Qt::Key_I), false);
+
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);
-    this->addAction(m_undoAction);
-
     m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
     m_redoAction->setShortcuts(QKeySequence::Redo);
-    this->addAction(m_redoAction);
+
+    addAction(m_addCharacterAction);
+    addAction(m_undoAction);
+    addAction(m_redoAction);
 
     const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     setUndoRedoIcon(isSystemInDarkMode);
 
     auto* const toolBar = new QToolBar("Actions");
+    toolBar->addAction(m_addCharacterAction);
+    toolBar->addAction(m_removeAction);
+    toolBar->addAction(m_addEffectAction);
+    toolBar->addSeparator();
+    toolBar->addAction(m_duplicateAction);
+    toolBar->addAction(m_rerollAction);
+    toolBar->addSeparator();
     toolBar->addAction(m_undoAction);
     toolBar->addAction(m_redoAction);
 
@@ -80,18 +95,6 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_roundCounterLabel = new QLabel(tr("Current: None"));
     m_currentPlayerLabel = new QLabel(tr("Round 0"));
 
-    connect(this, &CombatWidget::roundCounterSet, this, [this] {
-        m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
-    });
-
-    connect(m_tableWidget, &QTableWidget::itemPressed, this, [this] {
-        saveOldState();
-    });
-    connect(m_tableWidget, &QTableWidget::currentCellChanged, this, [this] {
-        saveOldState();
-    });
-    connect(m_tableWidget, &QTableWidget::itemChanged, this, &CombatWidget::handleTableWidgetItemPressed);
-
     // Lower layout
     auto *const lowerLayout = new QHBoxLayout();
     lowerLayout->addWidget(m_roundCounterLabel);
@@ -110,14 +113,19 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     mainLayout->addLayout(lowerLayout);
     setLayout(mainLayout);
 
-    auto *const duplicateShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_D), this);
-    auto *const deleteShortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this);
-    auto *const statusEffectShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_E), this);
-    auto *const rerollIniShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_I), this);
-    auto *const editCombatShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), this);
     auto *const resortTableShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
     auto *const moveCharacterDownwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), this);
     auto *const moveCharacterUpwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), this);
+
+    connect(this, &CombatWidget::roundCounterSet, this, [this] {
+        m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
+    });
+
+    connect(m_addCharacterAction, &QAction::triggered, this, &CombatWidget::openAddCharacterDialog);
+    connect(m_removeAction, &QAction::triggered, this, &CombatWidget::removeRow);
+    connect(m_addEffectAction, &QAction::triggered, this, &CombatWidget::openStatusEffectDialog);
+    connect(m_duplicateAction, &QAction::triggered, this, &CombatWidget::duplicateRow);
+    connect(m_rerollAction, &QAction::triggered, this, &CombatWidget::rerollIni);
 
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
         m_tableWidget->clearSelection();
@@ -128,6 +136,19 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     connect(m_tableWidget, &QTableWidget::cellChanged, this, [this] {
         emit changeOccured();
     });
+    connect(m_tableWidget, &QTableWidget::itemPressed, this, [this] {
+        saveOldState();
+    });
+    connect(m_tableWidget, &QTableWidget::itemSelectionChanged, this, [this] {
+        m_removeAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
+        m_addEffectAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
+        m_duplicateAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
+        m_rerollAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
+    });
+    connect(m_tableWidget, &QTableWidget::currentCellChanged, this, [this] {
+        saveOldState();
+    });
+    connect(m_tableWidget, &QTableWidget::itemChanged, this, &CombatWidget::handleTableWidgetItemPressed);
 
     connect(upButton, &QPushButton::clicked, this, [this] {
         enteredRowChanged(false);
@@ -139,11 +160,6 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
         emit exit();
     });
 
-    connect(duplicateShortcut, &QShortcut::activated, this, &CombatWidget::duplicateRow);
-    connect(deleteShortcut, &QShortcut::activated, this, &CombatWidget::removeRow);
-    connect(statusEffectShortcut, &QShortcut::activated, this, &CombatWidget::openStatusEffectDialog);
-    connect(rerollIniShortcut, &QShortcut::activated, this, &CombatWidget::rerollIni);
-    connect(editCombatShortcut, &QShortcut::activated, this, &CombatWidget::openAddCharacterDialog);
     connect(resortTableShortcut, &QShortcut::activated, this, &CombatWidget::sortTable);
     connect(moveCharacterDownwardShortcut, &QShortcut::activated, this, [this] {
         switchCharacterPosition(true);
@@ -238,6 +254,11 @@ CombatWidget::resetNameAndInfoWidth(const int nameWidth, const int addInfoWidth)
 void
 CombatWidget::setUndoRedoIcon(bool isDarkMode)
 {
+    m_addCharacterAction->setIcon(isDarkMode ? QIcon(":/icons/table/add_white.svg") : QIcon(":/icons/table/add_black.svg"));
+    m_removeAction->setIcon(isDarkMode ? QIcon(":/icons/table/remove_white.svg") : QIcon(":/icons/table/remove_black.svg"));
+    m_addEffectAction->setIcon(isDarkMode ? QIcon(":/icons/table/effect_white.svg") : QIcon(":/icons/table/effect_black.svg"));
+    m_duplicateAction->setIcon(isDarkMode ? QIcon(":/icons/table/duplicate_white.svg") : QIcon(":/icons/table/duplicate_black.svg"));
+    m_rerollAction->setIcon(isDarkMode ? QIcon(":/icons/table/reroll_white.svg") : QIcon(":/icons/table/reroll_black.svg"));
     m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
     m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
 }
@@ -347,6 +368,8 @@ CombatWidget::openStatusEffectDialog()
             pushOnUndoStack();
         }
     }
+
+    m_tableWidget->itemSelectionChanged();
 }
 
 
@@ -393,6 +416,71 @@ CombatWidget::rerollIni()
                                tr("Modifier: ") + QString::number(characters.at(row).modifier);
 
     QMessageBox::information(this, tr("Rerolled initiative"), messageString);
+    m_tableWidget->itemSelectionChanged();
+}
+
+
+// Remove a row/character of the table
+void
+CombatWidget::removeRow()
+{
+    if (!m_tableWidget->selectionModel()->hasSelection()) {
+        return;
+    }
+
+    saveOldState();
+    m_tableWidget->resynchronizeCharacters();
+
+    // Get selected rows indices
+    for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
+        m_removedOrAddedRowIndices.emplace_back(index.row());
+    }
+
+    // Sort reversed so items in the vector can be removed without using offsets
+    std::sort(m_removedOrAddedRowIndices.begin(), m_removedOrAddedRowIndices.end(), [](const auto& a, const auto& b) {
+        return a > b;
+    });
+
+    auto& characters = m_characterHandler->getCharacters();
+    for (const auto& index : m_removedOrAddedRowIndices) {
+        // If the deleted row is before the current entered row, move one up
+        if (index < (int) m_rowEntered) {
+            m_rowEntered--;
+        } else if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
+            // If the deleted row was the last one in the table and also the current player, select to the first row
+            m_rowEntered = 0;
+        }
+
+        characters.remove(index);
+    }
+
+    // Reverse for the undo stack removal operation
+    std::reverse(m_removedOrAddedRowIndices.begin(), m_removedOrAddedRowIndices.end());
+
+    // Update the current player row and table
+    setRowAndPlayer();
+    pushOnUndoStack();
+    m_tableWidget->itemSelectionChanged();
+}
+
+
+void
+CombatWidget::duplicateRow()
+{
+    if (m_tableWidget->selectionModel()->selectedRows().size() != 1) {
+        return;
+    }
+
+    saveOldState();
+
+    m_tableWidget->resynchronizeCharacters();
+    auto& characters = m_characterHandler->getCharacters();
+    const auto currentIndex = m_tableWidget->currentIndex().row();
+    characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
+
+    m_removedOrAddedRowIndices.emplace_back(currentIndex + 1);
+    pushOnUndoStack();
+    m_tableWidget->itemSelectionChanged();
 }
 
 
@@ -484,68 +572,6 @@ CombatWidget::setRowAndPlayer() const
 
 
 void
-CombatWidget::duplicateRow()
-{
-    if (m_tableWidget->selectionModel()->selectedRows().size() != 1) {
-        return;
-    }
-
-    saveOldState();
-
-    m_tableWidget->resynchronizeCharacters();
-    auto& characters = m_characterHandler->getCharacters();
-    const auto currentIndex = m_tableWidget->currentIndex().row();
-    characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
-
-    m_removedOrAddedRowIndices.emplace_back(currentIndex + 1);
-    pushOnUndoStack();
-}
-
-
-// Remove a row/character of the table
-void
-CombatWidget::removeRow()
-{
-    if (!m_tableWidget->selectionModel()->hasSelection()) {
-        return;
-    }
-
-    saveOldState();
-    m_tableWidget->resynchronizeCharacters();
-
-    // Get selected rows indices
-    for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
-        m_removedOrAddedRowIndices.emplace_back(index.row());
-    }
-
-    // Sort reversed so items in the vector can be removed without using offsets
-    std::sort(m_removedOrAddedRowIndices.begin(), m_removedOrAddedRowIndices.end(), [](const auto& a, const auto& b) {
-        return a > b;
-    });
-
-    auto& characters = m_characterHandler->getCharacters();
-    for (const auto& index : m_removedOrAddedRowIndices) {
-        // If the deleted row is before the current entered row, move one up
-        if (index < (int) m_rowEntered) {
-            m_rowEntered--;
-        } else if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
-            // If the deleted row was the last one in the table and also the current player, select to the first row
-            m_rowEntered = 0;
-        }
-
-        characters.remove(index);
-    }
-
-    // Reverse for the undo stack removal operation
-    std::reverse(m_removedOrAddedRowIndices.begin(), m_removedOrAddedRowIndices.end());
-
-    // Update the current player row and table
-    setRowAndPlayer();
-    pushOnUndoStack();
-}
-
-
-void
 CombatWidget::switchCharacterPosition(bool goDown)
 {
     // Do not fall out of table bounds
@@ -626,6 +652,18 @@ CombatWidget::setTableOption(bool option, int valueType)
 }
 
 
+QAction*
+CombatWidget::createAction(const QString& text, const QString& toolTip, const QKeySequence& keySequence, bool enabled)
+{
+    auto* const action = new QAction(text);
+    action->setToolTip(toolTip);
+    action->setShortcut(keySequence);
+    action->setEnabled(enabled);
+
+    return action;
+}
+
+
 void
 CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
@@ -635,30 +673,18 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     // Map from MainWindow coordinates to Table Widget coordinates
     if (currentRow >= 0) {
         // Status Effect, reroll, duplication and removal only if the cursor is above an item
-        auto *const statusEffectAction = menu->addAction(tr("Add Status Effect(s)..."), this, [this] () {
-            openStatusEffectDialog();
-        });
-        statusEffectAction->setShortcut(Qt::CTRL | Qt::Key_E);
-        statusEffectAction->setShortcutVisibleInContextMenu(true);
+        menu->addAction(m_addEffectAction);
 
         // Enable only for a single selected character
         if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
-            auto *const rerollIniAction = menu->addAction(tr("Reroll Initiative"), this, &CombatWidget::rerollIni);
-            rerollIniAction->setShortcut(Qt::CTRL | Qt::Key_I);
-            rerollIniAction->setShortcutVisibleInContextMenu(true);
-
-            auto *const duplicateRowAction = menu->addAction(tr("Duplicate"), this, [this] () {
-                duplicateRow();
-            });
-            duplicateRowAction->setShortcut(Qt::CTRL | Qt::Key_D);
-            duplicateRowAction->setShortcutVisibleInContextMenu(true);
+            menu->addAction(m_rerollAction);
+            menu->addAction(m_duplicateAction);
+            m_rerollAction->setShortcutVisibleInContextMenu(true);
+            m_duplicateAction->setShortcutVisibleInContextMenu(true);
         }
 
-        auto *const removeRowAction = menu->addAction(tr("Remove"), this, [this] () {
-            removeRow();
-        });
-        removeRowAction->setShortcut(Qt::Key_Delete);
-        removeRowAction->setShortcutVisibleInContextMenu(true);
+        menu->addAction(m_removeAction);
+        m_removeAction->setShortcutVisibleInContextMenu(true);
 
         if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
             auto *const moveCharacterUpwardAction = menu->addAction(tr("Move Upward"), this, [this] {
@@ -685,11 +711,8 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 
     menu->addSeparator();
 
-    auto *const openAddCharacterDialogAction = menu->addAction(tr("Add new Character(s)..."), this, [this] () {
-        openAddCharacterDialog();
-    });
-    openAddCharacterDialogAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N));
-    openAddCharacterDialogAction->setShortcutVisibleInContextMenu(true);
+    menu->addAction(m_addCharacterAction);
+    m_addCharacterAction->setShortcutVisibleInContextMenu(true);
 
     if (m_tableWidget->rowCount() > 1) {
         auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {

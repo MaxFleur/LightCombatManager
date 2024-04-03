@@ -113,6 +113,12 @@ private slots:
     rerollIni();
 
     void
+    removeRow();
+
+    void
+    duplicateRow();
+
+    void
     handleTableWidgetItemPressed(QTableWidgetItem *item);
 
 private:
@@ -124,12 +130,6 @@ private:
 
     void
     setRowAndPlayer() const;
-
-    void
-    duplicateRow();
-
-    void
-    removeRow();
 
     void
     switchCharacterPosition(bool goDown);
@@ -144,6 +144,12 @@ private:
     void
     setRowIdentifiers();
 
+    [[nodiscard]] QAction*
+    createAction(const QString&      text,
+                 const QString&      toolTip,
+                 const QKeySequence& keySequence,
+                 bool                enabled);
+
     void
     contextMenuEvent(QContextMenuEvent *event) override;
 
@@ -154,6 +160,12 @@ private:
     QPointer<QLabel> m_currentPlayerLabel;
 
     QPointer<QUndoStack> m_undoStack;
+
+    QPointer<QAction> m_addCharacterAction;
+    QPointer<QAction> m_removeAction;
+    QPointer<QAction> m_addEffectAction;
+    QPointer<QAction> m_duplicateAction;
+    QPointer<QAction> m_rerollAction;
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
 

@@ -18,8 +18,18 @@
         <file>icons/menus/save_as_black.svg</file>
         <file>icons/menus/save_as_white.svg</file>
 
+        <file>icons/table/add_black.svg</file>
+        <file>icons/table/add_white.svg</file>
+        <file>icons/table/duplicate_black.svg</file>
+        <file>icons/table/duplicate_white.svg</file>
+        <file>icons/table/effect_black.svg</file>
+        <file>icons/table/effect_white.svg</file>
         <file>icons/table/redo_black.svg</file>
         <file>icons/table/redo_white.svg</file>
+        <file>icons/table/remove_black.svg</file>
+        <file>icons/table/remove_white.svg</file>
+        <file>icons/table/reroll_black.svg</file>
+        <file>icons/table/reroll_white.svg</file>
         <file>icons/table/undo_black.svg</file>
         <file>icons/table/undo_white.svg</file>
     </qresource>

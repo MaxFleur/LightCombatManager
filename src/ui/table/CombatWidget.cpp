@@ -18,7 +18,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QShortcut>
 #include <QToolBar>
 #include <QToolButton>
 #include <QUndoStack>
@@ -46,15 +45,18 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(Qt::CTRL | Qt::Key_E), false);
     m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(Qt::CTRL | Qt::Key_D), false);
     m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(Qt::CTRL | Qt::Key_I), false);
+    m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(Qt::CTRL | Qt::Key_R), true);
+    m_moveUpwardAction = createAction(tr("Move Upward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), true);
+    m_moveDownwardAction = createAction(tr("Move Downward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), true);
 
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);
     m_redoAction = m_undoStack->createRedoAction(this, tr("&Redo"));
     m_redoAction->setShortcuts(QKeySequence::Redo);
 
-    addAction(m_addCharacterAction);
-    addAction(m_undoAction);
-    addAction(m_redoAction);
+    addAction(m_resortAction);
+    addAction(m_moveUpwardAction);
+    addAction(m_moveDownwardAction);
 
     const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     setUndoRedoIcon(isSystemInDarkMode);
@@ -113,10 +115,6 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     mainLayout->addLayout(lowerLayout);
     setLayout(mainLayout);
 
-    auto *const resortTableShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_R), this);
-    auto *const moveCharacterDownwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), this);
-    auto *const moveCharacterUpwardShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), this);
-
     connect(this, &CombatWidget::roundCounterSet, this, [this] {
         m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
     });
@@ -126,6 +124,13 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     connect(m_addEffectAction, &QAction::triggered, this, &CombatWidget::openStatusEffectDialog);
     connect(m_duplicateAction, &QAction::triggered, this, &CombatWidget::duplicateRow);
     connect(m_rerollAction, &QAction::triggered, this, &CombatWidget::rerollIni);
+    connect(m_resortAction, &QAction::triggered, this, &CombatWidget::sortTable);
+    connect(m_moveUpwardAction, &QAction::triggered, this, [this] {
+        switchCharacterPosition(false);
+    });
+    connect(m_moveDownwardAction, &QAction::triggered, this, [this] {
+        switchCharacterPosition(true);
+    });
 
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
         m_tableWidget->clearSelection();
@@ -158,14 +163,6 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     });
     connect(exitButton, &QPushButton::clicked, this, [this] {
         emit exit();
-    });
-
-    connect(resortTableShortcut, &QShortcut::activated, this, &CombatWidget::sortTable);
-    connect(moveCharacterDownwardShortcut, &QShortcut::activated, this, [this] {
-        switchCharacterPosition(true);
-    });
-    connect(moveCharacterUpwardShortcut, &QShortcut::activated, this, [this] {
-        switchCharacterPosition(false);
     });
 }
 
@@ -555,6 +552,10 @@ CombatWidget::setTableDataWithFileData()
 void
 CombatWidget::sortTable()
 {
+    if (m_tableWidget->rowCount() <= 1) {
+        return;
+    }
+
     saveOldState();
     // Main sorting
     m_tableWidget->resynchronizeCharacters();
@@ -659,6 +660,7 @@ CombatWidget::createAction(const QString& text, const QString& toolTip, const QK
     action->setToolTip(toolTip);
     action->setShortcut(keySequence);
     action->setEnabled(enabled);
+    action->setShortcutVisibleInContextMenu(true);
 
     return action;
 }
@@ -679,28 +681,15 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
             menu->addAction(m_rerollAction);
             menu->addAction(m_duplicateAction);
-            m_rerollAction->setShortcutVisibleInContextMenu(true);
-            m_duplicateAction->setShortcutVisibleInContextMenu(true);
         }
 
         menu->addAction(m_removeAction);
-        m_removeAction->setShortcutVisibleInContextMenu(true);
 
         if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
-            auto *const moveCharacterUpwardAction = menu->addAction(tr("Move Upward"), this, [this] {
-                switchCharacterPosition(false);
-            });
-            moveCharacterUpwardAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up));
-            moveCharacterUpwardAction->setShortcutVisibleInContextMenu(true);
-
-            auto *const moveCharacterDownwardAction = menu->addAction(tr("Move Downward"), this, [this] {
-                switchCharacterPosition(true);
-            });
-            moveCharacterDownwardAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down));
-            moveCharacterDownwardAction->setShortcutVisibleInContextMenu(true);
-
-            moveCharacterUpwardAction->setEnabled(currentRow > 0);
-            moveCharacterDownwardAction->setEnabled(currentRow < m_tableWidget->rowCount() - 1);
+            menu->addAction(m_moveUpwardAction);
+            menu->addAction(m_moveDownwardAction);
+            m_moveUpwardAction->setEnabled(currentRow > 0);
+            m_moveDownwardAction->setEnabled(currentRow < m_tableWidget->rowCount() - 1);
         }
 
         menu->addSeparator();
@@ -712,14 +701,9 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     menu->addSeparator();
 
     menu->addAction(m_addCharacterAction);
-    m_addCharacterAction->setShortcutVisibleInContextMenu(true);
 
     if (m_tableWidget->rowCount() > 1) {
-        auto *const resortAction = menu->addAction(tr("Resort Table"), this, [this] () {
-            sortTable();
-        });
-        resortAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
-        resortAction->setShortcutVisibleInContextMenu(true);
+        menu->addAction(m_resortAction);
         menu->addSeparator();
     }
 

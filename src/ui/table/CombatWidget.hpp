@@ -168,6 +168,9 @@ private:
     QPointer<QAction> m_rerollAction;
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
+    QPointer<QAction> m_resortAction;
+    QPointer<QAction> m_moveUpwardAction;
+    QPointer<QAction> m_moveDownwardAction;
 
     std::shared_ptr<CharacterHandler> m_characterHandler;
 

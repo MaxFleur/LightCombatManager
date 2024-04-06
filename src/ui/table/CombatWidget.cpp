@@ -65,6 +65,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     toolBar->addAction(m_addCharacterAction);
     toolBar->addAction(m_removeAction);
     toolBar->addAction(m_addEffectAction);
+    toolBar->addAction(m_resortAction);
     toolBar->addSeparator();
     toolBar->addAction(m_duplicateAction);
     toolBar->addAction(m_rerollAction);
@@ -256,6 +257,7 @@ CombatWidget::setUndoRedoIcon(bool isDarkMode)
     m_addEffectAction->setIcon(isDarkMode ? QIcon(":/icons/table/effect_white.svg") : QIcon(":/icons/table/effect_black.svg"));
     m_duplicateAction->setIcon(isDarkMode ? QIcon(":/icons/table/duplicate_white.svg") : QIcon(":/icons/table/duplicate_black.svg"));
     m_rerollAction->setIcon(isDarkMode ? QIcon(":/icons/table/reroll_white.svg") : QIcon(":/icons/table/reroll_black.svg"));
+    m_resortAction->setIcon(isDarkMode ? QIcon(":/icons/table/sort_white.svg") : QIcon(":/icons/table/sort_black.svg"));
     m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
     m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
 }

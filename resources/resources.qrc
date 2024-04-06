@@ -30,6 +30,8 @@
         <file>icons/table/remove_white.svg</file>
         <file>icons/table/reroll_black.svg</file>
         <file>icons/table/reroll_white.svg</file>
+        <file>icons/table/sort_black.svg</file>
+        <file>icons/table/sort_white.svg</file>
         <file>icons/table/undo_black.svg</file>
         <file>icons/table/undo_white.svg</file>
     </qresource>

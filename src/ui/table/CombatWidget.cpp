@@ -672,40 +672,31 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     auto *const menu = new QMenu(this);
     const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
 
+    menu->addAction(m_addCharacterAction);
+
     // Map from MainWindow coordinates to Table Widget coordinates
     if (currentRow >= 0) {
-        // Status Effect, reroll, duplication and removal only if the cursor is above an item
+        menu->addAction(m_removeAction);
         menu->addAction(m_addEffectAction);
+
+        if (m_tableWidget->rowCount() > 1) {
+            menu->addAction(m_resortAction);
+        }
+        menu->addSeparator();
 
         // Enable only for a single selected character
         if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
-            menu->addAction(m_rerollAction);
-            menu->addAction(m_duplicateAction);
-        }
+            auto *const editingMenu = menu->addMenu(tr("Editing"));
+            editingMenu->addAction(m_duplicateAction);
+            editingMenu->addAction(m_rerollAction);
+            editingMenu->addAction(m_moveUpwardAction);
+            editingMenu->addAction(m_moveDownwardAction);
 
-        menu->addAction(m_removeAction);
-
-        if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
-            menu->addAction(m_moveUpwardAction);
-            menu->addAction(m_moveDownwardAction);
             m_moveUpwardAction->setEnabled(currentRow > 0);
             m_moveDownwardAction->setEnabled(currentRow < m_tableWidget->rowCount() - 1);
         }
-
-        menu->addSeparator();
     }
-
-    menu->addAction(m_undoAction);
-    menu->addAction(m_redoAction);
-
     menu->addSeparator();
-
-    menu->addAction(m_addCharacterAction);
-
-    if (m_tableWidget->rowCount() > 1) {
-        menu->addAction(m_resortAction);
-        menu->addSeparator();
-    }
 
     auto *const optionMenu = menu->addMenu(tr("Table Options"));
 

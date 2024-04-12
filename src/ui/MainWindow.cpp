@@ -255,9 +255,8 @@ MainWindow::setWelcomingWidget()
     setWindowTitle("LCM");
 
     m_welcomeWidget = new WelcomeWidget(this);
-    setMinimumSize(0, 0);
-    setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     setCentralWidget(m_welcomeWidget);
+    resize(START_WIDTH, START_HEIGHT);
 
     m_isTableSavedInFile = false;
     emit setSaveAction(false);
@@ -271,8 +270,8 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJson
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
-        if (height > START_HEIGHT) {
-            setFixedHeight(height);
+        if (height > START_HEIGHT && (int) height > this->height()) {
+            resize(width(), height);
         }
     });
     connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int tableWidth) {
@@ -292,12 +291,12 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJson
     setCombatTitle(false);
 
     if (newCombatStarted) {
-        setFixedHeight(START_HEIGHT);
+        resize(width(), START_HEIGHT);
         m_combatWidget->openAddCharacterDialog();
     } else {
         m_combatWidget->generateTable();
         const auto height = m_combatWidget->getHeight();
-        setFixedHeight(std::max(height, START_HEIGHT));
+        resize(width(), std::max(height, START_HEIGHT));
     }
 
     m_isTableActive = true;

@@ -57,7 +57,7 @@ public:
     [[nodiscard]] unsigned int
     getHeight() const
     {
-        return m_tableWidget->getHeight();
+        return m_tableWidget->getHeight() + 40;
     }
 
     void

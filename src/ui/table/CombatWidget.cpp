@@ -273,6 +273,7 @@ CombatWidget::openAddCharacterDialog()
     auto *const dialog = new AddCharacterDialog(this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
+        emit tableHeightSet(m_tableWidget->getHeight() + 40);
     });
 
     if (dialog->exec() == QDialog::Accepted) {

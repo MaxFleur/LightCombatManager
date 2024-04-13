@@ -3,6 +3,7 @@
 #include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
 #include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
 
 #include <QApplication>
 #include <QHeaderView>
@@ -34,11 +35,11 @@ CombatTableWidget::CombatTableWidget(std::shared_ptr<CharacterHandler> character
 
     setFocusPolicy(Qt::ClickFocus);
 
-    setColumnWidth(COL_NAME, mainWidgetWidth * WIDTH_NAME);
-    setColumnWidth(COL_INI, mainWidgetWidth * WIDTH_INI);
-    setColumnWidth(COL_MODIFIER, mainWidgetWidth * WIDTH_MODIFIER);
-    setColumnWidth(COL_HP, mainWidgetWidth * WIDTH_HP);
-    setColumnWidth(COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
+    setColumnWidth(Utils::Table::COL_NAME, mainWidgetWidth * WIDTH_NAME);
+    setColumnWidth(Utils::Table::COL_INI, mainWidgetWidth * WIDTH_INI);
+    setColumnWidth(Utils::Table::COL_MODIFIER, mainWidgetWidth * WIDTH_MODIFIER);
+    setColumnWidth(Utils::Table::COL_HP, mainWidgetWidth * WIDTH_HP);
+    setColumnWidth(Utils::Table::COL_ENEMY, mainWidgetWidth * WIDTH_ENEMY);
 
     connect(this, &QTableWidget::itemSelectionChanged, this, &CombatTableWidget::adjustAdditionalInfoWidgetPalette);
 }
@@ -52,11 +53,11 @@ CombatTableWidget::resynchronizeCharacters()
     for (auto i = 0; i < rowCount(); i++) {
         auto *const additionalInfoWidget = cellWidget(i, 5)->findChild<AdditionalInfoWidget *>();
 
-        m_characterHandler->storeCharacter(item(i, COL_NAME)->text(),
-                                           item(i, COL_INI)->text().toInt(),
-                                           item(i, COL_MODIFIER)->text().toInt(),
-                                           item(i, COL_HP)->text().toInt(),
-                                           item(i, COL_ENEMY)->checkState() == Qt::Checked,
+        m_characterHandler->storeCharacter(item(i, Utils::Table::COL_NAME)->text(),
+                                           item(i, Utils::Table::COL_INI)->text().toInt(),
+                                           item(i, Utils::Table::COL_MODIFIER)->text().toInt(),
+                                           item(i, Utils::Table::COL_HP)->text().toInt(),
+                                           item(i, Utils::Table::COL_ENEMY)->checkState() == Qt::Checked,
                                            additionalInfoWidget->getAdditionalInformation());
     }
 }
@@ -111,7 +112,7 @@ CombatTableWidget::setTableRowColor(bool resetColor)
     };
 
     for (auto i = 0; i < rowCount(); i++) {
-        const auto cellColor = color(item(i, COL_ENEMY)->checkState() == Qt::Checked);
+        const auto cellColor = color(item(i, Utils::Table::COL_ENEMY)->checkState() == Qt::Checked);
 
         for (auto j = 0; j < FIRST_FIVE_COLUMNS; j++) {
             item(i, j)->setBackground(cellColor);
@@ -119,8 +120,8 @@ CombatTableWidget::setTableRowColor(bool resetColor)
 
         QPalette palette;
         palette.setColor(QPalette::Base, cellColor);
-        cellWidget(i, COL_ADDITIONAL)->setAutoFillBackground(!m_rowsUncolored);
-        cellWidget(i, COL_ADDITIONAL)->setPalette(palette);
+        cellWidget(i, Utils::Table::COL_ADDITIONAL)->setAutoFillBackground(!m_rowsUncolored);
+        cellWidget(i, Utils::Table::COL_ADDITIONAL)->setPalette(palette);
     }
 
     blockSignals(false);
@@ -149,7 +150,7 @@ CombatTableWidget::setIniColumnTooltips(bool resetToolTip)
 void
 CombatTableWidget::setStatusEffectInWidget(QVector<AdditionalInfoData::StatusEffect> statusEffects, int row)
 {
-    auto* const additionalInfoWidget = cellWidget(row, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();
+    auto* const additionalInfoWidget = cellWidget(row, Utils::Table::COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();
     additionalInfoWidget->setStatusEffects(statusEffects);
 }
 
@@ -158,7 +159,7 @@ void
 CombatTableWidget::adjustStatusEffectRoundCounter(bool decrease)
 {
     for (auto i = 0; i < rowCount(); i++) {
-        auto* const additionalInfoWidget = cellWidget(i, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();
+        auto* const additionalInfoWidget = cellWidget(i, Utils::Table::COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>();
         additionalInfoWidget->adjustEffectDuration(decrease);
     }
 }
@@ -175,10 +176,10 @@ CombatTableWidget::tableDataFromWidget()
             rowValues.push_back(item(i, j)->text());
         }
 
-        rowValues.push_back(item(i, COL_ENEMY)->checkState() == Qt::Checked);
+        rowValues.push_back(item(i, Utils::Table::COL_ENEMY)->checkState() == Qt::Checked);
 
         QVariant variant;
-        variant.setValue(cellWidget(i, COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation());
+        variant.setValue(cellWidget(i, Utils::Table::COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation());
         rowValues.push_back(variant);
 
         tableData.push_back(rowValues);
@@ -247,11 +248,11 @@ CombatTableWidget::adjustAdditionalInfoWidgetPalette()
     for (const auto& selectedModel : selectedRows) {
         const auto row = selectedModel.row();
 
-        auto palette = cellWidget(row, COL_ADDITIONAL)->palette();
+        auto palette = cellWidget(row, Utils::Table::COL_ADDITIONAL)->palette();
         auto baseColor = palette.color(QPalette::Base);
 
         baseColor.setAlpha(0);
         palette.setColor(QPalette::Base, baseColor);
-        cellWidget(row, COL_ADDITIONAL)->setPalette(palette);
+        cellWidget(row, Utils::Table::COL_ADDITIONAL)->setPalette(palette);
     }
 }

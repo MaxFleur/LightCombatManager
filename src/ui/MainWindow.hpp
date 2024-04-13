@@ -109,7 +109,4 @@ private:
 
     static constexpr unsigned int START_WIDTH = 860;
     static constexpr unsigned int START_HEIGHT = 240;
-
-    static constexpr int COL_RULESET = 8;
-    static constexpr int COL_ROLL_AUTOMATICALLY = 9;
 };

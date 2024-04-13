@@ -199,18 +199,10 @@ private:
 
     bool m_isDataStored;
 
-    static constexpr int COL_NAME = 0;
-    static constexpr int COL_INI = 1;
-    static constexpr int COL_MODIFIER = 2;
-    static constexpr int COL_HP = 3;
-    static constexpr int COL_ENEMY = 4;
-    static constexpr int COL_ADDITIONAL = 5;
-
     static constexpr int SPACING = 30;
 
     static constexpr int COL_LENGTH_BUFFER_NAME = 20;
     static constexpr int COL_LENGTH_BUFFER_ADDITIONAL = 35;
-
 
     static constexpr int LABEL_SHOWN_DURATION = 3000;
 };

@@ -7,6 +7,7 @@
 #include "StatusEffectDialog.hpp"
 #include "Undo.hpp"
 #include "UtilsGeneral.hpp"
+#include "UtilsTable.hpp"
 
 #include <QAction>
 #include <QApplication>
@@ -78,7 +79,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 
     // Spinbox for the hp column
     auto *const delegateSpinBox = new DelegateSpinBox(this);
-    m_tableWidget->setItemDelegateForColumn(COL_HP, delegateSpinBox);
+    m_tableWidget->setItemDelegateForColumn(Utils::Table::COL_HP, delegateSpinBox);
 
     auto *const upButton = new QToolButton;
     upButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -184,8 +185,8 @@ CombatWidget::generateTable()
 {
     // Store the data from file
     setTableDataWithFileData();
-    m_tableWidget->setColumnHidden(COL_INI, !m_tableSettings.iniShown);
-    m_tableWidget->setColumnHidden(COL_MODIFIER, !m_tableSettings.modifierShown);
+    m_tableWidget->setColumnHidden(Utils::Table::COL_INI, !m_tableSettings.iniShown);
+    m_tableWidget->setColumnHidden(Utils::Table::COL_MODIFIER, !m_tableSettings.modifierShown);
 
     for (auto i = 0; i < m_characterHandler->getCharacters().size(); i++) {
         m_removedOrAddedRowIndices.push_back(i);
@@ -237,14 +238,14 @@ CombatWidget::resetNameAndInfoWidth(const int nameWidth, const int addInfoWidth)
 
     // Due to the stretch property, the additional info column will be shortened if the name column
     // is enhanced. To prevent this, we store the old value and reuse it if necessary
-    const auto oldAddInfoWidth = m_tableWidget->columnWidth(COL_ADDITIONAL);
+    const auto oldAddInfoWidth = m_tableWidget->columnWidth(Utils::Table::COL_ADDITIONAL);
 
-    if (m_tableWidget->columnWidth(COL_NAME) < nameWidth) {
-        m_tableWidget->setColumnWidth(COL_NAME, nameWidth + COL_LENGTH_BUFFER_NAME);
+    if (m_tableWidget->columnWidth(Utils::Table::COL_NAME) < nameWidth) {
+        m_tableWidget->setColumnWidth(Utils::Table::COL_NAME, nameWidth + COL_LENGTH_BUFFER_NAME);
         changeOccured = true;
     }
     if (oldAddInfoWidth < addInfoWidth) {
-        m_tableWidget->setColumnWidth(COL_ADDITIONAL, addInfoWidth + COL_LENGTH_BUFFER_ADDITIONAL);
+        m_tableWidget->setColumnWidth(Utils::Table::COL_ADDITIONAL, addInfoWidth + COL_LENGTH_BUFFER_ADDITIONAL);
         changeOccured = true;
     }
 
@@ -458,7 +459,7 @@ CombatWidget::removeRow()
         // If the deleted row is before the current entered row, move one up
         if (index < (int) m_rowEntered) {
             m_rowEntered--;
-        } else if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, COL_NAME)->font().bold()) {
+        } else if (index == m_tableWidget->rowCount() - 1 && m_tableWidget->item(index, Utils::Table::COL_NAME)->font().bold()) {
             // If the deleted row was the last one in the table and also the current player, select to the first row
             m_rowEntered = 0;
         }
@@ -499,7 +500,7 @@ CombatWidget::duplicateRow()
 void
 CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
 {
-    if (item->column() == COL_ENEMY) {
+    if (item->column() == Utils::Table::COL_ENEMY) {
         m_tableWidget->blockSignals(true);
         // We need to store the old checkbox state, so we will reset the state for a short time
         // Then, after saving, reset to the new value and set the correct undo command
@@ -649,10 +650,10 @@ CombatWidget::setTableOption(bool option, int valueType)
 {
     switch (valueType) {
     case 0:
-        m_tableWidget->setColumnHidden(COL_INI, !option);
+        m_tableWidget->setColumnHidden(Utils::Table::COL_INI, !option);
         break;
     case 1:
-        m_tableWidget->setColumnHidden(COL_MODIFIER, !option);
+        m_tableWidget->setColumnHidden(Utils::Table::COL_MODIFIER, !option);
         break;
     case 2:
         m_tableWidget->setTableRowColor(!option);

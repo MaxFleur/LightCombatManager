@@ -18,6 +18,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
 #include <QUndoStack>
@@ -97,12 +98,18 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 
     m_roundCounterLabel = new QLabel(tr("Current: None"));
     m_currentPlayerLabel = new QLabel(tr("Round 0"));
+    m_iniRerolledLabel = new QLabel;
+
+    m_timer = new QTimer(this);
+    m_timer->setSingleShot(true);
 
     // Lower layout
     auto *const lowerLayout = new QHBoxLayout();
     lowerLayout->addWidget(m_roundCounterLabel);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(m_currentPlayerLabel);
+    lowerLayout->addSpacing(SPACING);
+    lowerLayout->addWidget(m_iniRerolledLabel);
     lowerLayout->addStretch();
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(upButton);
@@ -164,6 +171,10 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     });
     connect(exitButton, &QPushButton::clicked, this, [this] {
         emit exit();
+    });
+
+    connect(m_timer, &QTimer::timeout, this, [this] {
+        Utils::General::animateLabel(m_iniRerolledLabel);
     });
 }
 
@@ -411,11 +422,12 @@ CombatWidget::rerollIni()
     characters[row].initiative = newInitiative;
     pushOnUndoStack();
 
-    const auto messageString = tr("New initiative value: ") + QString::number(newInitiative) + "<br>" +
-                               tr("Rolled dice value: ") + QString::number(newRolledDice) + "<br>" +
-                               tr("Modifier: ") + QString::number(characters.at(row).modifier);
+    // Reset the graphics effect and kickoff the animation
+    m_iniRerolledLabel->setGraphicsEffect(0);
+    m_iniRerolledLabel->setText(tr("New Value: ") + QString::number(newInitiative) + tr(" (Rolled ") +
+                                QString::number(newRolledDice) + tr(" + Mod ") + QString::number(characters.at(row).modifier) + ").");
+    m_timer->start(LABEL_SHOWN_DURATION);
 
-    QMessageBox::information(this, tr("Rerolled initiative"), messageString);
     m_tableWidget->itemSelectionChanged();
 }
 

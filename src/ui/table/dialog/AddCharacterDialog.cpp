@@ -7,13 +7,11 @@
 #include <QCheckBox>
 #include <QDebug>
 #include <QDialogButtonBox>
-#include <QGraphicsEffect>
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QPropertyAnimation>
 #include <QPushButton>
 #include <QShortcut>
 #include <QSpinBox>
@@ -139,7 +137,9 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
 
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    connect(m_timer, &QTimer::timeout, this, &AddCharacterDialog::animateLabel);
+    connect(m_timer, &QTimer::timeout, this, [this] {
+        Utils::General::animateLabel(m_animatedLabel);
+    });
     connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {
         m_instanceNumberBox->setEnabled(m_multipleEnabledBox->checkState() == Qt::Checked);
     });
@@ -152,22 +152,6 @@ AddCharacterDialog::randomButtonClicked()
     const auto rand = Utils::General::rollDice();
     m_iniBox->setValue(rand + m_iniModifierBox->value());
     m_rolledValueLabel->setText(tr("Rolled: <b>") + QString::number(rand) + "</b>.");
-}
-
-
-void
-AddCharacterDialog::animateLabel()
-{
-    // Create a small fading text if a character has been stored
-    auto *const effect = new QGraphicsOpacityEffect;
-    m_animatedLabel->setGraphicsEffect(effect);
-
-    auto *const animation = new QPropertyAnimation(effect, "opacity");
-    animation->setDuration(LABEL_FADEOUT);
-    animation->setStartValue(1.0);
-    animation->setEndValue(0.0);
-    animation->setEasingCurve(QEasingCurve::OutQuad);
-    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 

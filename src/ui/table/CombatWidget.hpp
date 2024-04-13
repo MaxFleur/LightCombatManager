@@ -11,6 +11,7 @@
 class QAction;
 class QLabel;
 class QUndoStack;
+class QTimer;
 
 class AdditionalSettings;
 class RuleSettings;
@@ -158,8 +159,11 @@ private:
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
+    QPointer<QLabel> m_iniRerolledLabel;
 
     QPointer<QUndoStack> m_undoStack;
+
+    QPointer<QTimer> m_timer;
 
     QPointer<QAction> m_addCharacterAction;
     QPointer<QAction> m_removeAction;
@@ -206,4 +210,7 @@ private:
 
     static constexpr int COL_LENGTH_BUFFER_NAME = 20;
     static constexpr int COL_LENGTH_BUFFER_ADDITIONAL = 35;
+
+
+    static constexpr int LABEL_SHOWN_DURATION = 3000;
 };

@@ -31,9 +31,6 @@ private slots:
     randomButtonClicked();
 
     void
-    animateLabel();
-
-    void
     saveButtonClicked();
 
     void
@@ -62,5 +59,4 @@ private:
     bool m_isFirstCharStored{ false };
 
     static constexpr int LABEL_SHOWN_DURATION = 1000;
-    static constexpr int LABEL_FADEOUT = 2000;
 };

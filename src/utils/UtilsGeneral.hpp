@@ -3,6 +3,7 @@
 #include "AdditionalInfoData.hpp"
 #include "CharacterHandler.hpp"
 
+class QLabel;
 class QTableWidget;
 
 // General utility functions
@@ -26,7 +27,10 @@ getRulesetName(unsigned int ruleset);
 [[nodiscard]] QString
 getAutoRollEnabled(bool autoRollEnabled);
 
+void
+animateLabel(QPointer<QLabel> label);
+
 // Calculate the luminance value of a certain color, determine if the color is in dark mode
 [[nodiscard]] bool
-isSystemInDarkMode();
+isSystemInDarkMode();;
 }

@@ -4,6 +4,9 @@
 
 #include <QApplication>
 #include <QFileInfo>
+#include <QLabel>
+#include <QGraphicsEffect>
+#include <QPropertyAnimation>
 
 #include <random>
 
@@ -70,6 +73,24 @@ QString
 getAutoRollEnabled(bool autoRollEnabled)
 {
     return autoRollEnabled ? "automatic rolling enabled" : "automatic rolling disabled";
+}
+
+
+void
+animateLabel(QPointer<QLabel> label)
+{
+    static constexpr int LABEL_FADEOUT = 2000;
+
+    // Create a small fading text if a character has been stored
+    auto *const effect = new QGraphicsOpacityEffect;
+    label->setGraphicsEffect(effect);
+
+    auto *const animation = new QPropertyAnimation(effect, "opacity");
+    animation->setDuration(LABEL_FADEOUT);
+    animation->setStartValue(1.0);
+    animation->setEndValue(0.0);
+    animation->setEasingCurve(QEasingCurve::OutQuad);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 

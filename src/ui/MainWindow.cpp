@@ -89,6 +89,7 @@ MainWindow::newCombat()
     m_isTableSavedInFile = false;
 
     m_fileName = QString();
+    m_fileDir = QString();
 
     setTableWidget(false, true);
     setCombatTitle(true);
@@ -159,9 +160,8 @@ void
 MainWindow::openTable()
 {
     const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
-    static auto isTableAlreadyLoaded = false;
-    // Return for equal names or if file dialog has been cancelled
-    if ((fileName == m_dirSettings.openDir && isTableAlreadyLoaded) || fileName.isEmpty()) {
+    // Return if this exact same file is already loaded or if the dialog has been cancelled
+    if ((m_isTableActive && fileName == m_fileDir) || fileName.isEmpty()) {
         return;
     }
     // Check if a table is active right now
@@ -170,7 +170,6 @@ MainWindow::openTable()
         return;
     }
 
-    isTableAlreadyLoaded = true;
     auto rulesModified = false;
 
     switch (const auto code = m_fileHandler->getLCMStatus(fileName); code) {
@@ -197,6 +196,7 @@ MainWindow::openTable()
         // Save the opened file dir
         m_dirSettings.write(fileName);
         m_fileName = Utils::General::getCSVName(fileName);
+        m_fileDir = fileName;
         setTableWidget(true, false, m_fileHandler->getData());
 
         // If the settings rules are applied to the table, it is modified

@@ -100,6 +100,7 @@ private:
     RuleSettings::Ruleset m_loadedTableRule;
 
     QString m_fileName{ "" };
+    QString m_fileDir{ "" };
 
     bool m_isTableActive{ false };
     bool m_isTableSavedInFile{ false };

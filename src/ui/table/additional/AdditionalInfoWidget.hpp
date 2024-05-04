@@ -78,4 +78,6 @@ private:
     int m_statusEffectsLayoutWidth = 0;
 
     static constexpr int LENGTH_BUFFER = 30;
+    static constexpr int BORDER_VALUES = 0;
+    static constexpr int SPACING = 10;
 };

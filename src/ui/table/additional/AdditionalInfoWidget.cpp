@@ -19,10 +19,13 @@ AdditionalInfoWidget::AdditionalInfoWidget()
 
     m_statusEffectsLayout = new QHBoxLayout;
     m_statusEffectsLayout->addWidget(m_statusEffectLabel);
+    m_statusEffectsLayout->addSpacing(SPACING);
 
     auto* const mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_additionalInfoLineEdit);
     mainLayout->addLayout(m_statusEffectsLayout);
+    mainLayout->setSpacing(BORDER_VALUES);
+    mainLayout->setContentsMargins(BORDER_VALUES, BORDER_VALUES, BORDER_VALUES, BORDER_VALUES);
 
     setLayout(mainLayout);
 

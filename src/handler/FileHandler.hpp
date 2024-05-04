@@ -4,7 +4,7 @@
 
 #include <QJsonObject>
 
-// This class handles the saving and opening of csv table data
+// Handles saving and opening of lcm table data
 class FileHandler {
 public:
     // Write the table to an lcm file

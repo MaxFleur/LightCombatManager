@@ -36,7 +36,7 @@ getStringWidth(const QString& str)
 
 
 QString
-getCSVName(const QString& filePath)
+getLCMName(const QString& filePath)
 {
     const QFileInfo fileInfo(filePath);
     return fileInfo.fileName();

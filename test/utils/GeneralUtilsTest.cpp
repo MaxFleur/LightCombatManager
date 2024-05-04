@@ -8,13 +8,13 @@
 TEST_CASE("General Util Testing", "[GeneralUtils]") {
     SECTION("CSV file path test") {
         SECTION("Example Latin") {
-            REQUIRE(Utils::General::getCSVName("a/path/to/an/exampleTable.csv") == "exampleTable.csv");
+            REQUIRE(Utils::General::getLCMName("a/path/to/an/exampleTable.csv") == "exampleTable.csv");
         }
         SECTION("Example Umlaut") {
-            REQUIRE(Utils::General::getCSVName("/rändöm/päth/tö/exämpleTäble.csv") == "exämpleTäble.csv");
+            REQUIRE(Utils::General::getLCMName("/rändöm/päth/tö/exämpleTäble.csv") == "exämpleTäble.csv");
         }
         SECTION("Example Cyrillic") {
-            REQUIRE(Utils::General::getCSVName("путь/к/примеру.csv") == "примеру.csv");
+            REQUIRE(Utils::General::getLCMName("путь/к/примеру.csv") == "примеру.csv");
         }
     }
 }

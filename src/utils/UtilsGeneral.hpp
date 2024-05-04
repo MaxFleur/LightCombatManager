@@ -19,7 +19,7 @@ getStringWidth(const QString& str);
 
 // Trim a file's path so only the file name remains
 [[nodiscard]] QString
-getCSVName(const QString& filePath);
+getLCMName(const QString& filePath);
 
 [[nodiscard]] QString
 getRulesetName(unsigned int ruleset);

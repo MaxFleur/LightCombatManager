@@ -126,7 +126,7 @@ MainWindow::saveTable()
                                         m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
         m_isTableSavedInFile = true;
         m_dirSettings.write(fileName, true);
-        m_fileName = Utils::General::getCSVName(fileName);
+        m_fileName = Utils::General::getLCMName(fileName);
 
         setCombatTitle(false);
         // Success
@@ -195,7 +195,7 @@ MainWindow::openTable()
         m_isTableSavedInFile = true;
         // Save the opened file dir
         m_dirSettings.write(fileName);
-        m_fileName = Utils::General::getCSVName(fileName);
+        m_fileName = Utils::General::getLCMName(fileName);
         m_fileDir = fileName;
         setTableWidget(true, false, m_fileHandler->getData());
 

@@ -522,7 +522,7 @@ CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
 }
 
 
-// Set the characters vector, if the table data has been stored in a csv file
+// Set the character vector, if the table data has been stored in a lcm file
 void
 CombatWidget::setTableDataWithFileData()
 {

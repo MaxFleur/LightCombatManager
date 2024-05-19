@@ -120,6 +120,7 @@ CombatTableWidget::setTableRowColor(bool resetColor)
 
         QPalette palette;
         palette.setColor(QPalette::Base, cellColor);
+        palette.setColor(QPalette::Text, palette.color(QPalette::Text));
         cellWidget(i, Utils::Table::COL_ADDITIONAL)->setAutoFillBackground(!m_rowsUncolored);
         cellWidget(i, Utils::Table::COL_ADDITIONAL)->setPalette(palette);
     }
@@ -250,9 +251,11 @@ CombatTableWidget::adjustAdditionalInfoWidgetPalette()
 
         auto palette = cellWidget(row, Utils::Table::COL_ADDITIONAL)->palette();
         auto baseColor = palette.color(QPalette::Base);
+        auto highlightedTextColor = palette.color(QPalette::HighlightedText);
 
         baseColor.setAlpha(0);
         palette.setColor(QPalette::Base, baseColor);
+        palette.setColor(QPalette::Text, highlightedTextColor);
         cellWidget(row, Utils::Table::COL_ADDITIONAL)->setPalette(palette);
     }
 }

@@ -133,8 +133,8 @@ AdditionalInfoWidget::event(QEvent *event)
 {
     if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
         auto lineEditPalette = m_additionalInfoLineEdit->palette();
-        auto applicationBaseColor = QApplication::palette().color(QPalette::Button);
-        lineEditPalette.setColor(QPalette::Base, applicationBaseColor);
+        lineEditPalette.setColor(QPalette::Base, QApplication::palette().color(QPalette::Button));
+        lineEditPalette.setColor(QPalette::Text, QApplication::palette().color(QPalette::Text));
         m_additionalInfoLineEdit->setPalette(lineEditPalette);
 
         auto thisPalette = palette();

@@ -2,7 +2,7 @@
 
 #include "AdditionalSettings.hpp"
 #include "DirSettings.hpp"
-#include "FileHandler.hpp"
+#include "TableFileHandler.hpp"
 #include "RuleSettings.hpp"
 
 #include <QMainWindow>
@@ -91,7 +91,7 @@ private:
     QPointer<QAction> m_openSettingsAction;
     QPointer<QAction> m_aboutLCMAction;
 
-    std::unique_ptr<FileHandler> m_fileHandler;
+    std::unique_ptr<TableFileHandler> m_tableFileHandler;
 
     AdditionalSettings m_additionalSettings;
     RuleSettings m_ruleSettings;

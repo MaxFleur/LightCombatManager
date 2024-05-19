@@ -51,7 +51,6 @@ TEST_CASE("Settings Testing", "[Settings]") {
         REQUIRE(settings.value("dir_open").toString() == "/example/path/new_path");
         REQUIRE(settings.value("dir_save").toString() == "/example/path/dir_open_and_save");
     }
-
     SECTION("Rule settings test") {
         RuleSettings ruleSettings;
         QSettings settings;

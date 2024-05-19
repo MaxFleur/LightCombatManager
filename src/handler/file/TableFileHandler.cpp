@@ -1,13 +1,12 @@
-#include "FileHandler.hpp"
+#include "TableFileHandler.hpp"
 
 #include "AdditionalInfoData.hpp"
 
 #include <QFile>
 #include <QJsonDocument>
-#include <QJsonObject>
 
 bool
-FileHandler::writeTableToFile(
+TableFileHandler::writeToFile(
     const QVector<QVector<QVariant> >& tableData,
     const QString&                     fileName,
     unsigned int                       rowEntered,
@@ -60,34 +59,16 @@ FileHandler::writeTableToFile(
     auto byteArray = QJsonDocument(lcmFile).toJson();
     QFile fileOut(fileName);
     fileOut.open(QIODevice::WriteOnly);
-    return fileOut.write(byteArray);
-}
-
-
-int
-FileHandler::getLCMStatus(const QString& fileName)
-{
-    // Try to open
-    QFile fileIin(fileName);
-    if (!fileIin.open(QIODevice::ReadOnly)) {
-        // Read failed
-        return 2;
-    }
-
-    auto byteArray = fileIin.readAll();
-    const auto document = QJsonDocument::fromJson(byteArray);
-    m_lcmFile = document.object();
-    // Correct or false format
-    return !checkLCMFormat();
+    return fileOut.write(byteArray) != -1;
 }
 
 
 bool
-FileHandler::checkLCMFormat() const
+TableFileHandler::checkFileFormat() const
 {
-    auto checker = !m_lcmFile.empty() && m_lcmFile.contains("row_entered") && m_lcmFile.contains("round_counter") &&
-                   m_lcmFile.contains("ruleset") && m_lcmFile.contains("roll_automatically") &&
-                   m_lcmFile.contains("characters");
+    auto checker = !m_fileData.empty() && m_fileData.contains("row_entered") && m_fileData.contains("round_counter") &&
+                   m_fileData.contains("ruleset") && m_fileData.contains("roll_automatically") &&
+                   m_fileData.contains("characters");
 
     return checker;
 }

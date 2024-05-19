@@ -19,10 +19,10 @@ target_sources(ui INTERFACE
 
 if(${Qt6_FOUND})
     target_link_libraries(ui
-        INTERFACE Qt::SvgWidgets Qt::Widgets settings table
+        INTERFACE Qt::SvgWidgets Qt::Widgets fileHandler settings table
     )
 else()
     target_link_libraries(ui
-        INTERFACE Qt::Svg Qt::Widgets settings table
+        INTERFACE Qt::Svg Qt::Widgets fileHandler settings table
     )
 endif()

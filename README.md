@@ -16,12 +16,12 @@
 ### A small, lightweight cross-platform combat manager for d20-based role-playing games, based on Qt.
 
 With LightCombatManager (or just **LCM**), characters with initiative values, a health point counter and additional information (including ruleset-defined status effects) can be easily created.\
-![Bossfight](https://github.com/MaxFleur/LightCombatManager/assets/15110943/b85a9614-977e-4376-b61f-f1f76e777c82)
+![whole_widget](https://github.com/MaxFleur/LightCombatManager/assets/15110943/b44ac693-a9b1-4e57-b0b8-805c80ee0d45)
 
 After character generation, LCM creates a full combat table, which can be used to easily manage the combat. LCM supports operations such as dragging and dropping rows, undoing changes or the deletion and subsequent addition of characters.\
-![Start](https://github.com/MaxFleur/LightCombatManager/assets/15110943/d4a209a6-7abb-4149-be9c-314590923fb9)
+![new_combat](https://github.com/MaxFleur/LightCombatManager/assets/15110943/91e701c9-8716-4909-b7b7-d0c03867fdb6)
 
-If the game ends, but the current combat is not finished yet, the combat table can be saved and reopened later to continue the combat.
+If the game ends, but the current combat is not finished yet, the combat table can be saved and reopened later to continue the combat. Characters can also be stored as templates for later usage.
 
 ### Supported rulesets
 

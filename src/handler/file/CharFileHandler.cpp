@@ -9,7 +9,14 @@ CharFileHandler::CharFileHandler()
 {
     QSettings settings;
     QDir dir(settings.fileName());
-    dir.cdUp();
+    const auto doSettingExist = dir.cdUp();
+
+    if (!doSettingExist) {
+        // For the case where no settings exist yet, create a small dummy value and retry
+        settings.setValue("char_handler", "value");
+        settings.sync();
+        dir.cdUp();
+    }
     m_directoryString = dir.absolutePath() + "/";
 }
 

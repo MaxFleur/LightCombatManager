@@ -5,6 +5,7 @@
 
 #include <QApplication>
 #include <QSplashScreen>
+#include <QSettings>
 
 #include <chrono>
 #include <thread>
@@ -15,8 +16,11 @@ main(int argc, char *argv[])
     QApplication app(argc, argv);
     app.setApplicationName("LCM");
     app.setOrganizationName("LCM");
-
     app.setStyle(new CheckBoxStyle());
+
+#ifdef _WIN32
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+#endif
 
     const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     QPixmap pixmap(isSystemInDarkMode ? ":/icons/logos/splash_dark.png" : ":/icons/logos/splash_light.png");

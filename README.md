@@ -3,7 +3,7 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![CI badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run.yml/badge.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v2.0.1-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v2.1.0-blue.svg)
 
 </div>
 

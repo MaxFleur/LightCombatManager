@@ -67,7 +67,7 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     m_multipleEnabledBox->setToolTip(tr("If this is selected and 'Save' is pressed,\n"
                                         "the Character is added multiple times to the Table."));
 
-    m_storeTemplatesButton = new QPushButton(tr("Store in Templates"));
+    m_storeTemplatesButton = new QPushButton(tr("Store as Template"));
     m_storeTemplatesButton->setVisible(false);
     auto *const resetButton = new QPushButton(tr("Reset all entered Values"));
 

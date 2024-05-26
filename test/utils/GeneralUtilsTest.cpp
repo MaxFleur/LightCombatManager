@@ -1,7 +1,7 @@
 #include "AdditionalInfoWidget.hpp"
 #include "UtilsGeneral.hpp"
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 #include <QHBoxLayout>
 

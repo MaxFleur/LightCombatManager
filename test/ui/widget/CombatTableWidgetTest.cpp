@@ -3,7 +3,7 @@
 #include "CharacterHandler.hpp"
 #include "CombatTableWidget.hpp"
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 #include <QApplication>
 #include <QHBoxLayout>

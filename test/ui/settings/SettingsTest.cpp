@@ -3,7 +3,7 @@
 #include "RuleSettings.hpp"
 #include "TableSettings.hpp"
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <QSettings>
 

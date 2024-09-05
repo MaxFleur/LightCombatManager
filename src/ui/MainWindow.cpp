@@ -206,6 +206,8 @@ MainWindow::openTable()
         break;
     }
     case 2:
+        QMessageBox::critical(this, tr("Failure reading File!"),
+                              tr("The file reading failed. Make sure that the file is accessible and readable."));
         break;
     }
 }

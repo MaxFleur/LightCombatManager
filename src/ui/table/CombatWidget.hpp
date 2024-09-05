@@ -5,6 +5,7 @@
 #include "TableFileHandler.hpp"
 #include "TableSettings.hpp"
 
+#include <QJsonObject>
 #include <QPointer>
 #include <QWidget>
 
@@ -95,6 +96,9 @@ private slots:
                 int newVisualIndex);
 
     void
+    insertTable();
+
+    void
     openStatusEffectDialog();
 
     void
@@ -131,7 +135,7 @@ private:
                    int  valueType);
 
     void
-    setRowIdentifiers();
+    writeStoredCharacters(const QJsonObject& jsonObject);
 
     [[nodiscard]] QAction*
     createAction(const QString&      text,
@@ -154,6 +158,7 @@ private:
     QPointer<QTimer> m_timer;
 
     QPointer<QAction> m_addCharacterAction;
+    QPointer<QAction> m_insertTableAction;
     QPointer<QAction> m_removeAction;
     QPointer<QAction> m_addEffectAction;
     QPointer<QAction> m_duplicateAction;

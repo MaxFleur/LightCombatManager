@@ -25,16 +25,16 @@
 #include <QUndoStack>
 #include <QVBoxLayout>
 
-CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
-                           const RuleSettings&       RuleSettings,
-                           int                       mainWidgetWidth,
-                           bool                      isDataStored,
-                           const QJsonObject&        data,
-                           QWidget *                 parent) :
+CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
+                           const AdditionalSettings&         AdditionalSettings,
+                           const RuleSettings&               RuleSettings,
+                           int                               mainWidgetWidth,
+                           bool                              isDataStored,
+                           QWidget *                         parent) :
     QWidget(parent),
+    m_tableFileHandler(tableFilerHandler),
     m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
-    m_loadedFileData(data),
     m_isDataStored(std::move(isDataStored))
 {
     m_characterHandler = std::make_shared<CharacterHandler>();
@@ -181,10 +181,47 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 
 
 void
-CombatWidget::generateTable()
+CombatWidget::generateTableFromTableData()
 {
     // Store the data from file
-    setTableDataWithFileData();
+    if (!m_isDataStored) {
+        return;
+    }
+
+    const auto& loadedFileData = m_tableFileHandler->getData();
+    m_rowEntered = loadedFileData.value("row_entered").toInt();
+    m_roundCounter = loadedFileData.value("round_counter").toInt();
+
+    auto& characters = m_characterHandler->getCharacters();
+    const auto& charactersObject = loadedFileData.value("characters").toObject();
+
+    // Single character
+    for (const auto& character : charactersObject) {
+        const auto& characterObject = character.toObject();
+        const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
+
+        // Additional info
+        AdditionalInfoData additionalInfoData;
+        additionalInfoData.mainInfoText = additionalInfoObject.value("main_info").toString();
+
+        // Status effects
+        const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
+        for (const auto& singleEffect : statusEffectsObject) {
+            const auto& singleEffectObject = singleEffect.toObject();
+
+            AdditionalInfoData::StatusEffect effect(singleEffectObject.value("name").toString(),
+                                                    singleEffectObject.value("is_permanent").toBool(),
+                                                    singleEffectObject.value("duration").toInt());
+            additionalInfoData.statusEffects.push_back(effect);
+        }
+
+        characters.push_back(CharacterHandler::Character {
+            characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
+            characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
+            characterObject.value("is_enemy").toBool(), additionalInfoData });
+    }
+
+    m_isDataStored = false;
     m_tableWidget->setColumnHidden(Utils::Table::COL_INI, !m_tableSettings.iniShown);
     m_tableWidget->setColumnHidden(Utils::Table::COL_MODIFIER, !m_tableSettings.modifierShown);
 
@@ -196,6 +233,14 @@ CombatWidget::generateTable()
     pushOnUndoStack();
     // We do not need a save step directly after table creation, so reset the stack
     m_undoStack->clear();
+}
+
+
+bool
+CombatWidget::saveTableData(const QString& fileName)
+{
+    return m_tableFileHandler->writeToFile(m_tableWidget->tableDataFromWidget(), fileName, m_rowEntered,
+                                           m_roundCounter, m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
 }
 
 
@@ -519,49 +564,6 @@ CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
         m_tableWidget->resynchronizeCharacters();
         pushOnUndoStack();
     }
-}
-
-
-// Set the character vector, if the table data has been stored in a lcm file
-void
-CombatWidget::setTableDataWithFileData()
-{
-    if (!m_isDataStored) {
-        return;
-    }
-
-    m_rowEntered = m_loadedFileData.value("row_entered").toInt();
-    m_roundCounter = m_loadedFileData.value("round_counter").toInt();
-
-    auto& characters = m_characterHandler->getCharacters();
-    const auto& charactersObject = m_loadedFileData.value("characters").toObject();
-
-    // Single character
-    for (const auto& character : charactersObject) {
-        const auto& characterObject = character.toObject();
-        const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
-
-        // Additional info
-        AdditionalInfoData additionalInfoData;
-        additionalInfoData.mainInfoText = additionalInfoObject.value("main_info").toString();
-
-        // Status effects
-        const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
-        for (const auto& singleEffect : statusEffectsObject) {
-            const auto& singleEffectObject = singleEffect.toObject();
-
-            AdditionalInfoData::StatusEffect effect(singleEffectObject.value("name").toString(),
-                                                    singleEffectObject.value("is_permanent").toBool(),
-                                                    singleEffectObject.value("duration").toInt());
-            additionalInfoData.statusEffects.push_back(effect);
-        }
-
-        characters.push_back(CharacterHandler::Character {
-            characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
-            characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
-            characterObject.value("is_enemy").toBool(), additionalInfoData });
-    }
-    m_isDataStored = false;
 }
 
 

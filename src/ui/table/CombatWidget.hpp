@@ -2,9 +2,9 @@
 
 #include "CharacterHandler.hpp"
 #include "CombatTableWidget.hpp"
+#include "TableFileHandler.hpp"
 #include "TableSettings.hpp"
 
-#include <QJsonObject>
 #include <QPointer>
 #include <QWidget>
 
@@ -21,32 +21,20 @@ class CombatWidget : public QWidget {
     Q_OBJECT
 
 public:
-    CombatWidget(const AdditionalSettings& AdditionalSettings,
-                 const RuleSettings&       RuleSettings,
-                 int                       mainWidgetWidth,
-                 bool                      isDataStored,
-                 const QJsonObject&        data = {},
-                 QWidget *                 parent = 0);
+    CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
+                 const AdditionalSettings&         AdditionalSettings,
+                 const RuleSettings&               RuleSettings,
+                 int                               mainWidgetWidth,
+                 bool                              isDataStored,
+                 QWidget *                         parent = 0);
 
     void
-    generateTable();
+    generateTableFromTableData();
 
     [[nodiscard]] CombatTableWidget*
     getCombatTableWidget() const
     {
         return m_tableWidget;
-    }
-
-    [[nodiscard]] unsigned int
-    getRowEntered() const
-    {
-        return m_rowEntered;
-    }
-
-    [[nodiscard]] unsigned int
-    getRoundCounter() const
-    {
-        return m_roundCounter;
     }
 
     [[nodiscard]] bool
@@ -60,6 +48,9 @@ public:
     {
         return m_tableWidget->getHeight() + 40;
     }
+
+    [[nodiscard]] bool
+    saveTableData(const QString& fileName);
 
     void
     saveOldState();
@@ -124,9 +115,6 @@ private slots:
 
 private:
     void
-    setTableDataWithFileData();
-
-    void
     sortTable();
 
     void
@@ -177,6 +165,7 @@ private:
     QPointer<QAction> m_moveDownwardAction;
 
     std::shared_ptr<CharacterHandler> m_characterHandler;
+    std::shared_ptr<TableFileHandler> m_tableFileHandler;
 
     const AdditionalSettings& m_additionalSettings;
     const RuleSettings& m_ruleSettings;
@@ -187,8 +176,6 @@ private:
     std::vector<int> m_removedOrAddedRowIndices;
 
     QByteArray m_headerDataState;
-
-    QJsonObject m_loadedFileData;
 
     unsigned int m_rowEntered{ 0 };
     unsigned int m_roundCounter{ 1 };

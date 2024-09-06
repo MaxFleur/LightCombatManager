@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="38mm" height="27mm" version="1.1" viewBox="0 0 38 27" xmlns="http://www.w3.org/2000/svg">
- <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
-  <path d="m2.327 2.1445h32.764" stroke="#FFF"/>
-  <path d="m2.327 9.7277h32.764" stroke="#FFF"/>
-  <path d="m2.327 17.311h32.764" stroke="#cb1b02"/>
-  <path d="m2.327 24.894h32.764" stroke="#cb1b02"/>
+
+<svg
+    width="37mm"
+    height="27mm"
+    version="1.1"
+    viewBox="0 0 37 27"
+    xmlns="http://www.w3.org/2000/svg">
+
+ <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+  <path d="m1.7488 1.6759h32.764" stroke="#FFF"/>
+  <path d="m1.7488 7.4967h32.764" stroke="#FFF"/>
+  <g stroke="#cb1b02">
+   <path d="m17.321 13.318h17.981"/>
+   <path d="m17.321 19.138h17.981"/>
+   <path d="m17.321 24.959h17.981"/>
+   <path d="m7.4021 14.156v9.9644"/>
+   <path d="m2.4199 19.138h9.9644"/>
+  </g>
  </g>
 </svg>

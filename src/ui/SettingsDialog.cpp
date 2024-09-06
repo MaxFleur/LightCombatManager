@@ -5,10 +5,8 @@
 
 #include <QCheckBox>
 #include <QComboBox>
-#include <QDebug>
 #include <QDialogButtonBox>
 #include <QHBoxLayout>
-#include <QMessageBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -67,10 +65,17 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
     m_modToIniCharsBox->setToolTip(tr("If the mod value is adjusted in the Character Dialog,\n"
                                       "this value will be added to the Initiative value."));
 
+    auto* const resetToDefaultButton = new QPushButton(tr("Reset to Defaults"));
+    resetToDefaultButton->setEnabled(!isTableActive);
+
     auto *const buttonBox = new QDialogButtonBox;
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
     auto *const applyButton = buttonBox->addButton(QDialogButtonBox::Apply);
     auto *const cancelButton = buttonBox->addButton(QDialogButtonBox::Cancel);
+
+    auto* const resetToDefaultButtonLayout = new QHBoxLayout;
+    resetToDefaultButtonLayout->addStretch();
+    resetToDefaultButtonLayout->addWidget(resetToDefaultButton);
 
     auto *const mainLayout = new QVBoxLayout;
     mainLayout->addWidget(rulesLabel);
@@ -81,12 +86,25 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
     mainLayout->addWidget(m_indicatorMultipleCharsBox);
     mainLayout->addWidget(m_rollIniMultipleCharsBox);
     mainLayout->addWidget(m_modToIniCharsBox);
+    mainLayout->addLayout(resetToDefaultButtonLayout);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
 
+    connect(resetToDefaultButton, &QPushButton::clicked, this, &SettingsDialog::resetToDefaultClicked);
     connect(okButton, &QPushButton::clicked, this, &SettingsDialog::okClicked);
     connect(applyButton, &QPushButton::clicked, this, &SettingsDialog::applyClicked);
     connect(cancelButton, &QPushButton::clicked, this, &QDialog::reject);
+}
+
+
+void
+SettingsDialog::resetToDefaultClicked()
+{
+    m_rulesetBox->setCurrentIndex(0);
+    m_rollTieBox->setChecked(false);
+    m_indicatorMultipleCharsBox->setChecked(true);
+    m_rollIniMultipleCharsBox->setChecked(false);
+    m_modToIniCharsBox->setChecked(true);
 }
 
 

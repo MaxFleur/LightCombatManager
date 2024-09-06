@@ -22,6 +22,9 @@ public:
 
 private slots:
     void
+    resetToDefaultClicked();
+
+    void
     applyClicked();
 
     void

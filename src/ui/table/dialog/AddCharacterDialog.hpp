@@ -12,7 +12,6 @@ class QLabel;
 class QLineEdit;
 class QSpinBox;
 
-class RuleSettings;
 class TemplatesWidget;
 
 // Dialog used to add new characters to an existing Combat

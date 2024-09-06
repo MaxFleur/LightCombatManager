@@ -18,8 +18,8 @@
 
 class TemplatesListWidget;
 
-AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
-    QDialog(parent)
+AddCharacterDialog::AddCharacterDialog(const bool modAddedToIni, QWidget *parent) :
+    QDialog(parent), m_modAddedToIni(modAddedToIni)
 {
     setWindowTitle(tr("Add new Character(s)"));
 
@@ -141,9 +141,15 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
 
     connect(randomIniButton, &QPushButton::clicked, this, &AddCharacterDialog::randomButtonClicked);
     connect(m_iniBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
+        if (!m_modAddedToIni) {
+            return;
+        }
         m_iniWithoutModValue = m_iniBox->value() - m_iniModifierBox->value();
     });
     connect(m_iniModifierBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
+        if (!m_modAddedToIni) {
+            return;
+        }
         m_iniBox->setValue(m_iniWithoutModValue + m_iniModifierBox->value());
     });
     connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {

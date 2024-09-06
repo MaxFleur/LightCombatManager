@@ -62,6 +62,11 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
     m_rollIniMultipleCharsBox->setToolTip(tr("If a Character is added to the table multiple times,\n"
                                              "the Initiative is rerolled for each duplicate."));
 
+    m_modToIniCharsBox = new QCheckBox(tr("Add Mod Value to Initiative Value"));
+    m_modToIniCharsBox->setChecked(m_additionalSettings.modAddedToIni);
+    m_modToIniCharsBox->setToolTip(tr("If the mod value is adjusted in the Character Dialog,\n"
+                                      "this value will be added to the Initiative value."));
+
     auto *const buttonBox = new QDialogButtonBox;
     auto *const okButton = buttonBox->addButton(QDialogButtonBox::Ok);
     auto *const applyButton = buttonBox->addButton(QDialogButtonBox::Apply);
@@ -75,6 +80,7 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
     mainLayout->addWidget(additionalLabel);
     mainLayout->addWidget(m_indicatorMultipleCharsBox);
     mainLayout->addWidget(m_rollIniMultipleCharsBox);
+    mainLayout->addWidget(m_modToIniCharsBox);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
 
@@ -92,8 +98,10 @@ SettingsDialog::applyClicked()
         m_ruleSettings.write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
     }
     if (m_indicatorMultipleCharsBox->isChecked() != m_additionalSettings.indicatorMultipleChars ||
-        m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings.rollIniMultipleChars) {
-        m_additionalSettings.write(m_indicatorMultipleCharsBox->isChecked(), m_rollIniMultipleCharsBox->isChecked());
+        m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings.rollIniMultipleChars ||
+        m_modToIniCharsBox->isChecked() != m_additionalSettings.modAddedToIni) {
+        m_additionalSettings.write(m_indicatorMultipleCharsBox->isChecked(), m_rollIniMultipleCharsBox->isChecked(),
+                                   m_modToIniCharsBox->isChecked());
     }
 }
 

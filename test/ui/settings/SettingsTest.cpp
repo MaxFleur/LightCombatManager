@@ -16,20 +16,24 @@ TEST_CASE("Settings Testing", "[Settings]") {
         settings.beginGroup("AdditionalSettings");
         REQUIRE(settings.value("indicatorMultipleChars").isValid() == false);
         REQUIRE(settings.value("rollIniMultipleChars").isValid() == false);
+        REQUIRE(settings.value("modAddedToIni").isValid() == false);
         settings.endGroup();
 
-        additionalSettings.write(false, true);
+        additionalSettings.write(false, true, false);
         settings.beginGroup("AdditionalSettings");
         REQUIRE(settings.value("indicatorMultipleChars").isValid() == true);
         REQUIRE(settings.value("rollIniMultipleChars").isValid() == true);
+        REQUIRE(settings.value("modAddedToIni").isValid() == true);
         REQUIRE(settings.value("indicatorMultipleChars").toBool() == false);
         REQUIRE(settings.value("rollIniMultipleChars").toBool() == true);
+        REQUIRE(settings.value("modAddedToIni").toBool() == false);
         settings.endGroup();
 
-        additionalSettings.write(false, false);
+        additionalSettings.write(true, false, true);
         settings.beginGroup("AdditionalSettings");
-        REQUIRE(settings.value("indicatorMultipleChars").toBool() == false);
+        REQUIRE(settings.value("indicatorMultipleChars").toBool() == true);
         REQUIRE(settings.value("rollIniMultipleChars").toBool() == false);
+        REQUIRE(settings.value("modAddedToIni").toBool() == true);
         settings.endGroup();
     }
 

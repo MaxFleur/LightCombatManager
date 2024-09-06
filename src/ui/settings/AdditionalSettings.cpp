@@ -10,7 +10,8 @@ AdditionalSettings::AdditionalSettings()
 
 void
 AdditionalSettings::write(bool newIndicatorMultipleChars,
-                          bool newRollIniMultipleChars)
+                          bool newRollIniMultipleChars,
+                          bool newModAddedToIni)
 {
     QSettings settings;
 
@@ -22,6 +23,10 @@ AdditionalSettings::write(bool newIndicatorMultipleChars,
     if (rollIniMultipleChars != newRollIniMultipleChars) {
         rollIniMultipleChars = newRollIniMultipleChars;
         settings.setValue("rollIniMultipleChars", rollIniMultipleChars);
+    }
+    if (modAddedToIni != newModAddedToIni) {
+        modAddedToIni = newModAddedToIni;
+        settings.setValue("modAddedToIni", modAddedToIni);
     }
     settings.endGroup();
 }
@@ -39,5 +44,8 @@ AdditionalSettings::read()
     rollIniMultipleChars = settings.value("rollIniMultipleChars").isValid() ?
                            settings.value("rollIniMultipleChars").toBool() :
                            false;
+    modAddedToIni = settings.value("modAddedToIni").isValid() ?
+                    settings.value("modAddedToIni").toBool() :
+                    true;
     settings.endGroup();
 }

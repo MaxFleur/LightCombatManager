@@ -310,7 +310,7 @@ CombatWidget::openAddCharacterDialog()
     m_tableWidget->resynchronizeCharacters();
     const auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
 
-    auto *const dialog = new AddCharacterDialog(this);
+    auto *const dialog = new AddCharacterDialog(m_additionalSettings.modAddedToIni, this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
         emit tableHeightSet(m_tableWidget->getHeight() + 40);

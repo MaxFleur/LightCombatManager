@@ -20,7 +20,8 @@ class AddCharacterDialog : public QDialog {
 
 public:
     explicit
-    AddCharacterDialog(QWidget* parent = 0);
+    AddCharacterDialog(const bool modAddedToIni,
+                       QWidget*   parent = 0);
 
 signals:
     void
@@ -71,6 +72,7 @@ private:
     int m_iniWithoutModValue = 0;
 
     bool m_isFirstCharStored{ false };
+    const bool m_modAddedToIni;
 
     static constexpr int LABEL_SHOWN_DURATION = 1000;
     static constexpr int LABEL_FADEOUT = 2000;

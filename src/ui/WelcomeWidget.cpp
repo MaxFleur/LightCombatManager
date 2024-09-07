@@ -17,10 +17,15 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
                                              "or open an already existing Combat ('File' -> 'Open...')."));
     welcomeLabel->setAlignment(Qt::AlignCenter);
 
+    auto* const versionLabel = new QLabel("v2.2");
+    versionLabel->setToolTip(tr("New settings, insert Tables into an existing Combat,\n"
+                                "change HP for multiple Characters at once and more!"));
+    versionLabel->setAlignment(Qt::AlignRight);
+
     auto *const layout = new QVBoxLayout(this);
     layout->addWidget(m_svgWidget);
     layout->addWidget(welcomeLabel);
-    layout->addSpacing(20);
+    layout->addWidget(versionLabel);
     layout->setAlignment(m_svgWidget, Qt::AlignHCenter);
     setLayout(layout);
 }

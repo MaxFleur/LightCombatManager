@@ -69,7 +69,7 @@ MainWindow::MainWindow()
     helpMenu->addAction(m_aboutLCMAction);
     helpMenu->addAction(aboutQtAction);
 
-    m_tableFileHandler = std::make_unique<TableFileHandler>();
+    m_tableFileHandler = std::make_shared<TableFileHandler>();
 
     setMainWindowIcons();
     resize(START_WIDTH, START_HEIGHT);
@@ -119,11 +119,7 @@ MainWindow::saveTable()
         fileName = m_dirSettings.openDir;
     }
     // Save the table
-    auto* const combatTableWidget = m_combatWidget->getCombatTableWidget();
-    const auto tableData = combatTableWidget->tableDataFromWidget();
-    if (m_tableFileHandler->writeToFile(tableData, fileName, m_combatWidget->getRowEntered(),
-                                        m_combatWidget->getRoundCounter(),
-                                        m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical)) {
+    if (m_combatWidget->saveTableData(fileName)) {
         m_isTableSavedInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getLCMName(fileName);
@@ -197,7 +193,7 @@ MainWindow::openTable()
         m_dirSettings.write(fileName);
         m_fileName = Utils::General::getLCMName(fileName);
         m_fileDir = fileName;
-        setTableWidget(true, false, m_tableFileHandler->getData());
+        setTableWidget(true, false);
 
         // If the settings rules are applied to the table, it is modified
         setCombatTitle(rulesModified);
@@ -210,6 +206,8 @@ MainWindow::openTable()
         break;
     }
     case 2:
+        QMessageBox::critical(this, tr("Failure reading File!"),
+                              tr("The file reading failed. Make sure that the file is accessible and readable."));
         break;
     }
 }
@@ -264,9 +262,9 @@ MainWindow::setWelcomingWidget()
 
 
 void
-MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJsonObject& jsonObjectData)
+MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
 {
-    m_combatWidget = new CombatWidget(m_additionalSettings, m_ruleSettings, width(), isDataStored, jsonObjectData, this);
+    m_combatWidget = new CombatWidget(m_tableFileHandler, m_additionalSettings, m_ruleSettings, width(), isDataStored, this);
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
@@ -294,7 +292,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted, const QJson
         resize(width(), START_HEIGHT);
         m_combatWidget->openAddCharacterDialog();
     } else {
-        m_combatWidget->generateTable();
+        m_combatWidget->generateTableFromTableData();
         const auto height = m_combatWidget->getHeight();
         resize(width(), std::max(height, START_HEIGHT));
     }

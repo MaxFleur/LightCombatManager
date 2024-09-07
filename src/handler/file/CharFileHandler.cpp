@@ -3,21 +3,15 @@
 #include <QDir>
 #include <QFile>
 #include <QJsonDocument>
-#include <QSettings>
 
 CharFileHandler::CharFileHandler()
 {
-    QSettings settings;
-    QDir dir(settings.fileName());
-    const auto doSettingExist = dir.cdUp();
-
-    if (!doSettingExist) {
-        // For the case where no settings exist yet, create a small dummy value and retry
-        settings.setValue("char_handler", "value");
-        settings.sync();
-        dir.cdUp();
+    // Create a subdir to save the tables into
+    QDir dir(QDir::currentPath());
+    if (!dir.exists(QDir::currentPath() + "/chars")) {
+        dir.mkdir("chars");
     }
-    m_directoryString = dir.absolutePath() + "/";
+    m_directoryString = QDir::currentPath() + "/chars/";
 }
 
 
@@ -34,7 +28,7 @@ CharFileHandler::writeToFile(const CharacterHandler::Character &character) const
 
     // Write to file
     const auto byteArray = QJsonDocument(characterObject).toJson();
-    QFile fileOut(m_directoryString + character.name + ".char");
+    QFile fileOut(m_directoryString + "/" + character.name + ".char");
     fileOut.open(QIODevice::WriteOnly);
     return fileOut.write(byteArray);
 }

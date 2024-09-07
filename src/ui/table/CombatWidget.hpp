@@ -2,6 +2,7 @@
 
 #include "CharacterHandler.hpp"
 #include "CombatTableWidget.hpp"
+#include "TableFileHandler.hpp"
 #include "TableSettings.hpp"
 
 #include <QJsonObject>
@@ -21,32 +22,20 @@ class CombatWidget : public QWidget {
     Q_OBJECT
 
 public:
-    CombatWidget(const AdditionalSettings& AdditionalSettings,
-                 const RuleSettings&       RuleSettings,
-                 int                       mainWidgetWidth,
-                 bool                      isDataStored,
-                 const QJsonObject&        data = {},
-                 QWidget *                 parent = 0);
+    CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
+                 const AdditionalSettings&         AdditionalSettings,
+                 const RuleSettings&               RuleSettings,
+                 int                               mainWidgetWidth,
+                 bool                              isDataStored,
+                 QWidget *                         parent = 0);
 
     void
-    generateTable();
+    generateTableFromTableData();
 
     [[nodiscard]] CombatTableWidget*
     getCombatTableWidget() const
     {
         return m_tableWidget;
-    }
-
-    [[nodiscard]] unsigned int
-    getRowEntered() const
-    {
-        return m_rowEntered;
-    }
-
-    [[nodiscard]] unsigned int
-    getRoundCounter() const
-    {
-        return m_roundCounter;
     }
 
     [[nodiscard]] bool
@@ -60,6 +49,9 @@ public:
     {
         return m_tableWidget->getHeight() + 40;
     }
+
+    [[nodiscard]] bool
+    saveTableData(const QString& fileName);
 
     void
     saveOldState();
@@ -104,6 +96,9 @@ private slots:
                 int newVisualIndex);
 
     void
+    insertTable();
+
+    void
     openStatusEffectDialog();
 
     void
@@ -112,6 +107,9 @@ private slots:
 
     void
     rerollIni();
+
+    void
+    changeHPForMultipleChars();
 
     void
     removeRow();
@@ -123,9 +121,6 @@ private slots:
     handleTableWidgetItemPressed(QTableWidgetItem *item);
 
 private:
-    void
-    setTableDataWithFileData();
-
     void
     sortTable();
 
@@ -143,7 +138,7 @@ private:
                    int  valueType);
 
     void
-    setRowIdentifiers();
+    writeStoredCharacters(const QJsonObject& jsonObject);
 
     [[nodiscard]] QAction*
     createAction(const QString&      text,
@@ -166,10 +161,12 @@ private:
     QPointer<QTimer> m_timer;
 
     QPointer<QAction> m_addCharacterAction;
+    QPointer<QAction> m_insertTableAction;
     QPointer<QAction> m_removeAction;
     QPointer<QAction> m_addEffectAction;
     QPointer<QAction> m_duplicateAction;
     QPointer<QAction> m_rerollAction;
+    QPointer<QAction> m_changeHPAction;
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
     QPointer<QAction> m_resortAction;
@@ -177,6 +174,7 @@ private:
     QPointer<QAction> m_moveDownwardAction;
 
     std::shared_ptr<CharacterHandler> m_characterHandler;
+    std::shared_ptr<TableFileHandler> m_tableFileHandler;
 
     const AdditionalSettings& m_additionalSettings;
     const RuleSettings& m_ruleSettings;
@@ -187,8 +185,6 @@ private:
     std::vector<int> m_removedOrAddedRowIndices;
 
     QByteArray m_headerDataState;
-
-    QJsonObject m_loadedFileData;
 
     unsigned int m_rowEntered{ 0 };
     unsigned int m_roundCounter{ 1 };

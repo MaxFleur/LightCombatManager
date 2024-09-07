@@ -2,6 +2,7 @@
 
 #include "AddCharacterDialog.hpp"
 #include "AdditionalSettings.hpp"
+#include "ChangeHPDialog.hpp"
 #include "DelegateSpinBox.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
@@ -12,7 +13,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QContextMenuEvent>
-#include <QDebug>
+#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -25,16 +26,16 @@
 #include <QUndoStack>
 #include <QVBoxLayout>
 
-CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
-                           const RuleSettings&       RuleSettings,
-                           int                       mainWidgetWidth,
-                           bool                      isDataStored,
-                           const QJsonObject&        data,
-                           QWidget *                 parent) :
+CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
+                           const AdditionalSettings&         AdditionalSettings,
+                           const RuleSettings&               RuleSettings,
+                           int                               mainWidgetWidth,
+                           bool                              isDataStored,
+                           QWidget *                         parent) :
     QWidget(parent),
+    m_tableFileHandler(tableFilerHandler),
     m_additionalSettings(AdditionalSettings),
     m_ruleSettings(RuleSettings),
-    m_loadedFileData(data),
     m_isDataStored(std::move(isDataStored))
 {
     m_characterHandler = std::make_shared<CharacterHandler>();
@@ -43,10 +44,13 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 
     m_addCharacterAction = createAction(tr("Add new Character(s)..."), tr("Add new Character(s)"),
                                         QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), true);
+    m_insertTableAction = createAction(tr("Insert other Table..."), tr("Insert another table without overwriting the current one"),
+                                       QKeySequence(Qt::CTRL | Qt::Key_T), false);
     m_removeAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
     m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(Qt::CTRL | Qt::Key_E), false);
     m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(Qt::CTRL | Qt::Key_D), false);
     m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(Qt::CTRL | Qt::Key_I), false);
+    m_changeHPAction = createAction(tr("Change HP"), tr("Change HP for multiple Characters at once"), QKeySequence(Qt::CTRL | Qt::Key_H), false);
     m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(Qt::CTRL | Qt::Key_R), true);
     m_moveUpwardAction = createAction(tr("Move Upward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), true);
     m_moveDownwardAction = createAction(tr("Move Downward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), true);
@@ -57,6 +61,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     m_redoAction->setShortcuts(QKeySequence::Redo);
 
     addAction(m_resortAction);
+    addAction(m_changeHPAction);
     addAction(m_moveUpwardAction);
     addAction(m_moveDownwardAction);
 
@@ -65,6 +70,7 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 
     auto* const toolBar = new QToolBar("Actions");
     toolBar->addAction(m_addCharacterAction);
+    toolBar->addAction(m_insertTableAction);
     toolBar->addAction(m_removeAction);
     toolBar->addAction(m_addEffectAction);
     toolBar->addAction(m_resortAction);
@@ -129,10 +135,12 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
     });
 
     connect(m_addCharacterAction, &QAction::triggered, this, &CombatWidget::openAddCharacterDialog);
+    connect(m_insertTableAction, &QAction::triggered, this, &CombatWidget::insertTable);
     connect(m_removeAction, &QAction::triggered, this, &CombatWidget::removeRow);
     connect(m_addEffectAction, &QAction::triggered, this, &CombatWidget::openStatusEffectDialog);
     connect(m_duplicateAction, &QAction::triggered, this, &CombatWidget::duplicateRow);
     connect(m_rerollAction, &QAction::triggered, this, &CombatWidget::rerollIni);
+    connect(m_changeHPAction, &QAction::triggered, this, &CombatWidget::changeHPForMultipleChars);
     connect(m_resortAction, &QAction::triggered, this, &CombatWidget::sortTable);
     connect(m_moveUpwardAction, &QAction::triggered, this, [this] {
         switchCharacterPosition(false);
@@ -158,11 +166,18 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
         m_addEffectAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
         m_duplicateAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
         m_rerollAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
+        m_changeHPAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() > 1);
     });
     connect(m_tableWidget, &QTableWidget::currentCellChanged, this, [this] {
         saveOldState();
     });
     connect(m_tableWidget, &QTableWidget::itemChanged, this, &CombatWidget::handleTableWidgetItemPressed);
+    connect(m_tableWidget->model(), &QAbstractItemModel::rowsInserted, this, [this] {
+        m_insertTableAction->setEnabled(m_tableWidget->rowCount() != 0);
+    });
+    connect(m_tableWidget->model(), &QAbstractItemModel::rowsRemoved, this, [this] {
+        m_insertTableAction->setEnabled(m_tableWidget->rowCount() != 0);
+    });
 
     connect(upButton, &QPushButton::clicked, this, [this] {
         enteredRowChanged(false);
@@ -181,10 +196,19 @@ CombatWidget::CombatWidget(const AdditionalSettings& AdditionalSettings,
 
 
 void
-CombatWidget::generateTable()
+CombatWidget::generateTableFromTableData()
 {
-    // Store the data from file
-    setTableDataWithFileData();
+    if (!m_isDataStored) {
+        return;
+    }
+
+    // Load the data from file
+    const auto& loadedFileData = m_tableFileHandler->getData();
+    writeStoredCharacters(loadedFileData);
+    m_rowEntered = loadedFileData.value("row_entered").toInt();
+    m_roundCounter = loadedFileData.value("round_counter").toInt();
+
+    m_isDataStored = false;
     m_tableWidget->setColumnHidden(Utils::Table::COL_INI, !m_tableSettings.iniShown);
     m_tableWidget->setColumnHidden(Utils::Table::COL_MODIFIER, !m_tableSettings.modifierShown);
 
@@ -192,10 +216,18 @@ CombatWidget::generateTable()
         m_removedOrAddedRowIndices.push_back(i);
     }
 
-    // Then create the table
+    // Then create the table in the ui
     pushOnUndoStack();
     // We do not need a save step directly after table creation, so reset the stack
     m_undoStack->clear();
+}
+
+
+bool
+CombatWidget::saveTableData(const QString& fileName)
+{
+    return m_tableFileHandler->writeToFile(m_tableWidget->tableDataFromWidget(), fileName, m_rowEntered,
+                                           m_roundCounter, m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
 }
 
 
@@ -265,10 +297,12 @@ void
 CombatWidget::setUndoRedoIcon(bool isDarkMode)
 {
     m_addCharacterAction->setIcon(isDarkMode ? QIcon(":/icons/table/add_white.svg") : QIcon(":/icons/table/add_black.svg"));
+    m_insertTableAction->setIcon(isDarkMode ? QIcon(":/icons/table/insert_table_white.svg") : QIcon(":/icons/table/insert_table_black.svg"));
     m_removeAction->setIcon(isDarkMode ? QIcon(":/icons/table/remove_white.svg") : QIcon(":/icons/table/remove_black.svg"));
     m_addEffectAction->setIcon(isDarkMode ? QIcon(":/icons/table/effect_white.svg") : QIcon(":/icons/table/effect_black.svg"));
     m_duplicateAction->setIcon(isDarkMode ? QIcon(":/icons/table/duplicate_white.svg") : QIcon(":/icons/table/duplicate_black.svg"));
     m_rerollAction->setIcon(isDarkMode ? QIcon(":/icons/table/reroll_white.svg") : QIcon(":/icons/table/reroll_black.svg"));
+    m_changeHPAction->setIcon(isDarkMode ? QIcon(":/icons/table/change_hp_white.svg") : QIcon(":/icons/table/change_hp_black.svg"));
     m_resortAction->setIcon(isDarkMode ? QIcon(":/icons/table/sort_white.svg") : QIcon(":/icons/table/sort_black.svg"));
     m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
     m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
@@ -282,7 +316,7 @@ CombatWidget::openAddCharacterDialog()
     m_tableWidget->resynchronizeCharacters();
     const auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
 
-    auto *const dialog = new AddCharacterDialog(this);
+    auto *const dialog = new AddCharacterDialog(m_additionalSettings.modAddedToIni, this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
         emit tableHeightSet(m_tableWidget->getHeight() + 40);
@@ -326,6 +360,43 @@ CombatWidget::dragAndDrop(int /* logicalIndex */, int oldVisualIndex, int newVis
     // Highlight the row which has been dragged
     m_tableWidget->clearSelection();
     m_tableWidget->selectRow(newVisualIndex);
+}
+
+
+void
+CombatWidget::insertTable()
+{
+    const auto fileName = QFileDialog::getOpenFileName(this, "Insert other Table", "", ("lcm File(*.lcm)"));
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    switch (const auto code = m_tableFileHandler->getStatus(fileName); code) {
+    case 0:
+    {
+        saveOldState();
+        const auto oldSize = m_characterHandler->getCharacters().size();
+        writeStoredCharacters(m_tableFileHandler->getData());
+
+        for (auto i = oldSize; i < m_characterHandler->getCharacters().size(); i++) {
+            m_removedOrAddedRowIndices.push_back(i);
+        }
+        pushOnUndoStack();
+        emit tableHeightSet(m_tableWidget->getHeight() + 40);
+
+        break;
+    }
+    case 1:
+    {
+        QMessageBox::critical(this, tr("Wrong Table format!"),
+                              tr("The loading of the Table failed because the Table has the wrong format."));
+        break;
+    }
+    case 2:
+        QMessageBox::critical(this, tr("Failure reading File!"),
+                              tr("The file reading failed. Make sure that the file is accessible and readable."));
+        break;
+    }
 }
 
 
@@ -433,6 +504,32 @@ CombatWidget::rerollIni()
 }
 
 
+void
+CombatWidget::changeHPForMultipleChars()
+{
+    if (m_tableWidget->selectionModel()->selectedRows().size() <= 1) {
+        return;
+    }
+
+    if (auto *const dialog = new ChangeHPDialog(this); dialog->exec() == QDialog::Accepted) {
+        const auto hpValue = dialog->getHPValue();
+        if (hpValue == 0) {
+            return;
+        }
+
+        saveOldState();
+        m_tableWidget->resynchronizeCharacters();
+
+        auto& characters = m_characterHandler->getCharacters();
+        for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
+            characters[index.row()].hp = std::clamp(characters[index.row()].hp + hpValue, -10000, 10000);
+        }
+
+        pushOnUndoStack();
+    }
+}
+
+
 // Remove a row/character of the table
 void
 CombatWidget::removeRow()
@@ -519,49 +616,6 @@ CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
         m_tableWidget->resynchronizeCharacters();
         pushOnUndoStack();
     }
-}
-
-
-// Set the character vector, if the table data has been stored in a lcm file
-void
-CombatWidget::setTableDataWithFileData()
-{
-    if (!m_isDataStored) {
-        return;
-    }
-
-    m_rowEntered = m_loadedFileData.value("row_entered").toInt();
-    m_roundCounter = m_loadedFileData.value("round_counter").toInt();
-
-    auto& characters = m_characterHandler->getCharacters();
-    const auto& charactersObject = m_loadedFileData.value("characters").toObject();
-
-    // Single character
-    for (const auto& character : charactersObject) {
-        const auto& characterObject = character.toObject();
-        const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
-
-        // Additional info
-        AdditionalInfoData additionalInfoData;
-        additionalInfoData.mainInfoText = additionalInfoObject.value("main_info").toString();
-
-        // Status effects
-        const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
-        for (const auto& singleEffect : statusEffectsObject) {
-            const auto& singleEffectObject = singleEffect.toObject();
-
-            AdditionalInfoData::StatusEffect effect(singleEffectObject.value("name").toString(),
-                                                    singleEffectObject.value("is_permanent").toBool(),
-                                                    singleEffectObject.value("duration").toInt());
-            additionalInfoData.statusEffects.push_back(effect);
-        }
-
-        characters.push_back(CharacterHandler::Character {
-            characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
-            characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
-            characterObject.value("is_enemy").toBool(), additionalInfoData });
-    }
-    m_isDataStored = false;
 }
 
 
@@ -669,6 +723,41 @@ CombatWidget::setTableOption(bool option, int valueType)
 }
 
 
+// Write characters stored in a file to the table
+void
+CombatWidget::writeStoredCharacters(const QJsonObject& jsonObject)
+{
+    auto& characters = m_characterHandler->getCharacters();
+    const auto& charactersObject = jsonObject.value("characters").toObject();
+
+    // Single character
+    for (const auto& character : charactersObject) {
+        const auto& characterObject = character.toObject();
+        const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
+
+        // Additional info
+        AdditionalInfoData additionalInfoData;
+        additionalInfoData.mainInfoText = additionalInfoObject.value("main_info").toString();
+
+        // Status effects
+        const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
+        for (const auto& singleEffect : statusEffectsObject) {
+            const auto& singleEffectObject = singleEffect.toObject();
+
+            AdditionalInfoData::StatusEffect effect(singleEffectObject.value("name").toString(),
+                                                    singleEffectObject.value("is_permanent").toBool(),
+                                                    singleEffectObject.value("duration").toInt());
+            additionalInfoData.statusEffects.push_back(effect);
+        }
+
+        characters.push_back(CharacterHandler::Character {
+            characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
+            characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
+            characterObject.value("is_enemy").toBool(), additionalInfoData });
+    }
+}
+
+
 QAction*
 CombatWidget::createAction(const QString& text, const QString& toolTip, const QKeySequence& keySequence, bool enabled)
 {
@@ -689,6 +778,9 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
 
     menu->addAction(m_addCharacterAction);
+    if (m_tableWidget->rowCount() > 0) {
+        menu->addAction(m_insertTableAction);
+    }
 
     // Map from MainWindow coordinates to Table Widget coordinates
     if (currentRow >= 0) {
@@ -701,15 +793,20 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
         menu->addSeparator();
 
         // Enable only for a single selected character
-        if (m_tableWidget->selectionModel()->selectedRows().size() == 1) {
+        if (m_tableWidget->selectionModel()->selectedRows().size() != 0) {
             auto *const editingMenu = menu->addMenu(tr("Editing"));
-            editingMenu->addAction(m_duplicateAction);
-            editingMenu->addAction(m_rerollAction);
-            editingMenu->addAction(m_moveUpwardAction);
-            editingMenu->addAction(m_moveDownwardAction);
 
-            m_moveUpwardAction->setEnabled(currentRow > 0);
-            m_moveDownwardAction->setEnabled(currentRow < m_tableWidget->rowCount() - 1);
+            if (m_tableWidget->selectionModel()->selectedRows().size() > 1) {
+                editingMenu->addAction(m_changeHPAction);
+            } else {
+                editingMenu->addAction(m_duplicateAction);
+                editingMenu->addAction(m_rerollAction);
+                editingMenu->addAction(m_moveUpwardAction);
+                editingMenu->addAction(m_moveDownwardAction);
+
+                m_moveUpwardAction->setEnabled(currentRow > 0);
+                m_moveDownwardAction->setEnabled(currentRow < m_tableWidget->rowCount() - 1);
+            }
         }
     }
     menu->addSeparator();

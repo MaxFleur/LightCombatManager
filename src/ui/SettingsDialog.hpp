@@ -22,6 +22,9 @@ public:
 
 private slots:
     void
+    resetToDefaultClicked();
+
+    void
     applyClicked();
 
     void
@@ -32,6 +35,7 @@ private:
     QPointer<QCheckBox> m_rollTieBox;
     QPointer<QCheckBox> m_indicatorMultipleCharsBox;
     QPointer<QCheckBox> m_rollIniMultipleCharsBox;
+    QPointer<QCheckBox> m_modToIniCharsBox;
 
     RuleSettings& m_ruleSettings;
     AdditionalSettings& m_additionalSettings;

@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <svg
-    width="60mm"
-    height="69mm"
+    width="43.5mm"
+    height="49.5mm"
     version="1.1"
-    viewBox="0 0 60 69"
+    viewBox="0 0 43.5 49.5"
     xmlns="http://www.w3.org/2000/svg">
 
- <g stroke-linejoin="round">
-  <g stroke="#ffffff" stroke-linecap="round">
-   <path d="m57.475 42.481v-25.352l-14.229-15.287h-41.504v64.365h29.389" fill="none" stroke-width="3"/>
-   <path d="m56.387 17.002h-13.175v-13.954" fill="none" stroke-width="4"/>
-   <path transform="matrix(1.4322 -.093953 .093953 1.4322 -44.351 -8.1313)" d="m61.985 15.191 3.8578 3.8578-5.2699 1.4121 0.70603-2.635z" stroke-width="4"/>
-  </g>
-  <path d="m38.361 66.143h19.185v-16.77h-19.185z" fill="none" stroke="#ffffff" stroke-width="3"/>
-  <rect x="38.613" y="45.646" width="7.2584" height="3.305" stroke="#ffffff" stroke-linecap="round" stroke-width="3.5182"/>
+ <g fill="none" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m1.6813 5.5838-0.039484 38.323a3.9647 3.9647 45.03 0 0 3.9647 3.9687h32.283a3.9688 3.9688 135 0 0 3.9688-3.9688v-27.39a9.1402 9.1402 66.529 0 0-2.8998-6.6784l-5.8289-5.4466a10.095 10.095 21.597 0 0-6.8685-2.719l-20.607-0.048663a3.9635 3.9635 135.1 0 0-3.9728 3.9594z" stroke-width="3"/>
+  <path d="m28.838 3.4205v7.0338a3.9688 3.9688 45 0 0 3.9688 3.9688h7.2044" stroke-width="3"/>
+  <path d="m26.687 37.255v5.2119a1.3229 1.3229 45 0 0 1.3229 1.3229h8.4135a1.3229 1.3229 135 0 0 1.3229-1.3229v-5.2062a1.3236 1.3236 45.015 0 0-1.3229-1.3236l-8.4135-0.0043a1.3222 1.3222 135.01 0 0-1.3229 1.3222z" stroke-width="2.5"/>
+  <path d="m26.687 38.007v-4.0263a1.3229 1.3229 135 0 1 1.3229-1.3229h2.0648a1.3229 1.3229 45 0 1 1.3229 1.3229v1.1822" stroke-width="2.5"/>
  </g>
 </svg>

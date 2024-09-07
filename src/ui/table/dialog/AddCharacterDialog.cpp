@@ -18,8 +18,8 @@
 
 class TemplatesListWidget;
 
-AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
-    QDialog(parent)
+AddCharacterDialog::AddCharacterDialog(const bool modAddedToIni, QWidget *parent) :
+    QDialog(parent), m_modAddedToIni(modAddedToIni)
 {
     setWindowTitle(tr("Add new Character(s)"));
 
@@ -141,9 +141,15 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
 
     connect(randomIniButton, &QPushButton::clicked, this, &AddCharacterDialog::randomButtonClicked);
     connect(m_iniBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
+        if (!m_modAddedToIni) {
+            return;
+        }
         m_iniWithoutModValue = m_iniBox->value() - m_iniModifierBox->value();
     });
     connect(m_iniModifierBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [this] {
+        if (!m_modAddedToIni) {
+            return;
+        }
         m_iniBox->setValue(m_iniWithoutModValue + m_iniModifierBox->value());
     });
     connect(m_multipleEnabledBox, &QCheckBox::stateChanged, this, [this] {
@@ -154,7 +160,6 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
 
     connect(m_templatesWidget, &TemplatesWidget::characterLoaded, this, &AddCharacterDialog::applyLoadedCharacterToUI);
 
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(openTemplatesButton, &QPushButton::clicked, this, [this, openTemplatesButton] {
         const auto isVisible = m_storeTemplatesButton->isVisible();
         openTemplatesButton->setText(isVisible ? "Templates >>" : "Templates <<");
@@ -163,7 +168,6 @@ AddCharacterDialog::AddCharacterDialog(QWidget *parent) :
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
     connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
-
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     connect(m_timer, &QTimer::timeout, this, [this] {

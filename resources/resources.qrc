@@ -20,10 +20,14 @@
 
         <file>icons/table/add_black.svg</file>
         <file>icons/table/add_white.svg</file>
+        <file>icons/table/change_hp_black.svg</file>
+        <file>icons/table/change_hp_white.svg</file>
         <file>icons/table/duplicate_black.svg</file>
         <file>icons/table/duplicate_white.svg</file>
         <file>icons/table/effect_black.svg</file>
         <file>icons/table/effect_white.svg</file>
+        <file>icons/table/insert_table_black.svg</file>
+        <file>icons/table/insert_table_white.svg</file>
         <file>icons/table/redo_black.svg</file>
         <file>icons/table/redo_white.svg</file>
         <file>icons/table/remove_black.svg</file>

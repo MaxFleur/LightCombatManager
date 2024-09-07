@@ -9,11 +9,13 @@ public:
 
     void
     write(bool newIndicatorMultipleChars,
-          bool newRollIniMultipleChars);
+          bool newRollIniMultipleChars,
+          bool newModAddedToIni);
 
 public:
     bool indicatorMultipleChars{ true };
     bool rollIniMultipleChars{ false };
+    bool modAddedToIni{ true };
 
 private:
     void

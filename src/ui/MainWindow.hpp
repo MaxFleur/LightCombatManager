@@ -53,9 +53,8 @@ private:
     setWelcomingWidget();
 
     void
-    setTableWidget(bool               isDataStored,
-                   bool               newCombatStarted,
-                   const QJsonObject& jsonObjectData = {});
+    setTableWidget(bool isDataStored,
+                   bool newCombatStarted);
 
     void
     setCombatTitle(bool isCombatActive);
@@ -91,7 +90,7 @@ private:
     QPointer<QAction> m_openSettingsAction;
     QPointer<QAction> m_aboutLCMAction;
 
-    std::unique_ptr<TableFileHandler> m_tableFileHandler;
+    std::shared_ptr<TableFileHandler> m_tableFileHandler;
 
     AdditionalSettings m_additionalSettings;
     RuleSettings m_ruleSettings;

@@ -42,28 +42,13 @@ TemplatesWidget::loadTemplates()
         it.next();
         const auto fileName = it.fileName();
 
-        switch (auto const code = m_charFileHandler->getStatus(fileName); code) {
-        case 0:
-        {
+        if (const auto code = m_charFileHandler->getStatus(fileName); code == 0) {
             const auto characterObject = m_charFileHandler->getData();
             CharacterHandler::Character character(characterObject["name"].toString(), characterObject["initiative"].toInt(),
                                                   characterObject["modifier"].toInt(), characterObject["hp"].toInt(),
                                                   characterObject["is_enemy"].toBool(),
                                                   AdditionalInfoData{ {}, characterObject["additional_info"].toString() });
-            if (!m_templatesListWidget->addCharacter(character)) {
-                Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("The Character is already in the list!"));
-            }
-            break;
-        }
-        case 1:
-        {
-            QMessageBox::critical(this, tr("Wrong Table format!"),
-                                  tr("The loading of the Table failed because the Table has the wrong format."));
-            break;
-        }
-        case 2:
-        default:
-            break;
+            m_templatesListWidget->addCharacter(character);
         }
     }
 }

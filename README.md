@@ -3,7 +3,7 @@
    ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![CI badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run.yml/badge.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v2.1.0-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v2.2.0-blue.svg)
 
 </div>
 
@@ -40,7 +40,7 @@ LCM is written in C++17. The following tools are used for development:
 * [Qt6 or Qt5](https://www.qt.io/) for the user interface and the storing and loading of tables.
    * If no Qt6 installation is found on the system, the application searches for a Qt5 installation instead.
    * Note that for the correct displaying of svg files, the Qt SVG plugin is needed.
-* [Catch2](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
+* [Catch2 v3](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 

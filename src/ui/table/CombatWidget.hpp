@@ -109,6 +109,9 @@ private slots:
     rerollIni();
 
     void
+    changeHPForMultipleChars();
+
+    void
     removeRow();
 
     void
@@ -163,6 +166,7 @@ private:
     QPointer<QAction> m_addEffectAction;
     QPointer<QAction> m_duplicateAction;
     QPointer<QAction> m_rerollAction;
+    QPointer<QAction> m_changeHPAction;
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
     QPointer<QAction> m_resortAction;

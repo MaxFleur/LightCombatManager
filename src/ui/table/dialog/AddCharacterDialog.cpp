@@ -160,7 +160,6 @@ AddCharacterDialog::AddCharacterDialog(const bool modAddedToIni, QWidget *parent
 
     connect(m_templatesWidget, &TemplatesWidget::characterLoaded, this, &AddCharacterDialog::applyLoadedCharacterToUI);
 
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(openTemplatesButton, &QPushButton::clicked, this, [this, openTemplatesButton] {
         const auto isVisible = m_storeTemplatesButton->isVisible();
         openTemplatesButton->setText(isVisible ? "Templates >>" : "Templates <<");
@@ -169,7 +168,6 @@ AddCharacterDialog::AddCharacterDialog(const bool modAddedToIni, QWidget *parent
     connect(saveButton, &QPushButton::clicked, this, &AddCharacterDialog::saveButtonClicked);
     connect(resetButton, &QPushButton::clicked, this, &AddCharacterDialog::resetButtonClicked);
     connect(okButton, &QPushButton::clicked, this, &AddCharacterDialog::okButtonClicked);
-
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     connect(m_timer, &QTimer::timeout, this, [this] {

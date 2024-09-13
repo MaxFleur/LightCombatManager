@@ -1,6 +1,6 @@
 <div align="center">
 
-   ![License badge](https://img.shields.io/badge/License-MIT-blue.svg)
+   ![License badge](https://img.shields.io/badge/License-GPLv3-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![CI badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run.yml/badge.svg)
    ![Tag badge](https://img.shields.io/badge/Release-v2.2.0-blue.svg)

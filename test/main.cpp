@@ -1,5 +1,10 @@
 #define CATCH_CONFIG_RUNNER
+
+#ifdef CATCH2_V3
 #include <catch2/catch_session.hpp>
+#else
+#include <catch2/catch.hpp>
+#endif
 
 #include <QApplication>
 #include <QSettings>

@@ -1,4 +1,11 @@
-find_package(Catch2 REQUIRED)
+find_package(Catch2 3 QUIET)
+if(${Catch2_FOUND})
+    find_package(Catch2 3 REQUIRED)
+    add_definitions(-DCATCH2_V3)
+else()
+    find_package(Catch2 REQUIRED)
+    add_definitions(-DCATCH2_V2)
+endif()
 
 add_executable(tests
     ${CMAKE_CURRENT_LIST_DIR}/main.cpp

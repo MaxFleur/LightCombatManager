@@ -7,6 +7,7 @@ class QLabel;
 class QTableWidget;
 
 class CombatWidget;
+class LogListWidget;
 
 // Manage the main combat table widget undoing and redoing
 class Undo : public QUndoCommand
@@ -20,6 +21,7 @@ public:
 
 public:
     Undo(CombatWidget*          CombatWidget,
+         LogListWidget*         logListWidget,
          QPointer<QLabel>       roundCounterLabel,
          QPointer<QLabel>       currentPlayerLabel,
          const UndoData&        oldData,
@@ -46,10 +48,12 @@ private:
                         int             col);
 
     void
-    adjustTableWidgetRowCount(bool addRow);
+    adjustTableWidgetRowCount(bool addRow,
+                              bool undo);
 
 private:
     QPointer<CombatWidget> m_combatWidget;
+    QPointer<LogListWidget> m_logListWidget;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;

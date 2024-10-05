@@ -3,12 +3,14 @@
 #include <QVariant>
 
 class CombatWidget;
+class LogListWidget;
 
 // Utility functions for the Combat Table
 namespace Utils::Table
 {
 void
 setTableAdditionalInfoWidget(CombatWidget*   combatWidget,
+                             LogListWidget*  logListWidget,
                              unsigned int    row,
                              const QVariant& additionalInfo);
 

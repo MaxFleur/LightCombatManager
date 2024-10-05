@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg
+    width="51.6mm"
+    height="56.3mm"
+    version="1.1"
+    viewBox="0 0 51.6 56.3"
+    xmlns="http://www.w3.org/2000/svg">
+
+ <g transform="translate(.1332 .062373)" fill="none" stroke="#000" stroke-linecap="round" stroke-width="3">
+  <path d="m41.906 24.542v-8.1909c0-2.5317-1.05-4.9499-2.8998-6.6784l-5.8289-5.4466c-1.8638-1.7415-4.3177-2.713-6.8685-2.719l-20.607-0.048663c-2.191-0.005174-3.9706 1.7684-3.9728 3.9594l-0.039484 38.323c-0.00226 2.1912 1.7734 3.9687 3.9647 3.9687h15.569" stroke-linejoin="round"/>
+  <path d="m28.886 3.2543v7.0338a3.9688 3.9688 45 0 0 3.9688 3.9688h7.2044" stroke-linejoin="round"/>
+  <path d="m6.6607 6.9808h17.142"/>
+  <ellipse cx="34.422" cy="38.848" rx="15.223" ry="15.869" stroke-linejoin="round" stroke-miterlimit="8.5"/>
+  <path d="m34.351 28.454v11.099h7.1754" stroke-linejoin="round"/>
+  <g>
+   <path d="m6.6607 13.86h17.142"/>
+   <path d="m6.6607 20.739h17.142"/>
+   <path d="m6.6607 33.439h8.0545"/>
+   <path d="m6.6607 40.318h8.0545"/>
+  </g>
+ </g>
+</svg>

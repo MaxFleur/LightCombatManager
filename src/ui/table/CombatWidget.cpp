@@ -4,6 +4,7 @@
 #include "AdditionalSettings.hpp"
 #include "ChangeHPDialog.hpp"
 #include "DelegateSpinBox.hpp"
+#include "LogListWidget.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
 #include "Undo.hpp"
@@ -54,6 +55,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(Qt::CTRL | Qt::Key_R), true);
     m_moveUpwardAction = createAction(tr("Move Upward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), true);
     m_moveDownwardAction = createAction(tr("Move Downward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), true);
+    m_showLogAction = createAction(tr("Show Combat Log"), tr("Show a Log for the current Combat"), QKeySequence(Qt::CTRL | Qt::Key_L), true);
 
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);
@@ -64,6 +66,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     addAction(m_changeHPAction);
     addAction(m_moveUpwardAction);
     addAction(m_moveDownwardAction);
+    addAction(m_showLogAction);
 
     const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
     setUndoRedoIcon(isSystemInDarkMode);
@@ -80,12 +83,20 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     toolBar->addSeparator();
     toolBar->addAction(m_undoAction);
     toolBar->addAction(m_redoAction);
+    // Spacer widget with empty space so that the log action is on the right side
+    auto* const spacerWidget = new QWidget;
+    spacerWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    toolBar->addWidget(spacerWidget);
+    toolBar->addAction(m_showLogAction);
 
     m_tableWidget = new CombatTableWidget(m_characterHandler, mainWidgetWidth, this);
 
     // Spinbox for the hp column
     auto *const delegateSpinBox = new DelegateSpinBox(this);
     m_tableWidget->setItemDelegateForColumn(Utils::Table::COL_HP, delegateSpinBox);
+
+    m_logListWidget = new LogListWidget;
+    m_logListWidget->setVisible(false);
 
     auto *const upButton = new QToolButton;
     upButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -111,7 +122,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     m_timer->setSingleShot(true);
 
     // Lower layout
-    auto *const lowerLayout = new QHBoxLayout();
+    auto *const lowerLayout = new QHBoxLayout;
     lowerLayout->addWidget(m_roundCounterLabel);
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(m_currentPlayerLabel);
@@ -124,11 +135,15 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     lowerLayout->addSpacing(SPACING);
     lowerLayout->addWidget(exitButton);
 
-    auto *const mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(toolBar);
-    mainLayout->addWidget(m_tableWidget);
-    mainLayout->addLayout(lowerLayout);
-    setLayout(mainLayout);
+    auto *const combatLayout = new QVBoxLayout;
+    combatLayout->addWidget(toolBar);
+    combatLayout->addWidget(m_tableWidget);
+    combatLayout->addLayout(lowerLayout);
+
+    m_mainLayout = new QHBoxLayout;
+    m_mainLayout->addLayout(combatLayout);
+    m_mainLayout->addWidget(m_logListWidget);
+    setLayout(m_mainLayout);
 
     connect(this, &CombatWidget::roundCounterSet, this, [this] {
         m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
@@ -148,6 +163,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     connect(m_moveDownwardAction, &QAction::triggered, this, [this] {
         switchCharacterPosition(true);
     });
+    connect(m_showLogAction, &QAction::triggered, this, &CombatWidget::setLoggingWidgetVisibility);
 
     connect(m_tableWidget->verticalHeader(), &QHeaderView::sectionPressed, this, [this](int logicalIndex) {
         m_tableWidget->clearSelection();
@@ -178,6 +194,8 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     connect(m_tableWidget->model(), &QAbstractItemModel::rowsRemoved, this, [this] {
         m_insertTableAction->setEnabled(m_tableWidget->rowCount() != 0);
     });
+
+    connect(m_undoStack, &QUndoStack::indexChanged, this, &CombatWidget::showLoggingUndoOperations);
 
     connect(upButton, &QPushButton::clicked, this, [this] {
         enteredRowChanged(false);
@@ -217,6 +235,7 @@ CombatWidget::generateTableFromTableData()
     }
 
     // Then create the table in the ui
+    m_logListWidget->logChangedCharacterCount(m_characterHandler->getCharacters().size(), true);
     pushOnUndoStack();
     // We do not need a save step directly after table creation
     m_undoStack->clear();
@@ -255,7 +274,7 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const auto tableData = m_tableWidget->tableDataFromCharacterVector();
     const auto newData = Undo::UndoData{ tableData, m_rowEntered, m_roundCounter };
     // We got everything, so push
-    m_undoStack->push(new Undo(this, m_roundCounterLabel, m_currentPlayerLabel,
+    m_undoStack->push(new Undo(this, m_logListWidget, m_roundCounterLabel, m_currentPlayerLabel,
                                oldData, newData, m_removedOrAddedRowIndices, &m_rowEntered, &m_roundCounter,
                                m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips));
     m_removedOrAddedRowIndices.clear();
@@ -306,6 +325,7 @@ CombatWidget::setUndoRedoIcon(bool isDarkMode)
     m_resortAction->setIcon(isDarkMode ? QIcon(":/icons/table/sort_white.svg") : QIcon(":/icons/table/sort_black.svg"));
     m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
     m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
+    m_showLogAction->setIcon(isDarkMode ? QIcon(":/icons/table/log_white.svg") : QIcon(":/icons/table/log_black.svg"));
 }
 
 
@@ -314,12 +334,15 @@ CombatWidget::openAddCharacterDialog()
 {
     // Resynchronize because the table could have been modified
     m_tableWidget->resynchronizeCharacters();
-    const auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
+    auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
 
     auto *const dialog = new AddCharacterDialog(m_additionalSettings.modAddedToIni, this);
-    connect(dialog, &AddCharacterDialog::characterCreated, this, [this] (CharacterHandler::Character character, int instanceCount) {
+    connect(dialog, &AddCharacterDialog::characterCreated, this, [this, &sizeBeforeDialog] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
         emit tableHeightSet(m_tableWidget->getHeight() + 40);
+
+        m_logListWidget->logChangedCharacterCount(m_characterHandler->getCharacters().size() - sizeBeforeDialog, true);
+        sizeBeforeDialog = m_characterHandler->getCharacters().size();
     });
 
     if (dialog->exec() == QDialog::Accepted) {
@@ -355,6 +378,7 @@ CombatWidget::dragAndDrop(int /* logicalIndex */, int oldVisualIndex, int newVis
         std::rotate(characters.begin() + oldVisualIndex, characters.begin() + oldVisualIndex + 1, characters.begin() + newVisualIndex + 1);
     }
     // Then set the table
+    m_logListWidget->logCharacterSwitch(oldVisualIndex + 1, newVisualIndex + 1);
     pushOnUndoStack();
 
     // Highlight the row which has been dragged
@@ -449,6 +473,7 @@ CombatWidget::openStatusEffectDialog()
             }
         }
         if (needsUndo) {
+            m_logListWidget->logAddedEffects(m_tableWidget->selectionModel()->selectedRows().size());
             pushOnUndoStack();
         }
     }
@@ -493,6 +518,7 @@ CombatWidget::rerollIni()
     const auto newInitiative = newRolledDice + characters.at(row).modifier;
 
     characters[row].initiative = newInitiative;
+    m_logListWidget->logCharacterStatChanged(row + 1, 1);
     pushOnUndoStack();
 
     // Reset the graphics effect and kickoff the animation
@@ -526,6 +552,7 @@ CombatWidget::changeHPForMultipleChars()
             characters[index.row()].hp = std::clamp(characters[index.row()].hp + hpValue, -10000, 10000);
         }
 
+        m_logListWidget->logChangedHPMultipleChars(m_tableWidget->selectionModel()->selectedRows().size());
         pushOnUndoStack();
     }
 }
@@ -569,6 +596,7 @@ CombatWidget::removeRow()
     std::reverse(m_removedOrAddedRowIndices.begin(), m_removedOrAddedRowIndices.end());
 
     // Update the current player row and table
+    m_logListWidget->logChangedCharacterCount((int) m_removedOrAddedRowIndices.size(), false);
     setRowAndPlayer();
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
@@ -590,6 +618,7 @@ CombatWidget::duplicateRow()
     characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
 
     m_removedOrAddedRowIndices.emplace_back(currentIndex + 1);
+    m_logListWidget->logCharacterDuplicated(currentIndex + 1);
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
 }
@@ -608,16 +637,21 @@ CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
         item->setCheckState(item->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
         saveOldState();
         item->setCheckState(item->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+
+        // Need to call here, because pushing on the undo stack will replace the item with a new one
+        m_logListWidget->logCharacterStatChanged(item->row(), 4, item->checkState() != Qt::Checked);
         pushOnUndoStack(true);
 
         emit changeOccured();
         m_tableWidget->blockSignals(false);
+
         return;
     }
     const auto& tableData = m_tableWidget->tableDataFromWidget();
 
     if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
         m_tableWidget->resynchronizeCharacters();
+        m_logListWidget->logCharacterStatChanged(item->row(), item->column());
         pushOnUndoStack();
     }
 }
@@ -635,7 +669,41 @@ CombatWidget::sortTable()
     m_tableWidget->resynchronizeCharacters();
     m_characterHandler->sortCharacters(m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
     m_rowEntered = 0;
+    m_logListWidget->logOther("Table resorted.");
     pushOnUndoStack();
+}
+
+
+void
+CombatWidget::setLoggingWidgetVisibility()
+{
+    static int mainWidth;
+    if (!m_logListWidget->isVisible()) {
+        mainWidth = width();
+    }
+    m_logListWidget->setVisible(!m_logListWidget->isVisible());
+
+    emit tableWidthSet(m_logListWidget->isVisible() ? mainWidth + m_mainLayout->spacing() + m_logListWidget->width() : mainWidth);
+}
+
+
+void
+CombatWidget::showLoggingUndoOperations(int index)
+{
+    static auto lastUndoStackIndex = 0;
+    static auto oldStackCount = 0;
+
+    if (m_undoStack->count() == 0) {
+        return;
+    }
+    // Log every undo and "undo undo" command
+    if (index < lastUndoStackIndex) {
+        m_logListWidget->logOther("Undo called.");
+    } else if (index > lastUndoStackIndex && oldStackCount == m_undoStack->count()) {
+        m_logListWidget->logOther("Redo called.");
+    }
+    lastUndoStackIndex = index;
+    oldStackCount = m_undoStack->count();
 }
 
 
@@ -663,6 +731,7 @@ CombatWidget::switchCharacterPosition(bool goDown)
     std::iter_swap(characters.begin() + originalIndex, characters.begin() + originalIndex + indexToSwap);
 
     setRowAndPlayer();
+    m_logListWidget->logCharacterSwitch(originalIndex + 1, goDown ? originalIndex + 2 : originalIndex);
     pushOnUndoStack();
 
     m_tableWidget->clearSelection();
@@ -693,8 +762,9 @@ CombatWidget::enteredRowChanged(bool isGoingDown)
         m_rowEntered += rowEnteredModifier;
     }
 
-    // Recreate the table for the updated font´
+    // Recreate the table for the updated font
     setRowAndPlayer();
+    m_logListWidget->logNextTurn(m_roundCounter, m_rowEntered + 1);
     pushOnUndoStack(true);
 }
 

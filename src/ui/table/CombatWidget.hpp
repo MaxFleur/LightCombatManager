@@ -10,11 +10,13 @@
 #include <QWidget>
 
 class QAction;
+class QHBoxLayout;
 class QLabel;
 class QUndoStack;
 class QTimer;
 
 class AdditionalSettings;
+class LogListWidget;
 class RuleSettings;
 
 // This class handles the main combat widget
@@ -120,10 +122,16 @@ private slots:
     void
     handleTableWidgetItemPressed(QTableWidgetItem *item);
 
-private:
     void
     sortTable();
 
+    void
+    setLoggingWidgetVisibility();
+
+    void
+    showLoggingUndoOperations(int index);
+
+private:
     void
     setRowAndPlayer() const;
 
@@ -151,6 +159,8 @@ private:
 
 private:
     QPointer<CombatTableWidget> m_tableWidget;
+    QPointer<LogListWidget> m_logListWidget;
+    QPointer<QHBoxLayout> m_mainLayout;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
@@ -172,6 +182,7 @@ private:
     QPointer<QAction> m_resortAction;
     QPointer<QAction> m_moveUpwardAction;
     QPointer<QAction> m_moveDownwardAction;
+    QPointer<QAction> m_showLogAction;
 
     std::shared_ptr<CharacterHandler> m_characterHandler;
     std::shared_ptr<TableFileHandler> m_tableFileHandler;

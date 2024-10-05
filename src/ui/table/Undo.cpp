@@ -2,16 +2,19 @@
 
 #include "CombatWidget.hpp"
 #include "CombatTableWidget.hpp"
+#include "LogListWidget.hpp"
 #include "UtilsTable.hpp"
 
 #include <QLabel>
 #include <QObject>
 
-Undo::Undo(CombatWidget *CombatWidget, QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
+Undo::Undo(CombatWidget *CombatWidget, LogListWidget* logListWidget,
+           QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
            const UndoData& oldData, const UndoData& newData, const std::vector<int> affectedRows,
            unsigned int* rowEntered, unsigned int* roundCounter,
            bool colorTableRows, bool showIniToolTips) :
-    m_combatWidget(CombatWidget), m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
+    m_combatWidget(CombatWidget), m_logListWidget(logListWidget),
+    m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
     m_oldData(std::move(oldData)), m_newData(std::move(newData)), m_affectedRows(std::move(affectedRows)),
     m_rowEntered(rowEntered), m_roundCounter(roundCounter),
     m_colorTableRows(colorTableRows), m_showIniToolTips(showIniToolTips)
@@ -98,7 +101,7 @@ Undo::fillTableWidgetCell(const QVariant& data, int row, int col)
         tableWidget->item(row, COL_ENEMY)->setCheckState(data.toBool() ? Qt::Checked : Qt::Unchecked);
         break;
     case COL_ADDITIONAL:
-        Utils::Table::setTableAdditionalInfoWidget(m_combatWidget, row, data);
+        Utils::Table::setTableAdditionalInfoWidget(m_combatWidget, m_logListWidget, row, data);
         break;
     default:
         tableWidget->item(row, col) ? tableWidget->item(row, col)->setText(data.toString())

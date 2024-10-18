@@ -597,7 +597,10 @@ CombatWidget::duplicateRow()
 void
 CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
 {
-    if (item->column() == Utils::Table::COL_ENEMY) {
+    if (item->column() == Utils::Table::COL_NAME) {
+        const auto nameWidth = Utils::General::getStringWidth(item->text());
+        resetNameAndInfoWidth(nameWidth, m_tableWidget->columnWidth(Utils::Table::COL_ADDITIONAL));
+    } else if (item->column() == Utils::Table::COL_ENEMY) {
         m_tableWidget->blockSignals(true);
         // We need to store the old checkbox state, so we will reset the state for a short time
         // Then, after saving, reset to the new value and set the correct undo command

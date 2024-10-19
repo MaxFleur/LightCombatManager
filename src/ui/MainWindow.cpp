@@ -119,7 +119,7 @@ MainWindow::saveTable()
         fileName = m_dirSettings.openDir;
     }
     // Save the table
-    if (m_combatWidget->saveTableData(fileName)) {
+    if (m_combatWidget->writeTableToFile(fileName)) {
         m_isTableSavedInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getLCMName(fileName);
@@ -229,7 +229,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small, lightweight Combat Manager for d20-based role playing games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 2.2.0.<br>"
+                          "<p>Version 2.2.1.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 

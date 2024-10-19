@@ -51,7 +51,7 @@ public:
     }
 
     [[nodiscard]] bool
-    saveTableData(const QString& fileName);
+    writeTableToFile(const QString& fileName);
 
     void
     saveOldState();
@@ -138,7 +138,7 @@ private:
                    int  valueType);
 
     void
-    writeStoredCharacters(const QJsonObject& jsonObject);
+    loadCharactersFromTable(const QJsonObject& jsonObject);
 
     [[nodiscard]] QAction*
     createAction(const QString&      text,

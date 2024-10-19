@@ -17,9 +17,8 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
                                              "or open an already existing Combat ('File' -> 'Open...')."));
     welcomeLabel->setAlignment(Qt::AlignCenter);
 
-    auto* const versionLabel = new QLabel("v2.2.0");
-    versionLabel->setToolTip(tr("New settings, insert Tables into an existing Combat,\n"
-                                "change HP for multiple Characters at once and more!"));
+    auto* const versionLabel = new QLabel("v2.2.1");
+    versionLabel->setToolTip(tr("Minor bugfixes and refactoring."));
     versionLabel->setAlignment(Qt::AlignRight);
 
     auto *const layout = new QVBoxLayout(this);

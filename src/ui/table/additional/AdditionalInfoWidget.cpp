@@ -97,6 +97,7 @@ AdditionalInfoWidget::triggerAdditionalInfoEdited()
 
     const auto mainInfoText = getMainInfoText();
     if (m_mainInfoTextCache != mainInfoText) {
+        m_additionalInfoData.mainInfoText = mainInfoText;
         emit additionalInfoEdited();
     }
 }

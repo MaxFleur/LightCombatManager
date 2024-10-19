@@ -3,7 +3,7 @@
    ![License badge](https://img.shields.io/badge/License-GPLv3-blue.svg)
    ![C++ badge](https://img.shields.io/badge/C++-17-blue.svg)
    ![CI badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run.yml/badge.svg)
-   ![Tag badge](https://img.shields.io/badge/Release-v2.2.0-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v2.2.1-blue.svg)
 
 </div>
 
@@ -83,6 +83,9 @@ The following description is focused on building the application with `cmake`, M
 ├── Qt6Widgets.dll
 ```
 The dll files can be found under the Qt installation path under `/bin` and `/plugins`.
+
+# License
+Until Version 2.1.0, LCM used the [MIT license](https://www.mit.edu/~amini/LICENSE.md). Since Version 2.2.0, LCM uses [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.txt).
 
 # Contribution
 

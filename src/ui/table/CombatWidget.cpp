@@ -204,7 +204,7 @@ CombatWidget::generateTableFromTableData()
 
     // Load the data from file
     const auto& loadedFileData = m_tableFileHandler->getData();
-    writeStoredCharacters(loadedFileData);
+    loadCharactersFromTable(loadedFileData);
     m_rowEntered = loadedFileData.value("row_entered").toInt();
     m_roundCounter = loadedFileData.value("round_counter").toInt();
 
@@ -218,20 +218,20 @@ CombatWidget::generateTableFromTableData()
 
     // Then create the table in the ui
     pushOnUndoStack();
-    // We do not need a save step directly after table creation, so reset the stack
+    // We do not need a save step directly after table creation
     m_undoStack->clear();
 }
 
 
 bool
-CombatWidget::saveTableData(const QString& fileName)
+CombatWidget::writeTableToFile(const QString& fileName)
 {
     return m_tableFileHandler->writeToFile(m_tableWidget->tableDataFromWidget(), fileName, m_rowEntered,
                                            m_roundCounter, m_ruleSettings.ruleset, m_ruleSettings.rollAutomatical);
 }
 
 
-// Save the old table state before a change occurs, which is important for the undo command
+// Save the old table state before a table change occurs (later used for the undo stack)
 void
 CombatWidget::saveOldState()
 {
@@ -376,7 +376,7 @@ CombatWidget::insertTable()
     {
         saveOldState();
         const auto oldSize = m_characterHandler->getCharacters().size();
-        writeStoredCharacters(m_tableFileHandler->getData());
+        loadCharactersFromTable(m_tableFileHandler->getData());
 
         for (auto i = oldSize; i < m_characterHandler->getCharacters().size(); i++) {
             m_removedOrAddedRowIndices.push_back(i);
@@ -412,6 +412,7 @@ CombatWidget::openStatusEffectDialog()
         if (const auto& effects = dialog->getEffects(); effects.empty()) {
             return;
         }
+
         saveOldState();
         m_tableWidget->resynchronizeCharacters();
         auto& characters = m_characterHandler->getCharacters();
@@ -422,13 +423,13 @@ CombatWidget::openStatusEffectDialog()
             auto& statusEffects = characters[i.row()].additionalInfoData.statusEffects;
 
             for (const auto& dialogEffect : dialog->getEffects()) {
-                // Store normally for DnD 5E, for the others only if it's new or the duration is bigger
+                // Store normally for DnD 5E
                 if (m_ruleSettings.ruleset == RuleSettings::Ruleset::DND_5E) {
                     statusEffects.push_back(dialogEffect);
                     needsUndo = true;
                     continue;
                 }
-
+                // For the others only if it's new or the duration is bigger
                 auto it = std::find_if(statusEffects.begin(), statusEffects.end(), [dialogEffect] (const auto& statusEffect) {
                     return statusEffect.name == dialogEffect.name;
                 });
@@ -463,7 +464,7 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
     m_tableWidget->resynchronizeCharacters();
 
     const auto trimmedName = character.name.trimmed();
-    for (int i = 0; i < instanceCount; i++) {
+    for (auto i = 0; i < instanceCount; i++) {
         m_characterHandler->storeCharacter(instanceCount > 1 && m_additionalSettings.indicatorMultipleChars ? trimmedName + " #" + QString::number(i + 1)
                                                                                                             : trimmedName,
                                            instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier
@@ -507,7 +508,7 @@ CombatWidget::rerollIni()
 void
 CombatWidget::changeHPForMultipleChars()
 {
-    if (m_tableWidget->selectionModel()->selectedRows().size() <= 1) {
+    if (m_tableWidget->selectionModel()->selectedRows().size() < 2) {
         return;
     }
 
@@ -672,26 +673,22 @@ CombatWidget::switchCharacterPosition(bool goDown)
 
 
 void
-CombatWidget::enteredRowChanged(bool goDown)
+CombatWidget::enteredRowChanged(bool isGoingDown)
 {
-    if (m_tableWidget->rowCount() == 0 || (!goDown && m_rowEntered == 0 && m_roundCounter == 1)) {
+    if (m_tableWidget->rowCount() == 0 || (!isGoingDown && m_rowEntered == 0 && m_roundCounter == 1)) {
         return;
     }
 
     saveOldState();
+    const auto rowEnteredModifier = isGoingDown ? 1 : -1;
+    const auto boundaryIndex = isGoingDown ? m_tableWidget->rowCount() - 1 : 0;
 
-    const auto setForBound = [this, goDown] {
-        m_rowEntered = goDown ? 0 : m_tableWidget->rowCount() - 1;
-        m_roundCounter += goDown ? 1 : -1;
-        m_tableWidget->adjustStatusEffectRoundCounter(goDown);
+    if ((int) m_rowEntered == boundaryIndex) {
+        m_rowEntered = isGoingDown ? 0 : m_tableWidget->rowCount() - 1;
+        m_roundCounter += isGoingDown ? 1 : -1;
+        m_tableWidget->adjustStatusEffectRoundCounter(isGoingDown);
 
         emit roundCounterSet();
-    };
-
-    const auto rowEnteredModifier = goDown ? 1 : -1;
-    const auto tableWidgetBoundIndex = goDown ? m_tableWidget->rowCount() - 1 : 0;
-    if ((int) m_rowEntered == tableWidgetBoundIndex) {
-        setForBound();
     } else {
         m_rowEntered += rowEnteredModifier;
     }
@@ -726,9 +723,9 @@ CombatWidget::setTableOption(bool option, int valueType)
 }
 
 
-// Write characters stored in a file to the table
+// Load characters stored in a file to the table
 void
-CombatWidget::writeStoredCharacters(const QJsonObject& jsonObject)
+CombatWidget::loadCharactersFromTable(const QJsonObject& jsonObject)
 {
     auto& characters = m_characterHandler->getCharacters();
     const auto& charactersObject = jsonObject.value("characters").toObject();
@@ -778,13 +775,13 @@ void
 CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
-    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
 
     menu->addAction(m_addCharacterAction);
     if (m_tableWidget->rowCount() > 0) {
         menu->addAction(m_insertTableAction);
     }
 
+    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
     // Map from MainWindow coordinates to Table Widget coordinates
     if (currentRow >= 0) {
         menu->addAction(m_removeAction);

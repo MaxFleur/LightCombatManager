@@ -119,7 +119,7 @@ MainWindow::saveTable()
         fileName = m_dirSettings.openDir;
     }
     // Save the table
-    if (m_combatWidget->saveTableData(fileName)) {
+    if (m_combatWidget->writeTableToFile(fileName)) {
         m_isTableSavedInFile = true;
         m_dirSettings.write(fileName, true);
         m_fileName = Utils::General::getLCMName(fileName);

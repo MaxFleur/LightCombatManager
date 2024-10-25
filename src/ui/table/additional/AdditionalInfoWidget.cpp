@@ -14,6 +14,10 @@ AdditionalInfoWidget::AdditionalInfoWidget()
     m_additionalInfoLineEdit = new FocusOutLineEdit;
     m_additionalInfoLineEdit->installEventFilter(this);
 
+    m_additionalInfoLineEditLayout = new QVBoxLayout;
+    m_additionalInfoLineEditLayout->setContentsMargins(BORDER_VALUES, BORDER_VALUES, BORDER_VALUES, BORDER_VALUES);
+    m_additionalInfoLineEditLayout->addWidget(m_additionalInfoLineEdit);
+
     m_statusEffectLabel = new QLabel(tr("Status Effects:"));
     m_statusEffectLabel->setVisible(false);
 
@@ -22,7 +26,7 @@ AdditionalInfoWidget::AdditionalInfoWidget()
     m_statusEffectsLayout->addSpacing(SPACING);
 
     auto* const mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_additionalInfoLineEdit);
+    mainLayout->addLayout(m_additionalInfoLineEditLayout);
     mainLayout->addLayout(m_statusEffectsLayout);
     mainLayout->setSpacing(BORDER_VALUES);
     mainLayout->setContentsMargins(BORDER_VALUES, BORDER_VALUES, BORDER_VALUES, BORDER_VALUES);
@@ -84,8 +88,11 @@ AdditionalInfoWidget::setStatusEffects(const QVector<AdditionalInfoData::StatusE
         // The normal widget width returns weird values, so as a workaround use the text width with a buffer
         m_statusEffectsLayoutWidth += buttonTextStringWidth + LENGTH_BUFFER;
     }
-    m_statusEffectsLayout->addStretch();
 
+    m_statusEffectsLayout->addStretch();
+    m_additionalInfoLineEditLayout->setContentsMargins(BORDER_VALUES, BORDER_VALUES, BORDER_VALUES,
+                                                       m_additionalInfoData.statusEffects.empty() ?
+                                                       BORDER_VALUES : LINE_EDIT_BOTTOM_SPACING);
     calculateWidth();
 }
 

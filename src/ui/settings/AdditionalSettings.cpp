@@ -15,19 +15,10 @@ AdditionalSettings::write(bool newIndicatorMultipleChars,
 {
     QSettings settings;
 
-    settings.beginGroup("AdditionalSettings");
-    if (indicatorMultipleChars != newIndicatorMultipleChars) {
-        indicatorMultipleChars = newIndicatorMultipleChars;
-        settings.setValue("indicatorMultipleChars", indicatorMultipleChars);
-    }
-    if (rollIniMultipleChars != newRollIniMultipleChars) {
-        rollIniMultipleChars = newRollIniMultipleChars;
-        settings.setValue("rollIniMultipleChars", rollIniMultipleChars);
-    }
-    if (modAddedToIni != newModAddedToIni) {
-        modAddedToIni = newModAddedToIni;
-        settings.setValue("modAddedToIni", modAddedToIni);
-    }
+    settings.beginGroup("additional");
+    writeParameter(settings, newIndicatorMultipleChars, indicatorMultipleChars, "indicator_multiple_chars");
+    writeParameter(settings, newRollIniMultipleChars, rollIniMultipleChars, "roll_ini_for_multiple_chars");
+    writeParameter(settings, newModAddedToIni, modAddedToIni, "mod_added_to_ini");
     settings.endGroup();
 }
 
@@ -37,15 +28,15 @@ AdditionalSettings::read()
 {
     QSettings settings;
 
-    settings.beginGroup("AdditionalSettings");
-    indicatorMultipleChars = settings.value("indicatorMultipleChars").isValid() ?
-                             settings.value("indicatorMultipleChars").toBool() :
+    settings.beginGroup("additional");
+    indicatorMultipleChars = settings.value("indicator_multiple_chars").isValid() ?
+                             settings.value("indicator_multiple_chars").toBool() :
                              true;
-    rollIniMultipleChars = settings.value("rollIniMultipleChars").isValid() ?
-                           settings.value("rollIniMultipleChars").toBool() :
+    rollIniMultipleChars = settings.value("roll_ini_for_multiple_chars").isValid() ?
+                           settings.value("roll_ini_for_multiple_chars").toBool() :
                            false;
-    modAddedToIni = settings.value("modAddedToIni").isValid() ?
-                    settings.value("modAddedToIni").toBool() :
+    modAddedToIni = settings.value("mod_added_to_ini").isValid() ?
+                    settings.value("mod_added_to_ini").toBool() :
                     true;
     settings.endGroup();
 }

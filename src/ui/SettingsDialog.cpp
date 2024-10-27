@@ -113,7 +113,7 @@ SettingsDialog::applyClicked()
 {
     if (m_rulesetBox->currentIndex() != m_ruleSettings.ruleset ||
         m_rollTieBox->isChecked() != m_ruleSettings.rollAutomatical) {
-        m_ruleSettings.write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
+        m_ruleSettings.write(static_cast<RuleSettings::Ruleset>(m_rulesetBox->currentIndex()), m_rollTieBox->isChecked());
     }
     if (m_indicatorMultipleCharsBox->isChecked() != m_additionalSettings.indicatorMultipleChars ||
         m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings.rollIniMultipleChars ||

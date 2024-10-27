@@ -13,13 +13,11 @@ DirSettings::DirSettings()
 void
 DirSettings::write(const QString& fileName, bool setSaveDir)
 {
-    openDir = fileName;
-
     QSettings settings;
-    settings.setValue("dir_open", fileName);
+    writeParameter(settings, fileName, openDir, "dir_open");
 
     if (setSaveDir) {
-        settings.setValue("dir_save", fileName);
+        writeParameter(settings, fileName, saveDir, "dir_save");
         saveDir = fileName;
     }
 }

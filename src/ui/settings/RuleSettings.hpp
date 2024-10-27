@@ -16,8 +16,8 @@ public:
     };
 
     void
-    write(unsigned int newRuleset,
-          bool         newRollAutomatical);
+    write(Ruleset newRuleset,
+          bool    newRollAutomatical);
 
 public:
     Ruleset ruleset{ PATHFINDER_1E_DND_35E };

@@ -9,19 +9,13 @@ RuleSettings::RuleSettings()
 
 
 void
-RuleSettings::write(unsigned int newRuleset, bool newRollAutomatical)
+RuleSettings::write(Ruleset newRuleset, bool newRollAutomatical)
 {
     QSettings settings;
 
-    settings.beginGroup("RuleSettings");
-    if (ruleset != (int) newRuleset) {
-        ruleset = static_cast<Ruleset>(newRuleset);
-        settings.setValue("ruleset", ruleset);
-    }
-    if (rollAutomatical != newRollAutomatical) {
-        rollAutomatical = newRollAutomatical;
-        settings.setValue("roll_auto", rollAutomatical);
-    }
+    settings.beginGroup("rules");
+    writeParameter(settings, newRuleset, ruleset, "ruleset");
+    writeParameter(settings, newRollAutomatical, rollAutomatical, "roll_auto");
     settings.endGroup();
 }
 
@@ -31,7 +25,7 @@ RuleSettings::read()
 {
     QSettings settings;
 
-    settings.beginGroup("RuleSettings");
+    settings.beginGroup("rules");
     ruleset = settings.value("ruleset").isValid() ?
               static_cast<Ruleset>(settings.value("ruleset").toInt()) :
               Ruleset::PATHFINDER_1E_DND_35E;

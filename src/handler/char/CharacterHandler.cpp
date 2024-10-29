@@ -31,33 +31,34 @@ CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool roll
                false;
     };
 
-    std::sort(characters.begin(), characters.end(),
-              [ruleset, sortUsingHashes](const auto& c1, const auto& c2) {
+    std::ranges::sort(characters, [ruleset, sortUsingHashes](const auto& c1, const auto& c2) {
         // Common for all rulesets: Sort for higher initiative
         if (c1.initiative != c2.initiative) {
             return c1.initiative > c2.initiative;
         }
+
+        using enum RuleSettings::Ruleset;
         switch (ruleset) {
         // PF 1E/D&D 3.5/Starfinder rules: Sort for higher INI mod
         // If that's equal, sort automatically or let the party decide
-        case RuleSettings::Ruleset::PATHFINDER_1E_DND_35E:
-        case RuleSettings::Ruleset::STARFINDER:
+        case PATHFINDER_1E_DND_35E:
+        case STARFINDER:
         // D&D 3.0 uses the dex value for ties, but this is essentially another variant
         // of the mod value, so no additional changes are necessary
-        case RuleSettings::Ruleset::DND_30E:
+        case DND_30E:
             if (c1.modifier != c2.modifier) {
                 return c1.modifier > c2.modifier;
             }
             return sortUsingHashes(c1, c2);
         // PF 2E rules: If there is a tie between player and foe, foe goes first
         // Otherwise sort automatically or let the party decide
-        case RuleSettings::Ruleset::PATHFINDER_2E:
+        case PATHFINDER_2E:
             if (c1.isEnemy != c2.isEnemy) {
                 return c1.isEnemy > c2.isEnemy;
             }
             return sortUsingHashes(c1, c2);
         // D&D 5E rules: Just sort automatically or let the party decide
-        case RuleSettings::Ruleset::DND_5E:
+        case DND_5E:
             return sortUsingHashes(c1, c2);
         default:
             return false;

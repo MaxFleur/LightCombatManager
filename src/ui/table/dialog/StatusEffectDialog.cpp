@@ -32,8 +32,7 @@ StatusEffectDialog::StatusEffectDialog(const RuleSettings& RuleSettings, QWidget
 
     m_listWidget = new QListWidget(this);
     m_listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    const auto effects = StatusEffectData::getEffectList(m_ruleSettings.ruleset);
-    for (const auto& effect : effects) {
+    for (const auto effects = StatusEffectData::getEffectList(m_ruleSettings.ruleset); const auto& effect : effects) {
         m_listWidget->addItem(new QListWidgetItem(effect));
     }
 

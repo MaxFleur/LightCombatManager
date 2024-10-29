@@ -139,7 +139,7 @@ AdditionalInfoWidget::eventFilter(QObject* object, QEvent* event)
 bool
 AdditionalInfoWidget::event(QEvent *event)
 {
-    if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
+    [[unlikely]] if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
         auto lineEditPalette = m_additionalInfoLineEdit->palette();
         lineEditPalette.setColor(QPalette::Base, QApplication::palette().color(QPalette::Button));
         lineEditPalette.setColor(QPalette::Text, QApplication::palette().color(QPalette::Text));

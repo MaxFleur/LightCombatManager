@@ -46,16 +46,16 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     m_addCharacterAction = createAction(tr("Add new Character(s)..."), tr("Add new Character(s)"),
                                         QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), true);
     m_insertTableAction = createAction(tr("Insert other Table..."), tr("Insert another table without overwriting the current one"),
-                                       QKeySequence(Qt::CTRL | Qt::Key_T), false);
+                                       QKeySequence(tr("Ctrl+T")), false);
     m_removeAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
-    m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(Qt::CTRL | Qt::Key_E), false);
-    m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(Qt::CTRL | Qt::Key_D), false);
-    m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(Qt::CTRL | Qt::Key_I), false);
-    m_changeHPAction = createAction(tr("Change HP"), tr("Change HP for multiple Characters at once"), QKeySequence(Qt::CTRL | Qt::Key_H), false);
-    m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(Qt::CTRL | Qt::Key_R), true);
+    m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(tr("Ctrl+E")), false);
+    m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(tr("Ctrl+D")), false);
+    m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(tr("Ctrl+I")), false);
+    m_changeHPAction = createAction(tr("Change HP"), tr("Change HP for multiple Characters at once"), QKeySequence(tr("Ctrl+H")), false);
+    m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(tr("Ctrl+R")), true);
     m_moveUpwardAction = createAction(tr("Move Upward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), true);
     m_moveDownwardAction = createAction(tr("Move Downward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), true);
-    m_showLogAction = createAction(tr("Show Combat Log"), tr("Show a Log for the current Combat"), QKeySequence(Qt::CTRL | Qt::Key_L), true);
+    m_showLogAction = createAction(tr("Show Combat Log"), tr("Show a Log for the current Combat"), QKeySequence(tr("Ctrl+L")), true);
 
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);
@@ -103,14 +103,14 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     upButton->setText(tr("Previous"));
     upButton->setArrowType(Qt::UpArrow);
     upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
-    upButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Up));
+    upButton->setShortcut(QKeySequence(tr("Ctrl+Up")));
 
     auto *const downButton = new QToolButton;
     downButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     downButton->setText(tr("Next"));
     downButton->setArrowType(Qt::DownArrow);
     downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
-    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
+    downButton->setShortcut(QKeySequence(tr("Ctrl+Down")));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
@@ -547,8 +547,8 @@ CombatWidget::changeHPForMultipleChars()
         saveOldState();
         m_tableWidget->resynchronizeCharacters();
 
-        auto& characters = m_characterHandler->getCharacters();
-        for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
+        for (auto& characters = m_characterHandler->getCharacters();
+             const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
             characters[index.row()].hp = std::clamp(characters[index.row()].hp + hpValue, -10000, 10000);
         }
 
@@ -573,14 +573,10 @@ CombatWidget::removeRow()
     for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
         m_removedOrAddedRowIndices.emplace_back(index.row());
     }
-
     // Sort reversed so items in the vector can be removed without using offsets
-    std::sort(m_removedOrAddedRowIndices.begin(), m_removedOrAddedRowIndices.end(), [](const auto& a, const auto& b) {
-        return a > b;
-    });
+    std::ranges::sort(m_removedOrAddedRowIndices, std::ranges::greater());
 
-    auto& characters = m_characterHandler->getCharacters();
-    for (const auto& index : m_removedOrAddedRowIndices) {
+    for (auto& characters = m_characterHandler->getCharacters(); const auto& index : m_removedOrAddedRowIndices) {
         // If the deleted row is before the current entered row, move one up
         if (index < (int) m_rowEntered) {
             m_rowEntered--;
@@ -593,7 +589,7 @@ CombatWidget::removeRow()
     }
 
     // Reverse for the undo stack removal operation
-    std::reverse(m_removedOrAddedRowIndices.begin(), m_removedOrAddedRowIndices.end());
+    std::ranges::reverse(m_removedOrAddedRowIndices);
 
     // Update the current player row and table
     m_logListWidget->logChangedCharacterCount((int) m_removedOrAddedRowIndices.size(), false);
@@ -798,10 +794,9 @@ void
 CombatWidget::loadCharactersFromTable(const QJsonObject& jsonObject)
 {
     auto& characters = m_characterHandler->getCharacters();
-    const auto& charactersObject = jsonObject.value("characters").toObject();
 
     // Single character
-    for (const auto& character : charactersObject) {
+    for (const auto& charactersObject = jsonObject.value("characters").toObject(); const auto& character : charactersObject) {
         const auto& characterObject = character.toObject();
         const auto& additionalInfoObject = characterObject.value("additional_info").toObject();
 
@@ -810,8 +805,8 @@ CombatWidget::loadCharactersFromTable(const QJsonObject& jsonObject)
         additionalInfoData.mainInfoText = additionalInfoObject.value("main_info").toString();
 
         // Status effects
-        const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
-        for (const auto& singleEffect : statusEffectsObject) {
+        for (const auto& statusEffectsObject = additionalInfoObject.value("status_effects").toObject();
+             const auto& singleEffect : statusEffectsObject) {
             const auto& singleEffectObject = singleEffect.toObject();
 
             AdditionalInfoData::StatusEffect effect(singleEffectObject.value("name").toString(),

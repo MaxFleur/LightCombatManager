@@ -22,8 +22,7 @@ TableFileHandler::writeToFile(
     lcmFile["roll_automatically"] = rollAutomatically;
 
     QJsonObject charactersObject;
-    for (auto i = 0; i < tableData.size(); i++) {
-        const auto& row = tableData.at(i);
+    for (auto i = 0; const auto& row : tableData) {
         // Character values
         QJsonObject singleCharacterObject;
         singleCharacterObject["name"] = row.at(0).toString();
@@ -39,19 +38,18 @@ TableFileHandler::writeToFile(
 
         // Status effects for additional info
         QJsonObject statusEffectsObject;
-        for (auto j = 0; j < addInfo.statusEffects.size(); j++) {
-            const auto& statusEffect = addInfo.statusEffects.at(j);
+        for (auto j = 0; const auto& statusEffect : addInfo.statusEffects) {
             QJsonObject singleEffectObject;
             singleEffectObject["name"] = statusEffect.name;
             singleEffectObject["duration"] = (int) statusEffect.duration;
             singleEffectObject["is_permanent"] = statusEffect.isPermanent;
 
-            statusEffectsObject[QString::number(j)] = singleEffectObject;
+            statusEffectsObject[QString::number(j++)] = singleEffectObject;
         }
         additionalInfoObject["status_effects"] = statusEffectsObject;
         singleCharacterObject["additional_info"] = additionalInfoObject;
 
-        charactersObject[QString::number(i)] = singleCharacterObject;
+        charactersObject[QString::number(i++)] = singleCharacterObject;
     }
     lcmFile["characters"] = charactersObject;
 

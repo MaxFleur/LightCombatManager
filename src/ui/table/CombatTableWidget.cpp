@@ -244,9 +244,7 @@ CombatTableWidget::adjustAdditionalInfoWidgetPalette()
     // Reset all colors because other rows might have been selected before
     setTableRowColor(m_rowsUncolored);
 
-    const auto selectedRows = selectionModel()->selectedRows();
-
-    for (const auto& selectedModel : selectedRows) {
+    for (const auto selectedRows = selectionModel()->selectedRows(); const auto& selectedModel : selectedRows) {
         const auto row = selectedModel.row();
 
         auto palette = cellWidget(row, Utils::Table::COL_ADDITIONAL)->palette();

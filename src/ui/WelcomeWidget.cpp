@@ -43,7 +43,7 @@ WelcomeWidget::setSvgWidgetIcon()
 bool
 WelcomeWidget::event(QEvent *event)
 {
-    if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
+    [[unlikely]] if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
         setSvgWidgetIcon();
     }
     return QWidget::event(event);

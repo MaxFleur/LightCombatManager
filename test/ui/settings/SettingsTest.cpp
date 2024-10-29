@@ -12,6 +12,20 @@
 #include <QSettings>
 
 TEST_CASE("Settings Testing", "[Settings]") {
+    SECTION("Concepts test") {
+        enum TestEnum {};
+        struct TestStruct {};
+
+        REQUIRE(SettingsValue<int>);
+        REQUIRE(SettingsValue<bool>);
+        REQUIRE(SettingsValue<QString>);
+        REQUIRE(SettingsValue<TestEnum>);
+        REQUIRE(!SettingsValue<float>);
+        REQUIRE(!SettingsValue<char>);
+        REQUIRE(!SettingsValue<std::string>);
+        REQUIRE(!SettingsValue<TestStruct>);
+    }
+
     SECTION("Additional settings test") {
         AdditionalSettings additionalSettings;
         QSettings settings;

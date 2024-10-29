@@ -416,7 +416,7 @@ MainWindow::setMainWindowIcons()
 bool
 MainWindow::event(QEvent *event)
 {
-    if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
+    [[unlikely]] if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
         setMainWindowIcons();
 
         if (m_combatWidget) {

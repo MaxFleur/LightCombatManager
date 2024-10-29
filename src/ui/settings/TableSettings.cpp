@@ -11,20 +11,21 @@ TableSettings::TableSettings()
 void
 TableSettings::write(ValueType valueType, bool valueToWrite)
 {
+    using enum ValueType;
     QSettings settings;
 
     settings.beginGroup("table");
     switch (valueType) {
-    case ValueType::INI_SHOWN:
+    case INI_SHOWN:
         writeParameter(settings, valueToWrite, iniShown, "ini");
         break;
-    case ValueType::MOD_SHOWN:
+    case MOD_SHOWN:
         writeParameter(settings, valueToWrite, modifierShown, "modifier");
         break;
-    case ValueType::COLOR_TABLE:
+    case COLOR_TABLE:
         writeParameter(settings, valueToWrite, colorTableRows, "color_rows");
         break;
-    case ValueType::SHOW_INI_TOOLTIPS:
+    case SHOW_INI_TOOLTIPS:
         writeParameter(settings, valueToWrite, showIniToolTips, "ini_tool_tips");
     default:
         break;

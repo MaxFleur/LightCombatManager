@@ -4,6 +4,9 @@
 
 class BaseFileHandler {
 public:
+    virtual
+    ~BaseFileHandler() = default;
+
     [[nodiscard]] virtual int
     getStatus(const QString& fileName);
 

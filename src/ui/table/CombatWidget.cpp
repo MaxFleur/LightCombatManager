@@ -46,16 +46,16 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     m_addCharacterAction = createAction(tr("Add new Character(s)..."), tr("Add new Character(s)"),
                                         QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), true);
     m_insertTableAction = createAction(tr("Insert other Table..."), tr("Insert another table without overwriting the current one"),
-                                       QKeySequence(Qt::CTRL | Qt::Key_T), false);
+                                       QKeySequence(tr("Ctrl+T")), false);
     m_removeAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
-    m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(Qt::CTRL | Qt::Key_E), false);
-    m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(Qt::CTRL | Qt::Key_D), false);
-    m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(Qt::CTRL | Qt::Key_I), false);
-    m_changeHPAction = createAction(tr("Change HP"), tr("Change HP for multiple Characters at once"), QKeySequence(Qt::CTRL | Qt::Key_H), false);
-    m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(Qt::CTRL | Qt::Key_R), true);
+    m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(tr("Ctrl+E")), false);
+    m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(tr("Ctrl+D")), false);
+    m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(tr("Ctrl+I")), false);
+    m_changeHPAction = createAction(tr("Change HP"), tr("Change HP for multiple Characters at once"), QKeySequence(tr("Ctrl+H")), false);
+    m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(tr("Ctrl+R")), true);
     m_moveUpwardAction = createAction(tr("Move Upward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), true);
     m_moveDownwardAction = createAction(tr("Move Downward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), true);
-    m_showLogAction = createAction(tr("Show Combat Log"), tr("Show a Log for the current Combat"), QKeySequence(Qt::CTRL | Qt::Key_L), true);
+    m_showLogAction = createAction(tr("Show Combat Log"), tr("Show a Log for the current Combat"), QKeySequence(tr("Ctrl+L")), true);
 
     m_undoAction = m_undoStack->createUndoAction(this, tr("&Undo"));
     m_undoAction->setShortcuts(QKeySequence::Undo);
@@ -103,14 +103,14 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     upButton->setText(tr("Previous"));
     upButton->setArrowType(Qt::UpArrow);
     upButton->setToolTip(tr("Select the previous Character (Ctrl + Arrow Up)."));
-    upButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Up));
+    upButton->setShortcut(QKeySequence(tr("Ctrl+Up")));
 
     auto *const downButton = new QToolButton;
     downButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     downButton->setText(tr("Next"));
     downButton->setArrowType(Qt::DownArrow);
     downButton->setToolTip(tr("Select the next Character (Ctrl + Arrow Down)."));
-    downButton->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Down));
+    downButton->setShortcut(QKeySequence(tr("Ctrl+Down")));
 
     auto *const exitButton = new QPushButton(tr("Return to Main Window"));
 
@@ -579,8 +579,7 @@ CombatWidget::removeRow()
         return a > b;
     });
 
-    auto& characters = m_characterHandler->getCharacters();
-    for (const auto& index : m_removedOrAddedRowIndices) {
+    for (auto& characters = m_characterHandler->getCharacters(); const auto& index : m_removedOrAddedRowIndices) {
         // If the deleted row is before the current entered row, move one up
         if (index < (int) m_rowEntered) {
             m_rowEntered--;

@@ -4,7 +4,6 @@
 #include "AdditionalSettings.hpp"
 #include "ChangeHPDialog.hpp"
 #include "DelegateSpinBox.hpp"
-#include "LogListWidget.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
 #include "Undo.hpp"

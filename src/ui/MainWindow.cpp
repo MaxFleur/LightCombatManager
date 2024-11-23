@@ -286,13 +286,20 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
 
     setCombatTitle(false);
 
+    const auto resizeWidget = [this] (int width, int height) {
+        QTimer::singleShot(1, [this, width, height] {
+            resize(width, height);
+        });
+    };
+
     if (newCombatStarted) {
-        resize(width(), START_HEIGHT);
+        resizeWidget(START_WIDTH, START_HEIGHT);
         m_combatWidget->openAddCharacterDialog();
     } else {
         m_combatWidget->generateTableFromTableData();
+        const auto width = m_combatWidget->isLoggingWidgetVisible() ? m_combatWidget->width() - 250 : m_combatWidget->width();
         const auto height = m_combatWidget->getHeight();
-        resize(width(), std::max(height, START_HEIGHT));
+        resizeWidget(std::max(width, START_WIDTH), std::max(height, START_HEIGHT));
     }
 
     m_isTableActive = true;

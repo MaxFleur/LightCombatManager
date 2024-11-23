@@ -2,6 +2,7 @@
 
 #include "CharacterHandler.hpp"
 #include "CombatTableWidget.hpp"
+#include "LogListWidget.hpp"
 #include "TableFileHandler.hpp"
 #include "TableSettings.hpp"
 
@@ -16,7 +17,6 @@ class QUndoStack;
 class QTimer;
 
 class AdditionalSettings;
-class LogListWidget;
 class RuleSettings;
 
 // This class handles the main combat widget
@@ -46,10 +46,16 @@ public:
         return m_tableWidget->rowCount() == 0;
     }
 
-    [[nodiscard]] unsigned int
+    [[nodiscard]] int
     getHeight() const
     {
         return m_tableWidget->getHeight() + 40;
+    }
+
+    [[nodiscard]] bool
+    isLoggingWidgetVisible() const
+    {
+        return m_logListWidget->isVisible();
     }
 
     [[nodiscard]] bool

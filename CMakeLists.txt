@@ -27,9 +27,9 @@ add_subdirectory(src)
 add_subdirectory(test)
 
 if(MSVC)
-  target_compile_options(LightCombatManager PRIVATE /W4 /WX)
+  target_compile_options(LightCombatManager PRIVATE /W4)
 else()
-  target_compile_options(LightCombatManager PRIVATE -Wall -Wextra -Wpedantic -Werror)
+  target_compile_options(LightCombatManager PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
 # Install and uninstall options

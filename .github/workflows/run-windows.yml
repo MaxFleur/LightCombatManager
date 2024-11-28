@@ -1,0 +1,104 @@
+name: LCM CI
+
+on: [push]
+
+env:
+  BUILD_TYPE: Release
+  QT5_VERSION: 5.15.2
+  QT6_VERSION: 6.3.0
+
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/setup-dotnet@v1
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install CMake
+        run: |
+          choco install cmake --installargs '"ADD_CMAKE_TO_PATH=System"'
+        shell: powershell
+
+      - name: Install Catch2
+        run: |
+          git clone https://github.com/catchorg/Catch2.git
+          cd Catch2; mkdir build; cd build
+          cmake .. -DBUILD_TESTING=OFF; cmake --build . --config Release --target install
+        shell: powershell
+
+      - name: Install Qt5
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '${{env.QT5_VERSION}}'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+          archives: 'qtbase qtsvg'
+          cache: 'false'
+          cache-key-prefix: 'install-qt-action'
+          install-deps: 'true'
+          setup-python: 'false'
+          set-env: 'true'
+
+      - name: Edit CMakeLists.txt - Qt5
+        run: |
+          Add-Content ${{github.workspace}}/CMakeLists.txt 'set(CMAKE_PREFIX_PATH "${{runner.workspace}}/Qt/${{env.QT5_VERSION}}/msvc2019_64/")'
+          (Get-Content ${{github.workspace}}/CMakeLists.txt).Replace('\', '/') | Set-Content ${{github.workspace}}/CMakeLists.txt
+        shell: powershell
+
+      - name: Configure CMake  - Qt5
+        run: |
+          cmake -B build -G "Visual Studio 17 2022" -DCMAKE_CXX_COMPILER=cl
+
+        shell: powershell
+      - name: Build Project - Qt5
+        run: |
+          cmake --build build --config ${{env.BUILD_TYPE}}
+        shell: powershell
+
+      - name: Test - Qt5
+        run: |
+          ${{github.workspace}}/build/test/${{env.BUILD_TYPE}}/tests.exe
+        shell: powershell
+
+      - name: Clear directory
+        run: |
+          Remove-Item "${{github.workspace}}/build" -Recurse -Include *.*
+        shell: powershell
+
+      - name: Install Qt6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '${{env.QT6_VERSION}}'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+          archives: 'qtbase qtsvg'
+          cache: 'false'
+          cache-key-prefix: 'install-qt-action'
+          install-deps: 'true'
+          setup-python: 'false'
+          set-env: 'true'
+
+      - name: Edit CMakeLists.txt - Qt6
+        run: |
+          (Get-Content ${{github.workspace}}/CMakeLists.txt).Replace('${{env.QT5_VERSION}}', '${{env.QT6_VERSION}}') | Set-Content ${{github.workspace}}/CMakeLists.txt
+        shell: powershell
+
+      - name: Configure CMake  - Qt6
+        run: |
+          cmake -B build -G "Visual Studio 17 2022" -DCMAKE_CXX_COMPILER=cl
+
+      - name: Build Project - Qt6
+        run: |
+          cmake --build build --config ${{env.BUILD_TYPE}}
+        shell: powershell
+
+      - name: Test - Qt6
+        run: |
+          ${{github.workspace}}/build/test/${{env.BUILD_TYPE}}/tests.exe
+        shell: powershell

@@ -135,13 +135,12 @@ CombatTableWidget::setIniColumnTooltips(bool resetToolTip)
     blockSignals(true);
 
     for (auto i = 0; i < rowCount(); i++) {
-        auto toolTipString = QString();
-        if (!resetToolTip) {
+        if (resetToolTip) {
+            item(i, 1)->setToolTip(QString());
+        } else {
             const auto rolledValue = item(i, 1)->text().toInt() - item(i, 2)->text().toInt();
-            toolTipString += "Calculation: Rolled Value " + QString::number(rolledValue) + ", Modifier " + item(i, 2)->text();
+            item(i, 1)->setToolTip("Calculation: Rolled Value " + QString::number(rolledValue) + ", Modifier " + item(i, 2)->text());
         }
-
-        item(i, 1)->setToolTip(toolTipString);
     }
 
     blockSignals(false);

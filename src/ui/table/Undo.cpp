@@ -129,8 +129,8 @@ Undo::adjustTableWidgetRowCount(bool addRow)
                 fillTableWidgetCell(tableData.at(col), front, col);
             }
         } else {
-            for (std::size_t i = 0; i < affectedRows.size(); i++) {
-                affectedRows[i]--;
+            for (auto& i : affectedRows) {
+                i--;
             }
         }
         affectedRows.erase(affectedRows.begin());

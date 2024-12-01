@@ -199,7 +199,7 @@ private:
 
     QVector<QVector<QVariant> > m_tableDataOld;
 
-    std::vector<int> m_removedOrAddedRowIndices;
+    std::vector<int> m_affectedRowIndices;
 
     QByteArray m_headerDataState;
 

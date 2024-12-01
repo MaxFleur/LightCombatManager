@@ -229,9 +229,8 @@ CombatWidget::generateTableFromTableData()
     m_tableWidget->setColumnHidden(Utils::Table::COL_INI, !m_tableSettings.iniShown);
     m_tableWidget->setColumnHidden(Utils::Table::COL_MODIFIER, !m_tableSettings.modifierShown);
 
-    for (auto i = 0; i < m_characterHandler->getCharacters().size(); i++) {
-        m_removedOrAddedRowIndices.push_back(i);
-    }
+    m_affectedRowIndices.resize(m_characterHandler->getCharacters().size());
+    std::iota(m_affectedRowIndices.begin(), m_affectedRowIndices.end(), 0);
 
     // Then create the table in the ui
     m_logListWidget->logChangedCharacterCount(m_characterHandler->getCharacters().size(), true);
@@ -274,9 +273,9 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     const Undo::UndoData newData{ tableData, m_rowEntered, m_roundCounter };
     // We got everything, so push
     m_undoStack->push(new Undo(this, m_logListWidget, m_roundCounterLabel, m_currentPlayerLabel,
-                               oldData, newData, m_removedOrAddedRowIndices, &m_rowEntered, &m_roundCounter,
+                               oldData, newData, m_affectedRowIndices, &m_rowEntered, &m_roundCounter,
                                m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips));
-    m_removedOrAddedRowIndices.clear();
+    m_affectedRowIndices.clear();
 }
 
 
@@ -400,13 +399,12 @@ CombatWidget::insertTable()
         saveOldState();
         const auto oldSize = m_characterHandler->getCharacters().size();
         loadCharactersFromTable(m_tableFileHandler->getData());
+        // Update to new table size and reset identifiers
+        m_affectedRowIndices.resize(m_affectedRowIndices.size() + m_characterHandler->getCharacters().size() - oldSize);
+        std::iota(m_affectedRowIndices.begin(), m_affectedRowIndices.end(), oldSize);
 
-        for (auto i = oldSize; i < m_characterHandler->getCharacters().size(); i++) {
-            m_removedOrAddedRowIndices.push_back(i);
-        }
         pushOnUndoStack();
         emit tableHeightSet(m_tableWidget->getHeight() + 40);
-
         break;
     }
     case 1:
@@ -494,7 +492,7 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
                                            instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier
                                                                                                           : character.initiative,
                                            character.modifier, character.hp, character.isEnemy, character.additionalInfoData);
-        m_removedOrAddedRowIndices.emplace_back(m_characterHandler->getCharacters().size() - 1);
+        m_affectedRowIndices.emplace_back(m_characterHandler->getCharacters().size() - 1);
     }
 
     pushOnUndoStack();
@@ -570,12 +568,12 @@ CombatWidget::removeRow()
 
     // Get selected rows indices
     for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
-        m_removedOrAddedRowIndices.emplace_back(index.row());
+        m_affectedRowIndices.emplace_back(index.row());
     }
     // Sort reversed so items in the vector can be removed without using offsets
-    std::ranges::sort(m_removedOrAddedRowIndices, std::ranges::greater());
+    std::ranges::sort(m_affectedRowIndices, std::ranges::greater());
 
-    for (auto& characters = m_characterHandler->getCharacters(); const auto& index : m_removedOrAddedRowIndices) {
+    for (auto& characters = m_characterHandler->getCharacters(); const auto& index : m_affectedRowIndices) {
         // If the deleted row is before the current entered row, move one up
         if (index < (int) m_rowEntered) {
             m_rowEntered--;
@@ -588,10 +586,10 @@ CombatWidget::removeRow()
     }
 
     // Reverse for the undo stack removal operation
-    std::ranges::reverse(m_removedOrAddedRowIndices);
+    std::ranges::reverse(m_affectedRowIndices);
 
     // Update the current player row and table
-    m_logListWidget->logChangedCharacterCount((int) m_removedOrAddedRowIndices.size(), false);
+    m_logListWidget->logChangedCharacterCount((int) m_affectedRowIndices.size(), false);
     setRowAndPlayer();
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
@@ -612,7 +610,7 @@ CombatWidget::duplicateRow()
     const auto currentIndex = m_tableWidget->currentIndex().row();
     characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
 
-    m_removedOrAddedRowIndices.emplace_back(currentIndex + 1);
+    m_affectedRowIndices.emplace_back(currentIndex + 1);
     m_logListWidget->logCharacterDuplicated(currentIndex + 1);
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
@@ -655,7 +653,7 @@ CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
 void
 CombatWidget::sortTable()
 {
-    if (m_tableWidget->rowCount() <= 1) {
+    if (m_tableWidget->rowCount() < 2) {
         return;
     }
 

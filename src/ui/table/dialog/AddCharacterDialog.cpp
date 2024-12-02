@@ -260,6 +260,7 @@ AddCharacterDialog::resetButtonClicked()
 
     m_multipleEnabledBox->setCheckState(Qt::Unchecked);
     m_instanceNumberBox->setValue(2);
+    m_nameEdit->setFocus(Qt::TabFocusReason);
 }
 
 

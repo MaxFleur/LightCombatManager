@@ -78,9 +78,10 @@ CombatTableWidget::setRowAndPlayer(QLabel *roundCounterLabel, QLabel *currentPla
     blockSignals(true);
     // Reset bold text rows to standard font
     for (auto i = 0; i < rowCount(); i++) {
-        if (const auto font = item(i, 0)->font(); font.bold()) {
+        if (auto font = item(i, 0)->font(); font.bold()) {
             for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
-                item(i, j)->setFont(font.defaultFamily());
+                font.setBold(false);
+                item(i, j)->setFont(font);
             }
             break;
         }

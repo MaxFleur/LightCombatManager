@@ -51,6 +51,10 @@ TemplatesWidget::loadTemplates()
             m_templatesListWidget->addCharacter(character);
         }
     }
+
+    if (m_templatesListWidget->count() > 0) {
+        m_templatesListWidget->item(0)->setSelected(true);
+    }
 }
 
 

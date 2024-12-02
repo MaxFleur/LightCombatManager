@@ -405,6 +405,13 @@ CombatWidget::insertTable()
 
         pushOnUndoStack();
         emit tableHeightSet(m_tableWidget->getHeight() + 40);
+
+        auto const reply = QMessageBox::question(this, tr("Sort Table?"), tr("Do you want to resort the Table?"),
+                                                 QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            sortTable();
+        }
+
         break;
     }
     case 1:

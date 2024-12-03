@@ -23,7 +23,8 @@ public:
                              bool added);
 
     void
-    logChangedHPMultipleChars(int count);
+    logChangedStatMultipleChars(int  count,
+                                bool hpChanged);
 
     void
     logCharacterDuplicated(int row);

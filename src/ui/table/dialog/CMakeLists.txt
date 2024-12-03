@@ -9,8 +9,8 @@ target_include_directories (dialog
 target_sources(dialog INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/AddCharacterDialog.hpp
     ${CMAKE_CURRENT_LIST_DIR}/AddCharacterDialog.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/ChangeHPDialog.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/ChangeHPDialog.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ChangeStatDialog.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/ChangeStatDialog.cpp
     ${CMAKE_CURRENT_LIST_DIR}/StatusEffectData.hpp
     ${CMAKE_CURRENT_LIST_DIR}/StatusEffectDialog.hpp
     ${CMAKE_CURRENT_LIST_DIR}/StatusEffectDialog.cpp

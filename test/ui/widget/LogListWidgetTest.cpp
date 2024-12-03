@@ -35,6 +35,14 @@ TEST_CASE("Logging List Widget Testing", "[TableUtils]") {
         REQUIRE(logListWidget->item(1)->text() == "Added 2 Character(s).");
         REQUIRE(logListWidget->item(0)->text() == "Removed 1 Character(s).");
     }
+    SECTION("Log changed stat for multiple chars test") {
+        logListWidget->logChangedStatMultipleChars(2, true);
+        logListWidget->logChangedStatMultipleChars(1, false);
+
+        REQUIRE(logListWidget->count() == 2);
+        REQUIRE(logListWidget->item(1)->text() == "Changed HP for 2 Characters.");
+        REQUIRE(logListWidget->item(0)->text() == "Changed Info Text for 1 Characters.");
+    }
     SECTION("Log duplicated character test") {
         logListWidget->logCharacterDuplicated(2);
 

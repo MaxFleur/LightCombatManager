@@ -49,9 +49,10 @@ LogListWidget::logChangedCharacterCount(int count, bool added)
 
 
 void
-LogListWidget::logChangedHPMultipleChars(int count)
+LogListWidget::logChangedStatMultipleChars(int count, bool hpChanged)
 {
-    addNewEntry("Changed HP for " + QString::number(count) + " Characters.");
+    addNewEntry(hpChanged ? "Changed HP for " + QString::number(count) + " Characters."
+                          : "Changed Info Text for " + QString::number(count) + " Characters.");
 }
 
 

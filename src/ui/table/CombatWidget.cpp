@@ -2,7 +2,7 @@
 
 #include "AddCharacterDialog.hpp"
 #include "AdditionalSettings.hpp"
-#include "ChangeHPDialog.hpp"
+#include "ChangeStatDialog.hpp"
 #include "DelegateSpinBox.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectDialog.hpp"
@@ -51,6 +51,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(tr("Ctrl+D")), false);
     m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(tr("Ctrl+I")), false);
     m_changeHPAction = createAction(tr("Change HP"), tr("Change HP for multiple Characters at once"), QKeySequence(tr("Ctrl+H")), false);
+    m_addInfoTextAction = createAction(tr("Add Text"), tr("Add Text for multiple Characters at once"), QKeySequence(tr("Ctrl+J")), false);
     m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(tr("Ctrl+R")), true);
     m_moveUpwardAction = createAction(tr("Move Upward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), true);
     m_moveDownwardAction = createAction(tr("Move Downward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), true);
@@ -63,6 +64,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
 
     addAction(m_resortAction);
     addAction(m_changeHPAction);
+    addAction(m_addInfoTextAction);
     addAction(m_moveUpwardAction);
     addAction(m_moveDownwardAction);
     addAction(m_showLogAction);
@@ -154,7 +156,12 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     connect(m_addEffectAction, &QAction::triggered, this, &CombatWidget::openStatusEffectDialog);
     connect(m_duplicateAction, &QAction::triggered, this, &CombatWidget::duplicateRow);
     connect(m_rerollAction, &QAction::triggered, this, &CombatWidget::rerollIni);
-    connect(m_changeHPAction, &QAction::triggered, this, &CombatWidget::changeHPForMultipleChars);
+    connect(m_changeHPAction, &QAction::triggered, this, [this] {
+        changeStatForMultipleChars(true);
+    });
+    connect(m_addInfoTextAction, &QAction::triggered, this, [this] {
+        changeStatForMultipleChars(false);
+    });
     connect(m_resortAction, &QAction::triggered, this, &CombatWidget::sortTable);
     connect(m_moveUpwardAction, &QAction::triggered, this, [this] {
         switchCharacterPosition(false);
@@ -182,6 +189,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
         m_duplicateAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
         m_rerollAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
         m_changeHPAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() > 1);
+        m_addInfoTextAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() > 1);
     });
     connect(m_tableWidget, &QTableWidget::currentCellChanged, this, [this] {
         saveOldState();
@@ -320,6 +328,7 @@ CombatWidget::setUndoRedoIcon(bool isDarkMode)
     m_duplicateAction->setIcon(isDarkMode ? QIcon(":/icons/table/duplicate_white.svg") : QIcon(":/icons/table/duplicate_black.svg"));
     m_rerollAction->setIcon(isDarkMode ? QIcon(":/icons/table/reroll_white.svg") : QIcon(":/icons/table/reroll_black.svg"));
     m_changeHPAction->setIcon(isDarkMode ? QIcon(":/icons/table/change_hp_white.svg") : QIcon(":/icons/table/change_hp_black.svg"));
+    m_addInfoTextAction->setIcon(isDarkMode ? QIcon(":/icons/table/text_white.svg") : QIcon(":/icons/table/text_black.svg"));
     m_resortAction->setIcon(isDarkMode ? QIcon(":/icons/table/sort_white.svg") : QIcon(":/icons/table/sort_black.svg"));
     m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
     m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
@@ -536,15 +545,15 @@ CombatWidget::rerollIni()
 
 
 void
-CombatWidget::changeHPForMultipleChars()
+CombatWidget::changeStatForMultipleChars(bool changeHP)
 {
     if (m_tableWidget->selectionModel()->selectedRows().size() < 2) {
         return;
     }
 
-    if (auto *const dialog = new ChangeHPDialog(this); dialog->exec() == QDialog::Accepted) {
-        const auto hpValue = dialog->getHPValue();
-        if (hpValue == 0) {
+    if (auto *const dialog = new ChangeStatDialog(changeHP, this); dialog->exec() == QDialog::Accepted) {
+        const auto variant = dialog->getVariant();
+        if (variant.isNull()) {
             return;
         }
 
@@ -553,10 +562,14 @@ CombatWidget::changeHPForMultipleChars()
 
         for (auto& characters = m_characterHandler->getCharacters();
              const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
-            characters[index.row()].hp = std::clamp(characters[index.row()].hp + hpValue, -10000, 10000);
+            if (changeHP) {
+                characters[index.row()].hp = std::clamp(characters[index.row()].hp + variant.toInt(), -10000, 10000);
+            } else {
+                characters[index.row()].additionalInfoData.mainInfoText += " " + variant.toString();
+            }
         }
 
-        m_logListWidget->logChangedHPMultipleChars(m_tableWidget->selectionModel()->selectedRows().size());
+        m_logListWidget->logChangedStatMultipleChars(m_tableWidget->selectionModel()->selectedRows().size(), changeHP);
         pushOnUndoStack();
     }
 }
@@ -867,6 +880,7 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 
             if (m_tableWidget->selectionModel()->selectedRows().size() > 1) {
                 editingMenu->addAction(m_changeHPAction);
+                editingMenu->addAction(m_addInfoTextAction);
             } else {
                 editingMenu->addAction(m_duplicateAction);
                 editingMenu->addAction(m_rerollAction);

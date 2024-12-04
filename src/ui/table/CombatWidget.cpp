@@ -50,8 +50,8 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(tr("Ctrl+E")), false);
     m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(tr("Ctrl+D")), false);
     m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(tr("Ctrl+I")), false);
-    m_changeHPAction = createAction(tr("Change HP"), tr("Change HP for multiple Characters at once"), QKeySequence(tr("Ctrl+H")), false);
-    m_addInfoTextAction = createAction(tr("Add Text"), tr("Add Text for multiple Characters at once"), QKeySequence(tr("Ctrl+J")), false);
+    m_changeHPAction = createAction(tr("Change HP..."), tr("Change HP for multiple Characters at once"), QKeySequence(tr("Ctrl+H")), false);
+    m_addInfoTextAction = createAction(tr("Add Info Text..."), tr("Add Info Text for multiple Characters at once"), QKeySequence(tr("Ctrl+J")), false);
     m_resortAction = createAction(tr("Resort Table"), "", QKeySequence(tr("Ctrl+R")), true);
     m_moveUpwardAction = createAction(tr("Move Upward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Up), true);
     m_moveDownwardAction = createAction(tr("Move Downward"), "", QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Down), true);

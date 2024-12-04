@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <svg
-    width="43mm"
-    height="43mm"
+    width="22.7mm"
+    height="22.7mm"
     version="1.1"
-    viewBox="0 0 43 43"
+    viewBox="0 0 22.7 22.7"
     xmlns="http://www.w3.org/2000/svg">
 
- <g stroke="#000" stroke-linecap="square" stroke-width="2.6291">
-  <rect x="1.5454" y="16.976" width="39.921" height="9.1096"/>
-  <rect transform="rotate(90)" x="1.5706" y="-26.061" width="39.921" height="9.1096"/>
+ <g fill="none" stroke="#000" stroke-linecap="round" stroke-width="5">
+  <path d="m2.5842 11.35h17.532"/>
+  <path d="m11.35 2.5842v17.532"/>
  </g>
 </svg>

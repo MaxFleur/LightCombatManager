@@ -17,11 +17,11 @@
 
 ### A small, lightweight cross-platform combat manager for d20-based role-playing games, based on Qt.
 
-![bossfight](https://github.com/user-attachments/assets/66adc3ed-2568-4625-9e54-a44e5e56d65d)
+![bossfight](https://github.com/user-attachments/assets/a07db4f2-0c9f-451a-9143-4c4e774833e3)
 
 With LightCombatManager (or just **LCM**), you can easily manage a combat for a d20-based RPG. The table supports all sorts of combat-based operations, such as reordering rows when a character moves their initiative, removing or adding ruleset-defined status effects to one or multiple characters or subsequent addition of characters who just joined the combat. Undoing and logging changes are also supported!
 
-![new_fight](https://github.com/user-attachments/assets/4992d9fc-5b0f-436f-a690-fb8d3c502c96)
+![editor](https://github.com/user-attachments/assets/d925de4c-28d6-427c-ac4b-1250ba421cad)
 
 LCM provides an intuitive character editor, where characters with initiative value and modifier, a health point counter and additional information can be easily created.\
 If the game ends, but the current combat is not finished yet, you can save it on the PC. Characters can also be stored as templates for later usage.
@@ -43,7 +43,7 @@ LCM is written in C++20. The following frameworks are used for development:
 * [Qt6 or Qt5](https://www.qt.io/) for the user interface and the storing and loading of tables.
    * If no Qt6 installation is found on the system, the application searches for a Qt5 installation instead.
    * Note that for the correct displaying of svg files, the Qt SVG plugin is needed.
-* [Catch2 v3](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt))
+* [Catch2 v2 or v3](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt)).
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
 * CMake as build system.
 

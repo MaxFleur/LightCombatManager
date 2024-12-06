@@ -5,7 +5,7 @@
    ![CI MacOS badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run-mac.yml/badge.svg?event=push)
    ![CI Ubuntu badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run-ubuntu.yml/badge.svg?event=push)
    ![CI Windows badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run-windows.yml/badge.svg?event=push)
-   ![Tag badge](https://img.shields.io/badge/Release-v2.2.1-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v3.0.0-blue.svg)
 
 </div>
 

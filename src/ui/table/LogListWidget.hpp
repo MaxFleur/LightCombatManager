@@ -11,34 +11,37 @@ public:
     explicit
     LogListWidget(QWidget *parent = nullptr);
 
+    enum class LoggingType {
+        NAME,
+        INI,
+        INI_MOD,
+        HP,
+        ALLY,
+        INFO_TEXT,
+        INFO_EFFECT,
+        COUNT,
+        MULTIPLE_CHARS,
+        DUPLICATE,
+        SWITCH,
+        NEXT_TURN,
+        OTHER
+    };
+
 public:
     void
-    logCharacterStatChanged(int  charRow,
-                            int  charColumn,
-                            // Call only for default
-                            bool isAlly = false);
+    logSingleValue(LoggingType type,
+                   int         value);
 
     void
-    logChangedCharacterCount(int  count,
-                             bool added);
+    logConditionalValue(LoggingType type,
+                        int         value,
+                        // Call only for default
+                        bool        condition = false);
 
     void
-    logChangedStatMultipleChars(int  count,
-                                bool hpChanged);
-
-    void
-    logCharacterDuplicated(int row);
-
-    void
-    logCharacterSwitch(int oldIndex,
-                       int newIndex);
-
-    void
-    logAddedEffects(int count);
-
-    void
-    logNextTurn(int roundCounter,
-                int row);
+    logTwoValues(LoggingType type,
+                 int         firstValue,
+                 int         secondValue);
 
     void
     logOther(const QString& log);

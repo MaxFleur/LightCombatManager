@@ -2,6 +2,8 @@
 
 #include <QListWidgetItem>
 
+using enum LogListWidget::LoggingType;
+
 LogListWidget::LogListWidget(QWidget *parent)
     : QListWidget(parent)
 {
@@ -10,77 +12,68 @@ LogListWidget::LogListWidget(QWidget *parent)
 
 
 void
-LogListWidget::logCharacterStatChanged(int charRow, int charColumn, bool isAlly)
+LogListWidget::logSingleValue(LoggingType type, int value)
 {
-    QString listEntry;
-
-    switch (charColumn) {
-    case 0:
-        listEntry = "Changed name ";
-        break;
-    case 1:
-        listEntry = "Set INI ";
-        break;
-    case 2:
-        listEntry = "Set INI modifier ";
-        break;
-    case 3:
-        listEntry = "Set HP ";
-        break;
-    case 5:
-        listEntry = "Added more info ";
-        break;
+    switch (type) {
+    case NAME:
+        addNewEntry("Changed name for row " + QString::number(value) + ".");
+        return;
+    case INI:
+        addNewEntry("Set INI for row " + QString::number(value) + ".");
+        return;
+    case INI_MOD:
+        addNewEntry("Set INI modifier for row " + QString::number(value) + ".");
+        return;
+    case HP:
+        addNewEntry("Set HP for row " + QString::number(value) + ".");
+        return;
+    case INFO_TEXT:
+        addNewEntry("Added more info for row " + QString::number(value) + ".");
+        return;
+    case DUPLICATE:
+        addNewEntry("Duplicated row " + QString::number(value) + ".");
+        return;
+    case INFO_EFFECT:
+        addNewEntry("Modified effects for " + QString::number(value) + " Characters.");
+        return;
     default:
-        const auto appendixString = isAlly ? "'Ally'." : "'Enemy'.";
-        addNewEntry("Set enemy status in row " + QString::number(charRow) + " to " + appendixString);
         return;
     }
-
-    addNewEntry(listEntry += "for row " + QString::number(charRow) + ".");
 }
 
 
 void
-LogListWidget::logChangedCharacterCount(int count, bool added)
+LogListWidget::logConditionalValue(LoggingType type, int value, bool condition)
 {
-    auto newEntry = added ? "Added " : "Removed ";
-    addNewEntry(newEntry + QString::number(count) + " Character(s).");
+    switch (type) {
+    case ALLY:
+    {
+        const auto appendixString = condition ? "'Ally'." : "'Enemy'.";
+        addNewEntry("Set enemy status in row " + QString::number(value) + " to " + appendixString);
+        return;
+    }
+    case COUNT:
+    {
+        const auto newEntry = condition ? "Added " : "Removed ";
+        addNewEntry(newEntry + QString::number(value) + " Character(s).");
+        return;
+    }
+    case MULTIPLE_CHARS:
+        addNewEntry(condition ? "Changed HP for " + QString::number(value) + " Characters."
+                              : "Changed Info Text for " + QString::number(value) + " Characters.");
+        return;
+    default:
+        return;
+    }
 }
 
 
 void
-LogListWidget::logChangedStatMultipleChars(int count, bool hpChanged)
+LogListWidget::logTwoValues(LoggingType type, int firstValue, int secondValue)
 {
-    addNewEntry(hpChanged ? "Changed HP for " + QString::number(count) + " Characters."
-                          : "Changed Info Text for " + QString::number(count) + " Characters.");
-}
-
-
-void
-LogListWidget::logCharacterDuplicated(int row)
-{
-    addNewEntry("Duplicated row " + QString::number(row) + ".");
-}
-
-
-void
-LogListWidget::logCharacterSwitch(int oldIndex, int newIndex)
-{
-    addNewEntry("Switched row " + QString::number(oldIndex) + " and " + QString::number(newIndex) + ".");
-}
-
-
-void
-LogListWidget::logAddedEffects(int count)
-{
-    addNewEntry("Modified effects for " + QString::number(count) + " Characters.");
-}
-
-
-void
-LogListWidget::logNextTurn(int roundCounter, int row)
-{
-    addNewEntry("Next turn (round " + QString::number(roundCounter) + ", row " + QString::number(row) + ").");
+    // Currently, we are using only two possible logging types
+    type == SWITCH ? addNewEntry("Switched row " + QString::number(firstValue) + " and " + QString::number(secondValue) + ".")
+                   : addNewEntry("Next turn (round " + QString::number(firstValue) + ", row " + QString::number(secondValue) + ").");
 }
 
 

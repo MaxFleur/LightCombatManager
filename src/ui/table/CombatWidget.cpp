@@ -26,6 +26,8 @@
 #include <QUndoStack>
 #include <QVBoxLayout>
 
+using enum LogListWidget::LoggingType;
+
 CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
                            const AdditionalSettings&         AdditionalSettings,
                            const RuleSettings&               RuleSettings,
@@ -241,7 +243,7 @@ CombatWidget::generateTableFromTableData()
     std::iota(m_affectedRowIndices.begin(), m_affectedRowIndices.end(), 0);
 
     // Then create the table in the ui
-    m_logListWidget->logChangedCharacterCount(m_characterHandler->getCharacters().size(), true);
+    m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getCharacters().size(), true);
     pushOnUndoStack();
     // We do not need a save step directly after table creation
     m_undoStack->clear();
@@ -348,7 +350,7 @@ CombatWidget::openAddCharacterDialog()
         addCharacter(character, instanceCount);
         emit tableHeightSet(m_tableWidget->getHeight() + 40);
 
-        m_logListWidget->logChangedCharacterCount(m_characterHandler->getCharacters().size() - sizeBeforeDialog, true);
+        m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getCharacters().size() - sizeBeforeDialog, true);
         sizeBeforeDialog = m_characterHandler->getCharacters().size();
     });
 
@@ -385,7 +387,7 @@ CombatWidget::dragAndDrop(int /* logicalIndex */, int oldVisualIndex, int newVis
         std::rotate(characters.begin() + oldVisualIndex, characters.begin() + oldVisualIndex + 1, characters.begin() + newVisualIndex + 1);
     }
     // Then set the table
-    m_logListWidget->logCharacterSwitch(oldVisualIndex + 1, newVisualIndex + 1);
+    m_logListWidget->logTwoValues(SWITCH, oldVisualIndex + 1, newVisualIndex + 1);
     pushOnUndoStack();
 
     // Highlight the row which has been dragged
@@ -486,7 +488,7 @@ CombatWidget::openStatusEffectDialog()
             }
         }
         if (needsUndo) {
-            m_logListWidget->logAddedEffects(m_tableWidget->selectionModel()->selectedRows().size());
+            m_logListWidget->logSingleValue(INFO_EFFECT, m_tableWidget->selectionModel()->selectedRows().size());
             pushOnUndoStack();
         }
     }
@@ -531,7 +533,7 @@ CombatWidget::rerollIni()
     const auto newInitiative = newRolledDice + characters.at(row).modifier;
 
     characters[row].initiative = newInitiative;
-    m_logListWidget->logCharacterStatChanged(row + 1, 1);
+    m_logListWidget->logSingleValue(INI, row + 1);
     pushOnUndoStack();
 
     // Reset the graphics effect and kickoff the animation
@@ -569,7 +571,7 @@ CombatWidget::changeStatForMultipleChars(bool changeHP)
             }
         }
 
-        m_logListWidget->logChangedStatMultipleChars(m_tableWidget->selectionModel()->selectedRows().size(), changeHP);
+        m_logListWidget->logConditionalValue(MULTIPLE_CHARS, m_tableWidget->selectionModel()->selectedRows().size(), changeHP);
         pushOnUndoStack();
     }
 }
@@ -609,7 +611,7 @@ CombatWidget::removeRow()
     std::ranges::reverse(m_affectedRowIndices);
 
     // Update the current player row and table
-    m_logListWidget->logChangedCharacterCount((int) m_affectedRowIndices.size(), false);
+    m_logListWidget->logConditionalValue(COUNT, (int) m_affectedRowIndices.size(), false);
     setRowAndPlayer();
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
@@ -631,7 +633,7 @@ CombatWidget::duplicateRow()
     characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
 
     m_affectedRowIndices.emplace_back(currentIndex + 1);
-    m_logListWidget->logCharacterDuplicated(currentIndex + 1);
+    m_logListWidget->logSingleValue(DUPLICATE, currentIndex + 1);
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
 }
@@ -652,7 +654,7 @@ CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
         item->setCheckState(item->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
 
         // Need to call here, because pushing on the undo stack will replace the item with a new one
-        m_logListWidget->logCharacterStatChanged(item->row(), 4, item->checkState() != Qt::Checked);
+        m_logListWidget->logConditionalValue(ALLY, item->row(), item->checkState() != Qt::Checked);
         pushOnUndoStack(true);
 
         emit changeOccured();
@@ -664,7 +666,7 @@ CombatWidget::handleTableWidgetItemPressed(QTableWidgetItem *item)
 
     if (tableData != m_tableDataOld || m_rowEnteredOld != m_rowEntered || m_roundCounterOld != m_roundCounter) {
         m_tableWidget->resynchronizeCharacters();
-        m_logListWidget->logCharacterStatChanged(item->row(), item->column());
+        m_logListWidget->logSingleValue(static_cast<LogListWidget::LoggingType>(item->column()), item->row());
         pushOnUndoStack();
     }
 }
@@ -744,7 +746,7 @@ CombatWidget::switchCharacterPosition(bool goDown)
     std::iter_swap(characters.begin() + originalIndex, characters.begin() + originalIndex + indexToSwap);
 
     setRowAndPlayer();
-    m_logListWidget->logCharacterSwitch(originalIndex + 1, goDown ? originalIndex + 2 : originalIndex);
+    m_logListWidget->logTwoValues(SWITCH, originalIndex + 1, goDown ? originalIndex + 2 : originalIndex);
     pushOnUndoStack();
 
     m_tableWidget->clearSelection();
@@ -777,7 +779,7 @@ CombatWidget::enteredRowChanged(bool isGoingDown)
 
     // Recreate the table for the updated font
     setRowAndPlayer();
-    m_logListWidget->logNextTurn(m_roundCounter, m_rowEntered + 1);
+    m_logListWidget->logTwoValues(NEXT_TURN, m_roundCounter, m_rowEntered + 1);
     pushOnUndoStack(true);
 }
 

@@ -24,7 +24,7 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, LogListWidget* logListW
     });
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::additionalInfoEdited, combatWidget,
                      [combatWidget, logListWidget, row] {
-        logListWidget->logCharacterStatChanged(row + 1, 5, false);
+        logListWidget->logSingleValue(LogListWidget::LoggingType::INFO_TEXT, row + 1);
         combatWidget->pushOnUndoStack(true);
     });
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widthAdjusted, combatWidget,

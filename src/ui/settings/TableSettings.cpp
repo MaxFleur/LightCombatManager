@@ -11,25 +11,22 @@ TableSettings::TableSettings()
 void
 TableSettings::write(ValueType valueType, bool valueToWrite)
 {
+    using enum ValueType;
     QSettings settings;
 
-    settings.beginGroup("TableSettings");
+    settings.beginGroup("table");
     switch (valueType) {
-    case ValueType::INI_SHOWN:
-        iniShown = valueToWrite;
-        settings.setValue("INI", iniShown);
+    case INI_SHOWN:
+        writeParameter(settings, valueToWrite, iniShown, "ini");
         break;
-    case ValueType::MOD_SHOWN:
-        modifierShown = valueToWrite;
-        settings.setValue("Modifier", modifierShown);
+    case MOD_SHOWN:
+        writeParameter(settings, valueToWrite, modifierShown, "modifier");
         break;
-    case ValueType::COLOR_TABLE:
-        colorTableRows = valueToWrite;
-        settings.setValue("ColorTable", colorTableRows);
+    case COLOR_TABLE:
+        writeParameter(settings, valueToWrite, colorTableRows, "color_rows");
         break;
-    case ValueType::SHOW_INI_TOOLTIPS:
-        showIniToolTips = valueToWrite;
-        settings.setValue("IniToolTips", showIniToolTips);
+    case SHOW_INI_TOOLTIPS:
+        writeParameter(settings, valueToWrite, showIniToolTips, "ini_tool_tips");
     default:
         break;
     }
@@ -43,10 +40,10 @@ TableSettings::read()
 {
     QSettings settings;
 
-    settings.beginGroup("TableSettings");
-    iniShown = settings.value("INI").isValid() ? settings.value("INI").toBool() : true;
-    modifierShown = settings.value("Modifier").isValid() ? settings.value("Modifier").toBool() : true;
-    colorTableRows = settings.value("ColorTable").isValid() ? settings.value("ColorTable").toBool() : false;
-    showIniToolTips = settings.value("IniToolTips").isValid() ? settings.value("IniToolTips").toBool() : false;
+    settings.beginGroup("table");
+    iniShown = settings.value("ini").isValid() ? settings.value("ini").toBool() : true;
+    modifierShown = settings.value("modifier").isValid() ? settings.value("modifier").toBool() : true;
+    colorTableRows = settings.value("color_rows").isValid() ? settings.value("color_rows").toBool() : false;
+    showIniToolTips = settings.value("ini_tool_tips").isValid() ? settings.value("ini_tool_tips").toBool() : false;
     settings.endGroup();
 }

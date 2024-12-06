@@ -78,9 +78,10 @@ CombatTableWidget::setRowAndPlayer(QLabel *roundCounterLabel, QLabel *currentPla
     blockSignals(true);
     // Reset bold text rows to standard font
     for (auto i = 0; i < rowCount(); i++) {
-        if (const auto font = item(i, 0)->font(); font.bold()) {
+        if (auto font = item(i, 0)->font(); font.bold()) {
             for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
-                item(i, j)->setFont(font.defaultFamily());
+                font.setBold(false);
+                item(i, j)->setFont(font);
             }
             break;
         }
@@ -135,13 +136,12 @@ CombatTableWidget::setIniColumnTooltips(bool resetToolTip)
     blockSignals(true);
 
     for (auto i = 0; i < rowCount(); i++) {
-        auto toolTipString = QString();
-        if (!resetToolTip) {
+        if (resetToolTip) {
+            item(i, 1)->setToolTip(QString());
+        } else {
             const auto rolledValue = item(i, 1)->text().toInt() - item(i, 2)->text().toInt();
-            toolTipString += "Calculation: Rolled Value " + QString::number(rolledValue) + ", Modifier " + item(i, 2)->text();
+            item(i, 1)->setToolTip("Calculation: Rolled Value " + QString::number(rolledValue) + ", Modifier " + item(i, 2)->text());
         }
-
-        item(i, 1)->setToolTip(toolTipString);
     }
 
     blockSignals(false);
@@ -244,9 +244,7 @@ CombatTableWidget::adjustAdditionalInfoWidgetPalette()
     // Reset all colors because other rows might have been selected before
     setTableRowColor(m_rowsUncolored);
 
-    const auto selectedRows = selectionModel()->selectedRows();
-
-    for (const auto& selectedModel : selectedRows) {
+    for (const auto selectedRows = selectionModel()->selectedRows(); const auto& selectedModel : selectedRows) {
         const auto row = selectedModel.row();
 
         auto palette = cellWidget(row, Utils::Table::COL_ADDITIONAL)->palette();

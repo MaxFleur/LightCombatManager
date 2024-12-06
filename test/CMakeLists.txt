@@ -17,6 +17,7 @@ add_executable(tests
     ${CMAKE_CURRENT_LIST_DIR}/ui/settings/SettingsTest.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/ui/widget/CombatTableWidgetTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/ui/widget/LogListWidgetTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/widget/TemplatesListWidgetTest.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/utils/GeneralUtilsTest.cpp

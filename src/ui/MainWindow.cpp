@@ -227,9 +227,9 @@ void
 MainWindow::about()
 {
     QMessageBox::about(this, tr("About Light Combat Manager"),
-                       tr("<p>Light Combat Manager. A small, lightweight Combat Manager for d20-based role playing games.<br>"
-                          "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a></p>"
-                          "<p>Version 2.2.1.<br>"
+                       tr("<p>Light Combat Manager. A small, lightweight combat manager for d20-based role playing games.<br>"
+                          "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a> Uses GNU GPLv3 license.</p>"
+                          "<p>Version 3.0.0.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 
@@ -273,14 +273,12 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
         }
     });
     connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int tableWidth) {
-        if (tableWidth > width()) {
-            // @note A single immediate call to resize() won't actually resize the window
-            // So the function is called with a minimal delay of 1 ms, which will actually
-            // resize the main window
-            QTimer::singleShot(1, [this, tableWidth]() {
-                resize(tableWidth, height());
-            });
-        }
+        // @note A single immediate call to resize() won't actually resize the window
+        // So the function is called with a minimal delay of 1 ms, which will actually
+        // resize the main window
+        QTimer::singleShot(1, [this, tableWidth]() {
+            resize(tableWidth, height());
+        });
     });
     connect(m_combatWidget, &CombatWidget::changeOccured, this, [this] {
         setCombatTitle(true);
@@ -288,13 +286,20 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
 
     setCombatTitle(false);
 
+    const auto resizeWidget = [this] (int width, int height) {
+        QTimer::singleShot(1, [this, width, height] {
+            resize(width, height);
+        });
+    };
+
     if (newCombatStarted) {
-        resize(width(), START_HEIGHT);
+        resizeWidget(START_WIDTH, START_HEIGHT);
         m_combatWidget->openAddCharacterDialog();
     } else {
         m_combatWidget->generateTableFromTableData();
+        const auto width = m_combatWidget->isLoggingWidgetVisible() ? m_combatWidget->width() - 250 : m_combatWidget->width();
         const auto height = m_combatWidget->getHeight();
-        resize(width(), std::max(height, START_HEIGHT));
+        resizeWidget(std::max(width, START_WIDTH), std::max(height, START_HEIGHT));
     }
 
     m_isTableActive = true;
@@ -418,7 +423,7 @@ MainWindow::setMainWindowIcons()
 bool
 MainWindow::event(QEvent *event)
 {
-    if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
+    [[unlikely]] if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
         setMainWindowIcons();
 
         if (m_combatWidget) {

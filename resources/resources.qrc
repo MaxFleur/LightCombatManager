@@ -28,6 +28,8 @@
         <file>icons/table/effect_white.svg</file>
         <file>icons/table/insert_table_black.svg</file>
         <file>icons/table/insert_table_white.svg</file>
+        <file>icons/table/log_black.svg</file>
+        <file>icons/table/log_white.svg</file>
         <file>icons/table/redo_black.svg</file>
         <file>icons/table/redo_white.svg</file>
         <file>icons/table/remove_black.svg</file>
@@ -36,6 +38,8 @@
         <file>icons/table/reroll_white.svg</file>
         <file>icons/table/sort_black.svg</file>
         <file>icons/table/sort_white.svg</file>
+        <file>icons/table/text_black.svg</file>
+        <file>icons/table/text_white.svg</file>
         <file>icons/table/undo_black.svg</file>
         <file>icons/table/undo_white.svg</file>
     </qresource>

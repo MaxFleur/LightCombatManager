@@ -9,7 +9,7 @@
 
 TEST_CASE("Templates List Widget Testing", "[TableUtils]") {
     auto* const templatesListWidget = new TemplatesListWidget;
-    const auto character = CharacterHandler::Character("test", 0, -3, 10, false, AdditionalInfoData{ {}, "Haste" });
+    const auto character = CharacterHandler::Character("test", 0, -3, 10, false, AdditionalInfoData{ .mainInfoText = "Haste" });
     const auto characterAdded = templatesListWidget->addCharacter(character);
 
     SECTION("Added character storage tests") {
@@ -37,7 +37,7 @@ TEST_CASE("Templates List Widget Testing", "[TableUtils]") {
         REQUIRE(templatesListWidget->count() == 0);
     }
     SECTION("Remove another unadded character test") {
-        const auto anotherCharacter = CharacterHandler::Character("test2", 0, -3, 10, false, AdditionalInfoData{ {}, "Haste" });
+        const auto anotherCharacter = CharacterHandler::Character("test2", 0, -3, 10, false, AdditionalInfoData{ .mainInfoText = "Haste" });
         const auto characterRemoved = templatesListWidget->removeCharacter(anotherCharacter);
         REQUIRE(characterRemoved == false);
     }

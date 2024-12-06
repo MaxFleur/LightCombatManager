@@ -12,32 +12,46 @@
 #include <QSettings>
 
 TEST_CASE("Settings Testing", "[Settings]") {
+    SECTION("Concepts test") {
+        enum TestEnum {};
+        struct TestStruct {};
+
+        REQUIRE(SettingsValue<int>);
+        REQUIRE(SettingsValue<bool>);
+        REQUIRE(SettingsValue<QString>);
+        REQUIRE(SettingsValue<TestEnum>);
+        REQUIRE(!SettingsValue<float>);
+        REQUIRE(!SettingsValue<char>);
+        REQUIRE(!SettingsValue<std::string>);
+        REQUIRE(!SettingsValue<TestStruct>);
+    }
+
     SECTION("Additional settings test") {
         AdditionalSettings additionalSettings;
         QSettings settings;
         settings.clear();
 
-        settings.beginGroup("AdditionalSettings");
-        REQUIRE(settings.value("indicatorMultipleChars").isValid() == false);
-        REQUIRE(settings.value("rollIniMultipleChars").isValid() == false);
-        REQUIRE(settings.value("modAddedToIni").isValid() == false);
+        settings.beginGroup("additional");
+        REQUIRE(settings.value("indicator_multiple_chars").isValid() == false);
+        REQUIRE(settings.value("roll_ini_for_multiple_chars").isValid() == false);
+        REQUIRE(settings.value("mod_added_to_ini").isValid() == false);
         settings.endGroup();
 
         additionalSettings.write(false, true, false);
-        settings.beginGroup("AdditionalSettings");
-        REQUIRE(settings.value("indicatorMultipleChars").isValid() == true);
-        REQUIRE(settings.value("rollIniMultipleChars").isValid() == true);
-        REQUIRE(settings.value("modAddedToIni").isValid() == true);
-        REQUIRE(settings.value("indicatorMultipleChars").toBool() == false);
-        REQUIRE(settings.value("rollIniMultipleChars").toBool() == true);
-        REQUIRE(settings.value("modAddedToIni").toBool() == false);
+        settings.beginGroup("additional");
+        REQUIRE(settings.value("indicator_multiple_chars").isValid() == true);
+        REQUIRE(settings.value("roll_ini_for_multiple_chars").isValid() == true);
+        REQUIRE(settings.value("mod_added_to_ini").isValid() == true);
+        REQUIRE(settings.value("indicator_multiple_chars").toBool() == false);
+        REQUIRE(settings.value("roll_ini_for_multiple_chars").toBool() == true);
+        REQUIRE(settings.value("mod_added_to_ini").toBool() == false);
         settings.endGroup();
 
         additionalSettings.write(true, false, true);
-        settings.beginGroup("AdditionalSettings");
-        REQUIRE(settings.value("indicatorMultipleChars").toBool() == true);
-        REQUIRE(settings.value("rollIniMultipleChars").toBool() == false);
-        REQUIRE(settings.value("modAddedToIni").toBool() == true);
+        settings.beginGroup("additional");
+        REQUIRE(settings.value("indicator_multiple_chars").toBool() == true);
+        REQUIRE(settings.value("roll_ini_for_multiple_chars").toBool() == false);
+        REQUIRE(settings.value("mod_added_to_ini").toBool() == true);
         settings.endGroup();
     }
 
@@ -64,13 +78,13 @@ TEST_CASE("Settings Testing", "[Settings]") {
         QSettings settings;
         settings.clear();
 
-        settings.beginGroup("RuleSettings");
+        settings.beginGroup("rules");
         REQUIRE(settings.value("ruleset").isValid() == false);
         REQUIRE(settings.value("roll_auto").isValid() == false);
         settings.endGroup();
 
-        ruleSettings.write(2, true);
-        settings.beginGroup("RuleSettings");
+        ruleSettings.write(RuleSettings::Ruleset::DND_5E, true);
+        settings.beginGroup("rules");
         REQUIRE(settings.value("ruleset").isValid() == true);
         REQUIRE(settings.value("roll_auto").isValid() == true);
         REQUIRE(static_cast<RuleSettings::Ruleset>(settings.value("ruleset").toInt()) == RuleSettings::Ruleset::DND_5E);
@@ -83,28 +97,28 @@ TEST_CASE("Settings Testing", "[Settings]") {
         QSettings settings;
         settings.clear();
 
-        settings.beginGroup("TableSettings");
-        REQUIRE(settings.value("INI").isValid() == false);
-        REQUIRE(settings.value("Modifier").isValid() == false);
-        REQUIRE(settings.value("ColorTable").isValid() == false);
-        REQUIRE(settings.value("IniToolTips").isValid() == false);
+        settings.beginGroup("table");
+        REQUIRE(settings.value("ini").isValid() == false);
+        REQUIRE(settings.value("modifier").isValid() == false);
+        REQUIRE(settings.value("color_rows").isValid() == false);
+        REQUIRE(settings.value("ini_tool_tips").isValid() == false);
         settings.endGroup();
 
-        tableSettings.write(TableSettings::ValueType::INI_SHOWN, true);
-        tableSettings.write(TableSettings::ValueType::MOD_SHOWN, true);
-        tableSettings.write(TableSettings::ValueType::COLOR_TABLE, false);
-        tableSettings.write(TableSettings::ValueType::SHOW_INI_TOOLTIPS, false);
+        tableSettings.write(TableSettings::ValueType::INI_SHOWN, false);
+        tableSettings.write(TableSettings::ValueType::MOD_SHOWN, false);
+        tableSettings.write(TableSettings::ValueType::COLOR_TABLE, true);
+        tableSettings.write(TableSettings::ValueType::SHOW_INI_TOOLTIPS, true);
 
-        settings.beginGroup("TableSettings");
-        REQUIRE(settings.value("INI").isValid() == true);
-        REQUIRE(settings.value("Modifier").isValid() == true);
-        REQUIRE(settings.value("ColorTable").isValid() == true);
-        REQUIRE(settings.value("IniToolTips").isValid() == true);
+        settings.beginGroup("table");
+        REQUIRE(settings.value("ini").isValid() == true);
+        REQUIRE(settings.value("modifier").isValid() == true);
+        REQUIRE(settings.value("color_rows").isValid() == true);
+        REQUIRE(settings.value("ini_tool_tips").isValid() == true);
 
-        REQUIRE(settings.value("INI").toBool() == true);
-        REQUIRE(settings.value("Modifier").toBool() == true);
-        REQUIRE(settings.value("ColorTable").toBool() == false);
-        REQUIRE(settings.value("IniToolTips").toBool() == false);
+        REQUIRE(settings.value("ini").toBool() == false);
+        REQUIRE(settings.value("modifier").toBool() == false);
+        REQUIRE(settings.value("color_rows").toBool() == true);
+        REQUIRE(settings.value("ini_tool_tips").toBool() == true);
         settings.endGroup();
     }
 }

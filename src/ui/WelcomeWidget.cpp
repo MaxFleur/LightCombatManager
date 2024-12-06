@@ -17,8 +17,8 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
                                              "or open an already existing Combat ('File' -> 'Open...')."));
     welcomeLabel->setAlignment(Qt::AlignCenter);
 
-    auto* const versionLabel = new QLabel("v2.2.1");
-    versionLabel->setToolTip(tr("Minor bugfixes and refactoring."));
+    auto* const versionLabel = new QLabel("v3.0.0");
+    versionLabel->setToolTip(tr("Logging widget, major infrastructure updates and various UI improvements!"));
     versionLabel->setAlignment(Qt::AlignRight);
 
     auto *const layout = new QVBoxLayout(this);
@@ -43,7 +43,7 @@ WelcomeWidget::setSvgWidgetIcon()
 bool
 WelcomeWidget::event(QEvent *event)
 {
-    if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
+    [[unlikely]] if (event->type() == QEvent::ApplicationPaletteChange || event->type() == QEvent::PaletteChange) {
         setSvgWidgetIcon();
     }
     return QWidget::event(event);

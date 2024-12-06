@@ -1,0 +1,33 @@
+name: Linux
+
+on: [push]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies - Qt5
+        run: sudo apt update && sudo apt install -y make cmake gcc qtbase5-dev libqt5svg5 libqt5svg5-dev catch2
+      - name: Configure CMake - Qt5
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Build project - Qt5
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Test - Qt5
+        run: cmake --build build --target test
+
+      - name: Install Qt6
+        run: sudo apt update && sudo apt install -y qt6-base-dev libqt6svg6 libqt6svg6-dev
+      - name: Clear directory
+        run: rm -rf ${{github.workspace}}/build
+      - name: Configure CMake - Qt6
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Build project - Qt6
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: Test - Qt6
+        run: cmake --build build --target test

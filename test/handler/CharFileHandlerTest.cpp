@@ -14,7 +14,7 @@
 
 TEST_CASE("CharFileHandler Testing", "[CharFileHandler]") {
     auto const charFileHandler = std::make_shared<CharFileHandler>();
-    const auto character = CharacterHandler::Character("test", 0, 0, 10, false, AdditionalInfoData{ {}, "Haste" });
+    const auto character = CharacterHandler::Character("test", 0, 0, 10, false, AdditionalInfoData{ .mainInfoText = "Haste" });
     const auto tableSaved = charFileHandler->writeToFile(character);
 
     QDir dir;

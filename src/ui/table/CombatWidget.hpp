@@ -2,6 +2,7 @@
 
 #include "CharacterHandler.hpp"
 #include "CombatTableWidget.hpp"
+#include "LogListWidget.hpp"
 #include "TableFileHandler.hpp"
 #include "TableSettings.hpp"
 
@@ -10,6 +11,7 @@
 #include <QWidget>
 
 class QAction;
+class QHBoxLayout;
 class QLabel;
 class QUndoStack;
 class QTimer;
@@ -44,10 +46,16 @@ public:
         return m_tableWidget->rowCount() == 0;
     }
 
-    [[nodiscard]] unsigned int
+    [[nodiscard]] int
     getHeight() const
     {
         return m_tableWidget->getHeight() + 40;
+    }
+
+    [[nodiscard]] bool
+    isLoggingWidgetVisible() const
+    {
+        return m_logListWidget->isVisible();
     }
 
     [[nodiscard]] bool
@@ -109,7 +117,7 @@ private slots:
     rerollIni();
 
     void
-    changeHPForMultipleChars();
+    changeStatForMultipleChars(bool changeHP);
 
     void
     removeRow();
@@ -120,10 +128,16 @@ private slots:
     void
     handleTableWidgetItemPressed(QTableWidgetItem *item);
 
-private:
     void
     sortTable();
 
+    void
+    setLoggingWidgetVisibility();
+
+    void
+    showLoggingUndoOperations(int index);
+
+private:
     void
     setRowAndPlayer() const;
 
@@ -151,6 +165,8 @@ private:
 
 private:
     QPointer<CombatTableWidget> m_tableWidget;
+    QPointer<LogListWidget> m_logListWidget;
+    QPointer<QHBoxLayout> m_mainLayout;
 
     QPointer<QLabel> m_roundCounterLabel;
     QPointer<QLabel> m_currentPlayerLabel;
@@ -167,11 +183,13 @@ private:
     QPointer<QAction> m_duplicateAction;
     QPointer<QAction> m_rerollAction;
     QPointer<QAction> m_changeHPAction;
+    QPointer<QAction> m_addInfoTextAction;
     QPointer<QAction> m_undoAction;
     QPointer<QAction> m_redoAction;
     QPointer<QAction> m_resortAction;
     QPointer<QAction> m_moveUpwardAction;
     QPointer<QAction> m_moveDownwardAction;
+    QPointer<QAction> m_showLogAction;
 
     std::shared_ptr<CharacterHandler> m_characterHandler;
     std::shared_ptr<TableFileHandler> m_tableFileHandler;
@@ -182,7 +200,7 @@ private:
 
     QVector<QVector<QVariant> > m_tableDataOld;
 
-    std::vector<int> m_removedOrAddedRowIndices;
+    std::vector<int> m_affectedRowIndices;
 
     QByteArray m_headerDataState;
 

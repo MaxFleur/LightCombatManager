@@ -8,6 +8,7 @@
 
 class QHBoxLayout;
 class QLabel;
+class QVBoxLayout;
 
 // This class displays additional information and status effects
 class AdditionalInfoWidget : public QWidget {
@@ -70,6 +71,7 @@ private:
     QPointer<FocusOutLineEdit> m_additionalInfoLineEdit;
     QPointer<QLabel> m_statusEffectLabel;
     QPointer<QHBoxLayout> m_statusEffectsLayout;
+    QPointer<QVBoxLayout> m_additionalInfoLineEditLayout;
 
     AdditionalInfoData m_additionalInfoData;
 
@@ -79,5 +81,6 @@ private:
 
     static constexpr int LENGTH_BUFFER = 30;
     static constexpr int BORDER_VALUES = 0;
+    static constexpr int LINE_EDIT_BOTTOM_SPACING = 6;
     static constexpr int SPACING = 10;
 };

@@ -106,6 +106,6 @@ private:
 
     bool m_loadedTableRollAutomatically;
 
-    static constexpr unsigned int START_WIDTH = 860;
-    static constexpr unsigned int START_HEIGHT = 240;
+    static constexpr int START_WIDTH = 860;
+    static constexpr int START_HEIGHT = 240;
 };

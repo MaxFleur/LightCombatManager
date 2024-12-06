@@ -30,7 +30,7 @@ public:
             const auto combinedPath = currentDir / relativeDir;
 
             if (std::filesystem::exists(combinedPath)) {
-                return QString::fromStdString(combinedPath.u8string());
+                return QString::fromStdString(combinedPath.string());
             }
             currentDir = currentDir.parent_path();
         }

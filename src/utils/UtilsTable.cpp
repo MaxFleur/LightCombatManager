@@ -3,6 +3,7 @@
 #include "AdditionalInfoData.hpp"
 #include "AdditionalInfoWidget.hpp"
 #include "CombatWidget.hpp"
+#include "LogListWidget.hpp"
 #include "UtilsGeneral.hpp"
 
 #include <QHBoxLayout>
@@ -12,7 +13,8 @@
 namespace Utils::Table
 {
 void
-setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const QVariant& additionalInfo)
+setTableAdditionalInfoWidget(CombatWidget* combatWidget, LogListWidget* logListWidget,
+                             unsigned int row, const QVariant& additionalInfo)
 {
     auto *const combatTableWidget = combatWidget->getCombatTableWidget();
 
@@ -20,7 +22,9 @@ setTableAdditionalInfoWidget(CombatWidget* combatWidget, unsigned int row, const
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widgetCalled, combatWidget, [combatWidget] {
         combatWidget->saveOldState();
     });
-    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::additionalInfoEdited, combatWidget, [combatWidget] {
+    QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::additionalInfoEdited, combatWidget,
+                     [combatWidget, logListWidget, row] {
+        logListWidget->logSingleValue(LogListWidget::LoggingType::INFO_TEXT, row + 1);
         combatWidget->pushOnUndoStack(true);
     });
     QObject::connect(additionalInfoWidget, &AdditionalInfoWidget::widthAdjusted, combatWidget,

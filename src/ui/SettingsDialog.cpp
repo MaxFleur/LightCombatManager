@@ -25,12 +25,13 @@ SettingsDialog::SettingsDialog(AdditionalSettings& AdditionalSettings,
     rulesLabel->setEnabled(!isTableActive);
     auto* const rulesetLabel = new QLabel(tr("Ruleset:"));
 
+    using enum RuleSettings::Ruleset;
     m_rulesetBox = new QComboBox;
-    m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", RuleSettings::Ruleset::PATHFINDER_1E_DND_35E);
-    m_rulesetBox->addItem("Pathfinder 2E", RuleSettings::Ruleset::PATHFINDER_2E);
-    m_rulesetBox->addItem("D&D 5E", RuleSettings::Ruleset::DND_5E);
-    m_rulesetBox->addItem("D&D 3.0E", RuleSettings::Ruleset::DND_30E);
-    m_rulesetBox->addItem("Starfinder", RuleSettings::Ruleset::STARFINDER);
+    m_rulesetBox->addItem("Pathfinder 1E/D&D 3.5E", PATHFINDER_1E_DND_35E);
+    m_rulesetBox->addItem("Pathfinder 2E", PATHFINDER_2E);
+    m_rulesetBox->addItem("D&D 5E", DND_5E);
+    m_rulesetBox->addItem("D&D 3.0E", DND_30E);
+    m_rulesetBox->addItem("Starfinder", STARFINDER);
     m_rulesetBox->setToolTip(tr("The ruleset determines the Table sorting rules and the available status effects."));
     m_rulesetBox->setCurrentIndex(m_ruleSettings.ruleset);
 
@@ -113,7 +114,7 @@ SettingsDialog::applyClicked()
 {
     if (m_rulesetBox->currentIndex() != m_ruleSettings.ruleset ||
         m_rollTieBox->isChecked() != m_ruleSettings.rollAutomatical) {
-        m_ruleSettings.write(m_rulesetBox->currentIndex(), m_rollTieBox->isChecked());
+        m_ruleSettings.write(static_cast<RuleSettings::Ruleset>(m_rulesetBox->currentIndex()), m_rollTieBox->isChecked());
     }
     if (m_indicatorMultipleCharsBox->isChecked() != m_additionalSettings.indicatorMultipleChars ||
         m_rollIniMultipleCharsBox->isChecked() != m_additionalSettings.rollIniMultipleChars ||

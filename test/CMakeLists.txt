@@ -12,6 +12,7 @@ add_executable(tests
 
     ${CMAKE_CURRENT_LIST_DIR}/handler/CharacterHandlerTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/handler/CharFileHandlerTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/handler/EffectFileHandlerTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/handler/TableFileHandlerTest.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/ui/settings/SettingsTest.cpp

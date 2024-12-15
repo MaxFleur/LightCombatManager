@@ -1,8 +1,6 @@
 #include "CharFileHandler.hpp"
 
 #include <QDir>
-#include <QFile>
-#include <QJsonDocument>
 
 CharFileHandler::CharFileHandler()
 {
@@ -26,23 +24,8 @@ CharFileHandler::writeToFile(const CharacterHandler::Character &character) const
     characterObject["is_enemy"] = character.isEnemy;
     characterObject["additional_info"] = character.additionalInfoData.mainInfoText;
 
-    // Write to file
-    const auto byteArray = QJsonDocument(characterObject).toJson();
-    QFile fileOut(m_directoryString + "/" + character.name + ".char");
-    fileOut.open(QIODevice::WriteOnly);
-    return fileOut.write(byteArray);
+    return BaseFileHandler::writeJsonObjectToFile(characterObject, m_directoryString + "/" + character.name + ".char");
 }
-
-
-bool
-CharFileHandler::removeCharacter(const QString& fileName)
-{
-    QFile fileOut(m_directoryString + fileName);
-    if (!fileOut.exists()) {
-        return false;
-    }
-    return fileOut.remove();
-};
 
 
 int

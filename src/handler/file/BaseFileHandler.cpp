@@ -19,3 +19,13 @@ BaseFileHandler::getStatus(const QString& fileName)
     // Correct or false format
     return !checkFileFormat();
 }
+
+
+bool
+BaseFileHandler::writeJsonObjectToFile(const QJsonObject& object, const QString& fileName) const
+{
+    const auto byteArray = QJsonDocument(object).toJson();
+    QFile fileOut(fileName);
+    fileOut.open(QIODevice::WriteOnly);
+    return fileOut.write(byteArray) != -1;
+}

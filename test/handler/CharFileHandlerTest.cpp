@@ -9,8 +9,6 @@
 #endif
 
 #include <QDir>
-#include <QFile>
-#include <QJsonDocument>
 
 TEST_CASE("CharFileHandler Testing", "[CharFileHandler]") {
     auto const charFileHandler = std::make_shared<CharFileHandler>();
@@ -41,12 +39,8 @@ TEST_CASE("CharFileHandler Testing", "[CharFileHandler]") {
         // Incomplete json object
         QJsonObject jsonObject;
         jsonObject["name"] = 2;
-
         // Write to file
-        auto byteArray = QJsonDocument(jsonObject).toJson();
-        QFile fileOut(dir.currentPath() + "/chars/broken.char");
-        fileOut.open(QIODevice::WriteOnly);
-        fileOut.write(byteArray);
+        charFileHandler->writeJsonObjectToFile(jsonObject, dir.currentPath() + "/chars/broken.char");
 
         REQUIRE(charFileHandler->getStatus("broken.char") == 1);
         dir.remove(dir.currentPath() + "/chars/broken.char");
@@ -55,9 +49,6 @@ TEST_CASE("CharFileHandler Testing", "[CharFileHandler]") {
         const auto codeCSVStatus = charFileHandler->getStatus("nonexisting.char");
         REQUIRE(codeCSVStatus == 2);
     }
-    SECTION("Check file removal") {
-        const auto fileRemoved = charFileHandler->removeCharacter("test.char");
-        REQUIRE(fileRemoved == true);
-        REQUIRE(!dir.exists(charPath));
-    }
+
+    std::remove("./chars/test.char");
 }

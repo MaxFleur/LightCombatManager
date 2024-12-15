@@ -1,8 +1,6 @@
 #include "EffectFileHandler.hpp"
 
 #include <QDir>
-#include <QFile>
-#include <QJsonDocument>
 
 EffectFileHandler::EffectFileHandler()
 {
@@ -21,23 +19,8 @@ EffectFileHandler::writeToFile(const QString& name) const
     QJsonObject effectObject;
     effectObject["name"] = name;
 
-    // Write to file
-    const auto byteArray = QJsonDocument(effectObject).toJson();
-    QFile fileOut(m_directoryString + "/" + name + ".effect");
-    fileOut.open(QIODevice::WriteOnly);
-    return fileOut.write(byteArray);
+    return BaseFileHandler::writeJsonObjectToFile(effectObject, m_directoryString + "/" + name + ".effect");
 }
-
-
-bool
-EffectFileHandler::removeEffect(const QString& effectName)
-{
-    QFile fileOut(m_directoryString + effectName);
-    if (!fileOut.exists()) {
-        return false;
-    }
-    return fileOut.remove();
-};
 
 
 int

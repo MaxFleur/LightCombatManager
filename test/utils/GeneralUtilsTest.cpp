@@ -1,4 +1,3 @@
-#include "AdditionalInfoWidget.hpp"
 #include "UtilsGeneral.hpp"
 
 #ifdef CATCH2_V3
@@ -6,8 +5,6 @@
 #else
 #include <catch2/catch.hpp>
 #endif
-
-#include <QHBoxLayout>
 
 TEST_CASE("General Util Testing", "[GeneralUtils]") {
     SECTION("CSV file path test") {

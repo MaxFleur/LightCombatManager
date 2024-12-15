@@ -11,9 +11,7 @@
 #include <catch2/catch.hpp>
 #endif
 
-#include <QFile>
 #include <QHBoxLayout>
-#include <QJsonDocument>
 #include <QWidget>
 
 #include <filesystem>
@@ -151,12 +149,8 @@ TEST_CASE_METHOD(FileHandlerTestUtils, "TableFileHandler Testing", "[TableFileHa
                 QJsonObject jsonObject;
                 jsonObject["row_entered"] = 2;
                 jsonObject["round_counter"] = 3;
-
                 // Write to file
-                auto byteArray = QJsonDocument(jsonObject).toJson();
-                QFile fileOut("./broken.lcm");
-                fileOut.open(QIODevice::WriteOnly);
-                fileOut.write(byteArray);
+                tableFileHandler->writeJsonObjectToFile(jsonObject, "./broken.lcm");
 
                 REQUIRE(tableFileHandler->getStatus(resolvePath("./broken.lcm")) == 1);
             }

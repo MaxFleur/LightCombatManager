@@ -12,10 +12,6 @@ public:
     [[nodiscard]] bool
     writeToFile(const QString& name) const;
 
-    // Remove effect
-    [[nodiscard]] bool
-    removeEffect(const QString& effectName);
-
     // Open a saved table
     [[nodiscard]] int
     getStatus(const QString& fileName) override;

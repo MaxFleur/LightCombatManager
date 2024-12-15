@@ -2,9 +2,6 @@
 
 #include "AdditionalInfoData.hpp"
 
-#include <QFile>
-#include <QJsonDocument>
-
 bool
 TableFileHandler::writeToFile(
     const QVector<QVector<QVariant> >& tableData,
@@ -15,11 +12,11 @@ TableFileHandler::writeToFile(
     bool                               rollAutomatically) const
 {
     // Main combat stats
-    QJsonObject lcmFile;
-    lcmFile["row_entered"] = (int) rowEntered;
-    lcmFile["round_counter"] = (int) roundCounter;
-    lcmFile["ruleset"] = (int) ruleset;
-    lcmFile["roll_automatically"] = rollAutomatically;
+    QJsonObject tableObject;
+    tableObject["row_entered"] = (int) rowEntered;
+    tableObject["round_counter"] = (int) roundCounter;
+    tableObject["ruleset"] = (int) ruleset;
+    tableObject["roll_automatically"] = rollAutomatically;
 
     QJsonObject charactersObject;
     for (auto i = 0; const auto& row : tableData) {
@@ -51,13 +48,9 @@ TableFileHandler::writeToFile(
 
         charactersObject[QString::number(i++)] = singleCharacterObject;
     }
-    lcmFile["characters"] = charactersObject;
+    tableObject["characters"] = charactersObject;
 
-    // Write to file
-    auto byteArray = QJsonDocument(lcmFile).toJson();
-    QFile fileOut(fileName);
-    fileOut.open(QIODevice::WriteOnly);
-    return fileOut.write(byteArray) != -1;
+    return BaseFileHandler::writeJsonObjectToFile(tableObject, fileName);
 }
 
 

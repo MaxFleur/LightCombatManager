@@ -12,10 +12,6 @@ public:
     [[nodiscard]] bool
     writeToFile(const CharacterHandler::Character& character) const;
 
-    // Remove a saved character file
-    [[nodiscard]] bool
-    removeCharacter(const QString& fileName);
-
     // Open a saved table
     [[nodiscard]] int
     getStatus(const QString& fileName) override;

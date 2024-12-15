@@ -7,8 +7,6 @@
 #endif
 
 #include <QDir>
-#include <QFile>
-#include <QJsonDocument>
 
 TEST_CASE("EffectFileHandler Testing", "[EffectFileHandler]") {
     auto const effectFileHandler = std::make_unique<EffectFileHandler>();
@@ -32,13 +30,9 @@ TEST_CASE("EffectFileHandler Testing", "[EffectFileHandler]") {
     SECTION("Broken table") {
         // Incomplete json object
         QJsonObject jsonObject;
-        jsonObject["name"] = 2;
-
+        jsonObject["broken"] = 2;
         // Write to file
-        auto byteArray = QJsonDocument(jsonObject).toJson();
-        QFile fileOut(dir.currentPath() + "/effects/Broken Effect.effect");
-        fileOut.open(QIODevice::WriteOnly);
-        fileOut.write(byteArray);
+        effectFileHandler->writeJsonObjectToFile(jsonObject, dir.currentPath() + "/effects/Broken Effect.effect");
 
         REQUIRE(effectFileHandler->getStatus("Broken Effect.effect") == 1);
         dir.remove(dir.currentPath() + "/effects/Broken Effect.effect");
@@ -47,9 +41,6 @@ TEST_CASE("EffectFileHandler Testing", "[EffectFileHandler]") {
         const auto codeCSVStatus = effectFileHandler->getStatus("nonexisting.effect");
         REQUIRE(codeCSVStatus == 2);
     }
-    SECTION("Check file removal") {
-        const auto fileRemoved = effectFileHandler->removeEffect("Test Effect.effect");
-        REQUIRE(fileRemoved == true);
-        REQUIRE(!dir.exists(effectPath));
-    }
+
+    std::remove("./effects/Test Effect.effect");
 }

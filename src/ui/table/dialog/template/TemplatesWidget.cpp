@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 
+#include "UtilsFiles.hpp"
 #include "UtilsGeneral.hpp"
 
 TemplatesWidget::TemplatesWidget(QWidget* parent) :
@@ -98,7 +99,8 @@ TemplatesWidget::removeButtonClicked()
         Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("Could not remove Character!"));
         return;
     }
-    if (!m_charFileHandler->removeCharacter(character.name + ".char")) {
+    if (const auto charRemoved = Utils::Files::removeFile(m_charFileHandler->getDirectoryString() + character.name + ".char");
+        !charRemoved) {
         Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("The Character could not be removed!"));
     }
 }

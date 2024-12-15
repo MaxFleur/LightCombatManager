@@ -3,6 +3,7 @@
 #include "AddCustomEffectDialog.hpp"
 #include "RuleSettings.hpp"
 #include "StatusEffectData.hpp"
+#include "UtilsFiles.hpp"
 #include "UtilsGeneral.hpp"
 
 #include <QCheckBox>
@@ -169,7 +170,8 @@ StatusEffectDialog::removeEffectButtonClicked()
         return;
     }
 
-    if (!m_effectFileHandler->removeEffect(selectedItems.at(0)->text(COL_NAME) + ".effect")) {
+    if (const auto effectRemoved = Utils::Files::removeFile(m_effectFileHandler->getDirectoryString() + selectedItems.at(0)->text(COL_NAME) + ".effect");
+        !effectRemoved) {
         Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("Could not remove Effect!"));
         return;
     }

@@ -22,6 +22,7 @@ add_executable(tests
     ${CMAKE_CURRENT_LIST_DIR}/ui/widget/TemplatesListWidgetTest.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/utils/GeneralUtilsTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/utils/UtilsFilesTest.cpp
 )
 
 target_link_libraries(tests

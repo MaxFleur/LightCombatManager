@@ -268,7 +268,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
-        if (height > START_HEIGHT && (int) height > this->height()) {
+        if (height > START_HEIGHT) {
             resize(width(), height);
         }
     });

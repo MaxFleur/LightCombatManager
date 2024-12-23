@@ -102,23 +102,28 @@ TEST_CASE("Settings Testing", "[Settings]") {
         REQUIRE(settings.value("modifier").isValid() == false);
         REQUIRE(settings.value("color_rows").isValid() == false);
         REQUIRE(settings.value("ini_tool_tips").isValid() == false);
+        REQUIRE(settings.value("adjust_height_remove").isValid() == false);
         settings.endGroup();
 
         tableSettings.write(TableSettings::ValueType::INI_SHOWN, false);
         tableSettings.write(TableSettings::ValueType::MOD_SHOWN, false);
         tableSettings.write(TableSettings::ValueType::COLOR_TABLE, true);
         tableSettings.write(TableSettings::ValueType::SHOW_INI_TOOLTIPS, true);
+        tableSettings.write(TableSettings::ValueType::ADJUST_HEIGHT_AFTER_REMOVE, true);
 
         settings.beginGroup("table");
         REQUIRE(settings.value("ini").isValid() == true);
         REQUIRE(settings.value("modifier").isValid() == true);
         REQUIRE(settings.value("color_rows").isValid() == true);
         REQUIRE(settings.value("ini_tool_tips").isValid() == true);
+        REQUIRE(settings.value("adjust_height_remove").isValid() == true);
 
         REQUIRE(settings.value("ini").toBool() == false);
         REQUIRE(settings.value("modifier").toBool() == false);
         REQUIRE(settings.value("color_rows").toBool() == true);
         REQUIRE(settings.value("ini_tool_tips").toBool() == true);
+        REQUIRE(settings.value("adjust_height_remove").toBool() == true);
         settings.endGroup();
+        settings.clear();
     }
 }

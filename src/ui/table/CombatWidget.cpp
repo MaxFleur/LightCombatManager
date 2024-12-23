@@ -616,6 +616,10 @@ CombatWidget::removeRow()
     setRowAndPlayer();
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
+
+    if (m_tableSettings.adjustHeightAfterRemove) {
+        emit tableHeightSet(m_tableWidget->getHeight() + 40);
+    }
 }
 
 
@@ -801,6 +805,7 @@ CombatWidget::setTableOption(bool option, int valueType)
     case 3:
         m_tableWidget->setIniColumnTooltips(!option);
         break;
+    case 4:
     default:
         break;
     }
@@ -924,6 +929,12 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     });
     showIniTooltipsAction->setCheckable(true);
     showIniTooltipsAction->setChecked(m_tableSettings.showIniToolTips);
+
+    auto *const adjustHeightAfterRemoveAction = optionMenu->addAction(tr("Readjust Height after Character Removal"), this, [this] (bool show) {
+        setTableOption(show, 4);
+    });
+    adjustHeightAfterRemoveAction->setCheckable(true);
+    adjustHeightAfterRemoveAction->setChecked(m_tableSettings.adjustHeightAfterRemove);
 
     menu->exec(event->globalPos());
 }

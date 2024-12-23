@@ -21,7 +21,7 @@ add_executable(tests
     ${CMAKE_CURRENT_LIST_DIR}/ui/widget/LogListWidgetTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/widget/TemplatesListWidgetTest.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/utils/GeneralUtilsTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/utils/UtilsGeneralTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/utils/UtilsFilesTest.cpp
 )
 

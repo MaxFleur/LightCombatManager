@@ -349,7 +349,7 @@ CombatWidget::openAddCharacterDialog()
     auto *const dialog = new AddCharacterDialog(m_additionalSettings.modAddedToIni, this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this, &sizeBeforeDialog] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
-        emit tableHeightSet(m_tableWidget->getHeight() + 40);
+        emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
 
         m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getCharacters().size() - sizeBeforeDialog, true);
         sizeBeforeDialog = m_characterHandler->getCharacters().size();
@@ -416,7 +416,7 @@ CombatWidget::insertTable()
         std::iota(m_affectedRowIndices.begin(), m_affectedRowIndices.end(), oldSize);
 
         pushOnUndoStack();
-        emit tableHeightSet(m_tableWidget->getHeight() + 40);
+        emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
 
         auto const reply = QMessageBox::question(this, tr("Sort Table?"), tr("Do you want to resort the Table?"),
                                                  QMessageBox::Yes | QMessageBox::No);
@@ -618,7 +618,7 @@ CombatWidget::removeRow()
     m_tableWidget->itemSelectionChanged();
 
     if (m_tableSettings.adjustHeightAfterRemove) {
-        emit tableHeightSet(m_tableWidget->getHeight() + 40);
+        emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
     }
 }
 

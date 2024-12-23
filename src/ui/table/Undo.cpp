@@ -83,7 +83,7 @@ Undo::setCombatWidget(bool undo)
     tableWidget->setTableRowColor(!m_colorTableRows);
     tableWidget->setIniColumnTooltips(!m_showIniToolTips);
 
-    emit m_combatWidget->tableHeightSet(tableWidget->getHeight());
+    emit m_combatWidget->tableHeightSet(tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
     emit m_combatWidget->changeOccured();
 
     tableWidget->blockSignals(false);

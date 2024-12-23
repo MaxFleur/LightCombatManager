@@ -216,7 +216,7 @@ CombatTableWidget::getHeight() const
     for (int i = 0; i < rowCount(); i++) {
         height += rowHeight(i);
     }
-    return height + HEIGHT_BUFFER;
+    return height + TABLE_HEIGHT_BUFFER;
 }
 
 

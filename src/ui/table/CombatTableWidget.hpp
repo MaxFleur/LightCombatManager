@@ -67,7 +67,7 @@ private:
     static constexpr int FIRST_FIVE_COLUMNS = 5;
     static constexpr int NMBR_COLUMNS = 6;
 
-    static constexpr int HEIGHT_BUFFER = 140;
+    static constexpr int TABLE_HEIGHT_BUFFER = 140;
 
     static constexpr float WIDTH_NAME = 0.20f;
     static constexpr float WIDTH_INI = 0.05f;

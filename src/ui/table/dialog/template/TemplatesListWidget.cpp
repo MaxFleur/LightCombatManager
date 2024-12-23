@@ -28,16 +28,14 @@ TemplatesListWidget::addCharacter(const CharacterHandler::Character& character)
 }
 
 
-bool
-TemplatesListWidget::removeCharacter(const CharacterHandler::Character &character)
+void
+TemplatesListWidget::removeCharacter(const QString& characterName)
 {
     for (auto i = 0; i < count(); i++) {
         auto const storedCharacter = item(i)->data(Qt::UserRole).value<CharacterHandler::Character>();
-        if (storedCharacter.name == character.name) {
+        if (storedCharacter.name == characterName) {
             QListWidgetItem *it = this->takeItem(i);
             delete it;
-            return true;
         }
     }
-    return false;
 }

@@ -94,13 +94,16 @@ TemplatesWidget::removeButtonClicked()
         return;
     }
 
-    const auto character = m_templatesListWidget->selectedItems().first()->data(Qt::UserRole).value<CharacterHandler::Character>();
-    if (!m_templatesListWidget->removeCharacter(character)) {
-        Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("Could not remove Character!"));
+    const auto characterName = m_templatesListWidget->selectedItems().first()->data(Qt::UserRole).value<CharacterHandler::Character>().name;
+    const auto foundCharacter = Utils::Files::findObject(m_charFileHandler->getDirectoryString(), "*.char", characterName);
+    if (!foundCharacter.has_value()) {
+        Utils::General::displayWarningMessageBox(this, tr("Character not found!"), tr("The Character was not found on disc!"));
         return;
     }
-    if (const auto charRemoved = Utils::Files::removeFile(m_charFileHandler->getDirectoryString() + character.name + ".char");
-        !charRemoved) {
-        Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("The Character could not be removed!"));
+
+    if (const auto charRemoved = Utils::Files::removeFile(foundCharacter.value()); !charRemoved) {
+        Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("The Character could not be removed from disc!"));
+        return;
     }
+    m_templatesListWidget->removeCharacter(characterName);
 }

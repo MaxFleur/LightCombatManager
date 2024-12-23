@@ -32,13 +32,7 @@ TEST_CASE("Templates List Widget Testing", "[TableUtils]") {
         REQUIRE(sameCharacterAddedAgain == false);
     }
     SECTION("Remove character test") {
-        const auto characterRemoved = templatesListWidget->removeCharacter(character);
-        REQUIRE(characterRemoved == true);
+        templatesListWidget->removeCharacter(character.name);
         REQUIRE(templatesListWidget->count() == 0);
-    }
-    SECTION("Remove another unadded character test") {
-        const auto anotherCharacter = CharacterHandler::Character("test2", 0, -3, 10, false, AdditionalInfoData{ .mainInfoText = "Haste" });
-        const auto characterRemoved = templatesListWidget->removeCharacter(anotherCharacter);
-        REQUIRE(characterRemoved == false);
     }
 }

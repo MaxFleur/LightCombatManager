@@ -170,8 +170,13 @@ StatusEffectDialog::removeEffectButtonClicked()
         return;
     }
 
-    if (const auto effectRemoved = Utils::Files::removeFile(m_effectFileHandler->getDirectoryString() + selectedItems.at(0)->text(COL_NAME) + ".effect");
-        !effectRemoved) {
+    const auto foundEffect = Utils::Files::findObject(m_effectFileHandler->getDirectoryString(), "*.effect", selectedItems.at(0)->text(COL_NAME));
+    if (!foundEffect.has_value()) {
+        Utils::General::displayWarningMessageBox(this, tr("Effect not found!"), tr("The Effect was not found on disc!"));
+        return;
+    }
+
+    if (const auto effectRemoved = Utils::Files::removeFile(foundEffect.value()); !effectRemoved) {
         Utils::General::displayWarningMessageBox(this, tr("Action not possible!"), tr("Could not remove Effect!"));
         return;
     }

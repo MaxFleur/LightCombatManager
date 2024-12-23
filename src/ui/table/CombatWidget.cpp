@@ -44,11 +44,11 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
 
     m_undoStack = new QUndoStack(this);
 
+    m_removeCharacterAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
     m_addCharacterAction = createAction(tr("Add new Character(s)..."), tr("Add new Character(s)"),
                                         QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), true);
     m_insertTableAction = createAction(tr("Insert other Table..."), tr("Insert another table without overwriting the current one"),
                                        QKeySequence(tr("Ctrl+T")), false);
-    m_removeAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
     m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(tr("Ctrl+E")), false);
     m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(tr("Ctrl+D")), false);
     m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(tr("Ctrl+I")), false);
@@ -75,9 +75,10 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     setUndoRedoIcon(isSystemInDarkMode);
 
     auto* const toolBar = new QToolBar("Actions");
+    toolBar->addAction(m_removeCharacterAction);
     toolBar->addAction(m_addCharacterAction);
+    toolBar->addSeparator();
     toolBar->addAction(m_insertTableAction);
-    toolBar->addAction(m_removeAction);
     toolBar->addAction(m_addEffectAction);
     toolBar->addAction(m_resortAction);
     toolBar->addSeparator();
@@ -152,9 +153,9 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
         m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
     });
 
+    connect(m_removeCharacterAction, &QAction::triggered, this, &CombatWidget::removeRow);
     connect(m_addCharacterAction, &QAction::triggered, this, &CombatWidget::openAddCharacterDialog);
     connect(m_insertTableAction, &QAction::triggered, this, &CombatWidget::insertTable);
-    connect(m_removeAction, &QAction::triggered, this, &CombatWidget::removeRow);
     connect(m_addEffectAction, &QAction::triggered, this, &CombatWidget::openStatusEffectDialog);
     connect(m_duplicateAction, &QAction::triggered, this, &CombatWidget::duplicateRow);
     connect(m_rerollAction, &QAction::triggered, this, &CombatWidget::rerollIni);
@@ -186,7 +187,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
         saveOldState();
     });
     connect(m_tableWidget, &QTableWidget::itemSelectionChanged, this, [this] {
-        m_removeAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
+        m_removeCharacterAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
         m_addEffectAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
         m_duplicateAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
         m_rerollAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
@@ -323,9 +324,9 @@ CombatWidget::resetNameAndInfoWidth(const int nameWidth, const int addInfoWidth)
 void
 CombatWidget::setUndoRedoIcon(bool isDarkMode)
 {
+    m_removeCharacterAction->setIcon(isDarkMode ? QIcon(":/icons/table/remove_white.svg") : QIcon(":/icons/table/remove_black.svg"));
     m_addCharacterAction->setIcon(isDarkMode ? QIcon(":/icons/table/add_white.svg") : QIcon(":/icons/table/add_black.svg"));
     m_insertTableAction->setIcon(isDarkMode ? QIcon(":/icons/table/insert_table_white.svg") : QIcon(":/icons/table/insert_table_black.svg"));
-    m_removeAction->setIcon(isDarkMode ? QIcon(":/icons/table/remove_white.svg") : QIcon(":/icons/table/remove_black.svg"));
     m_addEffectAction->setIcon(isDarkMode ? QIcon(":/icons/table/effect_white.svg") : QIcon(":/icons/table/effect_black.svg"));
     m_duplicateAction->setIcon(isDarkMode ? QIcon(":/icons/table/duplicate_white.svg") : QIcon(":/icons/table/duplicate_black.svg"));
     m_rerollAction->setIcon(isDarkMode ? QIcon(":/icons/table/reroll_white.svg") : QIcon(":/icons/table/reroll_black.svg"));
@@ -860,15 +861,17 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
 
+    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
+    if (currentRow >= 0) {
+        menu->addAction(m_removeCharacterAction);
+    }
     menu->addAction(m_addCharacterAction);
+
     if (m_tableWidget->rowCount() > 0) {
         menu->addAction(m_insertTableAction);
     }
-
-    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
     // Map from MainWindow coordinates to Table Widget coordinates
     if (currentRow >= 0) {
-        menu->addAction(m_removeAction);
         menu->addAction(m_addEffectAction);
 
         if (m_tableWidget->rowCount() > 1) {

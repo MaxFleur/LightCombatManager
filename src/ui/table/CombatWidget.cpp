@@ -335,6 +335,8 @@ CombatWidget::setUndoRedoIcon(bool isDarkMode)
     m_resortAction->setIcon(isDarkMode ? QIcon(":/icons/table/sort_white.svg") : QIcon(":/icons/table/sort_black.svg"));
     m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
     m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
+    m_moveUpwardAction->setIcon(isDarkMode ? QIcon(":/icons/table/move_up_white.svg") : QIcon(":/icons/table/move_up_black.svg"));
+    m_moveDownwardAction->setIcon(isDarkMode ? QIcon(":/icons/table/move_down_white.svg") : QIcon(":/icons/table/move_down_black.svg"));
     m_showLogAction->setIcon(isDarkMode ? QIcon(":/icons/table/log_white.svg") : QIcon(":/icons/table/log_black.svg"));
 }
 

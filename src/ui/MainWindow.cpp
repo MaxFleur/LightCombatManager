@@ -277,7 +277,7 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
         // @note A single immediate call to resize() won't actually resize the window
         // So the function is called with a minimal delay of 1 ms, which will actually
         // resize the main window
-        QTimer::singleShot(1, [this, tableWidth]() {
+        QTimer::singleShot(1, [this, tableWidth] {
             resize(tableWidth, height());
         });
     });

@@ -344,7 +344,7 @@ CombatWidget::openAddCharacterDialog()
 {
     // Resynchronize because the table could have been modified
     m_tableWidget->resynchronizeCharacters();
-    auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
+    const auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
 
     auto *const dialog = new AddCharacterDialog(m_additionalSettings.modAddedToIni, this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this, &sizeBeforeDialog] (CharacterHandler::Character character, int instanceCount) {
@@ -352,7 +352,6 @@ CombatWidget::openAddCharacterDialog()
         emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
 
         m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getCharacters().size() - sizeBeforeDialog, true);
-        sizeBeforeDialog = m_characterHandler->getCharacters().size();
     });
 
     if (dialog->exec() == QDialog::Accepted) {

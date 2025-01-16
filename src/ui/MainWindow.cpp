@@ -174,8 +174,8 @@ MainWindow::openTable()
         if (!checkStoredTableRules(m_tableFileHandler->getData())) {
             const auto messageString = createRuleChangeMessageBoxText();
             auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different Rulesets detected!"), messageString, QMessageBox::Cancel);
-            auto* const applyButton = msgBox->addButton(tr("Apply Table Ruleset to Settings"), QMessageBox::ApplyRole);
-            auto* const ignoreButton = msgBox->addButton(tr("Ignore stored Table Ruleset"), QMessageBox::AcceptRole);
+            auto* const ignoreButton = msgBox->addButton(tr("Use Settings Ruleset"), QMessageBox::AcceptRole);
+            auto* const applyButton = msgBox->addButton(tr("Use Table Ruleset (Apply to Settings)"), QMessageBox::ApplyRole);
 
             msgBox->exec();
             if (msgBox->clickedButton() == applyButton) {
@@ -360,12 +360,12 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 QString
 MainWindow::createRuleChangeMessageBoxText() const
 {
-    const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
-                            "Your ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings.ruleset) + "</b>, " +
-                         "<b>" + Utils::General::getAutoRollEnabled(m_ruleSettings.rollAutomatical) + "</b> <br>" +
-                         tr("The stored table ruleset is: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
-                         "<b>" + Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
-                         tr("Do you want to apply the stored Table ruleset to your settings or ignore it?");
+    const auto message = tr("The loaded table uses a different ruleset from your settings! <br><br>"
+                            "Settings ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings.ruleset) + "</b>, " +
+                         Utils::General::getAutoRollEnabled(m_ruleSettings.rollAutomatical) + "<br>" +
+                         tr("Table ruleset: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
+                         Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "<br><br>" +
+                         tr("Do you want to use your settings or the table ruleset?");
 
     return message;
 }

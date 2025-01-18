@@ -21,43 +21,19 @@
 MainWindow::MainWindow()
 {
     // Actions
-    m_newCombatAction = new QAction(tr("&New"), this);
+    m_newCombatAction = new QAction(tr("&New"));
     m_newCombatAction->setShortcuts(QKeySequence::New);
-    connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
-
-    m_openCombatAction = new QAction(tr("&Open..."), this);
+    m_openCombatAction = new QAction(tr("&Open..."));
     m_openCombatAction->setShortcuts(QKeySequence::Open);
-    connect(m_openCombatAction, &QAction::triggered, this, [this] {
-        openTable();
-    });
-
-    m_saveAction = new QAction(tr("&Save"), this);
+    m_saveAction = new QAction(tr("&Save"));
     m_saveAction->setShortcuts(QKeySequence::Save);
-    connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
-
-    m_saveAsAction = new QAction(tr("&Save As..."), this);
+    m_saveAsAction = new QAction(tr("&Save As..."));
     m_saveAsAction->setShortcuts(QKeySequence::SaveAs);
-    connect(m_saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
-    // Both options have to be enabled or disabled simultaneously
-    connect(this, &MainWindow::setSaveAction, this, [this] (bool enable) {
-        m_saveAction->setEnabled(enable);
-        m_saveAsAction->setEnabled(enable);
-    });
+    m_openSettingsAction = new QAction(tr("Settings..."));
+    m_aboutLCMAction = new QAction(tr("&About LCM"));
 
-    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.svg"), tr("&Close"), this);
-    closeAction->setShortcuts(QKeySequence::Close);
-    connect(closeAction, &QAction::triggered, this, [this] () {
-        m_isTableActive ? exitCombat() : QApplication::quit();
-    });
-
-    m_openSettingsAction = new QAction(tr("Settings..."), this);
-    connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
-
-    m_aboutLCMAction = new QAction(tr("&About LCM"), this);
-    connect(m_aboutLCMAction, &QAction::triggered, this, &MainWindow::about);
-
-    auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
-    connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.svg"), tr("&Close"));
+    auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"));
 
     m_openRecentMenu = new QMenu(tr("Open Recent"));
 
@@ -72,17 +48,35 @@ MainWindow::MainWindow()
     fileMenu->addAction(m_openSettingsAction);
     fileMenu->addSeparator();
 
-    setOpenRecentMenuActions();
-
     auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(m_aboutLCMAction);
     helpMenu->addAction(aboutQtAction);
 
+    connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
+    connect(m_openCombatAction, &QAction::triggered, this, [this] {
+        openTable();
+    });
+    connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
+    connect(m_saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    closeAction->setShortcuts(QKeySequence::Close);
+    connect(closeAction, &QAction::triggered, this, [this] () {
+        m_isTableActive ? exitCombat() : QApplication::quit();
+    });
+    connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
+    connect(m_aboutLCMAction, &QAction::triggered, this, &MainWindow::about);
+    connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+    // Both options have to be enabled or disabled simultaneously
+    connect(this, &MainWindow::setSaveAction, this, [this] (bool enable) {
+        m_saveAction->setEnabled(enable);
+        m_saveAsAction->setEnabled(enable);
+    });
+
     m_tableFileHandler = std::make_shared<TableFileHandler>();
 
+    setOpenRecentMenuActions();
     setMainWindowIcons();
-    resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
+    resize(START_WIDTH, START_HEIGHT);
 }
 
 

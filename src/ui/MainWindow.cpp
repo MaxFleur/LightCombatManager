@@ -16,6 +16,8 @@
 #include <QPushButton>
 #include <QTimer>
 
+#include <filesystem>
+
 MainWindow::MainWindow()
 {
     // Actions
@@ -25,7 +27,9 @@ MainWindow::MainWindow()
 
     m_openCombatAction = new QAction(tr("&Open..."), this);
     m_openCombatAction->setShortcuts(QKeySequence::Open);
-    connect(m_openCombatAction, &QAction::triggered, this, &MainWindow::openTable);
+    connect(m_openCombatAction, &QAction::triggered, this, [this] {
+        openTable();
+    });
 
     m_saveAction = new QAction(tr("&Save"), this);
     m_saveAction->setShortcuts(QKeySequence::Save);
@@ -55,15 +59,20 @@ MainWindow::MainWindow()
     auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
     connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
 
+    m_openRecentMenu = new QMenu(tr("Open Recent"));
+
     // Add actions
     auto *const fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(m_newCombatAction);
     fileMenu->addAction(m_openCombatAction);
+    fileMenu->addMenu(m_openRecentMenu);
     fileMenu->addAction(m_saveAction);
     fileMenu->addAction(m_saveAsAction);
     fileMenu->addAction(closeAction);
     fileMenu->addAction(m_openSettingsAction);
     fileMenu->addSeparator();
+
+    setOpenRecentMenuActions();
 
     auto *const helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(m_aboutLCMAction);
@@ -153,13 +162,23 @@ MainWindow::saveAs()
 
 
 void
-MainWindow::openTable()
+MainWindow::openTable(const QString& recentDir)
 {
-    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
-    // Return if this exact same file is already loaded or if the dialog has been cancelled
-    if ((m_isTableActive && fileName == m_fileDir) || fileName.isEmpty()) {
+    QString fileName;
+    if (recentDir.isEmpty()) {
+        fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
+        if (fileName.isEmpty()) {
+            return;
+        }
+    } else {
+        fileName = recentDir;
+    }
+
+    // Return if this exact same file is already loaded
+    if ((m_isTableActive && fileName == m_fileDir)) {
         return;
     }
+
     // Check if a table is active right now
     if (m_isTableActive && isWindowModified() &&
         createSaveMessageBox(tr("Do you want to save the current Combat before opening another existing Combat?"), false) == 0) {
@@ -195,6 +214,7 @@ MainWindow::openTable()
         m_fileDir = fileName;
         setTableWidget(true, false);
 
+        setOpenRecentMenuActions();
         // If the settings rules are applied to the table, it is modified
         setCombatTitle(rulesModified);
         break;
@@ -406,6 +426,33 @@ MainWindow::checkStoredTableRules(const QJsonObject& jsonObjectData)
 
 
 void
+MainWindow::setOpenRecentMenuActions()
+{
+    m_openRecentMenu->clear();
+
+    if (m_dirSettings.recentDirs.at(0).isEmpty()) {
+        m_openRecentMenu->addAction(new QAction(tr("No recent dirs")));
+    } else {
+        for (const auto& recentDir : m_dirSettings.recentDirs) {
+            if (!std::filesystem::exists(recentDir.toStdString())) {
+                continue;
+            }
+
+            auto trimmedName = recentDir;
+            if (trimmedName.length() > 50) {
+                trimmedName.replace(0, trimmedName.length() - 50, "...");
+            }
+            auto* const recentDirAction = new QAction(trimmedName);
+            m_openRecentMenu->addAction(recentDirAction);
+            connect(recentDirAction, &QAction::triggered, this, [this, recentDir] {
+                openTable(recentDir);
+            });
+        }
+    }
+}
+
+
+void
 MainWindow::setMainWindowIcons()
 {
     const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
@@ -416,6 +463,8 @@ MainWindow::setMainWindowIcons()
     m_saveAsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/save_as_white.svg" : ":/icons/menus/save_as_black.svg"));
     m_openSettingsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/gear_white.svg" : ":/icons/menus/gear_black.svg"));
     m_aboutLCMAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
+
+    m_openRecentMenu->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.svg" : ":/icons/menus/open_black.svg"));
 
     QApplication::setWindowIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
 }

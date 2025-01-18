@@ -9,6 +9,7 @@
 #include <QPointer>
 
 class QAction;
+class QMenu;
 
 class CombatWidget;
 class WelcomeWidget;
@@ -37,7 +38,7 @@ private slots:
     saveAs();
 
     void
-    openTable();
+    openTable(const QString& recentDir = "");
 
     void
     openSettings();
@@ -73,6 +74,9 @@ private:
     checkStoredTableRules(const QJsonObject& jsonObjectData);
 
     void
+    setOpenRecentMenuActions();
+
+    void
     setMainWindowIcons();
 
     bool
@@ -89,6 +93,8 @@ private:
     QPointer<QAction> m_closeAction;
     QPointer<QAction> m_openSettingsAction;
     QPointer<QAction> m_aboutLCMAction;
+
+    QPointer<QMenu> m_openRecentMenu;
 
     std::shared_ptr<TableFileHandler> m_tableFileHandler;
 

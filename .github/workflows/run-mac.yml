@@ -18,26 +18,14 @@ jobs:
       - name: Install Catch2
         run: brew install catch2
 
-      - name: Install Qt5
-        run: brew install qt@5
-
-      - name: Configure CMake  - Qt5
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH="$(brew --prefix qt@5)"
-
-      - name: Build Project - Qt5
-        run: cd build && cmake ..
-
-      - name: Test - Qt5
-        run: cd build && make tests &&  cd test && ./tests
-
       - name: Install Qt6
         run: brew install qt@6
 
-      - name: Configure CMake  - Qt6
+      - name: Configure CMake
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH="$(brew --prefix qt@6)"
 
-      - name: Build Project - Qt6
+      - name: Build Project
         run: cd build && cmake ..
 
-      - name: Test - Qt6
+      - name: Test
         run: cd build && make tests &&  cd test && ./tests

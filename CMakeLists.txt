@@ -8,15 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(LightCombatManager LANGUAGES CXX)
 
-find_package(Qt6 QUIET COMPONENTS Widgets)
-
-if(${Qt6_FOUND})
-  find_package(QT NAMES Qt6 COMPONENTS SvgWidgets Widgets REQUIRED)
-  find_package(Qt6 COMPONENTS SvgWidgets Widgets REQUIRED)
-else()
-  find_package(QT NAMES Qt5 COMPONENTS Svg Widgets REQUIRED)
-  find_package(Qt5 COMPONENTS Svg Widgets REQUIRED)
-endif()
+find_package(QT NAMES Qt6 COMPONENTS SvgWidgets Widgets REQUIRED)
+find_package(Qt6 COMPONENTS SvgWidgets Widgets REQUIRED)
 
 include(CTest)
 enable_testing()

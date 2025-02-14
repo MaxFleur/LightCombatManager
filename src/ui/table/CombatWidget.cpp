@@ -841,7 +841,7 @@ CombatWidget::loadCharactersFromTable(const QJsonObject& jsonObject)
             additionalInfoData.statusEffects.push_back(effect);
         }
 
-        characters.push_back(CharacterHandler::Character {
+        characters.emplace_back(CharacterHandler::Character {
             characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
             characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
             characterObject.value("is_enemy").toBool(), additionalInfoData });

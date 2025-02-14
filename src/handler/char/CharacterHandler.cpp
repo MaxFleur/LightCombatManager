@@ -12,7 +12,7 @@ CharacterHandler::storeCharacter(
     bool               isEnemy,
     AdditionalInfoData additionalInfoData)
 {
-    characters.push_back(Character(name, initiative, modifier, hp, isEnemy, additionalInfoData));
+    characters.emplace_back(Character(name, initiative, modifier, hp, isEnemy, additionalInfoData));
 }
 
 

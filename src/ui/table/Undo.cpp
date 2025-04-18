@@ -12,12 +12,12 @@ Undo::Undo(CombatWidget *CombatWidget, LogListWidget* logListWidget,
            QPointer<QLabel> roundCounterLabel, QPointer<QLabel> currentPlayerLabel,
            const UndoData& oldData, const UndoData& newData, const std::vector<int> affectedRows,
            unsigned int* rowEntered, unsigned int* roundCounter,
-           bool colorTableRows, bool showIniToolTips) :
+           bool colorTableRows, bool showIniToolTips, bool adjustTableHeight) :
     m_combatWidget(CombatWidget), m_logListWidget(logListWidget),
     m_roundCounterLabel(roundCounterLabel), m_currentPlayerLabel(currentPlayerLabel),
     m_oldData(std::move(oldData)), m_newData(std::move(newData)), m_affectedRows(std::move(affectedRows)),
     m_rowEntered(rowEntered), m_roundCounter(roundCounter),
-    m_colorTableRows(colorTableRows), m_showIniToolTips(showIniToolTips)
+    m_colorTableRows(colorTableRows), m_showIniToolTips(showIniToolTips), m_adjustTableHeight(adjustTableHeight)
 {
 }
 
@@ -83,7 +83,13 @@ Undo::setCombatWidget(bool undo)
     tableWidget->setTableRowColor(!m_colorTableRows);
     tableWidget->setIniColumnTooltips(!m_showIniToolTips);
 
-    emit m_combatWidget->tableHeightSet(tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
+    // Only set table height if undoing and not removing
+    // (this is handled in the combat widget's remove row function)
+    const auto isRemovingRow = (oldTableData.size() < newTableData.size() && undo) ||
+                               (oldTableData.size() > newTableData.size() && !undo);
+    if (undo && !isRemovingRow && m_adjustTableHeight) {
+        emit m_combatWidget->tableHeightSet(tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
+    }
     emit m_combatWidget->changeOccured();
 
     tableWidget->blockSignals(false);

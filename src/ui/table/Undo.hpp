@@ -29,7 +29,8 @@ public:
          unsigned int*          rowEntered,
          unsigned int*          roundCounter,
          bool                   colorTableRows,
-         bool                   showIniToolTips);
+         bool                   showIniToolTips,
+         bool                   adjustTableHeight);
 
     void
     undo() override;
@@ -66,6 +67,7 @@ private:
 
     const bool m_colorTableRows;
     const bool m_showIniToolTips;
+    const bool m_adjustTableHeight;
 
     static constexpr int COL_ENEMY = 4;
     static constexpr int COL_ADDITIONAL = 5;

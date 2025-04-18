@@ -268,7 +268,9 @@ MainWindow::setWelcomingWidget()
 
     m_welcomeWidget = new WelcomeWidget(this);
     setCentralWidget(m_welcomeWidget);
-    resize(START_WIDTH, START_HEIGHT);
+    QTimer::singleShot(1, [this] {
+        resize(START_WIDTH, START_HEIGHT);
+    });
 
     m_isTableSavedInFile = false;
     emit setSaveAction(false);
@@ -282,10 +284,9 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
-        if (height <= START_HEIGHT) {
-            return;
-        }
-        resize(width(), height);
+        QTimer::singleShot(1, [this, height] {
+            resize(width(), height);
+        });
     });
     connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int tableWidth) {
         // @note A single immediate call to resize() won't actually resize the window

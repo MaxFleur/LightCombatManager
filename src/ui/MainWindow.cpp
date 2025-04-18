@@ -268,9 +268,7 @@ MainWindow::setWelcomingWidget()
 
     m_welcomeWidget = new WelcomeWidget(this);
     setCentralWidget(m_welcomeWidget);
-    QTimer::singleShot(1, [this] {
-        resize(START_WIDTH, START_HEIGHT);
-    });
+    callTimedResize(START_WIDTH, START_HEIGHT);
 
     m_isTableSavedInFile = false;
     emit setSaveAction(false);
@@ -284,17 +282,10 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
-        QTimer::singleShot(1, [this, height] {
-            resize(width(), height);
-        });
+        callTimedResize(width(), height);
     });
     connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int tableWidth) {
-        // @note A single immediate call to resize() won't actually resize the window
-        // So the function is called with a minimal delay of 1 ms, which will actually
-        // resize the main window
-        QTimer::singleShot(1, [this, tableWidth] {
-            resize(tableWidth, height());
-        });
+        callTimedResize(tableWidth, height());
     });
     connect(m_combatWidget, &CombatWidget::changeOccured, this, [this] {
         setCombatTitle(true);
@@ -302,20 +293,14 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
 
     setCombatTitle(false);
 
-    const auto resizeWidget = [this] (int width, int height) {
-        QTimer::singleShot(1, [this, width, height] {
-            resize(width, height);
-        });
-    };
-
     if (newCombatStarted) {
-        resizeWidget(START_WIDTH, START_HEIGHT);
+        callTimedResize(START_WIDTH, START_HEIGHT);
         m_combatWidget->openAddCharacterDialog();
     } else {
         m_combatWidget->generateTableFromTableData();
         const auto width = m_combatWidget->isLoggingWidgetVisible() ? m_combatWidget->width() - 250 : m_combatWidget->width();
         const auto height = m_combatWidget->getHeight();
-        resizeWidget(std::max(width, START_WIDTH), std::max(height, START_HEIGHT));
+        callTimedResize(std::max(width, START_WIDTH), std::max(height, START_HEIGHT));
     }
 
     m_isTableActive = true;
@@ -462,6 +447,16 @@ MainWindow::setMainWindowIcons()
     m_openRecentMenu->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.svg" : ":/icons/menus/open_black.svg"));
 
     QApplication::setWindowIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
+}
+
+
+void
+MainWindow::callTimedResize(int width, int height)
+{
+    // Sometimes it needs minimal delays to process events in the background before this can be called
+    QTimer::singleShot(1, [this, width, height] {
+        resize(width, height);
+    });
 }
 
 

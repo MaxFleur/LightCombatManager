@@ -79,6 +79,10 @@ private:
     void
     setMainWindowIcons();
 
+    void
+    callTimedResize(int width,
+                    int height);
+
     bool
     event(QEvent *event) override;
 

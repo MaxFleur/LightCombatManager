@@ -243,7 +243,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small, lightweight combat manager for d20-based role playing games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a> Uses GNU GPLv3 license.</p>"
-                          "<p>Version 3.0.0.<br>"
+                          "<p>Version 3.1.0.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 

@@ -53,6 +53,7 @@ TemplatesWidget::loadTemplates()
         }
     }
 
+    m_templatesListWidget->sortItems();
     if (m_templatesListWidget->count() > 0) {
         m_templatesListWidget->item(0)->setSelected(true);
     }

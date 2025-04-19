@@ -174,10 +174,10 @@ CombatTableWidget::tableDataFromWidget()
         QVector<QVariant> rowValues;
 
         for (auto j = 0; j < FIRST_FOUR_COLUMNS; j++) {
-            rowValues.push_back(item(i, j)->text());
+            rowValues.emplace_back(item(i, j)->text());
         }
 
-        rowValues.push_back(item(i, Utils::Table::COL_ENEMY)->checkState() == Qt::Checked);
+        rowValues.emplace_back(item(i, Utils::Table::COL_ENEMY)->checkState() == Qt::Checked);
 
         QVariant variant;
         variant.setValue(cellWidget(i, Utils::Table::COL_ADDITIONAL)->findChild<AdditionalInfoWidget *>()->getAdditionalInformation());
@@ -216,7 +216,7 @@ CombatTableWidget::getHeight() const
     for (int i = 0; i < rowCount(); i++) {
         height += rowHeight(i);
     }
-    return height + HEIGHT_BUFFER;
+    return height + TABLE_HEIGHT_BUFFER;
 }
 
 

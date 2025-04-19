@@ -1,4 +1,3 @@
-#include "AdditionalInfoWidget.hpp"
 #include "UtilsGeneral.hpp"
 
 #ifdef CATCH2_V3
@@ -7,9 +6,7 @@
 #include <catch2/catch.hpp>
 #endif
 
-#include <QHBoxLayout>
-
-TEST_CASE("General Util Testing", "[GeneralUtils]") {
+TEST_CASE("Utils General Testing", "[UtilsGeneral]") {
     SECTION("CSV file path test") {
         SECTION("Example Latin") {
             REQUIRE(Utils::General::getLCMName("a/path/to/an/exampleTable.csv") == "exampleTable.csv");

@@ -12,6 +12,7 @@ add_executable(tests
 
     ${CMAKE_CURRENT_LIST_DIR}/handler/CharacterHandlerTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/handler/CharFileHandlerTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/handler/EffectFileHandlerTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/handler/TableFileHandlerTest.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/ui/settings/SettingsTest.cpp
@@ -20,7 +21,8 @@ add_executable(tests
     ${CMAKE_CURRENT_LIST_DIR}/ui/widget/LogListWidgetTest.cpp
     ${CMAKE_CURRENT_LIST_DIR}/ui/widget/TemplatesListWidgetTest.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/utils/GeneralUtilsTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/utils/UtilsGeneralTest.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/utils/UtilsFilesTest.cpp
 )
 
 target_link_libraries(tests

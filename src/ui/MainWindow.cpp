@@ -16,49 +16,32 @@
 #include <QPushButton>
 #include <QTimer>
 
+#include <filesystem>
+
 MainWindow::MainWindow()
 {
     // Actions
-    m_newCombatAction = new QAction(tr("&New"), this);
+    m_newCombatAction = new QAction(tr("&New"));
     m_newCombatAction->setShortcuts(QKeySequence::New);
-    connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
-
-    m_openCombatAction = new QAction(tr("&Open..."), this);
+    m_openCombatAction = new QAction(tr("&Open..."));
     m_openCombatAction->setShortcuts(QKeySequence::Open);
-    connect(m_openCombatAction, &QAction::triggered, this, &MainWindow::openTable);
-
-    m_saveAction = new QAction(tr("&Save"), this);
+    m_saveAction = new QAction(tr("&Save"));
     m_saveAction->setShortcuts(QKeySequence::Save);
-    connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
-
-    m_saveAsAction = new QAction(tr("&Save As..."), this);
+    m_saveAsAction = new QAction(tr("&Save As..."));
     m_saveAsAction->setShortcuts(QKeySequence::SaveAs);
-    connect(m_saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
-    // Both options have to be enabled or disabled simultaneously
-    connect(this, &MainWindow::setSaveAction, this, [this] (bool enable) {
-        m_saveAction->setEnabled(enable);
-        m_saveAsAction->setEnabled(enable);
-    });
+    m_openSettingsAction = new QAction(tr("Settings..."));
+    m_aboutLCMAction = new QAction(tr("&About LCM"));
 
-    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.svg"), tr("&Close"), this);
-    closeAction->setShortcuts(QKeySequence::Close);
-    connect(closeAction, &QAction::triggered, this, [this] () {
-        m_isTableActive ? exitCombat() : QApplication::quit();
-    });
+    auto* const closeAction = new QAction(QIcon(":/icons/menus/close.svg"), tr("&Close"));
+    auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"));
 
-    m_openSettingsAction = new QAction(tr("Settings..."), this);
-    connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
-
-    m_aboutLCMAction = new QAction(tr("&About LCM"), this);
-    connect(m_aboutLCMAction, &QAction::triggered, this, &MainWindow::about);
-
-    auto *const aboutQtAction = new QAction(style()->standardIcon(QStyle::SP_TitleBarMenuButton), tr("About &Qt"), this);
-    connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+    m_openRecentMenu = new QMenu(tr("Open Recent"));
 
     // Add actions
     auto *const fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(m_newCombatAction);
     fileMenu->addAction(m_openCombatAction);
+    fileMenu->addMenu(m_openRecentMenu);
     fileMenu->addAction(m_saveAction);
     fileMenu->addAction(m_saveAsAction);
     fileMenu->addAction(closeAction);
@@ -69,11 +52,31 @@ MainWindow::MainWindow()
     helpMenu->addAction(m_aboutLCMAction);
     helpMenu->addAction(aboutQtAction);
 
+    connect(m_newCombatAction, &QAction::triggered, this, &MainWindow::newCombat);
+    connect(m_openCombatAction, &QAction::triggered, this, [this] {
+        openTable();
+    });
+    connect(m_saveAction, &QAction::triggered, this, &MainWindow::saveTable);
+    connect(m_saveAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    closeAction->setShortcuts(QKeySequence::Close);
+    connect(closeAction, &QAction::triggered, this, [this] () {
+        m_isTableActive ? exitCombat() : QApplication::quit();
+    });
+    connect(m_openSettingsAction, &QAction::triggered, this, &MainWindow::openSettings);
+    connect(m_aboutLCMAction, &QAction::triggered, this, &MainWindow::about);
+    connect(aboutQtAction, &QAction::triggered, qApp, &QApplication::aboutQt);
+    // Both options have to be enabled or disabled simultaneously
+    connect(this, &MainWindow::setSaveAction, this, [this] (bool enable) {
+        m_saveAction->setEnabled(enable);
+        m_saveAsAction->setEnabled(enable);
+    });
+
     m_tableFileHandler = std::make_shared<TableFileHandler>();
 
+    setOpenRecentMenuActions();
     setMainWindowIcons();
-    resize(START_WIDTH, START_HEIGHT);
     setWelcomingWidget();
+    resize(START_WIDTH, START_HEIGHT);
 }
 
 
@@ -153,13 +156,23 @@ MainWindow::saveAs()
 
 
 void
-MainWindow::openTable()
+MainWindow::openTable(const QString& recentDir)
 {
-    const auto fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
-    // Return if this exact same file is already loaded or if the dialog has been cancelled
-    if ((m_isTableActive && fileName == m_fileDir) || fileName.isEmpty()) {
+    QString fileName;
+    if (recentDir.isEmpty()) {
+        fileName = QFileDialog::getOpenFileName(this, "Open Table", m_dirSettings.openDir, ("lcm File(*.lcm)"));
+        if (fileName.isEmpty()) {
+            return;
+        }
+    } else {
+        fileName = recentDir;
+    }
+
+    // Return if this exact same file is already loaded
+    if ((m_isTableActive && fileName == m_fileDir)) {
         return;
     }
+
     // Check if a table is active right now
     if (m_isTableActive && isWindowModified() &&
         createSaveMessageBox(tr("Do you want to save the current Combat before opening another existing Combat?"), false) == 0) {
@@ -174,8 +187,8 @@ MainWindow::openTable()
         if (!checkStoredTableRules(m_tableFileHandler->getData())) {
             const auto messageString = createRuleChangeMessageBoxText();
             auto *const msgBox = new QMessageBox(QMessageBox::Warning, tr("Different Rulesets detected!"), messageString, QMessageBox::Cancel);
-            auto* const applyButton = msgBox->addButton(tr("Apply Table Ruleset to Settings"), QMessageBox::ApplyRole);
-            auto* const ignoreButton = msgBox->addButton(tr("Ignore stored Table Ruleset"), QMessageBox::AcceptRole);
+            auto* const ignoreButton = msgBox->addButton(tr("Use Settings Ruleset"), QMessageBox::AcceptRole);
+            auto* const applyButton = msgBox->addButton(tr("Use Table Ruleset (Apply to Settings)"), QMessageBox::ApplyRole);
 
             msgBox->exec();
             if (msgBox->clickedButton() == applyButton) {
@@ -195,6 +208,7 @@ MainWindow::openTable()
         m_fileDir = fileName;
         setTableWidget(true, false);
 
+        setOpenRecentMenuActions();
         // If the settings rules are applied to the table, it is modified
         setCombatTitle(rulesModified);
         break;
@@ -229,7 +243,7 @@ MainWindow::about()
     QMessageBox::about(this, tr("About Light Combat Manager"),
                        tr("<p>Light Combat Manager. A small, lightweight combat manager for d20-based role playing games.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager'>Code available on Github.</a> Uses GNU GPLv3 license.</p>"
-                          "<p>Version 3.0.0.<br>"
+                          "<p>Version 3.1.0.<br>"
                           "<a href='https://github.com/MaxFleur/LightCombatManager/releases'>Changelog</a></p>"));
 }
 
@@ -254,7 +268,7 @@ MainWindow::setWelcomingWidget()
 
     m_welcomeWidget = new WelcomeWidget(this);
     setCentralWidget(m_welcomeWidget);
-    resize(START_WIDTH, START_HEIGHT);
+    callTimedResize(START_WIDTH, START_HEIGHT);
 
     m_isTableSavedInFile = false;
     emit setSaveAction(false);
@@ -268,17 +282,10 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
     setCentralWidget(m_combatWidget);
     connect(m_combatWidget, &CombatWidget::exit, this, &MainWindow::exitCombat);
     connect(m_combatWidget, &CombatWidget::tableHeightSet, this, [this] (unsigned int height) {
-        if (height > START_HEIGHT && (int) height > this->height()) {
-            resize(width(), height);
-        }
+        callTimedResize(width(), height);
     });
     connect(m_combatWidget, &CombatWidget::tableWidthSet, this, [this] (int tableWidth) {
-        // @note A single immediate call to resize() won't actually resize the window
-        // So the function is called with a minimal delay of 1 ms, which will actually
-        // resize the main window
-        QTimer::singleShot(1, [this, tableWidth]() {
-            resize(tableWidth, height());
-        });
+        callTimedResize(tableWidth, height());
     });
     connect(m_combatWidget, &CombatWidget::changeOccured, this, [this] {
         setCombatTitle(true);
@@ -286,20 +293,14 @@ MainWindow::setTableWidget(bool isDataStored, bool newCombatStarted)
 
     setCombatTitle(false);
 
-    const auto resizeWidget = [this] (int width, int height) {
-        QTimer::singleShot(1, [this, width, height] {
-            resize(width, height);
-        });
-    };
-
     if (newCombatStarted) {
-        resizeWidget(START_WIDTH, START_HEIGHT);
+        callTimedResize(START_WIDTH, START_HEIGHT);
         m_combatWidget->openAddCharacterDialog();
     } else {
         m_combatWidget->generateTableFromTableData();
         const auto width = m_combatWidget->isLoggingWidgetVisible() ? m_combatWidget->width() - 250 : m_combatWidget->width();
         const auto height = m_combatWidget->getHeight();
-        resizeWidget(std::max(width, START_WIDTH), std::max(height, START_HEIGHT));
+        callTimedResize(std::max(width, START_WIDTH), std::max(height, START_HEIGHT));
     }
 
     m_isTableActive = true;
@@ -359,12 +360,12 @@ MainWindow::createSaveMessageBox(const QString& tableMessage, bool isClosing)
 QString
 MainWindow::createRuleChangeMessageBoxText() const
 {
-    const auto message = tr("The Table you are trying to load uses another ruleset than you have stored in your rule settings! <br><br>"
-                            "Your ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings.ruleset) + "</b>, " +
-                         "<b>" + Utils::General::getAutoRollEnabled(m_ruleSettings.rollAutomatical) + "</b> <br>" +
-                         tr("The stored table ruleset is: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
-                         "<b>" + Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "</b> <br><br>" +
-                         tr("Do you want to apply the stored Table ruleset to your settings or ignore it?");
+    const auto message = tr("The loaded table uses a different ruleset from your settings! <br><br>"
+                            "Settings ruleset: <b>") + Utils::General::getRulesetName(m_ruleSettings.ruleset) + "</b>, " +
+                         Utils::General::getAutoRollEnabled(m_ruleSettings.rollAutomatical) + "<br>" +
+                         tr("Table ruleset: <b>") + Utils::General::getRulesetName(m_loadedTableRule) + "</b>, " +
+                         Utils::General::getAutoRollEnabled(m_loadedTableRollAutomatically) + "<br><br>" +
+                         tr("Do you want to use your settings or the table ruleset?");
 
     return message;
 }
@@ -405,6 +406,33 @@ MainWindow::checkStoredTableRules(const QJsonObject& jsonObjectData)
 
 
 void
+MainWindow::setOpenRecentMenuActions()
+{
+    m_openRecentMenu->clear();
+
+    if (m_dirSettings.recentDirs.at(0).isEmpty()) {
+        m_openRecentMenu->addAction(new QAction(tr("No recent dirs")));
+    } else {
+        for (const auto& recentDir : m_dirSettings.recentDirs) {
+            if (!std::filesystem::exists(recentDir.toStdString())) {
+                continue;
+            }
+
+            auto trimmedName = recentDir;
+            if (trimmedName.length() > 50) {
+                trimmedName.replace(0, trimmedName.length() - 50, "...");
+            }
+            auto* const recentDirAction = new QAction(trimmedName);
+            m_openRecentMenu->addAction(recentDirAction);
+            connect(recentDirAction, &QAction::triggered, this, [this, recentDir] {
+                openTable(recentDir);
+            });
+        }
+    }
+}
+
+
+void
 MainWindow::setMainWindowIcons()
 {
     const auto isSystemInDarkMode = Utils::General::isSystemInDarkMode();
@@ -416,7 +444,19 @@ MainWindow::setMainWindowIcons()
     m_openSettingsAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/gear_white.svg" : ":/icons/menus/gear_black.svg"));
     m_aboutLCMAction->setIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
 
+    m_openRecentMenu->setIcon(QIcon(isSystemInDarkMode ? ":/icons/menus/open_white.svg" : ":/icons/menus/open_black.svg"));
+
     QApplication::setWindowIcon(QIcon(isSystemInDarkMode ? ":/icons/logos/main_light.svg" : ":/icons/logos/main_dark.svg"));
+}
+
+
+void
+MainWindow::callTimedResize(int width, int height)
+{
+    // Sometimes it needs minimal delays to process events in the background before this can be called
+    QTimer::singleShot(1, [this, width, height] {
+        resize(width, height);
+    });
 }
 
 

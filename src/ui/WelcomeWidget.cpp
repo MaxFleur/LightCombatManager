@@ -17,8 +17,8 @@ WelcomeWidget::WelcomeWidget(QWidget *parent)
                                              "or open an already existing Combat ('File' -> 'Open...')."));
     welcomeLabel->setAlignment(Qt::AlignCenter);
 
-    auto* const versionLabel = new QLabel("v3.0.0");
-    versionLabel->setToolTip(tr("Logging widget, major infrastructure updates and various UI improvements!"));
+    auto* const versionLabel = new QLabel("v3.1.0");
+    versionLabel->setToolTip(tr("Custom effects, an Open Recent Menu and minor icon rearrangement!"));
     versionLabel->setAlignment(Qt::AlignRight);
 
     auto *const layout = new QVBoxLayout(this);

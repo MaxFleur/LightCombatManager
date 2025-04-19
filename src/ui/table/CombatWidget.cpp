@@ -44,11 +44,11 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
 
     m_undoStack = new QUndoStack(this);
 
+    m_removeCharacterAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
     m_addCharacterAction = createAction(tr("Add new Character(s)..."), tr("Add new Character(s)"),
                                         QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N), true);
     m_insertTableAction = createAction(tr("Insert other Table..."), tr("Insert another table without overwriting the current one"),
                                        QKeySequence(tr("Ctrl+T")), false);
-    m_removeAction = createAction(tr("Remove"), tr("Remove Character(s)"), QKeySequence(Qt::Key_Delete), false);
     m_addEffectAction = createAction(tr("Add Status Effect(s)..."), tr("Add Status Effect(s)"), QKeySequence(tr("Ctrl+E")), false);
     m_duplicateAction = createAction(tr("Duplicate"), tr("Duplicate Character"), QKeySequence(tr("Ctrl+D")), false);
     m_rerollAction = createAction(tr("Reroll Initiative"), tr("Reroll Initiative"), QKeySequence(tr("Ctrl+I")), false);
@@ -75,9 +75,10 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
     setUndoRedoIcon(isSystemInDarkMode);
 
     auto* const toolBar = new QToolBar("Actions");
+    toolBar->addAction(m_removeCharacterAction);
     toolBar->addAction(m_addCharacterAction);
+    toolBar->addSeparator();
     toolBar->addAction(m_insertTableAction);
-    toolBar->addAction(m_removeAction);
     toolBar->addAction(m_addEffectAction);
     toolBar->addAction(m_resortAction);
     toolBar->addSeparator();
@@ -152,9 +153,9 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
         m_roundCounterLabel->setText(tr("Round ") + QString::number(m_roundCounter));
     });
 
+    connect(m_removeCharacterAction, &QAction::triggered, this, &CombatWidget::removeRow);
     connect(m_addCharacterAction, &QAction::triggered, this, &CombatWidget::openAddCharacterDialog);
     connect(m_insertTableAction, &QAction::triggered, this, &CombatWidget::insertTable);
-    connect(m_removeAction, &QAction::triggered, this, &CombatWidget::removeRow);
     connect(m_addEffectAction, &QAction::triggered, this, &CombatWidget::openStatusEffectDialog);
     connect(m_duplicateAction, &QAction::triggered, this, &CombatWidget::duplicateRow);
     connect(m_rerollAction, &QAction::triggered, this, &CombatWidget::rerollIni);
@@ -186,7 +187,7 @@ CombatWidget::CombatWidget(std::shared_ptr<TableFileHandler> tableFilerHandler,
         saveOldState();
     });
     connect(m_tableWidget, &QTableWidget::itemSelectionChanged, this, [this] {
-        m_removeAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
+        m_removeCharacterAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
         m_addEffectAction->setEnabled(m_tableWidget->selectionModel()->hasSelection());
         m_duplicateAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
         m_rerollAction->setEnabled(m_tableWidget->selectionModel()->selectedRows().size() == 1);
@@ -284,7 +285,8 @@ CombatWidget::pushOnUndoStack(bool resynchronize)
     // We got everything, so push
     m_undoStack->push(new Undo(this, m_logListWidget, m_roundCounterLabel, m_currentPlayerLabel,
                                oldData, newData, m_affectedRowIndices, &m_rowEntered, &m_roundCounter,
-                               m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips));
+                               m_tableSettings.colorTableRows, m_tableSettings.showIniToolTips,
+                               m_tableSettings.adjustHeightAfterRemove));
     m_affectedRowIndices.clear();
 }
 
@@ -323,9 +325,9 @@ CombatWidget::resetNameAndInfoWidth(const int nameWidth, const int addInfoWidth)
 void
 CombatWidget::setUndoRedoIcon(bool isDarkMode)
 {
+    m_removeCharacterAction->setIcon(isDarkMode ? QIcon(":/icons/table/remove_white.svg") : QIcon(":/icons/table/remove_black.svg"));
     m_addCharacterAction->setIcon(isDarkMode ? QIcon(":/icons/table/add_white.svg") : QIcon(":/icons/table/add_black.svg"));
     m_insertTableAction->setIcon(isDarkMode ? QIcon(":/icons/table/insert_table_white.svg") : QIcon(":/icons/table/insert_table_black.svg"));
-    m_removeAction->setIcon(isDarkMode ? QIcon(":/icons/table/remove_white.svg") : QIcon(":/icons/table/remove_black.svg"));
     m_addEffectAction->setIcon(isDarkMode ? QIcon(":/icons/table/effect_white.svg") : QIcon(":/icons/table/effect_black.svg"));
     m_duplicateAction->setIcon(isDarkMode ? QIcon(":/icons/table/duplicate_white.svg") : QIcon(":/icons/table/duplicate_black.svg"));
     m_rerollAction->setIcon(isDarkMode ? QIcon(":/icons/table/reroll_white.svg") : QIcon(":/icons/table/reroll_black.svg"));
@@ -334,6 +336,8 @@ CombatWidget::setUndoRedoIcon(bool isDarkMode)
     m_resortAction->setIcon(isDarkMode ? QIcon(":/icons/table/sort_white.svg") : QIcon(":/icons/table/sort_black.svg"));
     m_undoAction->setIcon(isDarkMode ? QIcon(":/icons/table/undo_white.svg") : QIcon(":/icons/table/undo_black.svg"));
     m_redoAction->setIcon(isDarkMode ? QIcon(":/icons/table/redo_white.svg") : QIcon(":/icons/table/redo_black.svg"));
+    m_moveUpwardAction->setIcon(isDarkMode ? QIcon(":/icons/table/move_up_white.svg") : QIcon(":/icons/table/move_up_black.svg"));
+    m_moveDownwardAction->setIcon(isDarkMode ? QIcon(":/icons/table/move_down_white.svg") : QIcon(":/icons/table/move_down_black.svg"));
     m_showLogAction->setIcon(isDarkMode ? QIcon(":/icons/table/log_white.svg") : QIcon(":/icons/table/log_black.svg"));
 }
 
@@ -343,15 +347,14 @@ CombatWidget::openAddCharacterDialog()
 {
     // Resynchronize because the table could have been modified
     m_tableWidget->resynchronizeCharacters();
-    auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
+    const auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
 
     auto *const dialog = new AddCharacterDialog(m_additionalSettings.modAddedToIni, this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this, &sizeBeforeDialog] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
-        emit tableHeightSet(m_tableWidget->getHeight() + 40);
+        emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
 
         m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getCharacters().size() - sizeBeforeDialog, true);
-        sizeBeforeDialog = m_characterHandler->getCharacters().size();
     });
 
     if (dialog->exec() == QDialog::Accepted) {
@@ -415,7 +418,7 @@ CombatWidget::insertTable()
         std::iota(m_affectedRowIndices.begin(), m_affectedRowIndices.end(), oldSize);
 
         pushOnUndoStack();
-        emit tableHeightSet(m_tableWidget->getHeight() + 40);
+        emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
 
         auto const reply = QMessageBox::question(this, tr("Sort Table?"), tr("Do you want to resort the Table?"),
                                                  QMessageBox::Yes | QMessageBox::No);
@@ -615,6 +618,10 @@ CombatWidget::removeRow()
     setRowAndPlayer();
     pushOnUndoStack();
     m_tableWidget->itemSelectionChanged();
+
+    if (m_tableSettings.adjustHeightAfterRemove) {
+        emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
+    }
 }
 
 
@@ -800,6 +807,7 @@ CombatWidget::setTableOption(bool option, int valueType)
     case 3:
         m_tableWidget->setIniColumnTooltips(!option);
         break;
+    case 4:
     default:
         break;
     }
@@ -834,7 +842,7 @@ CombatWidget::loadCharactersFromTable(const QJsonObject& jsonObject)
             additionalInfoData.statusEffects.push_back(effect);
         }
 
-        characters.push_back(CharacterHandler::Character {
+        characters.emplace_back(CharacterHandler::Character {
             characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
             characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
             characterObject.value("is_enemy").toBool(), additionalInfoData });
@@ -860,15 +868,17 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
 {
     auto *const menu = new QMenu(this);
 
+    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
+    if (currentRow >= 0) {
+        menu->addAction(m_removeCharacterAction);
+    }
     menu->addAction(m_addCharacterAction);
+
     if (m_tableWidget->rowCount() > 0) {
         menu->addAction(m_insertTableAction);
     }
-
-    const auto currentRow = m_tableWidget->indexAt(m_tableWidget->viewport()->mapFrom(this, event->pos())).row();
     // Map from MainWindow coordinates to Table Widget coordinates
     if (currentRow >= 0) {
-        menu->addAction(m_removeAction);
         menu->addAction(m_addEffectAction);
 
         if (m_tableWidget->rowCount() > 1) {
@@ -921,6 +931,12 @@ CombatWidget::contextMenuEvent(QContextMenuEvent *event)
     });
     showIniTooltipsAction->setCheckable(true);
     showIniTooltipsAction->setChecked(m_tableSettings.showIniToolTips);
+
+    auto *const adjustHeightAfterRemoveAction = optionMenu->addAction(tr("Readjust Height after Character Removal"), this, [this] (bool show) {
+        setTableOption(show, 4);
+    });
+    adjustHeightAfterRemoveAction->setCheckable(true);
+    adjustHeightAfterRemoveAction->setChecked(m_tableSettings.adjustHeightAfterRemove);
 
     menu->exec(event->globalPos());
 }

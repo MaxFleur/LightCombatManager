@@ -176,9 +176,9 @@ private:
 
     QPointer<QTimer> m_timer;
 
+    QPointer<QAction> m_removeCharacterAction;
     QPointer<QAction> m_addCharacterAction;
     QPointer<QAction> m_insertTableAction;
-    QPointer<QAction> m_removeAction;
     QPointer<QAction> m_addEffectAction;
     QPointer<QAction> m_duplicateAction;
     QPointer<QAction> m_rerollAction;

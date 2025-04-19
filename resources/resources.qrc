@@ -30,6 +30,10 @@
         <file>icons/table/insert_table_white.svg</file>
         <file>icons/table/log_black.svg</file>
         <file>icons/table/log_white.svg</file>
+        <file>icons/table/move_down_black.svg</file>
+        <file>icons/table/move_down_white.svg</file>
+        <file>icons/table/move_up_black.svg</file>
+        <file>icons/table/move_up_white.svg</file>
         <file>icons/table/redo_black.svg</file>
         <file>icons/table/redo_white.svg</file>
         <file>icons/table/remove_black.svg</file>

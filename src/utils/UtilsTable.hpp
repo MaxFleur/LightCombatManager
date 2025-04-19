@@ -14,6 +14,8 @@ setTableAdditionalInfoWidget(CombatWidget*   combatWidget,
                              unsigned int    row,
                              const QVariant& additionalInfo);
 
+static constexpr int HEIGHT_BUFFER = 40;
+
 static constexpr int COL_NAME = 0;
 static constexpr int COL_INI = 1;
 static constexpr int COL_MODIFIER = 2;

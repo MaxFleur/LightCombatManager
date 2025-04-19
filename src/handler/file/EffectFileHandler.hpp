@@ -3,14 +3,14 @@
 #include "BaseFileHandler.hpp"
 #include "CharacterHandler.hpp"
 
-// This class handles the saving and opening of character templates
-class CharFileHandler : public BaseFileHandler {
+// This class handles the saving and opening of effect templates
+class EffectFileHandler : public BaseFileHandler {
 public:
-    CharFileHandler();
+    EffectFileHandler();
 
-    // Write the character data to a file
+    // Write effect
     [[nodiscard]] bool
-    writeToFile(const CharacterHandler::Character& character) const;
+    writeToFile(const QString& name) const;
 
     // Open a saved table
     [[nodiscard]] int

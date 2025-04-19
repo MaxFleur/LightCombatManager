@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <svg
-    width="46mm"
-    height="54mm"
+    width="20mm"
+    height="5.1mm"
     version="1.1"
-    viewBox="0 0 46 54"
+    viewBox="0 0 20 5.1"
     xmlns="http://www.w3.org/2000/svg">
 
- <g stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
-  <rect x="2.3379" y="8.981" width="41.69" height="5.0591" fill-opacity="0"/>
-  <g fill="none">
-   <path d="m5.9507 14.353v37.504h34.464v-36.93"/>
-   <path d="m17.638 7.9317v-5.6208h11.09v5.7285"/>
-   <path d="m23.183 23.462v20.923"/>
-   <path d="m32.288 23.462v20.923"/>
-   <path d="m14.078 23.462v20.923"/>
-  </g>
- </g>
+ <path d="m2.5571 2.55h14.886" fill="none" stroke="#FFF" stroke-linecap="round" stroke-width="5"/>
 </svg>

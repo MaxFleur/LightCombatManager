@@ -15,6 +15,6 @@ public:
     bool
     addCharacter(const CharacterHandler::Character& character);
 
-    bool
-    removeCharacter(const CharacterHandler::Character& character);
+    void
+    removeCharacter(const QString& characterName);
 };

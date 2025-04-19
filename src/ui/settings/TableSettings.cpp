@@ -27,6 +27,9 @@ TableSettings::write(ValueType valueType, bool valueToWrite)
         break;
     case SHOW_INI_TOOLTIPS:
         writeParameter(settings, valueToWrite, showIniToolTips, "ini_tool_tips");
+        break;
+    case ADJUST_HEIGHT_AFTER_REMOVE:
+        writeParameter(settings, valueToWrite, adjustHeightAfterRemove, "adjust_height_remove");
     default:
         break;
     }
@@ -45,5 +48,6 @@ TableSettings::read()
     modifierShown = settings.value("modifier").isValid() ? settings.value("modifier").toBool() : true;
     colorTableRows = settings.value("color_rows").isValid() ? settings.value("color_rows").toBool() : false;
     showIniToolTips = settings.value("ini_tool_tips").isValid() ? settings.value("ini_tool_tips").toBool() : false;
+    adjustHeightAfterRemove = settings.value("adjust_height_remove").isValid() ? settings.value("adjust_height_remove").toBool() : false;
     settings.endGroup();
 }

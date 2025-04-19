@@ -1,13 +1,16 @@
 #pragma once
 
 #include "AdditionalInfoData.hpp"
+#include "EffectFileHandler.hpp"
 
 #include <QDialog>
 #include <QPointer>
+#include <QTreeWidgetItem>
 
 class QCheckBox;
 class QLineEdit;
-class QListWidget;
+class QTreeWidget;
+class QToolButton;
 class QSpinBox;
 
 class RuleSettings;
@@ -29,6 +32,15 @@ public:
 
 private slots:
     void
+    setRemoveButtonEnabling();
+
+    void
+    addEffectButtonClicked();
+
+    void
+    removeEffectButtonClicked();
+
+    void
     okButtonClicked();
 
 private:
@@ -38,13 +50,26 @@ private:
     void
     findEffect(const QString& filter);
 
+    void
+    setButtonIcons();
+
+    bool
+    event(QEvent* event);
+
 private:
-    QPointer<QListWidget> m_listWidget;
     QPointer<QLineEdit> m_lineEdit;
+    QPointer<QTreeWidget> m_treeWidget;
+    QPointer<QToolButton> m_removeEffectButton;
+    QPointer<QToolButton> m_addEffectButton;
     QPointer<QCheckBox> m_checkBox;
     QPointer<QSpinBox> m_spinBox;
+    QTreeWidgetItem* m_customHeaderItem;
+
+    std::unique_ptr<EffectFileHandler> m_effectFileHandler;
 
     QVector<AdditionalInfoData::StatusEffect> m_effects;
 
     const RuleSettings& m_ruleSettings;
+
+    static constexpr int COL_NAME = 0;
 };

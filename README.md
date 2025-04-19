@@ -5,7 +5,7 @@
    ![CI MacOS badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run-mac.yml/badge.svg?event=push)
    ![CI Ubuntu badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run-ubuntu.yml/badge.svg?event=push)
    ![CI Windows badge](https://github.com/MaxFleur/LightCombatManager/actions/workflows/run-windows.yml/badge.svg?event=push)
-   ![Tag badge](https://img.shields.io/badge/Release-v3.0.0-blue.svg)
+   ![Tag badge](https://img.shields.io/badge/Release-v3.1.0-blue.svg)
 
 </div>
 
@@ -17,11 +17,11 @@
 
 ### A small, lightweight cross-platform combat manager for d20-based role-playing games, based on Qt.
 
-![bossfight](https://github.com/user-attachments/assets/a07db4f2-0c9f-451a-9143-4c4e774833e3)
+![overall](https://github.com/user-attachments/assets/b8141a35-754b-460d-8cca-db51add3207a)
 
 With LightCombatManager (or just **LCM**), you can easily manage a combat for a d20-based RPG. The table supports all sorts of combat-based operations, such as reordering rows when a character moves their initiative, removing or adding ruleset-defined status effects to one or multiple characters or subsequent addition of characters who just joined the combat. Undoing and logging changes are also supported!
 
-![editor](https://github.com/user-attachments/assets/d925de4c-28d6-427c-ac4b-1250ba421cad)
+![char_editor](https://github.com/user-attachments/assets/353a4b5a-6e27-4fad-94b7-17d8256a4929)
 
 LCM provides an intuitive character editor, where characters with initiative value and modifier, a health point counter and additional information can be easily created.\
 If the game ends, but the current combat is not finished yet, you can save it on the PC. Characters can also be stored as templates for later usage.
@@ -40,8 +40,7 @@ Support for more d20-based rulesets might be added in the future.
 
 # Tools & Installation
 LCM is written in C++20. The following frameworks are used for development:
-* [Qt6 or Qt5](https://www.qt.io/) for the user interface and the storing and loading of tables.
-   * If no Qt6 installation is found on the system, the application searches for a Qt5 installation instead.
+* [Qt6](https://www.qt.io/) for the user interface as well as table storage and loading.
    * Note that for the correct displaying of svg files, the Qt SVG plugin is needed.
 * [Catch2 v2 or v3](https://github.com/catchorg/Catch2) for Unit testing ([Catch2 license](https://github.com/catchorg/Catch2/blob/devel/LICENSE.txt)).
 * [Uncrustify](https://github.com/uncrustify/uncrustify) for code formatting.
@@ -49,11 +48,11 @@ LCM is written in C++20. The following frameworks are used for development:
 
 The following commands will install all necessary requirements at once:
 ### Ubuntu:
-`sudo apt install qtbase5-dev libqt5svg5 libqt5svg5-dev qt6-base-dev libqt6svg6 libqt6svg6-dev catch2 uncrustify cmake`
+`sudo apt install qt6-base-dev libqt6svg6 libqt6svg6-dev catch2 uncrustify cmake`
 ### Arch Linux:
-`sudo pacman -S qt5-base qt5-svg qt6-base qt6-svg catch2 uncrustify cmake`
+`sudo pacman -S qt6-base qt6-svg catch2 uncrustify cmake`
 ### MacOS:
-`brew install qt@5 qt@6 catch2 uncrustify cmake`
+`brew install qt@6 catch2 uncrustify cmake`
 
 For Windows, installers for Qt, CMake and Catch2 are available. Make sure to install the Qt SVG plugin as well!\
 Alternatively, if you want to run the application without any additional installing, just download the binaries provided with the latest release.
@@ -62,7 +61,7 @@ Alternatively, if you want to run the application without any additional install
 
 1. Clone this repository and `cd` into it.
 2. `mkdir build && cd build`
-3. On MacOS: Hit `cmake -DCMAKE_PREFIX_PATH="$(brew --prefix qt@5)"` (Change to `qt@6` for Qt6), on Linux: Hit `cmake ..`
+3. On MacOS: Hit `cmake -DCMAKE_PREFIX_PATH="$(brew --prefix qt@6)"`, on Linux: Hit `cmake ..`
 4. `make`
 5. Start the application with `./src/LightCombatManager`.
 

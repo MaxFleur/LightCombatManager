@@ -11,6 +11,9 @@
 
 #include <QSettings>
 
+#include <filesystem>
+#include <fstream>
+
 TEST_CASE("Settings Testing", "[Settings]") {
     SECTION("Concepts test") {
         enum TestEnum {};
@@ -60,18 +63,41 @@ TEST_CASE("Settings Testing", "[Settings]") {
         QSettings settings;
         settings.clear();
 
+        // Create file so that the settings entry won't be deleted
+        std::filesystem::create_directories(std::filesystem::current_path().string() + "/example");
+        std::ofstream file(std::filesystem::current_path().string() + "/example/test.lcm");
+        file << "Text";
+        file.close();
+        const auto lcmFilePath = QString::fromStdString(std::filesystem::current_path().string() + "/example/test.lcm");
+
         REQUIRE(settings.value("dir_save").isValid() == false);
         REQUIRE(settings.value("dir_open").isValid() == false);
+        REQUIRE(settings.value("recent_dir_0").isValid() == false);
+        REQUIRE(settings.value("recent_dir_1").isValid() == false);
 
-        dirSettings.write("/example/path/dir_open_and_save", true);
+        dirSettings.write(lcmFilePath, true);
         REQUIRE(settings.value("dir_save").isValid() == true);
         REQUIRE(settings.value("dir_open").isValid() == true);
-        REQUIRE(settings.value("dir_open").toString() == "/example/path/dir_open_and_save");
-        REQUIRE(settings.value("dir_save").toString() == "/example/path/dir_open_and_save");
+        REQUIRE(settings.value("recent_dir_0").isValid() == true);
+        REQUIRE(settings.value("dir_open").toString() == lcmFilePath);
+        REQUIRE(settings.value("dir_save").toString() == lcmFilePath);
+        REQUIRE(settings.value("recent_dir_0").toString() == lcmFilePath);
 
-        dirSettings.write("/example/path/new_path", false);
-        REQUIRE(settings.value("dir_open").toString() == "/example/path/new_path");
-        REQUIRE(settings.value("dir_save").toString() == "/example/path/dir_open_and_save");
+        dirSettings.write("/example/invalid.csv", false);
+        REQUIRE(settings.value("dir_open").toString() == "/example/invalid.csv");
+        REQUIRE(settings.value("dir_save").toString() == lcmFilePath);
+        REQUIRE(settings.value("recent_dir_1").isValid() == true);
+        REQUIRE(settings.value("recent_dir_0").toString() == "/example/invalid.csv");
+        REQUIRE(settings.value("recent_dir_1").toString() == lcmFilePath);
+
+        DirSettings newDirSettings;
+        REQUIRE(settings.value("dir_save").isValid() == true);
+        REQUIRE(settings.value("dir_open").isValid() == true);
+        // These files never really existed, therefore the settings key should have been deleted
+        REQUIRE(settings.value("recent_dir_0").isValid() == false);
+        REQUIRE(settings.value("recent_dir_1").isValid() == true);
+
+        std::filesystem::remove_all("example/test.lcm");
     }
     SECTION("Rule settings test") {
         RuleSettings ruleSettings;
@@ -102,23 +128,28 @@ TEST_CASE("Settings Testing", "[Settings]") {
         REQUIRE(settings.value("modifier").isValid() == false);
         REQUIRE(settings.value("color_rows").isValid() == false);
         REQUIRE(settings.value("ini_tool_tips").isValid() == false);
+        REQUIRE(settings.value("adjust_height_remove").isValid() == false);
         settings.endGroup();
 
         tableSettings.write(TableSettings::ValueType::INI_SHOWN, false);
         tableSettings.write(TableSettings::ValueType::MOD_SHOWN, false);
         tableSettings.write(TableSettings::ValueType::COLOR_TABLE, true);
         tableSettings.write(TableSettings::ValueType::SHOW_INI_TOOLTIPS, true);
+        tableSettings.write(TableSettings::ValueType::ADJUST_HEIGHT_AFTER_REMOVE, true);
 
         settings.beginGroup("table");
         REQUIRE(settings.value("ini").isValid() == true);
         REQUIRE(settings.value("modifier").isValid() == true);
         REQUIRE(settings.value("color_rows").isValid() == true);
         REQUIRE(settings.value("ini_tool_tips").isValid() == true);
+        REQUIRE(settings.value("adjust_height_remove").isValid() == true);
 
         REQUIRE(settings.value("ini").toBool() == false);
         REQUIRE(settings.value("modifier").toBool() == false);
         REQUIRE(settings.value("color_rows").toBool() == true);
         REQUIRE(settings.value("ini_tool_tips").toBool() == true);
+        REQUIRE(settings.value("adjust_height_remove").toBool() == true);
         settings.endGroup();
+        settings.clear();
     }
 }

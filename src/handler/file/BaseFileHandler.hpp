@@ -10,6 +10,10 @@ public:
     [[nodiscard]] virtual int
     getStatus(const QString& fileName);
 
+    [[maybe_unused]] bool
+    writeJsonObjectToFile(const QJsonObject& object,
+                          const QString&     fileName) const;
+
     [[nodiscard]] QJsonObject&
     getData()
     {

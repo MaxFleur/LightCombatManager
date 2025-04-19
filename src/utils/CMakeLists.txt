@@ -5,6 +5,8 @@ target_include_directories (utils
 ) 
 
 target_sources(utils INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/UtilsFiles.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/UtilsFiles.hpp
     ${CMAKE_CURRENT_LIST_DIR}/UtilsGeneral.cpp
     ${CMAKE_CURRENT_LIST_DIR}/UtilsGeneral.hpp
     ${CMAKE_CURRENT_LIST_DIR}/UtilsTable.cpp

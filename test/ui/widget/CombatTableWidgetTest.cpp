@@ -60,23 +60,23 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
         combatTableWidget->resynchronizeCharacters();
 
         SECTION("Check stats") {
-            REQUIRE(characterHandler->getCharacters().at(0).name == "Fighter");
-            REQUIRE(characterHandler->getCharacters().at(0).initiative == 19);
-            REQUIRE(characterHandler->getCharacters().at(0).modifier == 2);
-            REQUIRE(characterHandler->getCharacters().at(0).hp == 36);
-            REQUIRE(characterHandler->getCharacters().at(0).isEnemy == false);
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.mainInfoText == "Haste");
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).name == "Shaken");
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).isPermanent == false);
-            REQUIRE(characterHandler->getCharacters().at(0).additionalInfoData.statusEffects.at(0).duration == 2);
+            REQUIRE(characterHandler->characterAt(0).name == "Fighter");
+            REQUIRE(characterHandler->characterAt(0).initiative == 19);
+            REQUIRE(characterHandler->characterAt(0).modifier == 2);
+            REQUIRE(characterHandler->characterAt(0).hp == 36);
+            REQUIRE(characterHandler->characterAt(0).isEnemy == false);
+            REQUIRE(characterHandler->characterAt(0).additionalInfoData.mainInfoText == "Haste");
+            REQUIRE(characterHandler->characterAt(0).additionalInfoData.statusEffects.at(0).name == "Shaken");
+            REQUIRE(characterHandler->characterAt(0).additionalInfoData.statusEffects.at(0).isPermanent == false);
+            REQUIRE(characterHandler->characterAt(0).additionalInfoData.statusEffects.at(0).duration == 2);
         }
         SECTION("Check for changed data") {
             combatTableWidget->setItem(0, 3, new QTableWidgetItem("24"));
             combatTableWidget->item(0, 4)->setCheckState(Qt::Checked);
             combatTableWidget->resynchronizeCharacters();
 
-            REQUIRE(characterHandler->getCharacters().at(0).hp == 24);
-            REQUIRE(characterHandler->getCharacters().at(0).isEnemy == true);
+            REQUIRE(characterHandler->characterAt(0).hp == 24);
+            REQUIRE(characterHandler->characterAt(0).isEnemy == true);
         }
     }
 
@@ -169,7 +169,6 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
 
     SECTION("Table data from character vector") {
         combatTableWidget->resynchronizeCharacters();
-        auto characters = characterHandler->getCharacters();
         auto tableData = combatTableWidget->tableDataFromCharacterVector();
 
         SECTION("Check stats") {
@@ -189,7 +188,6 @@ TEST_CASE("Combat Table Testing", "[TableUtils]") {
             combatTableWidget->setItem(0, 3, new QTableWidgetItem("24"));
             combatTableWidget->item(0, 4)->setCheckState(Qt::Checked);
             combatTableWidget->resynchronizeCharacters();
-            characters = characterHandler->getCharacters();
             tableData = combatTableWidget->tableDataFromCharacterVector();
 
             REQUIRE(tableData.at(0).at(3) == "24");

@@ -32,31 +32,101 @@ public:
         }
     };
 
+    enum class CharacterStatType {
+        INITIATIVE,
+        HP,
+        MAIN_INFO_TEXT
+    };
+
 public:
+    void
+    sortCharacters(const RuleSettings::Ruleset& ruleset,
+                   bool                         rollAutomatically);
+
+    void
+    swapCharacters(int i,
+                   int j)
+    {
+        m_characters.swapItemsAt(i, j);
+    }
+
+    void
+    rotateCharacters(int oldIndex,
+                     int newIndex)
+    {
+        if (oldIndex > newIndex) {
+            std::rotate(m_characters.rend() - oldIndex - 1, m_characters.rend() - oldIndex, m_characters.rend() - newIndex);
+        } else {
+            std::rotate(m_characters.begin() + oldIndex, m_characters.begin() + oldIndex + 1, m_characters.begin() + newIndex + 1);
+        }
+    }
+
+    void
+    clearCharacters()
+    {
+        if (!m_characters.empty()) {
+            m_characters.clear();
+        }
+    }
+
     void
     storeCharacter(QString            name,
                    int                initiative,
                    int                modifier,
                    int                hp,
                    bool               isEnemy,
-                   AdditionalInfoData additionalInfoData);
-
-    void
-    sortCharacters(const RuleSettings::Ruleset& ruleset,
-                   bool                         rollAutomatically);
-
-    void
-    clearCharacters();
-
-    [[nodiscard]] QVector<Character>&
-    getCharacters()
+                   AdditionalInfoData additionalInfoData)
     {
-        return characters;
+        m_characters.emplace_back(Character(name, initiative, modifier, hp, isEnemy, additionalInfoData));
+    }
+
+    void
+    duplicateCharacter(int index)
+    {
+        m_characters.insert(index + 1, CharacterHandler::Character(m_characters.at(index)));
+    }
+
+    void
+    removeCharacter(int index)
+    {
+        m_characters.remove(index);
+    }
+
+    template<CharacterStatType statType>
+    void
+    setCharacterSingleStat(const QVariant& variant,
+                           int             index)
+    {
+        if constexpr (statType == CharacterStatType::INITIATIVE) {
+            m_characters[index].initiative = variant.toInt();
+        } else if constexpr (statType == CharacterStatType::HP) {
+            m_characters[index].hp = std::clamp(m_characters[index].hp + variant.toInt(), -10000, 10000);
+        } else {
+            m_characters[index].additionalInfoData.mainInfoText += " " + variant.toString();
+        }
+    }
+
+    QVector<AdditionalInfoData::StatusEffect>&
+    getCharacterStatusEffect(int index)
+    {
+        return m_characters[index].additionalInfoData.statusEffects;
+    }
+
+    const Character&
+    characterAt(int index)
+    {
+        return m_characters.at(index);
+    }
+
+    [[nodiscard]] int
+    getNumberOfCharacters() const
+    {
+        return m_characters.size();
     }
 
 private:
     // Vector storing all created characters
-    QVector<Character> characters;
+    QVector<Character> m_characters;
 };
 
 Q_DECLARE_METATYPE(CharacterHandler::Character);

@@ -240,11 +240,11 @@ CombatWidget::generateTableFromTableData()
     m_tableWidget->setColumnHidden(Utils::Table::COL_INI, !m_tableSettings.iniShown);
     m_tableWidget->setColumnHidden(Utils::Table::COL_MODIFIER, !m_tableSettings.modifierShown);
 
-    m_affectedRowIndices.resize(m_characterHandler->getCharacters().size());
+    m_affectedRowIndices.resize(m_characterHandler->getNumberOfCharacters());
     std::iota(m_affectedRowIndices.begin(), m_affectedRowIndices.end(), 0);
 
     // Then create the table in the ui
-    m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getCharacters().size(), true);
+    m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getNumberOfCharacters(), true);
     pushOnUndoStack();
     // We do not need a save step directly after table creation
     m_undoStack->clear();
@@ -347,19 +347,19 @@ CombatWidget::openAddCharacterDialog()
 {
     // Resynchronize because the table could have been modified
     m_tableWidget->resynchronizeCharacters();
-    const auto sizeBeforeDialog = m_characterHandler->getCharacters().size();
+    const auto sizeBeforeDialog = m_characterHandler->getNumberOfCharacters();
 
     auto *const dialog = new AddCharacterDialog(m_additionalSettings.modAddedToIni, this);
     connect(dialog, &AddCharacterDialog::characterCreated, this, [this, &sizeBeforeDialog] (CharacterHandler::Character character, int instanceCount) {
         addCharacter(character, instanceCount);
         emit tableHeightSet(m_tableWidget->getHeight() + Utils::Table::HEIGHT_BUFFER);
 
-        m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getCharacters().size() - sizeBeforeDialog, true);
+        m_logListWidget->logConditionalValue(COUNT, m_characterHandler->getNumberOfCharacters() - sizeBeforeDialog, true);
     });
 
     if (dialog->exec() == QDialog::Accepted) {
         // Only ask to sort if there are enough chars and additional chars have been added
-        if (m_characterHandler->getCharacters().size() > 1 && m_characterHandler->getCharacters().size() != sizeBeforeDialog) {
+        if (m_characterHandler->getNumberOfCharacters() > 1 && m_characterHandler->getNumberOfCharacters() != sizeBeforeDialog) {
             auto const reply = QMessageBox::question(this, tr("Sort characters?"), tr("Do you want to sort the table?"),
                                                      QMessageBox::Yes | QMessageBox::No);
             if (reply == QMessageBox::Yes) {
@@ -383,12 +383,7 @@ CombatWidget::dragAndDrop(int /* logicalIndex */, int oldVisualIndex, int newVis
     m_tableWidget->resynchronizeCharacters();
 
     // Switch the character order according to the indices
-    auto& characters = m_characterHandler->getCharacters();
-    if (oldVisualIndex > newVisualIndex) {
-        std::rotate(characters.rend() - oldVisualIndex - 1, characters.rend() - oldVisualIndex, characters.rend() - newVisualIndex);
-    } else {
-        std::rotate(characters.begin() + oldVisualIndex, characters.begin() + oldVisualIndex + 1, characters.begin() + newVisualIndex + 1);
-    }
+    m_characterHandler->rotateCharacters(oldVisualIndex, newVisualIndex);
     // Then set the table
     m_logListWidget->logTwoValues(SWITCH, oldVisualIndex + 1, newVisualIndex + 1);
     pushOnUndoStack();
@@ -411,10 +406,10 @@ CombatWidget::insertTable()
     case 0:
     {
         saveOldState();
-        const auto oldSize = m_characterHandler->getCharacters().size();
+        const auto oldSize = m_characterHandler->getNumberOfCharacters();
         loadCharactersFromTable(m_tableFileHandler->getData());
         // Update to new table size and reset identifiers
-        m_affectedRowIndices.resize(m_affectedRowIndices.size() + m_characterHandler->getCharacters().size() - oldSize);
+        m_affectedRowIndices.resize(m_affectedRowIndices.size() + m_characterHandler->getNumberOfCharacters() - oldSize);
         std::iota(m_affectedRowIndices.begin(), m_affectedRowIndices.end(), oldSize);
 
         pushOnUndoStack();
@@ -457,12 +452,11 @@ CombatWidget::openStatusEffectDialog()
 
         saveOldState();
         m_tableWidget->resynchronizeCharacters();
-        auto& characters = m_characterHandler->getCharacters();
 
         auto needsUndo = false;
         // Add status effect text to characters
         for (const auto& i : m_tableWidget->selectionModel()->selectedRows()) {
-            auto& statusEffects = characters[i.row()].additionalInfoData.statusEffects;
+            auto& statusEffects = m_characterHandler->getCharacterStatusEffect(i.row());
 
             for (const auto& dialogEffect : dialog->getEffects()) {
                 // Store normally for DnD 5E
@@ -513,7 +507,7 @@ CombatWidget::addCharacter(CharacterHandler::Character character, int instanceCo
                                            instanceCount > 1 && m_additionalSettings.rollIniMultipleChars ? Utils::General::rollDice() + character.modifier
                                                                                                           : character.initiative,
                                            character.modifier, character.hp, character.isEnemy, character.additionalInfoData);
-        m_affectedRowIndices.emplace_back(m_characterHandler->getCharacters().size() - 1);
+        m_affectedRowIndices.emplace_back(m_characterHandler->getNumberOfCharacters() - 1);
     }
 
     pushOnUndoStack();
@@ -531,18 +525,17 @@ CombatWidget::rerollIni()
     m_tableWidget->resynchronizeCharacters();
 
     const auto row = m_tableWidget->currentRow();
-    auto& characters = m_characterHandler->getCharacters();
     const auto newRolledDice = Utils::General::rollDice();
-    const auto newInitiative = newRolledDice + characters.at(row).modifier;
+    const auto newInitiative = newRolledDice + m_characterHandler->characterAt(row).modifier;
 
-    characters[row].initiative = newInitiative;
+    m_characterHandler->setCharacterSingleStat<CharacterHandler::CharacterStatType::INITIATIVE>(QVariant::fromValue(newInitiative), row);
     m_logListWidget->logSingleValue(INI, row + 1);
     pushOnUndoStack();
 
     // Reset the graphics effect and kickoff the animation
     m_iniRerolledLabel->setGraphicsEffect(0);
     m_iniRerolledLabel->setText(tr("New Value: ") + QString::number(newInitiative) + tr(" (Rolled ") +
-                                QString::number(newRolledDice) + tr(" + Mod ") + QString::number(characters.at(row).modifier) + ").");
+                                QString::number(newRolledDice) + tr(" + Mod ") + QString::number(m_characterHandler->characterAt(row).modifier) + ").");
     m_timer->start(LABEL_SHOWN_DURATION);
 
     m_tableWidget->itemSelectionChanged();
@@ -565,13 +558,9 @@ CombatWidget::changeStatForMultipleChars(bool changeHP)
         saveOldState();
         m_tableWidget->resynchronizeCharacters();
 
-        for (auto& characters = m_characterHandler->getCharacters();
-             const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
-            if (changeHP) {
-                characters[index.row()].hp = std::clamp(characters[index.row()].hp + variant.toInt(), -10000, 10000);
-            } else {
-                characters[index.row()].additionalInfoData.mainInfoText += " " + variant.toString();
-            }
+        for (const auto& index : m_tableWidget->selectionModel()->selectedRows()) {
+            changeHP ? m_characterHandler->setCharacterSingleStat<CharacterHandler::CharacterStatType::HP>(variant, index.row())
+                     : m_characterHandler->setCharacterSingleStat<CharacterHandler::CharacterStatType::MAIN_INFO_TEXT>(variant, index.row());
         }
 
         m_logListWidget->logConditionalValue(MULTIPLE_CHARS, m_tableWidget->selectionModel()->selectedRows().size(), changeHP);
@@ -598,7 +587,7 @@ CombatWidget::removeRow()
     // Sort reversed so items in the vector can be removed without using offsets
     std::ranges::sort(m_affectedRowIndices, std::ranges::greater());
 
-    for (auto& characters = m_characterHandler->getCharacters(); const auto& index : m_affectedRowIndices) {
+    for (const auto& index : m_affectedRowIndices) {
         // If the deleted row is before the current entered row, move one up
         if (index < (int) m_rowEntered) {
             m_rowEntered--;
@@ -607,7 +596,7 @@ CombatWidget::removeRow()
             m_rowEntered = 0;
         }
 
-        characters.remove(index);
+        m_characterHandler->removeCharacter(index);
     }
 
     // Reverse for the undo stack removal operation
@@ -635,9 +624,8 @@ CombatWidget::duplicateRow()
     saveOldState();
 
     m_tableWidget->resynchronizeCharacters();
-    auto& characters = m_characterHandler->getCharacters();
     const auto currentIndex = m_tableWidget->currentIndex().row();
-    characters.insert(currentIndex + 1, CharacterHandler::Character(characters.at(currentIndex)));
+    m_characterHandler->duplicateCharacter(currentIndex);
 
     m_affectedRowIndices.emplace_back(currentIndex + 1);
     m_logListWidget->logSingleValue(DUPLICATE, currentIndex + 1);
@@ -748,9 +736,8 @@ CombatWidget::switchCharacterPosition(bool goDown)
     m_tableWidget->resynchronizeCharacters();
     saveOldState();
 
-    auto& characters = m_characterHandler->getCharacters();
     const auto indexToSwap = goDown ? 1 : -1;
-    std::iter_swap(characters.begin() + originalIndex, characters.begin() + originalIndex + indexToSwap);
+    m_characterHandler->swapCharacters(originalIndex, originalIndex + indexToSwap);
 
     setRowAndPlayer();
     m_logListWidget->logTwoValues(SWITCH, originalIndex + 1, goDown ? originalIndex + 2 : originalIndex);
@@ -820,8 +807,6 @@ CombatWidget::setTableOption(bool option, int valueType)
 void
 CombatWidget::loadCharactersFromTable(const QJsonObject& jsonObject)
 {
-    auto& characters = m_characterHandler->getCharacters();
-
     // Single character
     for (const auto& charactersObject = jsonObject.value("characters").toObject(); const auto& character : charactersObject) {
         const auto& characterObject = character.toObject();
@@ -842,10 +827,9 @@ CombatWidget::loadCharactersFromTable(const QJsonObject& jsonObject)
             additionalInfoData.statusEffects.push_back(effect);
         }
 
-        characters.emplace_back(CharacterHandler::Character {
-            characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
-            characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
-            characterObject.value("is_enemy").toBool(), additionalInfoData });
+        m_characterHandler->storeCharacter(characterObject.value("name").toString(), characterObject.value("initiative").toInt(),
+                                           characterObject.value("modifier").toInt(), characterObject.value("hp").toInt(),
+                                           characterObject.value("is_enemy").toBool(), additionalInfoData);
     }
 }
 

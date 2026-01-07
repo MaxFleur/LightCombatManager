@@ -194,11 +194,13 @@ QVector<QVector<QVariant> >
 CombatTableWidget::tableDataFromCharacterVector()
 {
     QVector<QVector<QVariant> > tableData;
-    for (const auto& character : m_characterHandler->getCharacters()) {
+    for (auto i = 0; i < m_characterHandler->getNumberOfCharacters(); ++i) {
+        const auto& character = m_characterHandler->characterAt(i);
         QVector<QVariant> charValues;
 
         QVariant additionalInfoVariant;
         additionalInfoVariant.setValue(character.additionalInfoData);
+
         charValues << character.name << character.initiative << character.modifier
                    << character.hp << character.isEnemy << additionalInfoVariant;
 

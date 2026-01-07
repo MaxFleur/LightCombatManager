@@ -2,20 +2,6 @@
 
 #include <QCryptographicHash>
 
-// Stores a new character
-void
-CharacterHandler::storeCharacter(
-    QString            name,
-    int                initiative,
-    int                modifier,
-    int                hp,
-    bool               isEnemy,
-    AdditionalInfoData additionalInfoData)
-{
-    characters.emplace_back(Character(name, initiative, modifier, hp, isEnemy, additionalInfoData));
-}
-
-
 // Sort all created characters, depending on the used rulset
 void
 CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool rollAutomatically)
@@ -31,7 +17,7 @@ CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool roll
                false;
     };
 
-    std::ranges::sort(characters, [ruleset, sortUsingHashes](const auto& c1, const auto& c2) {
+    std::ranges::sort(m_characters, [ruleset, sortUsingHashes](const auto& c1, const auto& c2) {
         // Common for all rulesets: Sort for higher initiative
         if (c1.initiative != c2.initiative) {
             return c1.initiative > c2.initiative;
@@ -64,13 +50,4 @@ CharacterHandler::sortCharacters(const RuleSettings::Ruleset& ruleset, bool roll
             return false;
         }
     });
-}
-
-
-void
-CharacterHandler::clearCharacters()
-{
-    if (!characters.empty()) {
-        characters.clear();
-    }
 }
